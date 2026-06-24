@@ -1,0 +1,63 @@
+name: Auto Label
+
+on:
+  pull_request:
+    types: [opened, ready_for_review, reopened]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  labeler:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add label from PR title and author
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const typeLabels = {
+              docs: '📄 DOCS',
+              feat: '✨ FEAT',
+              init: '🌱 INIT',
+              fix: '💦 FIX',
+              refactor: '🎀 REFACTOR',
+              chore: '📍 CHORE',
+              deploy: '🪄 DEPLOY',
+            }
+
+            const authorLabels = {
+              'jin-evergreen': '🐵 진석',
+              winchoose: '🐸 승택',
+              jinaaaaaaaaaaaaa: '🐹 진아',
+              ahyohyo: '🐶 효정',
+              seojin15: '🐟 서진',
+            }
+
+            const pullRequest = context.payload.pull_request
+            const title = pullRequest.title
+            const author = pullRequest.user.login
+            const match = title.match(
+              /^\[(init|feat|fix|docs|refactor|chore|deploy)\]/i,
+            )
+
+            if (!match) {
+              core.info(`No PR type found in title: ${title}`)
+              return
+            }
+
+            const type = match[1].toLowerCase()
+            const typeLabel = typeLabels[type]
+            const authorLabel = authorLabels[author]
+
+            const labelsToAdd = [typeLabel, authorLabel].filter((label) => label)
+
+            if (labelsToAdd.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pullRequest.number,
+                labels: labelsToAdd,
+              })
+            }
