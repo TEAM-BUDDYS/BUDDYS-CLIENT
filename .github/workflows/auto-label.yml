@@ -2,7 +2,7 @@ name: Auto Label
 
 on:
   pull_request:
-    types: [opened, ready_for_review, reopened]
+    types: [opened, ready_for_review, reopened, edited]
 
 permissions:
   contents: read
@@ -44,12 +44,27 @@ jobs:
 
             if (!match) {
               core.info(`No PR type found in title: ${title}`)
-              return
             }
 
-            const type = match[1].toLowerCase()
-            const typeLabel = typeLabels[type]
+            const type = match?[1].toLowerCase()
+            const typeLabel = type ? typeLabels[type] : null
             const authorLabel = authorLabels[author]
+
+            const currentLabels = pullRequest.labels.map(({ name }) => name)
+            const typeLableNames = Object.values(typeLabels)
+
+            const labelsToRemove = currentLabels.filter(
+              (label) => typeLableNames.includes(label) && label !== typeLabel,
+            )
+
+            for (const label of labelsToRemove) {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pullRequest.number,
+                name: label,
+              })
+            }
 
             const labelsToAdd = [typeLabel, authorLabel].filter((label) => label)
 
