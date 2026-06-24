@@ -5,7 +5,7 @@ on:
     types: [opened, ready_for_review, reopened, edited]
 
 permissions:
-  issues: write
+  pull-requests: write
 
 jobs:
   labeler:
@@ -44,7 +44,7 @@ jobs:
               core.info(`No PR type found in title: ${title}`)
             }
 
-            const type = match?.[1].toLowerCase()
+            const type = match?[1].toLowerCase()
             const typeLabel = type ? typeLabels[type] : null
             const authorLabel = authorLabels[author]
 
