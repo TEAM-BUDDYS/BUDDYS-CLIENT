@@ -1,7 +1,7 @@
 name: Auto Label
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, ready_for_review, reopened, edited]
 
 permissions:
@@ -49,10 +49,10 @@ jobs:
             const authorLabel = authorLabels[author]
 
             const currentLabels = pullRequest.labels.map(({ name }) => name)
-            const typeLableNames = Object.values(typeLabels)
+            const typeLabelNames = Object.values(typeLabels)
 
             const labelsToRemove = currentLabels.filter(
-              (label) => typeLableNames.includes(label) && label !== typeLabel,
+              (label) => typeLabelNames.includes(label) && label !== typeLabel,
             )
 
             for (const label of labelsToRemove) {
