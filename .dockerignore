@@ -1,0 +1,9 @@
+node_modules
+.next
+.git
+.github
+Dockerfile
+.dockerignore
+README.md
+npm-debug.log
+pnpm-debug.log
