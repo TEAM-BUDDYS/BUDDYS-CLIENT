@@ -15,6 +15,7 @@ src/
   domains/
 
   shared/
+    assets/
     components/
       ui/
       layout/
@@ -47,14 +48,14 @@ src/
 
 ```txt
 domains/{domain}/
-  pages-or-flows/
+  assets/
   components/
   hooks/
   api/
   model/
 ```
 
-- 특정 도메인에서만 쓰는 컴포넌트, 훅, API, 타입은 해당 도메인 내부에 둡니다.
+- 특정 도메인에서만 쓰는 컴포넌트, 훅, API, 타입과 에셋은 해당 도메인 내부에 둡니다.
 - 여러 도메인에서 실제로 재사용되고 의미와 변경 이유가 같으면 `shared` 이동을 검토합니다.
 - `app` 내부에는 복잡한 비즈니스 로직을 두지 않습니다.
 - 도메인 폴더는 실제 기능명이 확정된 뒤 생성합니다.

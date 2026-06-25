@@ -15,10 +15,10 @@
 
 ## Component
 
-- 컴포넌트는 arrow function으로 작성합니다.
+- 일반 React 컴포넌트는 arrow function을 기본으로 합니다.
 - 재사용 컴포넌트는 named export를 사용합니다.
 - 자식 요소가 없으면 self-closing 형태를 사용합니다.
-- page route 파일은 Next convention에 맞춰 default export를 사용합니다.
+- Next.js route 파일은 framework convention과 기존 코드 형식을 따르며 default export를 사용합니다.
 - 의미 없는 wrapper `div`는 피하고, 가능한 semantic tag 또는 Fragment를 사용합니다.
 - Fragment는 불필요한 DOM wrapper를 만들지 않아야 할 때 사용합니다.
 

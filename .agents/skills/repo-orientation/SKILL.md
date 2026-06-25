@@ -20,7 +20,7 @@ git log --oneline --decorate -5
 2. 저장소 구조와 실행 환경을 확인합니다.
 
 ```bash
-rg --files -g '!node_modules' -g '!.next'
+rg --files --hidden -g '!.git' -g '!node_modules' -g '!.next'
 cat package.json
 ```
 
