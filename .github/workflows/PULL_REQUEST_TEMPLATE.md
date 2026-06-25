@@ -1,6 +1,8 @@
 ## 🔗 Jira 이슈키
 
-BDYFE-
+<!-- Jira 이슈키와 링크를 함께 작성해주세요. 예: Jira: [BDYFE-1](Jira 이슈 링크) -->
+
+- Jira: [BDYFE-]()
 
 ## 📌 Summary
 
