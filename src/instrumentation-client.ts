@@ -10,10 +10,10 @@ if (dsn) {
 
     tracesSampleRate: 0.1,
 
-    integrations: [Sentry.replayIntegration()],
+    //integrations: [Sentry.replayIntegration()],
 
-    replaysSessionSampleRate: 0.1,
-    replaysOnErrorSampleRate: 1.0,
+    //replaysSessionSampleRate: 0.1,
+    //replaysOnErrorSampleRate: 1.0,
   });
 }
 
