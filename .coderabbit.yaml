@@ -1,0 +1,230 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+language: 'ko-KR' # 리뷰 언어 설정
+early_access: true # 얼리 액세스 기능 활성화
+
+# 리뷰 톤 및 스타일 지정
+tone_instructions: |
+  한국어 존댓말로 간결하고 건설적인 리뷰를 제공해요.
+  블로킹 이슈는 Must, 개선 제안은 Suggest로 구분해요.
+  보안, 성능, 유지보수성을 우선하고 docs/ 문서를 최우선 기준으로 적용해요.
+
+reviews:
+  profile: 'assertive' # 리뷰 스타일: chill(관대), assertive(엄격)
+  request_changes_workflow: false # true로 바꾸면 CodeRabbit이 변경 요청 상태를 직접 남길 수 있음
+  high_level_summary: true # PR 요약 생성
+  poem: false # 시(POEM) 생성 비활성화
+  review_status: true # 리뷰 상태 표시
+  assess_linked_issues: false # 연결된 이슈 분석 비활성화
+  related_prs: false # 관련 PR 표시 비활성화
+  suggested_labels: true # 라벨 자동 제안
+  changed_files_summary: true # 변경된 파일 요약
+  sequence_diagrams: false # 시퀀스 다이어그램 생성 비활성화(기본 노이즈 절감)
+
+  # 워크플로우 개선
+  high_level_summary_in_walkthrough: true # 요약을 워크스루에 포함
+  high_level_summary_placeholder: '이 PR의 주요 변경사항을 요약합니다'
+  collapse_walkthrough: true # 워크스루 섹션 접기(기본은 접어서 노이즈 감소)
+  commit_status: true # 커밋 상태 체크
+  fail_commit_status: false # 커밋 실패 시 상태 체크 실패하지 않음
+  related_issues: false # 관련 이슈 추적 비활성화
+  abort_on_close: true # PR 닫힐 때 리뷰 중단
+
+  # 파일 경로 필터링 (단일 Next.js 앱 기준)
+  path_filters:
+    # 포함(allow-list)
+    - 'src/**'
+    - 'public/**'
+    - 'docs/**'
+    - '.github/**'
+    - 'package.json'
+    - 'postcss.config.mjs'
+    - 'next.config.*'
+    - 'tsconfig*.json'
+    - '.coderabbit.yaml'
+    # 제외(deny-list)
+    - '!node_modules/**'
+    - '!.next/**'
+    - '!dist/**'
+    - '!build/**'
+    - '!coverage/**'
+    - '!**/*.png'
+    - '!**/*.jpg'
+    - '!**/*.jpeg'
+    - '!**/*.svg'
+    - '!**/*.gif'
+    - '!**/*.webp'
+    - '!**/*.ico'
+    - '!*.lock'
+    - '!pnpm-lock.yaml'
+    - '!package-lock.json'
+    - '!yarn.lock'
+
+  # 경로별 특별 지침 (구체적인 패턴부터 일반적인 패턴 순으로 배열)
+  path_instructions:
+    # 가장 구체적인 패턴들
+    - path: '.coderabbit.yaml'
+      instructions: |
+        CodeRabbit 설정 파일 리뷰 시:
+        - YAML 문법 정확성 확인
+        - 스키마 호환성 확인(지원되지 않는 필드 사용 여부)
+        - path_filters 포함/제외 패턴이 실제 src 구조와 맞는지 확인
+        - path_instructions 중복 또는 누락 확인
+        - 프로젝트 구조와 설정의 일치성 검토
+
+    - path: 'src/app/**'
+      instructions: |
+        App Router 경계 레이어예요.
+        - Next.js 파일 컨벤션(layout, page, loading, error, not-found, route handler) 용도로만 사용되는지 확인
+        - 복잡한 상태/form/API 로직이 page나 layout에 남아있으면 src/domains로 분리 제안
+        - Server/Client 컴포넌트 경계 확인("use client"는 leaf component나 providers.tsx 위주로 사용)
+        - domains가 app을 import하면 지적
+
+    - path: 'src/domains/**'
+      instructions: |
+        도메인 레이어예요. 하위 구조는 pages-or-flows, components, hooks, api, model 패턴을 따라야 해요.
+        - 특정 도메인 코드가 src/shared에 잘못 위치해 있지 않은지 확인
+        - domains -> app 방향 import가 있으면 지적
+        - 두 개 이상의 도메인에서 재사용되면 src/shared로 이동 제안
+
+    - path: 'src/shared/**'
+      instructions: |
+        여러 도메인에서 재사용되는 코드만 위치해야 해요.
+        - 특정 도메인에서만 쓰일 코드는 src/domains로 이동 제안
+        - shared -> domains 방향 import가 있으면 지적
+
+    - path: 'src/lib/**'
+      instructions: |
+        외부 라이브러리 설정이나 작은 헬퍼만 위치해야 해요.
+        - lib -> app, lib -> domains 방향 import가 있으면 지적
+
+    - path: 'src/types/**'
+      instructions: |
+        앱 전체 공통 타입만 위치해야 해요.
+        - 특정 도메인 타입은 domains/{domain}/model로 이동 제안
+
+    # 중간 수준의 구체적인 패턴들
+    - path: '**/components/**/*.tsx'
+      instructions: |
+        컴포넌트 파일 리뷰 시:
+        - 파일명과 컴포넌트 이름이 PascalCase인지 확인
+        - arrow function으로 작성됐는지 확인
+        - 재사용 컴포넌트는 named export, page route는 default export인지 확인
+        - 자식 요소가 없으면 self-closing인지 확인
+        - 의미 없는 wrapper div 지양, semantic tag나 Fragment 사용 제안
+        - Props 타입은 컴포넌트명 + Props suffix인지 확인 (예: UserCardProps)
+        - 접근성(aria-label, label 연결) 확인
+        - memo/useMemo/useCallback은 실제 렌더링 비용이나 참조 안정성이 필요한 경우에만 제안
+
+    - path: '**/hooks/**/*.ts'
+      instructions: |
+        커스텀 훅 리뷰 시:
+        - 파일명은 kebab-case, 함수명은 use 접두사인지 확인
+        - 의존성 배열(exhaustive-deps) 준수 여부 확인
+        - 특정 도메인 훅이 src/shared/hooks에 있지 않은지 확인
+        - TanStack Query 훅 네이밍: use + 행위 + 대상 + Query/Mutation (예: useGetUserListQuery)인지 확인
+
+    - path: '**/api/**/*.ts'
+      instructions: |
+        API 함수 리뷰 시:
+        - 파일명은 kebab-case인지 확인
+        - 함수명은 get/create/check/convert/add/remove/filter/has 등 동작이 드러나는 접두사인지 확인
+        - API 응답 타입은 XXXResponse 네이밍을 따르는지 확인
+        - 에러가 조용히 무시되고 있지 않은지 확인
+
+    - path: 'src/app/globals.css'
+      instructions: |
+        전역 CSS는 reset, Tailwind import, 앱 전체 토큰처럼 전역성이 명확할 때만 추가해야 해요.
+        - 반복되는 UI 패턴은 src/shared/components/ui로 분리 제안
+        - `@import "tailwindcss";` 유지 여부 확인
+
+    - path: 'docs/**'
+      instructions: |
+        문서 리뷰 시:
+        - 새 규칙이 가장 가까운 세부 문서에 추가됐는지 확인
+        - 코드 구조 변경이 관련 문서에도 반영됐는지 확인
+
+    # 가장 일반적인 패턴 (마지막에 배치)
+    - path: '**/*.{ts,tsx}'
+      instructions: |
+        공통 TypeScript/TSX 컨벤션 리뷰 시:
+
+        # 네이밍
+        - 폴더/일반 파일은 kebab-case(소문자 시작), 컴포넌트 파일만 PascalCase인지 확인
+        - 상수는 UPPER_SNAKE_CASE, boolean 변수는 is/has/can/should prefix를 권장하는지 확인
+        - 타입 이름은 PascalCase, Props는 Props suffix, 일반 type은 Types suffix인지 확인
+
+        # 함수 및 로직
+        - 이벤트 핸들러에만 handle prefix가 쓰였는지 확인
+        - 함수명은 동작이 드러나는 동사(get/create/check/convert 등)를 쓰는지 확인
+        - var 사용 금지, const 우선 사용 확인
+        - 배열/객체 처리는 spread, map/filter/forEach, 구조 분해 할당 패턴을 따르는지 확인
+        - 문자열 조합은 template literal을 사용하는지 확인
+
+        # 타입 및 import
+        - 객체 형태의 확장 가능한 계약은 interface, union/tuple/literal/mapped type은 type 사용 확인
+        - import 순서: 외부 패키지 -> 내부 alias(@/*) -> 상대 경로
+        - 절대 경로 alias(@/*)는 실제 tsconfig 설정과 일치할 때만 제안
+
+        # 보안 및 성능
+        - API 키, 토큰, 시크릿이 하드코딩돼 있지 않은지 확인(환경 변수 사용 여부 확인)
+        - 큰 라이브러리나 거의 쓰이지 않는 화면 단위는 dynamic import로 분리할 수 있는지 검토
+        - 가독성, 예측 가능성, 응집도, 결합도(Frontend Fundamentals) 관점에서 과도하게 복잡한 코드가 있으면 지적
+
+  auto_review:
+    enabled: true # 자동 리뷰 활성화
+    drafts: false # 드래프트 PR은 리뷰하지 않음
+    ignore_title_keywords: # 특정 키워드가 포함된 PR 제목 무시
+      - '[skip-review]'
+
+  # 사전 병합 검사 (커밋/PR은 "BDYFE-<번호> 작업 의도" 형식, 엄격도는 warning으로 시작)
+  pre_merge_checks:
+    title:
+      mode: 'warning' # 형식이 안 맞아도 머지는 막지 않고 댓글로만 안내
+      requirements: 'PR 제목은 BDYFE-<이슈번호>로 시작하고, 작업 의도가 드러나게 작성해요. 예: "BDYFE-12 로그인 페이지 레이아웃 추가"'
+    description:
+      mode: 'warning' # PR 설명이 비어있거나 부실하면 안내만
+    issue_assessment:
+      mode: 'off' # 연결된 이슈 평가 기능은 사용하지 않음
+
+  # 코드 개선 기능(finishing_touches) - 전역 비활성화
+  finishing_touches:
+    docstrings:
+      enabled: false # 자동 docstring 생성 비활성화
+    unit_tests:
+      enabled: false # 자동 유닛 테스트 생성 비활성화
+
+  # Next.js/TypeScript/Tailwind 환경에 맞는 도구들 (실제 사용하는 것만 활성화)
+  tools:
+    eslint:
+      enabled: true # TypeScript/React 린팅
+    stylelint:
+      enabled: true # Tailwind 등 CSS 린팅
+    languagetool:
+      enabled: true # 한국어 문법 검사
+      level: 'default'
+    markdownlint:
+      enabled: true # docs/ 문서 품질 검사
+    gitleaks:
+      enabled: true # 보안 비밀 정보 스캔
+    yamllint:
+      enabled: true # YAML 파일 검증
+    actionlint:
+      enabled: true # GitHub Actions 워크플로우 검증
+
+# 채팅 설정
+chat:
+  art: false # 아스키/이모지 아트 비활성화(전문성 유지)
+  auto_reply: true # 멘션 없이도 댓글 답글에 자동 응답
+
+# 지식 베이스 설정
+knowledge_base:
+  web_search:
+    enabled: true # 웹 검색 기능 활성화
+  code_guidelines:
+    enabled: true # 레포의 컨벤션 문서를 리뷰 기준으로 사용
+    filePatterns:
+      - 'README.md'
+      - 'docs/index.md'
+      - 'docs/architecture/**/*.md'
+      - 'docs/conventions/**/*.md'
