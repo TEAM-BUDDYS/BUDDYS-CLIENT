@@ -26,14 +26,14 @@ description: BUDDYS-CLIENT의 특정 제품 도메인에 속하는 컴포넌트,
 
 ```txt
 src/domains/{domain}/
-  {flow}/
+  assets/
   components/
   hooks/
   api/
   model/
 ```
 
-위 구조를 전부 생성하지 않습니다. 기능 복잡도와 가까운 기존 패턴에 필요한 위치만 사용합니다.
+위 구조를 전부 생성하지 않습니다. 기능 복잡도와 가까운 기존 패턴에 필요한 위치만 사용하며, 도메인이 커지면 실제 필요에 따라 하위 기능 폴더를 추가합니다.
 
 ## Shared Decision
 

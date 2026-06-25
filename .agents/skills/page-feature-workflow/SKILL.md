@@ -18,7 +18,7 @@ description: BUDDYS-CLIENT의 Next.js App Router 페이지, route, layout과 화
 3. 기본 page와 layout은 Server Component로 시작합니다.
 4. state, event handler, effect, browser API가 필요한 가장 작은 경계에만 `"use client"`를 추가합니다.
 5. loading, empty, error, disabled, success 상태를 요구사항에 맞게 처리합니다.
-6. route-local 코드는 실제 재사용이 확인되기 전까지 해당 도메인이나 flow 안에 둡니다.
+6. route-local 코드는 실제 재사용이 확인되기 전까지 해당 도메인 안에 둡니다.
 7. 접근성, 반응형, 긴 텍스트, navigation 동작을 확인합니다.
 8. `verify-frontend`로 마무리합니다.
 
@@ -26,14 +26,15 @@ description: BUDDYS-CLIENT의 Next.js App Router 페이지, route, layout과 화
 
 ```txt
 src/app/{route}/page.tsx
-src/domains/{domain}/{flow}/
+src/domains/{domain}/
+  assets/
   components/
   hooks/
   api/
   model/
 ```
 
-정확한 하위 구조는 기능 복잡도와 기존 패턴에 맞게 조정합니다. 비어 있는 디렉터리를 미리 만들지 않습니다.
+정확한 하위 구조는 기능 복잡도와 기존 패턴에 맞게 조정하며, 도메인이 커지면 실제 필요에 따라 하위 기능 폴더를 추가합니다. 비어 있는 디렉터리를 미리 만들지 않습니다.
 
 ## Requirement Check
 
