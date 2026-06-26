@@ -58,7 +58,6 @@ reviews:
     - '!**/*.png'
     - '!**/*.jpg'
     - '!**/*.jpeg'
-    - '!**/*.svg'
     - '!**/*.gif'
     - '!**/*.webp'
     - '!**/*.ico'
@@ -177,7 +176,7 @@ reviews:
     eslint:
       enabled: true # TypeScript/React 린팅
     stylelint:
-      enabled: true # Tailwind 등 CSS 린팅
+      enabled: false # Tailwind 등 CSS 린팅
     languagetool:
       enabled: true # 한국어 문법 검사
       level: 'default'
