@@ -46,4 +46,18 @@ jobs:
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
             docker-compose pull
             docker-compose up -d
-            docker image prune -f
+
+            for i in {1..10}; do
+              if curl -fsS http://localhost:3000 > /dev/null; then
+                echo "Health check passed"
+                docker image prune -f
+                exit 0
+              fi
+
+              echo "Waiting for app to be ready..."
+              sleep 3
+            done
+
+            echo "Health check failed"
+            docker-compose logs --tail=100
+            exit 1
