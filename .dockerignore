@@ -7,3 +7,4 @@ Dockerfile
 README.md
 npm-debug.log
 pnpm-debug.log
+.env*
