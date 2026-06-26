@@ -7,7 +7,7 @@ early_access: true # 얼리 액세스 기능 활성화
 tone_instructions: |
   한국어 존댓말로 간결하고 건설적인 리뷰를 제공해요.
   블로킹 이슈는 Must, 개선 제안은 Suggest로 구분해요.
-  보안, 성능, 유지보수성을 우선하고 docs/ 문서를 최우선 기준으로 적용해요.
+  보안, 성능, 유지보수성을 우선하고 실제 코드와 docs 문서를 함께 확인하며, 서로 다른 경우 문서 갱신 필요성을 안내해요.
 
 reviews:
   profile: 'assertive' # 리뷰 스타일: chill(관대), assertive(엄격)
@@ -17,7 +17,7 @@ reviews:
   review_status: true # 리뷰 상태 표시
   assess_linked_issues: false # 연결된 이슈 분석 비활성화
   related_prs: false # 관련 PR 표시 비활성화
-  suggested_labels: true # 라벨 자동 제안
+  suggested_labels: false # 라벨 자동 제안
   changed_files_summary: true # 변경된 파일 요약
   sequence_diagrams: false # 시퀀스 다이어그램 생성 비활성화(기본 노이즈 절감)
 
@@ -42,6 +42,11 @@ reviews:
     - 'next.config.*'
     - 'tsconfig*.json'
     - '.coderabbit.yaml'
+    - 'eslint.config.mjs'
+    - 'pnpm-workspace.yaml'
+    - 'sentry.*.config.ts'
+    - 'README.md'
+    - '.gitignore'
     # 제외(deny-list)
     - '!node_modules/**'
     - '!.next/**'
@@ -74,21 +79,23 @@ reviews:
 
     - path: 'src/app/**'
       instructions: |
-        App Router 경계 레이어예요.
-        - Next.js 파일 컨벤션(layout, page, loading, error, not-found, route handler) 용도로만 사용되는지 확인
-        - 복잡한 상태/form/API 로직이 page나 layout에 남아있으면 src/domains로 분리 제안
-        - Server/Client 컴포넌트 경계 확인("use client"는 leaf component나 providers.tsx 위주로 사용)
+        docs/architecture/app-structure.md 의 레이어 구조를 기준으로 리뷰해요.
+        App Router 경계 레이어로서 아래 책임을 중점 확인해요.
+        - Next.js 파일 컨벤션 외 로직이 page/layout에 남아있으면 src/domains로 분리 제안
+        - "use client"가 leaf component나 providers.tsx 외에 과도하게 사용되는지 확인
         - domains가 app을 import하면 지적
 
     - path: 'src/domains/**'
       instructions: |
-        도메인 레이어예요. 하위 구조는 pages-or-flows, components, hooks, api, model 패턴을 따라야 해요.
-        - 특정 도메인 코드가 src/shared에 잘못 위치해 있지 않은지 확인
+        docs/architecture/app-structure.md 의 레이어 구조를 기준으로 리뷰해요.
+        도메인 레이어로서 아래 책임을 중점 확인해요.
+        - 하위 구조가 pages-or-flows, components, hooks, api, model 패턴을 따르는지 확인
         - domains -> app 방향 import가 있으면 지적
-        - 두 개 이상의 도메인에서 재사용되면 src/shared로 이동 제안
+        - 여러 도메인에서 실제로 재사용되고 의미와 변경 이유가 같을 때 src/shared 이동을 검토
 
     - path: 'src/shared/**'
       instructions: |
+        docs/architecture/app-structure.md 의 레이어 구조를 기준으로 리뷰해요.
         여러 도메인에서 재사용되는 코드만 위치해야 해요.
         - 특정 도메인에서만 쓰일 코드는 src/domains로 이동 제안
         - shared -> domains 방향 import가 있으면 지적
@@ -106,70 +113,39 @@ reviews:
     # 중간 수준의 구체적인 패턴들
     - path: '**/components/**/*.tsx'
       instructions: |
-        컴포넌트 파일 리뷰 시:
-        - 파일명과 컴포넌트 이름이 PascalCase인지 확인
-        - arrow function으로 작성됐는지 확인
-        - 재사용 컴포넌트는 named export, page route는 default export인지 확인
-        - 자식 요소가 없으면 self-closing인지 확인
-        - 의미 없는 wrapper div 지양, semantic tag나 Fragment 사용 제안
-        - Props 타입은 컴포넌트명 + Props suffix인지 확인 (예: UserCardProps)
-        - 접근성(aria-label, label 연결) 확인
-        - memo/useMemo/useCallback은 실제 렌더링 비용이나 참조 안정성이 필요한 경우에만 제안
+        docs/conventions/conventions.md 의 컴포넌트 및 접근성 규칙을 기준으로 리뷰해요.
+        컴포넌트 props 설계와 접근성을 중점으로 확인해요.
 
     - path: '**/hooks/**/*.ts'
       instructions: |
-        커스텀 훅 리뷰 시:
-        - 파일명은 kebab-case, 함수명은 use 접두사인지 확인
-        - 의존성 배열(exhaustive-deps) 준수 여부 확인
-        - 특정 도메인 훅이 src/shared/hooks에 있지 않은지 확인
-        - TanStack Query 훅 네이밍: use + 행위 + 대상 + Query/Mutation (예: useGetUserListQuery)인지 확인
+        docs/conventions/conventions.md 의 훅 규칙을 기준으로 리뷰해요.
+        의존성 배열(exhaustive-deps) 준수와 TanStack Query 훅 네이밍을 중점으로 확인해요.
 
     - path: '**/api/**/*.ts'
       instructions: |
-        API 함수 리뷰 시:
-        - 파일명은 kebab-case인지 확인
-        - 함수명은 get/create/check/convert/add/remove/filter/has 등 동작이 드러나는 접두사인지 확인
-        - API 응답 타입은 XXXResponse 네이밍을 따르는지 확인
-        - 에러가 조용히 무시되고 있지 않은지 확인
+        docs/conventions/conventions.md 의 API 함수 규칙을 기준으로 리뷰해요.
+        에러 처리 누락과 응답 타입 네이밍을 중점으로 확인해요.
 
     - path: 'src/app/globals.css'
       instructions: |
-        전역 CSS는 reset, Tailwind import, 앱 전체 토큰처럼 전역성이 명확할 때만 추가해야 해요.
-        - 반복되는 UI 패턴은 src/shared/components/ui로 분리 제안
-        - `@import "tailwindcss";` 유지 여부 확인
+        docs/architecture/styling.md 의 스타일 규칙을 기준으로 리뷰해요.
+        전역성이 명확하지 않은 스타일은 src/shared/components/ui로 분리를 제안해요.
 
     - path: 'docs/**'
       instructions: |
         문서 리뷰 시:
-        - 새 규칙이 가장 가까운 세부 문서에 추가됐는지 확인
-        - 코드 구조 변경이 관련 문서에도 반영됐는지 확인
+        코드 변경이 있을 때 관련 문서도 함께 갱신됐는지 확인해요.
+        새 규칙은 docs/conventions/ 또는 docs/architecture/ 내 가장 적합한 문서에 추가됐는지 확인해요.
 
     # 가장 일반적인 패턴 (마지막에 배치)
     - path: '**/*.{ts,tsx}'
       instructions: |
-        공통 TypeScript/TSX 컨벤션 리뷰 시:
-
-        # 네이밍
-        - 폴더/일반 파일은 kebab-case(소문자 시작), 컴포넌트 파일만 PascalCase인지 확인
-        - 상수는 UPPER_SNAKE_CASE, boolean 변수는 is/has/can/should prefix를 권장하는지 확인
-        - 타입 이름은 PascalCase, Props는 Props suffix, 일반 type은 Types suffix인지 확인
-
-        # 함수 및 로직
-        - 이벤트 핸들러에만 handle prefix가 쓰였는지 확인
-        - 함수명은 동작이 드러나는 동사(get/create/check/convert 등)를 쓰는지 확인
-        - var 사용 금지, const 우선 사용 확인
-        - 배열/객체 처리는 spread, map/filter/forEach, 구조 분해 할당 패턴을 따르는지 확인
-        - 문자열 조합은 template literal을 사용하는지 확인
-
-        # 타입 및 import
-        - 객체 형태의 확장 가능한 계약은 interface, union/tuple/literal/mapped type은 type 사용 확인
-        - import 순서: 외부 패키지 -> 내부 alias(@/*) -> 상대 경로
-        - 절대 경로 alias(@/*)는 실제 tsconfig 설정과 일치할 때만 제안
-
-        # 보안 및 성능
-        - API 키, 토큰, 시크릿이 하드코딩돼 있지 않은지 확인(환경 변수 사용 여부 확인)
-        - 큰 라이브러리나 거의 쓰이지 않는 화면 단위는 dynamic import로 분리할 수 있는지 검토
-        - 가독성, 예측 가능성, 응집도, 결합도(Frontend Fundamentals) 관점에서 과도하게 복잡한 코드가 있으면 지적
+        docs/conventions/conventions.md 의 공통 TypeScript/TSX 컨벤션을 기준으로 리뷰해요.
+        네이밍, 타입, import 순서는 문서를 우선 기준으로 삼고, 아래 항목을 추가로 중점 확인해요.
+        - API 키, 토큰, 시크릿이 하드코딩돼 있지 않은지 확인(환경 변수 사용 여부)
+        - 브라우저 전용 대형 라이브러리나 초기 렌더링에 필요하지 않은 client component는 번들 크기와 사용자 경험을 고려해 dynamic import 적용 여부를 검토
+        - Next.js App Router가 기본 제공하는 route 단위 코드 분할에는 불필요한 dynamic import를 제안하지 않음
+        - 가독성, 예측 가능성, 응집도, 결합도 관점에서 과도하게 복잡한 코드가 있으면 지적
 
   auto_review:
     enabled: true # 자동 리뷰 활성화
@@ -177,11 +153,11 @@ reviews:
     ignore_title_keywords: # 특정 키워드가 포함된 PR 제목 무시
       - '[skip-review]'
 
-  # 사전 병합 검사 (커밋/PR은 "BDYFE-<번호> 작업 의도" 형식, 엄격도는 warning으로 시작)
+  # 사전 병합 검사 (PR은 "[작업유형] BDYFE-<번호> 작업 내용" 형식, 엄격도는 warning으로 시작)
   pre_merge_checks:
     title:
       mode: 'warning' # 형식이 안 맞아도 머지는 막지 않고 댓글로만 안내
-      requirements: 'PR 제목은 BDYFE-<이슈번호>로 시작하고, 작업 의도가 드러나게 작성해요. 예: "BDYFE-12 로그인 페이지 레이아웃 추가"'
+      requirements: 'PR 제목은 [작업유형] BDYFE-<이슈번호> 형식으로 시작하고, 작업 의도가 드러나게 작성해요. 예: "[Feat] BDYFE-12 로그인 페이지 레이아웃 추가"'
     description:
       mode: 'warning' # PR 설명이 비어있거나 부실하면 안내만
     issue_assessment:
