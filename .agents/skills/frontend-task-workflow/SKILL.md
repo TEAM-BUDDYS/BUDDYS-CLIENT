@@ -16,17 +16,17 @@ description: BUDDYS-CLIENT의 프론트엔드 요청을 페이지, 도메인 기
 
 ## Routing
 
-| Work | Skill |
-| --- | --- |
-| 새 작업의 저장소 맥락 확인 | `repo-orientation` |
-| 페이지, route, UI flow | `page-feature-workflow` |
-| 도메인 기능, component, hook, model | `domain-feature-workflow` |
-| 여러 도메인의 공통 UI 또는 layout | `shared-component-workflow` |
-| API 요청과 상태 연결 | `api-integration-workflow` |
-| 폴더 위치, 의존 방향, 공통화 판단 | `architecture-review` |
-| 구현 후 검사 | `verify-frontend` |
-| 문서 변경 | 가까운 Source of Truth와 `verify-frontend` |
-| 설정 또는 GitHub Actions | 기존 설정과 `verify-frontend` |
+| Work                                | Skill                                      |
+| ----------------------------------- | ------------------------------------------ |
+| 새 작업의 저장소 맥락 확인          | `repo-orientation`                         |
+| 페이지, route, UI flow              | `page-feature-workflow`                    |
+| 도메인 기능, component, hook, model | `domain-feature-workflow`                  |
+| 여러 도메인의 공통 UI 또는 layout   | `shared-component-workflow`                |
+| API 요청과 상태 연결                | `api-integration-workflow`                 |
+| 폴더 위치, 의존 방향, 공통화 판단   | `architecture-review`                      |
+| 구현 후 검사                        | `verify-frontend`                          |
+| 문서 변경                           | 가까운 Source of Truth와 `verify-frontend` |
+| 설정 또는 GitHub Actions            | 기존 설정과 `verify-frontend`              |
 
 ## Workflow
 

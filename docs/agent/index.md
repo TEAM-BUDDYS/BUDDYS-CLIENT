@@ -26,16 +26,16 @@ docs/
 
 ## Skills
 
-| Skill | Purpose |
-| --- | --- |
-| `repo-orientation` | 브랜치, 구조, 관련 문서와 기존 패턴 확인 |
-| `frontend-task-workflow` | 요청 유형 분류와 작업 흐름 선택 |
-| `page-feature-workflow` | Next.js 페이지와 route 구현 |
-| `domain-feature-workflow` | 도메인 기능, 컴포넌트와 훅 구현 |
-| `shared-component-workflow` | 공통 UI와 layout 컴포넌트 구현 |
-| `api-integration-workflow` | API 연동과 UI 상태 연결 |
-| `architecture-review` | 폴더 소유권과 의존 방향 검토 |
-| `verify-frontend` | 변경 범위에 맞는 검증 |
+| Skill                       | Purpose                                  |
+| --------------------------- | ---------------------------------------- |
+| `repo-orientation`          | 브랜치, 구조, 관련 문서와 기존 패턴 확인 |
+| `frontend-task-workflow`    | 요청 유형 분류와 작업 흐름 선택          |
+| `page-feature-workflow`     | Next.js 페이지와 route 구현              |
+| `domain-feature-workflow`   | 도메인 기능, 컴포넌트와 훅 구현          |
+| `shared-component-workflow` | 공통 UI와 layout 컴포넌트 구현           |
+| `api-integration-workflow`  | API 연동과 UI 상태 연결                  |
+| `architecture-review`       | 폴더 소유권과 의존 방향 검토             |
+| `verify-frontend`           | 변경 범위에 맞는 검증                    |
 
 ## Usage
 

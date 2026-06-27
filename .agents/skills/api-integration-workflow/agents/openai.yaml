@@ -1,4 +1,4 @@
 interface:
-  display_name: "API 연동"
-  short_description: "BUDDYS 프론트엔드의 API 연동 위치와 흐름을 설계합니다"
-  default_prompt: "Use $api-integration-workflow to implement or review this API integration."
+  display_name: 'API 연동'
+  short_description: 'BUDDYS 프론트엔드의 API 연동 위치와 흐름을 설계합니다'
+  default_prompt: 'Use $api-integration-workflow to implement or review this API integration.'

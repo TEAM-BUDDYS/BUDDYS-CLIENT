@@ -38,17 +38,17 @@
 
 ## Skill Routing
 
-| Task | Skill | Supporting document |
-| --- | --- | --- |
-| 저장소 파악 | `repo-orientation` | `docs/index.md` |
-| 프론트엔드 작업 분류와 진행 | `frontend-task-workflow` | `docs/workflows/feature-development.md` |
-| 페이지 또는 라우트 | `page-feature-workflow` | `docs/architecture/app-structure.md` |
-| 도메인 기능, 컴포넌트 또는 훅 | `domain-feature-workflow` | `docs/architecture/app-structure.md` |
-| 공통 UI 또는 layout 컴포넌트 | `shared-component-workflow` | `docs/architecture/app-structure.md` |
-| API 연동 | `api-integration-workflow` | `docs/architecture/app-structure.md` |
-| 구조와 의존 방향 검토 | `architecture-review` | `docs/architecture/app-structure.md` |
-| 구현 검증 | `verify-frontend` | `docs/workflows/verification.md` |
-| 문서, 설정 또는 GitHub Actions | `verify-frontend` | 가까운 Source of Truth와 기존 파일 |
+| Task                           | Skill                       | Supporting document                     |
+| ------------------------------ | --------------------------- | --------------------------------------- |
+| 저장소 파악                    | `repo-orientation`          | `docs/index.md`                         |
+| 프론트엔드 작업 분류와 진행    | `frontend-task-workflow`    | `docs/workflows/feature-development.md` |
+| 페이지 또는 라우트             | `page-feature-workflow`     | `docs/architecture/app-structure.md`    |
+| 도메인 기능, 컴포넌트 또는 훅  | `domain-feature-workflow`   | `docs/architecture/app-structure.md`    |
+| 공통 UI 또는 layout 컴포넌트   | `shared-component-workflow` | `docs/architecture/app-structure.md`    |
+| API 연동                       | `api-integration-workflow`  | `docs/architecture/app-structure.md`    |
+| 구조와 의존 방향 검토          | `architecture-review`       | `docs/architecture/app-structure.md`    |
+| 구현 검증                      | `verify-frontend`           | `docs/workflows/verification.md`        |
+| 문서, 설정 또는 GitHub Actions | `verify-frontend`           | 가까운 Source of Truth와 기존 파일      |
 
 ## Architecture Principles
 

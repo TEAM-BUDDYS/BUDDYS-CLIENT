@@ -1,4 +1,4 @@
 interface:
-  display_name: "공통 컴포넌트 구현"
-  short_description: "여러 도메인에서 재사용하는 공통 컴포넌트의 경계를 설계합니다"
-  default_prompt: "Use $shared-component-workflow to implement or review this shared component."
+  display_name: '공통 컴포넌트 구현'
+  short_description: '여러 도메인에서 재사용하는 공통 컴포넌트의 경계를 설계합니다'
+  default_prompt: 'Use $shared-component-workflow to implement or review this shared component.'

@@ -1,4 +1,4 @@
 interface:
-  display_name: "페이지 기능 구현"
-  short_description: "Next.js 페이지와 라우트 기능을 구조에 맞게 구현합니다"
-  default_prompt: "Use $page-feature-workflow to implement this page or route feature."
+  display_name: '페이지 기능 구현'
+  short_description: 'Next.js 페이지와 라우트 기능을 구조에 맞게 구현합니다'
+  default_prompt: 'Use $page-feature-workflow to implement this page or route feature.'
