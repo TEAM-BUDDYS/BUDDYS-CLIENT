@@ -124,7 +124,7 @@ export const MonthVoting = ({ date, time }: VoteInfoProps) => {
 
 - page 안에 복잡한 상태, form, API 로직을 오래 두지 않습니다.
 - 특정 도메인에서만 쓰는 로직은 `src/domains/{domain}` 안으로 분리합니다.
-- 여러 도메인에서 실제로 재사용되고 의미와 변경 이유가 같은 로직만 `src/shared` 이동을 검토합니다.
+- `src/shared` 이동 여부는 `docs/architecture/app-structure.md`의 `Commonization Rules`를 따릅니다.
 
 ## Accessibility
 

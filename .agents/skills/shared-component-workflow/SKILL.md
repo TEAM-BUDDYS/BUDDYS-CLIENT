@@ -16,11 +16,9 @@ description: BUDDYS-CLIENT에서 여러 도메인이 함께 사용하는 UI 또�
 
 ## Entry Decision
 
-다음 조건을 먼저 확인합니다.
+공통화 판단은 `docs/architecture/app-structure.md`의 `Commonization Rules`를 따릅니다.
 
-- 실제로 여러 도메인에서 사용되는가
-- 사용처의 의미와 변경 이유가 같은가
-- 제품 도메인 지식 없이 props와 UI 책임을 설명할 수 있는가
+공통화 기준을 충족한 뒤, 제품 도메인 지식 없이 props와 UI 책임을 설명할 수 있는지 추가로 확인합니다.
 
 조건이 충족되지 않으면 소유 domain 내부에 유지합니다.
 

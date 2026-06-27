@@ -37,9 +37,9 @@ src/domains/{domain}/
 
 ## Shared Decision
 
-- 한 domain에서만 사용하면 domain 내부에 유지합니다.
-- 여러 domain에서 실제로 재사용되고 의미와 변경 이유가 같을 때 shared 이동을 검토합니다.
-- 제품 의미가 포함된 코드는 형태가 비슷해도 무조건 공통화하지 않습니다.
+공통화 판단은 `docs/architecture/app-structure.md`의 `Commonization Rules`를 따릅니다.
+
+기준을 충족하기 전에는 코드를 소유 domain에 유지하고, 제품 의미가 포함된 코드를 형태가 비슷하다는 이유만으로 이동하지 않습니다.
 
 ## Completion
 

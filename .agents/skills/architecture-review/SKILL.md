@@ -41,10 +41,9 @@ lib -> app
 
 ## Commonization Decision
 
-- 한 domain에서만 쓰이면 해당 domain에 둡니다.
-- 두 곳에서 비슷하다는 이유만으로 바로 추출하지 않습니다.
-- 의미와 변경 이유가 같은 재사용인지 확인한 뒤 shared 이동을 검토합니다.
-- 외부 라이브러리 wrapper는 앱 전체 기반 설정일 때 `lib`을 검토합니다.
+공통화 판단은 `docs/architecture/app-structure.md`의 `Commonization Rules`를 따릅니다.
+
+리뷰에서는 `shared` 이동 근거가 실제 사용처에서 확인되는지와 선택한 소유 위치가 의존 방향에 맞는지 검증합니다.
 
 ## Review Output
 
