@@ -9,13 +9,13 @@ description: BUDDYS-CLIENT의 코드, 문서, 설정 또는 UI 변경을 변경 
 
 `docs/workflows/verification.md`를 기준으로 검증을 선택합니다.
 
-| Change | Minimum |
-| --- | --- |
-| Markdown | `git diff --check`, 링크와 경로 확인 |
-| Config or workflow | 문법 검사, `git diff --check`, 관련 동작 확인 |
-| TypeScript or React | lint, typecheck |
-| Shared or architecture | lint, typecheck, build |
-| Route or UI | lint, typecheck, build, 브라우저 확인 |
+| Change                 | Minimum                                       |
+| ---------------------- | --------------------------------------------- |
+| Markdown               | `git diff --check`, 링크와 경로 확인          |
+| Config or workflow     | 문법 검사, `git diff --check`, 관련 동작 확인 |
+| TypeScript or React    | lint, typecheck                               |
+| Shared or architecture | lint, typecheck, build                        |
+| Route or UI            | lint, typecheck, build, 브라우저 확인         |
 
 ## Commands
 

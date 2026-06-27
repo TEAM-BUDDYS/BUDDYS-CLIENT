@@ -4,14 +4,14 @@
 
 ## Matrix
 
-| Change | Required verification |
-| --- | --- |
-| Markdown only | `git diff --check`, 링크와 경로 확인 |
-| GitHub Actions or config | 문법 검사, `git diff --check`, 관련 이벤트 또는 빌드 확인 |
-| TypeScript utility | lint, typecheck, 필요한 단위 동작 확인 |
-| React component | lint, typecheck, 주요 상태 확인 |
-| Route or page | lint, typecheck, build, 브라우저 확인 |
-| Shared API or architecture | lint, typecheck, build, 영향받는 기능 확인 |
+| Change                     | Required verification                                     |
+| -------------------------- | --------------------------------------------------------- |
+| Markdown only              | `git diff --check`, 링크와 경로 확인                      |
+| GitHub Actions or config   | 문법 검사, `git diff --check`, 관련 이벤트 또는 빌드 확인 |
+| TypeScript utility         | lint, typecheck, 필요한 단위 동작 확인                    |
+| React component            | lint, typecheck, 주요 상태 확인                           |
+| Route or page              | lint, typecheck, build, 브라우저 확인                     |
+| Shared API or architecture | lint, typecheck, build, 영향받는 기능 확인                |
 
 ## Commands
 

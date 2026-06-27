@@ -1,4 +1,4 @@
 interface:
-  display_name: "프론트엔드 작업 흐름"
-  short_description: "프론트엔드 요청을 적절한 구현과 검증 절차로 연결합니다"
-  default_prompt: "Use $frontend-task-workflow to plan and execute this frontend task."
+  display_name: '프론트엔드 작업 흐름'
+  short_description: '프론트엔드 요청을 적절한 구현과 검증 절차로 연결합니다'
+  default_prompt: 'Use $frontend-task-workflow to plan and execute this frontend task.'
