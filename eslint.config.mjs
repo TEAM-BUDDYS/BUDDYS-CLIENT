@@ -57,9 +57,6 @@ const eslintConfig = defineConfig([
 
             // Relative imports
             ['^\\.'],
-
-            // Style imports
-            ['^.+\\.s?css$'],
           ],
         },
       ],
