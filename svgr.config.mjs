@@ -4,14 +4,14 @@ export default {
   icon: true,
 
   replaceAttrValues: {
-    "#000": "currentColor",
-    "#000000": "currentColor",
-    black: "currentColor",
+    '#000': 'currentColor',
+    '#000000': 'currentColor',
+    black: 'currentColor',
   },
 
   template: ({ imports, interfaces, componentName, props, jsx }, { tpl }) => {
-    const stripped = componentName.replace(/^Svg/, "");
-    const finalName = stripped.endsWith("Icon") ? stripped : `${stripped}Icon`;
+    const stripped = componentName.replace(/^Svg/, '');
+    const finalName = stripped.endsWith('Icon') ? stripped : `${stripped}Icon`;
 
     return tpl`
       ${imports};
@@ -23,13 +23,13 @@ export default {
   },
 
   svgProps: {
-    "aria-hidden": "true",
+    'aria-hidden': 'true',
   },
 
   svgoConfig: {
     plugins: [
       {
-        name: "preset-default",
+        name: 'preset-default',
         params: {
           overrides: {
             removeViewBox: false,
