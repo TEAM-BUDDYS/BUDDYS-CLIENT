@@ -1,0 +1,4 @@
+interface:
+  display_name: '저장소 파악'
+  short_description: 'BUDDYS 저장소의 현재 구조와 작업 맥락을 파악합니다'
+  default_prompt: 'Use $repo-orientation to inspect this repository before starting the task.'

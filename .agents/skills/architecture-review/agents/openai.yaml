@@ -1,0 +1,4 @@
+interface:
+  display_name: '아키텍처 리뷰'
+  short_description: '폴더 소유권과 의존 방향 및 공통화 기준을 검토합니다'
+  default_prompt: 'Use $architecture-review to review the structure and dependency direction of these changes.'

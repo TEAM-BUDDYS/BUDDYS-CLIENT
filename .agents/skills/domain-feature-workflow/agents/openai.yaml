@@ -1,0 +1,4 @@
+interface:
+  display_name: '도메인 기능 구현'
+  short_description: '도메인 기능과 컴포넌트 및 훅의 소유 위치를 결정합니다'
+  default_prompt: 'Use $domain-feature-workflow to implement this domain feature in the correct location.'
