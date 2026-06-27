@@ -15,10 +15,10 @@
 
 ## Component
 
-- 컴포넌트는 arrow function으로 작성합니다.
+- 일반 React 컴포넌트는 arrow function을 기본으로 합니다.
 - 재사용 컴포넌트는 named export를 사용합니다.
 - 자식 요소가 없으면 self-closing 형태를 사용합니다.
-- page route 파일은 Next convention에 맞춰 default export를 사용합니다.
+- Next.js route 파일은 framework convention과 기존 코드 형식을 따르며 default export를 사용합니다.
 - 의미 없는 wrapper `div`는 피하고, 가능한 semantic tag 또는 Fragment를 사용합니다.
 - Fragment는 불필요한 DOM wrapper를 만들지 않아야 할 때 사용합니다.
 
@@ -124,7 +124,7 @@ export const MonthVoting = ({ date, time }: VoteInfoProps) => {
 
 - page 안에 복잡한 상태, form, API 로직을 오래 두지 않습니다.
 - 특정 도메인에서만 쓰는 로직은 `src/domains/{domain}` 안으로 분리합니다.
-- 여러 도메인에서 재사용되는 로직만 `src/shared`로 이동합니다.
+- `src/shared` 이동 여부는 `docs/architecture/app-structure.md`의 `Commonization Rules`를 따릅니다.
 
 ## Accessibility
 
