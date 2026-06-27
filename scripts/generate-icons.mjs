@@ -1,5 +1,3 @@
-/* global console, process */
-
 import { spawn } from "node:child_process";
 import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -8,8 +6,6 @@ const packageRoot = process.cwd();
 const svgRoot = path.join(packageRoot, "src", "assets", "icons");
 const generatedRoot = path.join(packageRoot, "src", "shared", "components", "icons");
 
-// 1. 실행 전, 기존에 생성된 .tsx와 index.ts를 전부 비움
-//    → svg 파일명을 바꾸거나 지웠을 때 옛 결과물이 남아있는 문제를 방지
 const cleanGeneratedFiles = async () => {
   await mkdir(generatedRoot, { recursive: true });
 
@@ -24,8 +20,6 @@ const cleanGeneratedFiles = async () => {
   );
 };
 
-// 2. svgr을 셸 문자열이 아니라 spawn + 배열 인자로 직접 실행
-//    → Windows PowerShell의 따옴표/이스케이프 처리 차이로 옵션이 깨지는 문제를 방지
 const runSvgr = () => {
   const svgrCliPath = path.join(
     packageRoot,
@@ -63,7 +57,6 @@ const runSvgr = () => {
   });
 };
 
-// 3. 생성된 컴포넌트 파일의 export 이름에 Icon suffix가 없으면 추가
 const addIconSuffix = async () => {
   const entries = await readdir(generatedRoot, { withFileTypes: true });
   const componentFiles = entries
@@ -83,7 +76,6 @@ const addIconSuffix = async () => {
   );
 };
 
-// 4. barrel(index.ts) 생성 — 파일 내용에서 실제 export 이름을 읽어서 작성
 const writeIconBarrel = async () => {
   const entries = await readdir(generatedRoot, { withFileTypes: true });
   const componentFiles = entries
