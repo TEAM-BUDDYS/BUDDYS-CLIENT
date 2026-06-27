@@ -31,7 +31,6 @@ const eslintConfig = defineConfig([
 
       '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
 
-      'simple-import-sort/imports': 'error',
       'simple-import-sort/imports': [
         'error',
         {
@@ -60,6 +59,7 @@ const eslintConfig = defineConfig([
           ],
         },
       ],
+      'simple-import-sort/exports': 'error',
 
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
