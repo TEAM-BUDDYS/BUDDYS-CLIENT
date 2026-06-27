@@ -2,6 +2,9 @@
   "name": "buddys-client",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,6 +13,7 @@
   },
   "dependencies": {
     "@sentry/nextjs": "^10.60.0",
+    "ky": "^2.0.2",
     "next": "16.2.9",
     "react": "19.2.4",
     "react-dom": "19.2.4"
