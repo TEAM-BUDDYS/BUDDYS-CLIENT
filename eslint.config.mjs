@@ -32,7 +32,37 @@ const eslintConfig = defineConfig([
       '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
 
       'simple-import-sort/imports': 'error',
-      'simple-import-sort/exports': 'error',
+      'simple-import-sort/imports': [
+        'error',
+        {
+          groups: [
+            // Side effect imports
+            ['^\\u0000'],
+
+            // Node.js builtins, external packages
+            [
+              '^node:',
+              '^(?!@(?:app|domains|lib|shared|types)(?:/|$))(?!@/)@?\\w',
+            ],
+
+            // Path aliases
+            [
+              '^@app(?:/|$)',
+              '^@domains(?:/|$)',
+              '^@lib(?:/|$)',
+              '^@shared(?:/|$)',
+              '^@types(?:/|$)',
+              '^@/',
+            ],
+
+            // Relative imports
+            ['^\\.'],
+
+            // Style imports
+            ['^.+\\.s?css$'],
+          ],
+        },
+      ],
 
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
