@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { type ReactNode } from "react";
+import { type ReactNode } from 'react';
 
-type ProvidersProps = {
+interface ProvidersProps {
   children: ReactNode;
-};
+}
 
 export const Providers = ({ children }: ProvidersProps) => {
   return children;

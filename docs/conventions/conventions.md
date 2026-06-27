@@ -44,7 +44,7 @@ interface UserCardProps {
 ```
 
 ```tsx
-type ButtonVariantTypes = "primary" | "secondary";
+type ButtonVariantTypes = 'primary' | 'secondary';
 ```
 
 ## Variable And Constant
@@ -58,8 +58,8 @@ type ButtonVariantTypes = "primary" | "secondary";
 - 문자열 조합은 template literal을 사용합니다.
 
 ```tsx
-const API_BASE_URL = "https://api.example.com";
-const users = ["jiho", "mina"];
+const API_BASE_URL = 'https://api.example.com';
+const users = ['jiho', 'mina'];
 const isActive = true;
 const message = `${users[0]} is active`;
 ```
