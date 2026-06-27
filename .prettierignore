@@ -1,6 +1,7 @@
 .next
 node_modules
-dist
+out
+next-env.d.ts
 build
 coverage
 pnpm-lock.yaml
