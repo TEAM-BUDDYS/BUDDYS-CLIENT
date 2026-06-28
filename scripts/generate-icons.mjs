@@ -123,7 +123,62 @@ const writeIconBarrel = async () => {
   );
 };
 
+const runPrettier = () => {
+  const prettierBin = path.join(
+    packageRoot,
+    'node_modules',
+    'prettier',
+    'bin',
+    'prettier.cjs',
+  );
+  const args = [
+    prettierBin,
+    '--write',
+    path.relative(packageRoot, generatedRoot),
+  ];
+
+  return new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, args, {
+      cwd: packageRoot,
+      stdio: 'inherit',
+    });
+    child.on('error', reject);
+    child.on('exit', (code) =>
+      code === 0
+        ? resolve()
+        : reject(new Error(`Prettier exited with code ${code}`)),
+    );
+  });
+};
+
+// import 순서 등 ESLint 규칙은 Prettier가 아니라 ESLint가 고쳐줘야 함
+const runEslintFix = () => {
+  const eslintBin = path.join(
+    packageRoot,
+    'node_modules',
+    'eslint',
+    'bin',
+    'eslint.js',
+  );
+  const args = [eslintBin, '--fix', path.relative(packageRoot, generatedRoot)];
+
+  return new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, args, {
+      cwd: packageRoot,
+      stdio: 'inherit',
+    });
+    child.on('error', reject);
+    child.on('exit', (code) =>
+      code === 0
+        ? resolve()
+        : reject(new Error(`ESLint exited with code ${code}`)),
+    );
+  });
+};
+
 await cleanGeneratedFiles();
 await runSvgr();
 await addIconSuffix();
 await writeIconBarrel();
+await runPrettier();
+await runEslintFix();

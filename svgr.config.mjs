@@ -1,7 +1,9 @@
 /** @type {import('@svgr/core').Config} */
-export default {
+const config = {
   typescript: true,
   icon: true,
+
+  prettier: false,
 
   replaceAttrValues: {
     '#000': 'currentColor',
@@ -39,3 +41,5 @@ export default {
     ],
   },
 };
+
+export default config;
