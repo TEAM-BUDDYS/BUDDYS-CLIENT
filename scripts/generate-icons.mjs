@@ -151,7 +151,6 @@ const runPrettier = () => {
   });
 };
 
-// import 순서 등 ESLint 규칙은 Prettier가 아니라 ESLint가 고쳐줘야 함
 const runEslintFix = () => {
   const eslintBin = path.join(
     packageRoot,
