@@ -3,7 +3,7 @@ import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const packageRoot = process.cwd();
-const svgRoot = path.join(packageRoot, 'src', 'assets', 'icons');
+const svgRoot = path.join(packageRoot, 'src', 'shared', 'assets', 'icons');
 const generatedRoot = path.join(
   packageRoot,
   'src',
