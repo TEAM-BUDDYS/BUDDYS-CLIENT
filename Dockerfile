@@ -3,6 +3,8 @@ FROM node:22-alpine AS base
 FROM base AS deps
 WORKDIR /app
 
+ENV HUSKY=0
+
 RUN corepack enable && corepack prepare pnpm@10.15.1 --activate
 
 COPY package.json pnpm-lock.yaml ./
