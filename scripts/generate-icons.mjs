@@ -25,7 +25,6 @@ const pathExists = async (target) => {
   }
 };
 
-// 이전 실행이 실패해서 남아있을 수 있는 tempDir/backupDir 잔여물을 정리한다.
 const cleanupLeftovers = async () => {
   await rm(tempDir, { recursive: true, force: true });
   await rm(backupDir, { recursive: true, force: true });
@@ -175,8 +174,6 @@ const runEslintFix = () => {
   });
 };
 
-// finalDir을 backupDir로 옮겨두고 tempDir을 finalDir 자리로 교체한다.
-// 교체(두 번째 rename)가 실패하면 backupDir에서 finalDir을 복구한다.
 const swapDirectories = async () => {
   const hadExisting = await pathExists(finalDir);
 
