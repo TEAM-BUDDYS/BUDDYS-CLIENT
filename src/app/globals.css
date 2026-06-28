@@ -1,1 +1,145 @@
 @import 'tailwindcss';
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+/* 1. 디자인 토큰 */
+@theme {
+  /* Mint */
+  --color-mint-50: #e6fafb;
+  --color-mint-100: #d9f8f9;
+  --color-mint-200: #b0f0f3;
+  --color-mint-300: #00cfd7;
+  --color-mint-400: #00a6ac;
+  --color-mint-500: #005d61;
+
+  /* Gray */
+  --color-gray-50: #f1f4f9;
+  --color-gray-100: #e5eaf2;
+  --color-gray-200: #cdd3de;
+  --color-gray-300: #b3b9c6;
+  --color-gray-400: #9398a4;
+  --color-gray-500: #757a83;
+  --color-gray-600: #666a75;
+  --color-gray-700: #474b54;
+  --color-gray-800: #2c3037;
+  --color-gray-900: #212328;
+
+  /* Base / Sub */
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-sub-1: #ecff56;
+  --color-opacity-60: rgb(0 0 0 / 60%);
+
+  /* Font */
+  --font-pretendard: 'Pretendard', sans-serif;
+}
+
+/* 2. 전역 기본 스타일 */
+@layer base {
+  body {
+    margin: 0;
+    font-family: var(--font-pretendard);
+    color: var(--color-gray-900);
+    background-color: var(--color-white);
+  }
+}
+
+/* 3. 유틸 클래스 */
+@layer utilities {
+  .text-title-b-28 {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 150%;
+    letter-spacing: -0.01em;
+  }
+
+  .text-title-b-22 {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 150%;
+    letter-spacing: -0.01em;
+  }
+
+  .text-title-b-20 {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 150%;
+    letter-spacing: -0.01em;
+  }
+
+  .text-title-b-18 {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 150%;
+    letter-spacing: -0.01em;
+  }
+
+  .text-title-m-18 {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 150%;
+    letter-spacing: -0.01em;
+  }
+
+  .text-body-sb-16 {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 150%;
+    letter-spacing: -0.01em;
+  }
+
+  .text-body-m-16 {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 150%;
+    letter-spacing: -0.01em;
+  }
+
+  .text-body-sb-15 {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 150%;
+    letter-spacing: -0.01em;
+  }
+
+  .text-body-m-15 {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 150%;
+    letter-spacing: -0.01em;
+  }
+
+  .text-body-sb-14 {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 150%;
+    letter-spacing: -0.01em;
+  }
+
+  .text-body-r-14 {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 150%;
+    letter-spacing: -0.01em;
+  }
+
+  .text-caption-m-12 {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 150%;
+    letter-spacing: -0.01em;
+  }
+
+  .text-caption-r-12 {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 150%;
+    letter-spacing: -0.01em;
+  }
+
+  .grid-mobile {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 8px;
+    padding-inline: 16px;
+  }
+}
