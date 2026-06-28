@@ -1,30 +1,34 @@
 import { spawn } from 'node:child_process';
-import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
+import {
+  access,
+  mkdir,
+  readdir,
+  readFile,
+  rename,
+  rm,
+  writeFile,
+} from 'node:fs/promises';
 import path from 'node:path';
 
 const packageRoot = process.cwd();
 const svgRoot = path.join(packageRoot, 'src', 'shared', 'assets', 'icons');
-const generatedRoot = path.join(
-  packageRoot,
-  'src',
-  'shared',
-  'components',
-  'icons',
-);
+const finalDir = path.join(packageRoot, 'src', 'shared', 'components', 'icons');
+const tempDir = `${finalDir}-tmp`;
+const backupDir = `${finalDir}-backup`;
 
-const cleanGeneratedFiles = async () => {
-  await mkdir(generatedRoot, { recursive: true });
+const pathExists = async (target) => {
+  try {
+    await access(target);
+    return true;
+  } catch {
+    return false;
+  }
+};
 
-  const entries = await readdir(generatedRoot, { withFileTypes: true });
-  await Promise.all(
-    entries
-      .filter(
-        (entry) =>
-          entry.isFile() &&
-          (entry.name.endsWith('.ts') || entry.name.endsWith('.tsx')),
-      )
-      .map((entry) => rm(path.join(generatedRoot, entry.name))),
-  );
+// 이전 실행이 실패해서 남아있을 수 있는 tempDir/backupDir 잔여물을 정리한다.
+const cleanupLeftovers = async () => {
+  await rm(tempDir, { recursive: true, force: true });
+  await rm(backupDir, { recursive: true, force: true });
 };
 
 const runSvgr = () => {
@@ -43,7 +47,7 @@ const runSvgr = () => {
     path.join(packageRoot, 'svgr.config.mjs'),
     '--no-index',
     '--out-dir',
-    path.relative(packageRoot, generatedRoot),
+    path.relative(packageRoot, tempDir),
     path.relative(packageRoot, svgRoot),
   ];
 
@@ -65,14 +69,14 @@ const runSvgr = () => {
 };
 
 const addIconSuffix = async () => {
-  const entries = await readdir(generatedRoot, { withFileTypes: true });
+  const entries = await readdir(tempDir, { withFileTypes: true });
   const componentFiles = entries
     .filter((entry) => entry.isFile() && entry.name.endsWith('.tsx'))
     .map((entry) => entry.name);
 
   await Promise.all(
     componentFiles.map(async (file) => {
-      const filePath = path.join(generatedRoot, file);
+      const filePath = path.join(tempDir, file);
       const content = await readFile(filePath, 'utf-8');
       const renamed = content.replace(
         /export const (\w+) =/,
@@ -85,7 +89,7 @@ const addIconSuffix = async () => {
 };
 
 const writeIconBarrel = async () => {
-  const entries = await readdir(generatedRoot, { withFileTypes: true });
+  const entries = await readdir(tempDir, { withFileTypes: true });
   const componentFiles = entries
     .filter((entry) => entry.isFile() && entry.name.endsWith('.tsx'))
     .map((entry) => entry.name)
@@ -93,7 +97,7 @@ const writeIconBarrel = async () => {
 
   const exportLines = await Promise.all(
     componentFiles.map(async (file) => {
-      const filePath = path.join(generatedRoot, file);
+      const filePath = path.join(tempDir, file);
       const content = await readFile(filePath, 'utf-8');
       const match = content.match(/export const (\w+)/);
 
@@ -116,7 +120,7 @@ const writeIconBarrel = async () => {
       ? `${validExportLines.join('\n')}\n`
       : 'export {};\n';
 
-  await writeFile(path.join(generatedRoot, 'index.ts'), content, 'utf-8');
+  await writeFile(path.join(tempDir, 'index.ts'), content, 'utf-8');
 
   console.log(
     `✅ icons/index.ts barrel 갱신 완료 (${validExportLines.length}개)`,
@@ -131,11 +135,7 @@ const runPrettier = () => {
     'bin',
     'prettier.cjs',
   );
-  const args = [
-    prettierBin,
-    '--write',
-    path.relative(packageRoot, generatedRoot),
-  ];
+  const args = [prettierBin, '--write', path.relative(packageRoot, tempDir)];
 
   return new Promise((resolve, reject) => {
     const child = spawn(process.execPath, args, {
@@ -159,7 +159,7 @@ const runEslintFix = () => {
     'bin',
     'eslint.js',
   );
-  const args = [eslintBin, '--fix', path.relative(packageRoot, generatedRoot)];
+  const args = [eslintBin, '--fix', path.relative(packageRoot, tempDir)];
 
   return new Promise((resolve, reject) => {
     const child = spawn(process.execPath, args, {
@@ -175,9 +175,39 @@ const runEslintFix = () => {
   });
 };
 
-await cleanGeneratedFiles();
-await runSvgr();
-await addIconSuffix();
-await writeIconBarrel();
-await runPrettier();
-await runEslintFix();
+// finalDir을 backupDir로 옮겨두고 tempDir을 finalDir 자리로 교체한다.
+// 교체(두 번째 rename)가 실패하면 backupDir에서 finalDir을 복구한다.
+const swapDirectories = async () => {
+  const hadExisting = await pathExists(finalDir);
+
+  if (hadExisting) {
+    await rename(finalDir, backupDir);
+  }
+
+  try {
+    await rename(tempDir, finalDir);
+  } catch (error) {
+    if (hadExisting) {
+      await rename(backupDir, finalDir);
+    }
+    throw error;
+  }
+
+  if (hadExisting) {
+    await rm(backupDir, { recursive: true, force: true });
+  }
+};
+
+try {
+  await cleanupLeftovers();
+  await mkdir(tempDir, { recursive: true });
+  await runSvgr();
+  await addIconSuffix();
+  await writeIconBarrel();
+  await runPrettier();
+  await runEslintFix();
+  await swapDirectories();
+} catch (error) {
+  await rm(tempDir, { recursive: true, force: true });
+  throw error;
+}
