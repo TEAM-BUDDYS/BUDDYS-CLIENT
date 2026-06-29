@@ -44,6 +44,69 @@ src/
 - route group은 URL을 바꾸지 않고 레이아웃을 나눌 때만 사용합니다.
 - route handler는 서버 경계가 필요할 때만 `app/api`에 둡니다.
 
+## Confirmed Routes And Domains
+
+| Screen | URL           | Route entry                   | Owner domain | Notes                                   |
+| ------ | ------------- | ----------------------------- | ------------ | --------------------------------------- |
+| 홈     | `/`           | `src/app/page.tsx`            | 없음         | 여러 도메인의 기능을 조합하는 진입 화면 |
+| 로그인 | `/login`      | `src/app/login/page.tsx`      | `auth`       | 인증과 로그인 흐름                      |
+| 온보딩 | `/onboarding` | `src/app/onboarding/page.tsx` | `onboarding` | 초기 사용자 정보와 가입 완료 흐름       |
+| 게시물 | `/posts`      | `src/app/posts/page.tsx`      | `posts`      | 게시물 목록과 게시물 관련 기능          |
+| 프로필 | `/profile`    | `src/app/profile/page.tsx`    | `profile`    | 프로필 조회와 수정 기능                 |
+| 채팅   | `/chat`       | `src/app/chat/page.tsx`       | `chat`       | 채팅 목록과 채팅 관련 기능              |
+
+확정된 화면을 기준으로 route와 domain의 최상위 폴더를 아래와 같이 구성합니다.
+
+```txt
+src/
+  app/
+    page.tsx
+    login/
+      page.tsx
+    onboarding/
+      page.tsx
+    posts/
+      page.tsx
+    profile/
+      page.tsx
+    chat/
+      page.tsx
+
+  domains/
+    auth/
+      components/
+      hooks/
+      api/
+      model/
+    onboarding/
+      components/
+      hooks/
+      api/
+      model/
+    posts/
+      components/
+      hooks/
+      api/
+      model/
+    profile/
+      components/
+      hooks/
+      api/
+      model/
+    chat/
+      components/
+      hooks/
+      api/
+      model/
+```
+
+- 홈은 여러 도메인을 조합하는 route로 시작하며, 홈에만 속한 기능과 상태가 확인될 때 `home` domain 추가를 검토합니다.
+- 게시물 상세나 채팅방처럼 식별자가 필요한 화면은 요구사항이 확정된 뒤 `[postId]`, `[roomId]` 같은 dynamic route를 추가합니다.
+- 인증 전후 화면에서 서로 다른 layout이 실제로 필요해질 때 route group을 추가합니다.
+- 각 `page.tsx`는 현재 routing 확인을 위한 최소 화면이며, 실제 기능 구현 시 owner domain의 컴포넌트를 조합하는 route entry로 사용합니다.
+- 각 domain은 `components`, `hooks`, `api`, `model`을 기본 하위 폴더로 사용합니다.
+- `assets`와 추가 flow 폴더는 실제 구현에 필요한 시점에 추가합니다.
+
 ## Domain Structure
 
 ```txt
@@ -59,6 +122,7 @@ domains/{domain}/
 - 공통화 여부는 아래 `Commonization Rules`를 기준으로 판단합니다.
 - `app` 내부에는 복잡한 비즈니스 로직을 두지 않습니다.
 - 도메인 폴더는 실제 기능명이 확정된 뒤 생성합니다.
+- 현재 확정된 domain은 `auth`, `onboarding`, `posts`, `profile`, `chat`입니다.
 
 ## Commonization Rules
 
