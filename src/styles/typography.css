@@ -1,0 +1,68 @@
+@theme {
+  --font-sans: var(--font-pretendard);
+
+  --text-title-b-28: 28px;
+  --text-title-b-28--font-weight: 700;
+  --text-title-b-28--line-height: 150%;
+  --text-title-b-28--letter-spacing: -0.01em;
+
+  --text-title-b-22: 22px;
+  --text-title-b-22--font-weight: 700;
+  --text-title-b-22--line-height: 150%;
+  --text-title-b-22--letter-spacing: -0.01em;
+
+  --text-title-b-20: 20px;
+  --text-title-b-20--font-weight: 700;
+  --text-title-b-20--line-height: 150%;
+  --text-title-b-20--letter-spacing: -0.01em;
+
+  --text-title-b-18: 18px;
+  --text-title-b-18--font-weight: 700;
+  --text-title-b-18--line-height: 150%;
+  --text-title-b-18--letter-spacing: -0.01em;
+
+  --text-title-m-18: 18px;
+  --text-title-m-18--font-weight: 500;
+  --text-title-m-18--line-height: 150%;
+  --text-title-m-18--letter-spacing: -0.01em;
+
+  --text-body-sb-16: 16px;
+  --text-body-sb-16--font-weight: 600;
+  --text-body-sb-16--line-height: 150%;
+  --text-body-sb-16--letter-spacing: -0.01em;
+
+  --text-body-m-16: 16px;
+  --text-body-m-16--font-weight: 500;
+  --text-body-m-16--line-height: 150%;
+  --text-body-m-16--letter-spacing: -0.01em;
+
+  --text-body-sb-15: 15px;
+  --text-body-sb-15--font-weight: 600;
+  --text-body-sb-15--line-height: 150%;
+  --text-body-sb-15--letter-spacing: -0.01em;
+
+  --text-body-m-15: 15px;
+  --text-body-m-15--font-weight: 500;
+  --text-body-m-15--line-height: 150%;
+  --text-body-m-15--letter-spacing: -0.01em;
+
+  --text-body-sb-14: 14px;
+  --text-body-sb-14--font-weight: 600;
+  --text-body-sb-14--line-height: 150%;
+  --text-body-sb-14--letter-spacing: -0.01em;
+
+  --text-body-r-14: 14px;
+  --text-body-r-14--font-weight: 400;
+  --text-body-r-14--line-height: 150%;
+  --text-body-r-14--letter-spacing: -0.01em;
+
+  --text-caption-m-12: 12px;
+  --text-caption-m-12--font-weight: 500;
+  --text-caption-m-12--line-height: 150%;
+  --text-caption-m-12--letter-spacing: -0.01em;
+
+  --text-caption-r-12: 12px;
+  --text-caption-r-12--font-weight: 400;
+  --text-caption-r-12--line-height: 150%;
+  --text-caption-r-12--letter-spacing: -0.01em;
+}
