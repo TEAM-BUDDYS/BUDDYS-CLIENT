@@ -1,0 +1,8 @@
+@layer base {
+  body {
+    margin: 0;
+    font-family: var(--font-pretendard);
+    color: var(--color-gray-900);
+    background-color: var(--color-white);
+  }
+}
