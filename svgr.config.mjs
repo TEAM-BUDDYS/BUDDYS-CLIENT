@@ -9,6 +9,7 @@ const config = {
     '#000': 'currentColor',
     '#000000': 'currentColor',
     black: 'currentColor',
+    '#212328': 'currentColor',
   },
 
   template: ({ imports, interfaces, componentName, props, jsx }, { tpl }) => {
