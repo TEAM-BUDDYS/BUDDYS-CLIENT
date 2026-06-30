@@ -26,7 +26,7 @@ export const Dropdown = ({
   const hasSelectedValue = Boolean(value);
 
   return (
-    <article className={cn('flex h-76 flex-col gap-4')}>
+    <article className="flex h-76 flex-col gap-4">
       <button
         disabled={disabled}
         type="button"
