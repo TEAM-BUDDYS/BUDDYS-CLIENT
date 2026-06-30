@@ -1,0 +1,33 @@
+import type { SVGProps } from 'react';
+export const CalendarIcon = ({
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
+  role,
+  ...rest
+}: SVGProps<SVGSVGElement>) => {
+  const hasLabel = Boolean(ariaLabel || ariaLabelledBy);
+  const props = {
+    ...rest,
+    role: role ?? (hasLabel ? 'img' : undefined),
+    'aria-hidden': hasLabel ? undefined : true,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledBy,
+  };
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      fill="none"
+      viewBox="0 0 24 24"
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        fillRule="evenodd"
+        d="M7.16 2.07q-.214.093-.381.255c-.276.276-.333.491-.333 1.255v.637H5.254c-.663 0-1.308.02-1.456.047-.853.157-1.591.896-1.748 1.75-.067.37-.067 13.816 0 14.186.157.854.895 1.593 1.748 1.75.372.067 16.032.067 16.403 0 .854-.157 1.592-.896 1.749-1.75.067-.37.067-13.816 0-14.186-.157-.854-.895-1.593-1.748-1.75-.148-.026-.793-.047-1.456-.047h-1.192V3.58c0-.762-.057-.98-.332-1.254a1.094 1.094 0 0 0-1.557 0c-.275.275-.332.492-.332 1.254v.637H8.667V3.58c0-.762-.057-.98-.332-1.254a1.11 1.11 0 0 0-1.175-.255m12.616 6.036v1.667H4.224V6.439h15.552zm0 7.779v3.89H4.224v-7.78h15.552z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+};
