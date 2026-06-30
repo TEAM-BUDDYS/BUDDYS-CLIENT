@@ -1,14 +1,7 @@
 @layer base {
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-  }
-
   html,
   body {
     width: 100%;
-    font-size: 62.5%;
     scroll-behavior: smooth;
     background-color: var(--color-white);
     font-family: var(--font-pretendard);
