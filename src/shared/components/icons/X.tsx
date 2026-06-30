@@ -11,7 +11,7 @@ export const XIcon = (props: SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <path
-      stroke="#2C3037"
+      stroke="currentColor"
       strokeLinecap="round"
       strokeWidth={2}
       d="m6 6 12 12M18 6 6 18"

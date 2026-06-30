@@ -11,7 +11,7 @@ export const ChevronDownIcon = (props: SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <path
-      stroke="#2C3037"
+      stroke="currentColor"
       strokeLinecap="round"
       strokeWidth={2}
       d="m5 8 6.152 6.152a1.2 1.2 0 0 0 1.697 0L19 8"

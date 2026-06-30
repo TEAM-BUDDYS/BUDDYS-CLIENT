@@ -11,14 +11,14 @@ export const LocationIcon = (props: SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <path
-      stroke="#2C3037"
+      stroke="currentColor"
       strokeWidth={2}
       d="M20 10.5c0 5.142-6.4 10.5-8 10.5s-8-5.358-8-10.5C4 6.358 7.582 3 12 3s8 3.358 8 7.5Z"
     />
     <ellipse
       cx={3}
       cy={2.842}
-      stroke="#2C3037"
+      stroke="currentColor"
       strokeWidth={2}
       rx={3}
       ry={2.842}

@@ -6,10 +6,7 @@ const config = {
   prettier: false,
 
   replaceAttrValues: {
-    '#000': 'currentColor',
-    '#000000': 'currentColor',
-    black: 'currentColor',
-    '#212328': 'currentColor',
+    '#2C3037': 'currentColor',
   },
 
   template: ({ imports, interfaces, componentName, props, jsx }, { tpl }) => {

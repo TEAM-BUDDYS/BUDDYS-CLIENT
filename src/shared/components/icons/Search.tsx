@@ -11,7 +11,7 @@ export const SearchIcon = (props: SVGProps<SVGSVGElement>) => (
     {...props}
   >
     <g
-      stroke="#2C3037"
+      stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={2}
