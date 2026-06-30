@@ -46,7 +46,7 @@ export const Dropdown = ({
         )}
       </button>
       {isOpen && !disabled && (
-        <ul className="max-h-59 overflow-y-auto rounded-xl border border-gray-100 px-4 py-2 shadow-[0_2px_2px_0_rgba(0,0,0,0.25)] [&::-webkit-scrollbar]:w-3 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-4 [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:bg-clip-content [&::-webkit-scrollbar-track]:bg-transparent">
+        <ul className="max-h-59 overflow-y-auto rounded-xl border border-gray-200 px-4 py-2 shadow-[0_2px_2px_0_rgba(0,0,0,0.25)] [&::-webkit-scrollbar]:w-3 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-4 [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:bg-clip-content [&::-webkit-scrollbar-track]:bg-transparent">
           {options.map((option) => (
             <OptionItem
               key={option}
