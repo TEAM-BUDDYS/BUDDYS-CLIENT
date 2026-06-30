@@ -87,6 +87,25 @@ const addIconSuffix = async () => {
   );
 };
 
+const renameIconFiles = async () => {
+  const entries = await readdir(tempDir, { withFileTypes: true });
+  const componentFiles = entries
+    .filter((entry) => entry.isFile() && entry.name.endsWith('.tsx'))
+    .map((entry) => entry.name);
+
+  await Promise.all(
+    componentFiles.map(async (file) => {
+      const baseName = path.basename(file, '.tsx');
+      if (!baseName.endsWith('Icon')) {
+        await rename(
+          path.join(tempDir, file),
+          path.join(tempDir, `${baseName}Icon.tsx`),
+        );
+      }
+    }),
+  );
+};
+
 const writeIconBarrel = async () => {
   const entries = await readdir(tempDir, { withFileTypes: true });
   const componentFiles = entries
@@ -200,6 +219,7 @@ try {
   await mkdir(tempDir, { recursive: true });
   await runSvgr();
   await addIconSuffix();
+  await renameIconFiles();
   await writeIconBarrel();
   await runPrettier();
   await runEslintFix();
