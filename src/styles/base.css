@@ -1,8 +1,33 @@
 @layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    width: 100%;
+    font-size: 62.5%;
+    scroll-behavior: smooth;
+    background-color: var(--color-white);
+    font-family: var(--font-pretendard);
+  }
+
   body {
     margin: 0;
-    font-family: var(--font-pretendard);
     color: var(--color-gray-900);
-    background-color: var(--color-white);
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
   }
 }
