@@ -7,40 +7,35 @@ import { IcChevronDownIcon, IcChevronUpIcon } from '@/shared/components/icons';
 
 import { OptionItem } from './option-item';
 
-const options = [
-  { label: '진석', value: 'jinseok' },
-  { label: '승택', value: 'seungtaek' },
-  { label: '진아', value: 'jina' },
-  { label: '효정', value: 'hyojeong' },
-  { label: '서진', value: 'seojin' },
-];
-
 interface DropdownProps {
-  value?: string;
-  disabled: boolean;
+  options: string[];
+  value: string;
+  disabled?: boolean;
   placeholder?: string;
   onChange?: (value: string) => void;
 }
 
 export const Dropdown = ({
+  options,
   value,
-  disabled,
+  disabled = false,
   onChange,
   placeholder = '선택해주세요',
 }: DropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const hasSelectedValue = Boolean(value);
 
   return (
-    <article
-      className={cn('text-body-m-15 flex h-[30.4rem] flex-col gap-[1.6rem]')}
-    >
+    <article className={cn('flex h-76 flex-col gap-4')}>
       <button
         disabled={disabled}
         type="button"
         className={cn(
-          'flex justify-between rounded-[1.2rem] bg-gray-50 px-[1.6rem] py-[1.4rem]',
-          isOpen && 'border-mint-200 bg-gray-100',
-          disabled && 'cursor-not-allowed bg-gray-100 text-gray-500',
+          'text-body-m-15 flex justify-between rounded-xl bg-gray-50 px-4 py-3.5 text-gray-500',
+          isOpen && 'bg-gray-100',
+          hasSelectedValue &&
+            'border-mint-200 text-body-sb-15 border-2 bg-white text-gray-800',
+          disabled && 'bg-gray-50 text-gray-200',
         )}
         onClick={() => setIsOpen((prev) => !prev)}
       >
@@ -52,14 +47,14 @@ export const Dropdown = ({
         )}
       </button>
       {isOpen && !disabled && (
-        <ul className="px-[1.6rem] py-[0.8rem]">
+        <ul className="max-h-59 overflow-y-auto rounded-2xl border border-gray-100 px-4 py-2 shadow-[0_2px_2px_0_rgba(0,0,0,0.25)]">
           {options.map((option) => (
             <OptionItem
-              key={option.value}
-              option={option.label}
-              isSelected={value === option.value}
+              key={option}
+              option={option}
+              isSelected={value === option}
               onSelect={() => {
-                onChange?.(option.value);
+                onChange?.(option);
                 setIsOpen(false);
               }}
             />
