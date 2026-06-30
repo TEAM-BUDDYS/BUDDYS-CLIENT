@@ -20,7 +20,7 @@ export const Dropdown = ({
   value,
   disabled = false,
   onChange,
-  placeholder = '선택해주세요',
+  placeholder = '선택해주세요.',
 }: DropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const hasSelectedValue = Boolean(value);
@@ -33,13 +33,12 @@ export const Dropdown = ({
         className={cn(
           'text-body-m-15 flex justify-between rounded-xl bg-gray-50 px-4 py-3.5 text-gray-500',
           isOpen && 'bg-gray-100',
-          hasSelectedValue &&
-            'border-mint-200 text-body-sb-15 border-2 bg-white text-gray-800',
+          hasSelectedValue && 'text-gray-800',
           disabled && 'bg-gray-50 text-gray-200',
         )}
         onClick={() => setIsOpen((prev) => !prev)}
       >
-        {value ?? placeholder}
+        {hasSelectedValue ? value : placeholder}
         {isOpen ? (
           <IcChevronUpIcon width={24} height={24} />
         ) : (
@@ -47,7 +46,7 @@ export const Dropdown = ({
         )}
       </button>
       {isOpen && !disabled && (
-        <ul className="max-h-59 overflow-y-auto rounded-2xl border border-gray-100 px-4 py-2 shadow-[0_2px_2px_0_rgba(0,0,0,0.25)]">
+        <ul className="max-h-59 overflow-y-auto rounded-xl border border-gray-100 px-4 py-2 shadow-[0_2px_2px_0_rgba(0,0,0,0.25)] [&::-webkit-scrollbar]:w-3 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-4 [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:bg-clip-content [&::-webkit-scrollbar-track]:bg-transparent">
           {options.map((option) => (
             <OptionItem
               key={option}
