@@ -6,7 +6,7 @@ import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
 const IconButtonVariants = cva(
-  'inline-flex items-center justify-center px-2.5 py-2 rounded-[200px] gap-1.5 h-[44px] text-body-sb-14',
+  'inline-flex items-center justify-center px-2.5 py-2 rounded-[200px] gap-1.5 h-[44px] w-fit text-body-sb-14',
   {
     variants: {
       variant: {
@@ -28,15 +28,22 @@ type IconButtonVariantTypes = NonNullable<
   VariantProps<typeof IconButtonVariants>['variant']
 >;
 
-export interface IconButtonProps extends Omit<
-  IconButtonElementProps,
-  'children'
-> {
+interface IconButtonBaseProps extends IconButtonElementProps {
   variant?: IconButtonVariantTypes;
   icon: ReactNode;
-  children?: ReactNode;
-  'aria-label'?: string;
 }
+
+type IconButtonWithLabelProps = IconButtonBaseProps & {
+  children: ReactNode;
+  'aria-label'?: string;
+};
+
+type IconButtonOnlyProps = IconButtonBaseProps & {
+  children?: never;
+  'aria-label': string;
+};
+
+export type IconButtonProps = IconButtonWithLabelProps | IconButtonOnlyProps;
 
 export const IconButton = ({
   ref,
@@ -48,19 +55,13 @@ export const IconButton = ({
   'aria-label': ariaLabel,
   ...buttonProps
 }: IconButtonProps) => {
-  const hasLabel = Boolean(children);
-
   return (
     <button
       ref={ref}
       {...buttonProps}
       type={type}
       aria-label={ariaLabel}
-      className={cn(
-        IconButtonVariants({ variant }),
-        hasLabel ? 'w-fit' : 'wit-[44px]',
-        className,
-      )}
+      className={cn(IconButtonVariants({ variant }), className)}
     >
       <span
         aria-hidden
