@@ -6,7 +6,7 @@ import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
 const IconButtonVariants = cva(
-  'inline-flex items-center justify-center px-2 py-2.5 rounded-[200px] gap-1.5 h-[44px] text-body-sb-14',
+  'inline-flex items-center justify-center px-2.5 py-2 rounded-[200px] gap-1.5 h-[44px] text-body-sb-14',
   {
     variants: {
       variant: {
@@ -33,28 +33,42 @@ export interface IconButtonProps extends Omit<
   'children'
 > {
   variant?: IconButtonVariantTypes;
-  children: ReactNode;
-  'aria-label': string;
+  icon: ReactNode;
+  children?: ReactNode;
+  'aria-label'?: string;
 }
 
 export const IconButton = ({
   ref,
   variant,
+  icon,
   className,
   children,
   type = 'button',
   'aria-label': ariaLabel,
   ...buttonProps
 }: IconButtonProps) => {
+  const hasLabel = Boolean(children);
+
   return (
     <button
       ref={ref}
       {...buttonProps}
       type={type}
       aria-label={ariaLabel}
-      className={cn(IconButtonVariants({ variant }), className)}
+      className={cn(
+        IconButtonVariants({ variant }),
+        hasLabel ? 'w-fit' : 'wit-[44px]',
+        className,
+      )}
     >
-      {children}
+      <span
+        aria-hidden
+        className="inline-flex size-[24px] items-center justify-center text-current [&>svg]:size-full [&>svg]:shrink-0"
+      >
+        {icon}
+      </span>
+      {children ? <span>{children}</span> : null}
     </button>
   );
 };
