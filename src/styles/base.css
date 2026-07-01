@@ -12,10 +12,6 @@
     color: var(--color-gray-900);
   }
 
-  ::-webkit-scrollbar {
-    display: none;
-  }
-
   button {
     cursor: pointer;
   }
