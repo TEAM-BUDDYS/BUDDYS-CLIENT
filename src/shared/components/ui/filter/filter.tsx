@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDownIcon } from '../../icons';
+import { ChevronDownIcon } from '@/shared/components/icons';
 
 const COLORS = {
   default: { bg: 'bg-white', text: 'text-gray-800' },
