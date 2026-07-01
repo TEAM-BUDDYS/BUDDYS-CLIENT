@@ -76,7 +76,7 @@ export const TextField = ({
             status === 'error' &&
               'border-error-50 focus-visible:border-error-50 focus-visible:ring-error-50',
             status === 'success' &&
-              'focus-visible:border-info-50 focus-visible:ring-info-50 border-gray-200 bg-white',
+              'focus-visible:border-info-50 focus-visible:ring-info-50 border-gray-200',
             className,
           )}
           disabled={disabled}
