@@ -2,15 +2,15 @@
 
 ## File And Folder
 
-| Target               | Convention   | Example                         |
-| -------------------- | ------------ | ------------------------------- |
-| Folder               | `kebab-case` | `user-profile/`                 |
-| React component file | `PascalCase` | `UserCard.tsx`                  |
-| Hook                 | `kebab-case` | `use-auth.ts`                   |
-| API / Utils          | `kebab-case` | `auth-api.ts`, `format-date.ts` |
+| Target               | Convention   | Example                           |
+| -------------------- | ------------ | --------------------------------- |
+| Folder               | `kebab-case` | `user-profile/`                   |
+| React component file | `kebab-case` | `user-card.tsx`, `text-field.tsx` |
+| Hook                 | `kebab-case` | `use-auth.ts`                     |
+| API / Utils          | `kebab-case` | `auth-api.ts`, `format-date.ts`   |
 
-- 폴더명과 일반 파일명은 `kebab-case`를 사용합니다.
-- React 컴포넌트 파일과 컴포넌트 이름만 `PascalCase`를 사용합니다.
+- 폴더명과 파일명은 `kebab-case`를 사용합니다.
+- React 컴포넌트 이름과 타입 이름은 `PascalCase`를 사용합니다.
 - 파일명과 폴더명은 소문자로 시작합니다.
 
 ## Component
