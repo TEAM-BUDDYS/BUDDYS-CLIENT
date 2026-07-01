@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import { cn } from '@/lib/cn';
-import { IcChevronDownIcon, IcChevronUpIcon } from '@/shared/components/icons';
+import { ChevronDownIcon, ChevronUpIcon } from '@/shared/components/icons';
 
 import { OptionItem } from './option-item';
 
@@ -40,9 +40,9 @@ export const Dropdown = ({
       >
         {hasSelectedValue ? value : placeholder}
         {isOpen ? (
-          <IcChevronUpIcon width={24} height={24} />
+          <ChevronUpIcon width={24} height={24} />
         ) : (
-          <IcChevronDownIcon width={24} height={24} />
+          <ChevronDownIcon width={24} height={24} />
         )}
       </button>
       {isOpen && !disabled && (
