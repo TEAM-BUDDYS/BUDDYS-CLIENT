@@ -110,10 +110,11 @@ export const TextField = ({
 
       {message && (
         <p
-          className={cn(
-            'text-caption-r-12 text-gray-500',
-            status === 'error' && 'text-error',
-          )}
+          className={
+            status === 'error'
+              ? 'text-caption-r-12 text-error'
+              : 'text-caption-r-12 text-gray-500'
+          }
           id={messageId}
         >
           {message}
