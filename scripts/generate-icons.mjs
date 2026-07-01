@@ -45,6 +45,8 @@ const runSvgr = () => {
     '--config-file',
     path.join(packageRoot, 'svgr.config.mjs'),
     '--no-index',
+    '--filename-case',
+    'kebab',
     '--out-dir',
     path.relative(packageRoot, tempDir),
     path.relative(packageRoot, svgRoot),
@@ -96,10 +98,10 @@ const renameIconFiles = async () => {
   await Promise.all(
     componentFiles.map(async (file) => {
       const baseName = path.basename(file, '.tsx');
-      if (!baseName.endsWith('Icon')) {
+      if (!baseName.endsWith('-icon')) {
         await rename(
           path.join(tempDir, file),
-          path.join(tempDir, `${baseName}Icon.tsx`),
+          path.join(tempDir, `${baseName}-icon.tsx`),
         );
       }
     }),
