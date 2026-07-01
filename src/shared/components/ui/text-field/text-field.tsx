@@ -42,6 +42,7 @@ export const TextField = ({
   const inputId = id ?? generatedId;
   const messageId = message ? `${inputId}-message` : undefined;
   const StatusIcon = status === 'default' ? null : STATUS_ICONS[status];
+  const hasClearButton = status === 'default' && Boolean(onClear) && !disabled;
   const describedBy =
     [ariaDescribedBy, messageId].filter(Boolean).join(' ') || undefined;
 
@@ -72,7 +73,7 @@ export const TextField = ({
             'placeholder:text-gray-500 focus:bg-white',
             'focus-visible:border-mint-200 focus-visible:ring-mint-200 focus-visible:ring-1',
             'disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400',
-            StatusIcon && 'pr-12',
+            (StatusIcon || hasClearButton) && 'pr-12',
             status === 'error' &&
               'border-error-50 focus-visible:border-error-50 focus-visible:ring-error-50',
             status === 'success' &&
@@ -95,7 +96,7 @@ export const TextField = ({
           />
         )}
 
-        {status === 'default' && onClear && !disabled && (
+        {hasClearButton && (
           <button
             aria-label="입력 내용 지우기"
             className="absolute top-1/2 right-4 hidden size-6 -translate-y-1/2 rounded-full text-gray-200 peer-not-placeholder-shown:block"

@@ -27,6 +27,7 @@ export const TextArea = ({
   className,
   maxLength,
   value,
+  rows = 5,
   'aria-describedby': ariaDescribedBy,
   'aria-invalid': ariaInvalid,
   ...textAreaProps
@@ -84,7 +85,7 @@ export const TextArea = ({
           maxLength={maxLength}
           placeholder={placeholder}
           required={required}
-          rows={5}
+          rows={rows}
           value={value}
         />
 
