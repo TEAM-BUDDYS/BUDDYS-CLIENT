@@ -14,14 +14,19 @@ export const OptionItem = ({
   onSelect,
 }: OptionItemProps) => {
   return (
-    <li
-      className={cn(
-        'text-body-m-15 rounded-lg px-4 py-3.5 text-gray-500',
-        isSelected && 'bg-mint-50 text-mint-300',
-      )}
-      onClick={onSelect}
-    >
-      {option}
+    <li>
+      <button
+        aria-selected={isSelected}
+        className={cn(
+          'text-body-m-15 w-full rounded-lg px-4 py-3.5 text-left text-gray-500',
+          isSelected && 'bg-mint-50 text-mint-300',
+        )}
+        onClick={onSelect}
+        role="option"
+        type="button"
+      >
+        {option}
+      </button>
     </li>
   );
 };
