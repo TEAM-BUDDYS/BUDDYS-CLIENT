@@ -1,29 +1,20 @@
 'use client';
 
-import {
-  type ChangeEvent,
-  type ComponentProps,
-  type ReactNode,
-  useId,
-  useState,
-} from 'react';
+import { type ComponentProps, type ReactNode, useId } from 'react';
 
 import { cn } from '@lib/cn';
 import { EssentialIcon, WarningIcon } from '@shared/components/icons';
 
 export type TextAreaStatus = 'default' | 'error';
 
-export interface TextAreaProps extends ComponentProps<'textarea'> {
+export interface TextAreaProps extends Omit<
+  ComponentProps<'textarea'>,
+  'defaultValue'
+> {
   label?: ReactNode;
   message?: ReactNode;
   status?: TextAreaStatus;
 }
-
-const getTextLength = (value: ComponentProps<'textarea'>['value']) => {
-  if (value == null) return 0;
-
-  return String(value).length;
-};
 
 export const TextArea = ({
   id,
@@ -35,9 +26,7 @@ export const TextArea = ({
   placeholder,
   className,
   maxLength,
-  defaultValue,
   value,
-  onChange,
   'aria-describedby': ariaDescribedBy,
   'aria-invalid': ariaInvalid,
   ...textAreaProps
@@ -51,22 +40,10 @@ export const TextArea = ({
   const describedBy =
     [ariaDescribedBy, messageId, countId].filter(Boolean).join(' ') ||
     undefined;
-  const [uncontrolledTextLength, setUncontrolledTextLength] = useState(() =>
-    getTextLength(defaultValue),
-  );
-  const textLength =
-    value === undefined ? uncontrolledTextLength : getTextLength(value);
+  const textLength = value == null ? 0 : String(value).length;
   const displayTextLength = showCount
     ? Math.min(textLength, maxLength)
     : textLength;
-
-  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    if (value === undefined) {
-      setUncontrolledTextLength(event.currentTarget.value.length);
-    }
-
-    onChange?.(event);
-  };
 
   return (
     <div className="flex w-full flex-col gap-2">
@@ -102,11 +79,9 @@ export const TextArea = ({
             'text-body-m-15 min-h-0 w-full flex-1 resize-none bg-transparent text-gray-800 outline-none placeholder:text-gray-500',
             'disabled:cursor-not-allowed disabled:text-gray-400',
           )}
-          defaultValue={defaultValue}
           disabled={disabled}
           id={textAreaId}
           maxLength={maxLength}
-          onChange={handleChange}
           placeholder={placeholder}
           required={required}
           rows={5}
