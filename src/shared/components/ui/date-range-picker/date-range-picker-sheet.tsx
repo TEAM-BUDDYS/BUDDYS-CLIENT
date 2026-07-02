@@ -18,7 +18,7 @@ const DEFAULT_MONTH_INCREMENT = 6;
 const DEFAULT_MAX_MONTH_COUNT = 60;
 const BOTTOM_THRESHOLD_PX = 300;
 
-export interface DateRangePickerSheetProps {
+interface DateRangePickerSheetProps {
   open: boolean;
   value: DateRangeTypes;
   title?: string;
