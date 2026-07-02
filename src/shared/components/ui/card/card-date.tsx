@@ -1,15 +1,16 @@
 import { CalendarIcon } from '@/shared/components/icons';
-import { useDateRange } from '@/shared/hooks/use-date-range';
+import { formatDateRange } from '@/shared/utils/format-date-range';
 
 interface CardDateProps {
   startDate: string;
   endDate: string;
 }
 export const CardDate = ({ startDate, endDate }: CardDateProps) => {
-  const { durationDays, formattedEndDate, formattedStartDate } = useDateRange({
-    endDate,
-    startDate,
-  });
+  const { durationDays, formattedEndDate, formattedStartDate } =
+    formatDateRange({
+      endDate,
+      startDate,
+    });
 
   return (
     <div className="flex gap-1">

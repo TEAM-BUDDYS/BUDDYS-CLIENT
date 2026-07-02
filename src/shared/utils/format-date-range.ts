@@ -1,4 +1,4 @@
-interface UseDateRangeParams {
+interface FormatDateRangeParams {
   startDate: string;
   endDate: string;
 }
@@ -19,7 +19,10 @@ const getDurationDays = (startDate: string, endDate: string) => {
   return (endTime - startTime) / (1000 * 60 * 60 * 24) + 1;
 };
 
-export const useDateRange = ({ startDate, endDate }: UseDateRangeParams) => {
+export const formatDateRange = ({
+  startDate,
+  endDate,
+}: FormatDateRangeParams) => {
   return {
     durationDays: getDurationDays(startDate, endDate),
     formattedEndDate: formatDate(endDate),
