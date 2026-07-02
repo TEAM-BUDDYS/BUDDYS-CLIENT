@@ -1,10 +1,11 @@
-type ProgressStep = 25 | 50 | 75 | 100;
-
 interface ProgressBarProps {
-  percent: ProgressStep;
+  currentStep: number;
+  totalStep: number;
 }
 
-export const ProgressBar = ({ percent }: ProgressBarProps) => {
+export const ProgressBar = ({ currentStep, totalStep }: ProgressBarProps) => {
+  const percent = (currentStep / totalStep) * 100;
+
   return (
     <div
       role="progressbar"
