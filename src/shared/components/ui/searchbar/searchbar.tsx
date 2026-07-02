@@ -1,14 +1,18 @@
 'use client';
 
+import { ComponentPropsWithoutRef } from 'react';
+
 import { SearchIcon, XCircleIcon } from '../../icons';
 
 export type SearchbarSize = 'small' | 'medium';
 
-interface SearchbarProps {
+interface SearchbarProps extends Omit<
+  ComponentPropsWithoutRef<'input'>,
+  'size' | 'value' | 'onChange'
+> {
   size: SearchbarSize;
   value: string;
   onChange: (value: string) => void;
-  placeholder?: string;
 }
 
 const searchbarStyle = {
@@ -21,6 +25,7 @@ export const Searchbar = ({
   value,
   onChange,
   placeholder = '검색어를 입력해주세요',
+  ...inputProps
 }: SearchbarProps) => {
   const isTyping = value.length > 0;
 
@@ -37,6 +42,7 @@ export const Searchbar = ({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className="text-body-m-15 flex-1 bg-transparent text-gray-800 outline-none placeholder:text-gray-500"
+        {...inputProps}
       />
       {isTyping ? (
         <button type="button" onClick={handleClear} aria-label="검색어 삭제">

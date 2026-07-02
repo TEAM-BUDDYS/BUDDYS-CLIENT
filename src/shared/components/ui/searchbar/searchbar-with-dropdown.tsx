@@ -1,26 +1,31 @@
 'use client';
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 
 import { OptionItem } from '../dropdown/option-item';
+import { OptionList } from '../dropdown/option-list';
 import { Searchbar, SearchbarSize } from './searchbar';
 
 interface SearchbarWithDropdownProps {
   size: SearchbarSize;
   options: string[];
+  ariaLabel: string;
   onSelect?: (option: string) => void;
 }
 
 export const SearchbarWithDropdown = ({
   size,
   options,
+  ariaLabel,
   onSelect,
 }: SearchbarWithDropdownProps) => {
   const [keyword, setKeyword] = useState('');
   const [selectedOption, setSelectedOption] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const listboxId = useId();
 
   const filteredOptions = options.filter((option) => option.includes(keyword));
+  const isListboxOpen = isOpen && filteredOptions.length > 0;
 
   const handleChange = (value: string) => {
     setKeyword(value);
@@ -36,12 +41,20 @@ export const SearchbarWithDropdown = ({
 
   return (
     <div className="relative w-fit">
-      <Searchbar size={size} value={keyword} onChange={handleChange} />
-      {isOpen && filteredOptions.length > 0 && (
-        <ul
-          className="absolute top-full left-0 z-10 mt-2 flex max-h-59 w-full scrollbar-gutter-stable flex-col gap-1 overflow-y-auto rounded-xl border border-gray-200 bg-white py-2 pr-1 pl-4 shadow-md [&::-webkit-scrollbar]:w-2.25 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-[3px] [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:bg-clip-content [&::-webkit-scrollbar-track]:my-2.75 [&::-webkit-scrollbar-track]:bg-transparent"
-          role="listbox"
-        >
+      <Searchbar
+        size={size}
+        value={keyword}
+        onChange={handleChange}
+        role="combobox"
+        aria-label={ariaLabel}
+        aria-controls={isListboxOpen ? listboxId : undefined}
+        aria-expanded={isListboxOpen}
+        aria-haspopup="listbox"
+        aria-autocomplete="list"
+      />
+
+      {isListboxOpen && (
+        <OptionList id={listboxId}>
           {filteredOptions.map((option) => (
             <OptionItem
               key={option}
@@ -50,7 +63,7 @@ export const SearchbarWithDropdown = ({
               onSelect={() => handleSelect(option)}
             />
           ))}
-        </ul>
+        </OptionList>
       )}
     </div>
   );
