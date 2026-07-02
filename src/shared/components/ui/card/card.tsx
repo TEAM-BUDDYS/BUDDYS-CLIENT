@@ -35,7 +35,7 @@ export const Card = ({
           <span className="text-body-sb-16 truncate text-gray-800">
             {title}
           </span>
-          <span className="text-body-r-14 truncate text-gray-500">
+          <span className="text-caption-m-12 truncate text-gray-500">
             {content}
           </span>
         </div>
