@@ -16,7 +16,7 @@ export const PostStatusTag = ({ status }: PostStatusTagProps) => {
     <span
       className={cn(
         'text-caption-m-12 rounded px-2 py-0.5',
-        status === 'RECRUITING' && 'bg-[#ff968d] text-white',
+        status === 'RECRUITING' && 'bg-badge text-white',
         status === 'COMPLETED' && 'bg-gray-50 text-gray-200',
       )}
     >
