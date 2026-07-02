@@ -6,14 +6,13 @@ import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
 const IconButtonVariants = cva(
-  'inline-flex items-center justify-center px-2.5 py-2 rounded-[200px] gap-1.5 h-[44px] w-fit text-body-sb-14',
+  'inline-flex items-center justify-center p-2.5 rounded-full gap-1.5 w-fit text-body-sb-14 disabled:border disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-200',
   {
     variants: {
       variant: {
-        primary:
-          'bg-mint-300 text-white active:bg-mint-400 disabled:border disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-200',
+        primary: 'bg-mint-300 text-white active:bg-mint-400',
         secondary:
-          'bg-mint-50 text-mint-300 border border-mint-200 active:border-mint-300 active:bg-mint-300 active:text-white disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-200',
+          'bg-mint-50 text-mint-300 border border-mint-200 active:border-mint-300 active:bg-mint-300 active:text-white',
       },
     },
     defaultVariants: {

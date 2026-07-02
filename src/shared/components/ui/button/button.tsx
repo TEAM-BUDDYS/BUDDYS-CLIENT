@@ -5,29 +5,29 @@ import type { ComponentPropsWithRef, ReactNode } from 'react';
 
 import { cn } from '@/lib/cn';
 
-const ButtonVariants = cva('flex items-center px-4 py-2 rounded-xl h-[52px]', {
-  variants: {
-    variant: {
-      primary:
-        'text-body-sb-16 justify-center bg-mint-300 text-white active:bg-mint-400 disabled:bg-gray-50 disabled:text-gray-200',
-      secondary:
-        'text-body-sb-16 justify-center bg-white border border-gray-200 text-gray-800 active:bg-mint-50 active:border-mint-200 active:text-mint-300 disabled:text-gray-200',
-      neutral:
-        'text-body-m-15 gap-3 bg-gray-50 active:bg-gray-100 disabled:text-gray-200',
-      icon: 'text-body-m-15 gap-[84px] bg-[#FAE100] text-gray-900',
+const ButtonVariants = cva(
+  'flex items-center px-4 py-3 rounded-xl w-full flex-1',
+  {
+    variants: {
+      variant: {
+        primary:
+          'text-body-sb-16 justify-center bg-mint-300 text-white active:bg-mint-400 disabled:bg-gray-50 disabled:text-gray-200',
+        secondary:
+          'text-body-sb-16 justify-center bg-white border border-gray-200 text-gray-800 active:bg-mint-50 active:border-mint-200 active:text-mint-300 disabled:text-gray-200',
+        neutral:
+          'text-body-m-15 bg-gray-50 active:bg-gray-100 disabled:text-gray-200',
+        kakao: 'text-body-m-15 bg-[#FAE100] text-gray-900',
+      },
+      align: {
+        left: 'justify-start gap-3',
+        center: 'relative justify-center',
+      },
     },
-    size: {
-      sm: 'w-[84px]',
-      md: 'w-[164px]',
-      lg: 'w-[247px]',
-      xl: 'w-[343px]',
+    defaultVariants: {
+      variant: 'primary',
     },
   },
-  defaultVariants: {
-    variant: 'primary',
-    size: 'xl',
-  },
-});
+);
 
 const ButtonIconVariants = cva(
   'inline-flex items-center text-current [&>svg]:size-full [&>svg]:shrink-0',
@@ -50,7 +50,9 @@ type ButtonVariantTypes = NonNullable<
   VariantProps<typeof ButtonVariants>['variant']
 >;
 
-type ButtonSizeTypes = NonNullable<VariantProps<typeof ButtonVariants>['size']>;
+type ButtonAlignTypes = NonNullable<
+  VariantProps<typeof ButtonVariants>['align']
+>;
 
 type ButtonIconSizeTypes = NonNullable<
   VariantProps<typeof ButtonIconVariants>['iconSize']
@@ -58,7 +60,7 @@ type ButtonIconSizeTypes = NonNullable<
 
 export interface ButtonProps extends Omit<ButtonElementProps, 'children'> {
   variant?: ButtonVariantTypes;
-  size?: ButtonSizeTypes;
+  align?: ButtonAlignTypes;
   icon?: ReactNode;
   iconSize?: ButtonIconSizeTypes;
   children: ReactNode;
@@ -67,7 +69,7 @@ export interface ButtonProps extends Omit<ButtonElementProps, 'children'> {
 export const Button = ({
   ref,
   variant,
-  size,
+  align,
   icon,
   iconSize,
   className,
@@ -80,16 +82,16 @@ export const Button = ({
       ref={ref}
       {...buttonProps}
       type={type}
-      className={cn(
-        ButtonVariants({
-          variant,
-          size,
-        }),
-        className,
-      )}
+      className={cn(ButtonVariants({ variant, align }), className)}
     >
       {icon ? (
-        <span aria-hidden className={cn(ButtonIconVariants({ iconSize }))}>
+        <span
+          aria-hidden
+          className={cn(
+            ButtonIconVariants({ iconSize }),
+            align === 'center' ? 'absolute left-4' : null,
+          )}
+        >
           {icon}
         </span>
       ) : null}
