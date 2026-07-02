@@ -35,10 +35,10 @@ export const ChipButton = ({
 }: ChipButtonProps) => {
   return (
     <button
+      {...props}
       type="button"
       aria-pressed={active}
       className={cn(chipBase, chipSize[size], active && chipActive, className)}
-      {...props}
     />
   );
 };
