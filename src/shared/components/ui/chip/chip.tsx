@@ -21,29 +21,24 @@ type ChipButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   active?: boolean;
 };
 
-export function Chip({ size = 'sm', className, ...props }: ChipProps) {
+export const Chip = ({ size = 'sm', className, ...props }: ChipProps) => {
   return (
     <span className={cn(chipBase, chipSize[size], className)} {...props} />
   );
-}
+};
 
-export function ChipButton({
+export const ChipButton = ({
   size = 'sm',
   className,
   active = false,
   ...props
-}: ChipButtonProps) {
+}: ChipButtonProps) => {
   return (
     <button
       type="button"
       aria-pressed={active}
-      className={cn(
-        chipBase,
-        chipSize[size],
-        active ? chipActive : null,
-        className,
-      )}
+      className={cn(chipBase, chipSize[size], active && chipActive, className)}
       {...props}
     />
   );
-}
+};
