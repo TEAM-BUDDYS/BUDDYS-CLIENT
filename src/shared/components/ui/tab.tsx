@@ -1,3 +1,4 @@
+'use client';
 import { cn } from '@/lib/cn';
 
 interface TabProps {
@@ -14,7 +15,7 @@ export type TabValue = (typeof TAB_ITEMS)[number]['value'];
 
 export const Tab = ({ value, onChange }: TabProps) => {
   return (
-    <div className="flex w-full">
+    <div className="flex w-full" role="tablist">
       {TAB_ITEMS.map((item) => {
         const isSelected = value === item.value;
 
@@ -22,6 +23,8 @@ export const Tab = ({ value, onChange }: TabProps) => {
           <button
             key={item.value}
             type="button"
+            role="tab"
+            aria-selected={isSelected}
             className={cn(
               'text-body-sb-15 flex-1 border-b-[3px] px-17.5 py-4.5',
               isSelected
