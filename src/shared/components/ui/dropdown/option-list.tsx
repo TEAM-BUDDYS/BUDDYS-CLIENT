@@ -10,23 +10,29 @@ export const OptionList = ({
   ...props
 }: OptionListProps) => {
   return (
-    <ul
-      {...props}
+    <div
       className={cn(
-        'absolute top-full left-0 z-10 mt-2 flex max-h-59 w-full scrollbar-gutter-stable flex-col gap-1 overflow-y-auto rounded-xl border border-gray-200 bg-white py-2 pr-1 pl-4 shadow-md',
-        '[&::-webkit-scrollbar]:w-2.25',
-        '[&::-webkit-scrollbar-thumb]:rounded-full',
-        '[&::-webkit-scrollbar-thumb]:border-[3px]',
-        '[&::-webkit-scrollbar-thumb]:border-transparent',
-        '[&::-webkit-scrollbar-thumb]:bg-gray-200',
-        '[&::-webkit-scrollbar-thumb]:bg-clip-content',
-        '[&::-webkit-scrollbar-track]:my-2.75',
-        '[&::-webkit-scrollbar-track]:bg-transparent',
+        'absolute top-full left-0 z-10 mt-2 w-full rounded-xl border border-gray-200 bg-white py-2 pr-1 pl-2 shadow-[0_2px_2px_0_rgba(0,0,0,0.25)]',
         className,
       )}
-      role="listbox"
     >
-      {children}
-    </ul>
+      <ul
+        {...props}
+        className={cn(
+          'flex max-h-55 scrollbar-gutter-stable flex-col gap-1 overflow-y-auto',
+          '[&::-webkit-scrollbar]:w-2.75',
+          '[&::-webkit-scrollbar-thumb]:rounded-full',
+          '[&::-webkit-scrollbar-thumb]:border-4',
+          '[&::-webkit-scrollbar-thumb]:border-transparent',
+          '[&::-webkit-scrollbar-thumb]:bg-gray-200',
+          '[&::-webkit-scrollbar-thumb]:bg-clip-content',
+          '[&::-webkit-scrollbar-track]:my-1',
+          '[&::-webkit-scrollbar-track]:bg-transparent',
+        )}
+        role="listbox"
+      >
+        {children}
+      </ul>
+    </div>
   );
 };
