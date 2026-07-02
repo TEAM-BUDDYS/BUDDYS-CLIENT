@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 import { CardDate } from '@/shared/components/ui/card/card-date';
 import { PostStatusTag, Tag } from '@/shared/components/ui/card/card-tag';
 
@@ -39,7 +41,14 @@ export const Card = ({
         </div>
         <CardDate startDate={startDate} endDate={endDate} />
       </section>
-      <img src={image} alt={`${title} 썸네일`} className="size-27 rounded-xl" />
+      <Image
+        src={image}
+        alt={`${title} 썸네일`}
+        width={108}
+        height={108}
+        unoptimized
+        className="size-27 rounded-xl"
+      />
     </article>
   );
 };
