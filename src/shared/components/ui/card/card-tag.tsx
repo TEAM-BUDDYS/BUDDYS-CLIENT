@@ -25,11 +25,11 @@ export const PostStatusTag = ({ status }: PostStatusTagProps) => {
   );
 };
 
-interface CountryTagProps {
+interface TagProps {
   value: string;
 }
 
-export const Tag = ({ value }: CountryTagProps) => {
+export const Tag = ({ value }: TagProps) => {
   return (
     <span className="text-mint-300 bg-mint-100 text-caption-m-12 rounded px-2 py-0.5">
       {value}
