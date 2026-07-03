@@ -61,7 +61,7 @@ export const CalendarDayCell = ({
           'focus-visible:outline-mint-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid',
           !isSelected && !isDisabled && 'hover:bg-gray-50',
           isSelected && !isDisabled && 'bg-mint-300 text-white',
-          isBetween && !isSelected && !isDisabled && 'text-mint-500',
+          isBetween && !isSelected && !isDisabled && 'text-mint-300',
           isDisabled && 'text-gray-200',
         )}
         onClick={() => onSelect(day.date)}

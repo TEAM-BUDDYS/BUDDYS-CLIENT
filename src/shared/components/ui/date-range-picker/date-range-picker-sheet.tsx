@@ -120,7 +120,7 @@ const DateRangePickerContent = ({
         aria-modal="true"
         aria-labelledby="date-range-picker-title"
         className={cn(
-          'flex max-h-[calc(100dvh-24px)] w-full max-w-93.75 flex-col overflow-hidden rounded-t-[28px] bg-white shadow-[0_4px_2px_0_rgba(0,0,0,0.25)]',
+          'flex h-[67.1dvh] max-h-[calc(100dvh-24px)] w-full max-w-93.75 flex-col overflow-hidden rounded-t-[28px] bg-white shadow-[0_4px_2px_0_rgba(0,0,0,0.25)]',
           className,
         )}
         role="dialog"
