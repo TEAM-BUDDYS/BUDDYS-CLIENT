@@ -27,7 +27,6 @@ interface DateRangePickerSheetProps {
   monthIncrement?: number;
   maxMonthCount?: number;
   className?: string;
-  onChange: (value: DateRangeTypes) => void;
   onClose: () => void;
   onConfirm: (value: DateRangeTypes) => void;
 }
@@ -42,11 +41,11 @@ const DateRangePickerContent = ({
   monthIncrement = DEFAULT_MONTH_INCREMENT,
   maxMonthCount = DEFAULT_MAX_MONTH_COUNT,
   className,
-  onChange,
   onClose,
   onConfirm,
 }: DateRangePickerContentProps) => {
-  const currentValueRef = useRef(value);
+  const [draftValue, setDraftValue] = useState(value);
+  const draftValueRef = useRef(value);
   const minSelectableDate = useMemo(
     () => getStartOfDay(minDate ?? new Date()),
     [minDate],
@@ -60,11 +59,7 @@ const DateRangePickerContent = ({
     () => createMonths(minSelectableDate, renderedMonthCount),
     [minSelectableDate, renderedMonthCount],
   );
-  const canConfirm = Boolean(value.startDate && value.endDate);
-
-  useEffect(() => {
-    currentValueRef.current = value;
-  }, [value]);
+  const canConfirm = Boolean(draftValue.startDate && draftValue.endDate);
 
   useEffect(() => {
     const handleEscapeKeyDown = (event: KeyboardEvent) => {
@@ -82,10 +77,10 @@ const DateRangePickerContent = ({
 
   const handleDateSelect = (date: Date) => {
     const selectedDate = getStartOfDay(date);
-    const nextValue = getNextDateRange(selectedDate, currentValueRef.current);
+    const nextValue = getNextDateRange(selectedDate, draftValueRef.current);
 
-    currentValueRef.current = nextValue;
-    onChange(nextValue);
+    draftValueRef.current = nextValue;
+    setDraftValue(nextValue);
   };
 
   const handleCalendarScroll = (event: UIEvent<HTMLDivElement>) => {
@@ -111,7 +106,7 @@ const DateRangePickerContent = ({
       return;
     }
 
-    onConfirm(value);
+    onConfirm(draftValue);
   };
 
   return (
@@ -153,7 +148,7 @@ const DateRangePickerContent = ({
               <CalendarMonth
                 key={`${month.getFullYear()}-${month.getMonth()}`}
                 month={month}
-                value={value}
+                value={draftValue}
                 minDate={minSelectableDate}
                 onSelect={handleDateSelect}
               />
