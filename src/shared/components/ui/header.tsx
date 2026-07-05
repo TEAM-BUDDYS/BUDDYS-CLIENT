@@ -46,7 +46,7 @@ export const Header = ({
       {hasBackButton && (
         <button
           aria-label="뒤로가기"
-          className="m-2.5 -ml-0.5 flex shrink-0 items-center justify-center text-gray-800"
+          className="-ml-3 flex size-11 shrink-0 items-center justify-center text-gray-800"
           type="button"
           onClick={handleBackButtonClick}
         >
