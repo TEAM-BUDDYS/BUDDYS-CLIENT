@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 import { CardDate } from '@/shared/components/ui/card/card-date';
 
-interface CardProps {
+interface SummaryCardProps {
   title: string;
   content: string;
   startDate: string;
@@ -10,13 +10,13 @@ interface CardProps {
   image?: string;
 }
 
-export const Card = ({
+export const SummaryCard = ({
   title,
   content,
   startDate,
   endDate,
   image,
-}: CardProps) => {
+}: SummaryCardProps) => {
   return (
     <article className="flex gap-4">
       {image && (
