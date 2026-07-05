@@ -40,7 +40,11 @@ export const CalendarMonth = ({
             </span>
           ))}
         </div>
-        <div className="grid grid-cols-7 place-items-center">
+        <div
+          aria-label={`${month.getFullYear()}년 ${month.getMonth() + 1}월 날짜 선택`}
+          className="grid grid-cols-7 place-items-center"
+          role="grid"
+        >
           {days.map((day, dayIndex) => (
             <CalendarDayCell
               key={day.date.toISOString()}

@@ -53,8 +53,9 @@ export const CalendarDayCell = ({
       )}
       <button
         aria-label={`${day.date.getFullYear()}년 ${day.date.getMonth() + 1}월 ${day.date.getDate()}일`}
-        aria-pressed={isSelected}
+        aria-selected={isSelected}
         disabled={isDisabled}
+        role="gridcell"
         type="button"
         className={cn(
           'text-body-sb-15 relative z-10 flex size-10 items-center justify-center rounded-full text-gray-800 transition-colors',
