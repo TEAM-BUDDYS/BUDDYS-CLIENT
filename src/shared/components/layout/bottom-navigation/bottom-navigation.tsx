@@ -9,7 +9,7 @@ import {
   HomeIcon,
   LocationIcon,
   MessageIcon,
-  MyprofileIcon,
+  MyIcon,
 } from '@shared/components/icons';
 
 interface BottomNavigationItem {
@@ -40,7 +40,7 @@ const BOTTOM_NAVIGATION_ITEMS: BottomNavigationItem[] = [
   {
     key: 'profile',
     href: '/profile',
-    icon: MyprofileIcon,
+    icon: MyIcon,
     label: '프로필',
   },
 ];
