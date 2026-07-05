@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { Tag } from '@/shared/components/ui/card/card-tag';
 
@@ -8,6 +9,7 @@ interface CardProfileProps {
   ageGroup: string;
   matchingRate: number;
   imageUrl: string;
+  href: string;
 }
 
 export const CardProfile = ({
@@ -16,9 +18,13 @@ export const CardProfile = ({
   ageGroup,
   matchingRate,
   imageUrl,
+  href,
 }: CardProfileProps) => {
   return (
-    <article className="flex h-42 w-35.25 flex-col items-center justify-between gap-2 rounded-2xl border border-gray-200 px-10 py-4">
+    <Link
+      href={href}
+      className="flex h-42 w-35.25 flex-col items-center justify-between gap-2 rounded-2xl border border-gray-200 px-10 py-4"
+    >
       <Image
         src={imageUrl}
         alt={`${nickname} 프로필 이미지`}
@@ -34,6 +40,6 @@ export const CardProfile = ({
         </span>
       </div>
       <Tag value={`매칭 ${matchingRate}%`} />
-    </article>
+    </Link>
   );
 };
