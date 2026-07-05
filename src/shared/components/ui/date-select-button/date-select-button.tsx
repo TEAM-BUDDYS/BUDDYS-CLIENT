@@ -7,8 +7,11 @@ interface DateSelectButtonProps extends Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   'children'
 > {
-  label: string;
-  date?: Date | null;
+  label?: string;
+  dateRange?: {
+    startDate?: Date | null;
+    endDate?: Date | null;
+  };
 }
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
@@ -23,20 +26,25 @@ const formatDateButtonText = (date: Date) => {
 };
 
 export const DateSelectButton = ({
-  label,
-  date,
+  label = '출발일/도착일',
+  dateRange,
   className,
   type = 'button',
   ...props
 }: DateSelectButtonProps) => {
-  const hasSelectedDate = Boolean(date);
-  const displayText = date ? formatDateButtonText(date) : label;
+  const startDate = dateRange?.startDate;
+  const endDate = dateRange?.endDate;
+  const hasSelectedDateRange = Boolean(startDate && endDate);
+  const displayText =
+    startDate && endDate
+      ? `${formatDateButtonText(startDate)} ~ ${formatDateButtonText(endDate)}`
+      : label;
 
   return (
     <button
       className={cn(
-        'text-body-sb-15 focus-visible:outline-mint-300 group border-mint-300 active:bg-mint-300 flex h-13 w-37 items-center justify-center gap-3 rounded-[10px] border bg-white text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid active:text-white',
-        hasSelectedDate && 'text-gray-800',
+        'text-body-sb-15 focus-visible:outline-mint-300 group border-mint-300 active:bg-mint-300 inline-flex h-13 items-center justify-center gap-3 rounded-[10px] border bg-white px-4 text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid active:text-white',
+        hasSelectedDateRange && 'text-gray-800',
         className,
       )}
       type={type}
