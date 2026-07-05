@@ -2,6 +2,8 @@
 
 import { ComponentPropsWithoutRef } from 'react';
 
+import { cn } from '@/lib/cn';
+
 import { SearchIcon, XCircleIcon } from '../../icons';
 
 export type SearchbarSize = 'small' | 'medium';
@@ -27,30 +29,31 @@ export const Searchbar = ({
   placeholder = '검색어를 입력해주세요',
   ...inputProps
 }: SearchbarProps) => {
-  const isTyping = value.length > 0;
+  const { className: inputClassName, ...restInputProps } = inputProps ?? {};
 
-  const handleClear = () => {
-    onChange('');
-  };
+  const isTyping = value.length > 0;
 
   return (
     <div
       className={`flex ${searchbarStyle[size]} items-center justify-between rounded-xl bg-gray-50 py-2.5 pr-3 pl-4`}
     >
       <input
+        {...restInputProps}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="text-body-m-15 flex-1 bg-transparent text-gray-800 outline-none placeholder:text-gray-500"
-        {...inputProps}
+        className={cn(
+          'text-body-m-15 flex-1 bg-transparent text-gray-800 outline-none placeholder:text-gray-500',
+          inputClassName,
+        )}
       />
       {isTyping ? (
-        <button type="button" onClick={handleClear} aria-label="검색어 삭제">
-          <XCircleIcon
-            className="shrink-0 text-gray-200"
-            width={24}
-            height={24}
-          />
+        <button
+          type="button"
+          onClick={() => onChange('')}
+          aria-label="검색어 삭제"
+        >
+          <XCircleIcon className="size-6 shrink-0 text-gray-200" />
         </button>
       ) : (
         <SearchIcon className="shrink-0 text-gray-500" width={24} height={24} />

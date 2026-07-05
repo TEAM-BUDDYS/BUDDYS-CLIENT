@@ -2,6 +2,8 @@
 
 import { useId, useState } from 'react';
 
+import { useClickOutside } from '@/shared/hooks/use-click-outside';
+
 import { OptionItem } from '../dropdown/option-item';
 import { OptionList } from '../dropdown/option-list';
 import { Searchbar, SearchbarSize } from './searchbar';
@@ -23,6 +25,7 @@ export const SearchbarWithDropdown = ({
   const [selectedOption, setSelectedOption] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const listboxId = useId();
+  const searchbarRef = useClickOutside<HTMLDivElement>(() => setIsOpen(false));
 
   const filteredOptions = options.filter((option) => option.includes(keyword));
   const isListboxOpen = isOpen && filteredOptions.length > 0;
@@ -40,7 +43,7 @@ export const SearchbarWithDropdown = ({
   };
 
   return (
-    <div className="relative w-fit">
+    <div ref={searchbarRef} className="relative w-fit">
       <Searchbar
         size={size}
         value={keyword}
