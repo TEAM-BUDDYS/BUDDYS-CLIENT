@@ -1,5 +1,7 @@
 'use client';
 
+import { cn } from '@lib/cn';
+
 const COLORS = {
   default: {
     bg: 'bg-white',
@@ -35,10 +37,14 @@ export const Filter = ({
       type="button"
       onClick={onPress}
       aria-pressed={pressed}
-      className={`inline-flex shrink-0 items-center gap-1.5 rounded-[30px] py-2 pr-3 pl-3.5 ${bg} ${border}`}
+      className={cn(
+        'inline-flex shrink-0 items-center gap-1.5 rounded-[30px] py-2 pr-3 pl-3.5',
+        bg,
+        border,
+      )}
     >
-      {Icon && <Icon className={`size-4 ${text}`} />}
-      <span className={`text-caption-m-12 ${text}`}>{label}</span>
+      {Icon && <Icon className={cn('size-4', text)} />}
+      <span className={cn('text-caption-m-12', text)}>{label}</span>
     </button>
   );
 };
