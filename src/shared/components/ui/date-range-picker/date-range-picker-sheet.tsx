@@ -4,6 +4,7 @@ import { type UIEvent, useEffect, useMemo, useRef, useState } from 'react';
 
 import { cn } from '@lib/cn';
 import { XIcon } from '@shared/components/icons';
+import { Button } from '@shared/components/ui/button/button';
 
 import { CalendarMonth } from './calendar-month';
 import {
@@ -155,17 +156,9 @@ const DateRangePickerContent = ({
             ))}
           </div>
           <footer className="shrink-0 bg-white px-4 pt-3 pb-6">
-            <button
-              className={cn(
-                'text-body-sb-16 flex h-13 w-full items-center justify-center rounded-xl px-2.5 py-3 text-center text-white transition-colors',
-                canConfirm ? 'bg-mint-300' : 'bg-gray-200',
-              )}
-              disabled={!canConfirm}
-              type="button"
-              onClick={handleConfirmClick}
-            >
+            <Button disabled={!canConfirm} onClick={handleConfirmClick}>
               선택 완료
-            </button>
+            </Button>
           </footer>
         </div>
       </section>
