@@ -43,7 +43,7 @@ export const Filter = ({
         border,
       )}
     >
-      {Icon && <Icon className={cn('size-4', text)} />}
+      {Icon && <Icon aria-hidden="true" className={cn('size-4', text)} />}
       <span className={cn('text-caption-m-12', text)}>{label}</span>
     </button>
   );
