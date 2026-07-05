@@ -1,22 +1,22 @@
 'use client';
+
 import { cn } from '@/lib/cn';
 
-interface TabProps {
-  value: TabValue;
-  onChange: (value: TabValue) => void;
+interface TabItem {
+  label: string;
+  value: string;
 }
 
-const TAB_ITEMS = [
-  { label: '게시물', value: 'posts' },
-  { label: '코스', value: 'course' },
-] as const;
+interface TabProps {
+  items: TabItem[];
+  value: string;
+  onChange: (value: string) => void;
+}
 
-export type TabValue = (typeof TAB_ITEMS)[number]['value'];
-
-export const Tab = ({ value, onChange }: TabProps) => {
+export const Tab = ({ items, value, onChange }: TabProps) => {
   return (
     <div className="flex w-full" role="tablist">
-      {TAB_ITEMS.map((item) => {
+      {items.map((item) => {
         const isSelected = value === item.value;
 
         return (
@@ -26,7 +26,7 @@ export const Tab = ({ value, onChange }: TabProps) => {
             role="tab"
             aria-selected={isSelected}
             className={cn(
-              'text-body-sb-15 flex-1 border-b-[3px] px-17.5 py-4.5',
+              'text-body-sb-15 flex-1 border-b-[3px] px-17.5 py-4.5 active:bg-gray-50',
               isSelected
                 ? 'border-b-gray-800 text-gray-800'
                 : 'border-transparent text-gray-200',
