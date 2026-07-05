@@ -2,11 +2,11 @@
 
 import { cn } from '@lib/cn';
 
-const COLORS = {
+const FILTER_STYLES = {
   default: {
     bg: 'bg-white',
     text: 'text-gray-800',
-    border: 'border border-[color:var(--color-gray-300)]',
+    border: 'border border-gray-300',
   },
   pressed: {
     bg: 'bg-gray-800',
@@ -30,7 +30,7 @@ export const Filter = ({
   onPress,
   icon: Icon,
 }: FilterProps) => {
-  const { bg, text, border } = COLORS[pressed ? 'pressed' : 'default'];
+  const { bg, text, border } = FILTER_STYLES[pressed ? 'pressed' : 'default'];
 
   return (
     <button
