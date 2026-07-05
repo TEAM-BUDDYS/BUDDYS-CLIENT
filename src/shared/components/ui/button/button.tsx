@@ -6,14 +6,14 @@ import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
 const ButtonVariants = cva(
-  'flex items-center px-4 py-3 rounded-xl w-full flex-1',
+  'flex items-center px-4 py-3.5 rounded-xl w-full flex-1',
   {
     variants: {
       variant: {
         primary:
-          'text-body-sb-16 justify-center bg-mint-300 text-white active:bg-mint-400 disabled:bg-gray-50 disabled:text-gray-200',
+          'text-body-sb-16 bg-mint-300 text-white active:bg-mint-400 disabled:bg-gray-50 disabled:text-gray-200',
         secondary:
-          'text-body-sb-16 justify-center bg-white border border-gray-200 text-gray-800 active:bg-mint-50 active:border-mint-200 active:text-mint-300 disabled:text-gray-200',
+          'text-body-sb-16 bg-white border border-gray-200 text-gray-800 active:bg-mint-50 active:border-mint-200 active:text-mint-300 disabled:text-gray-200',
         neutral:
           'text-body-m-15 bg-gray-50 active:bg-gray-100 disabled:text-gray-200',
         kakao: 'text-body-m-15 bg-[#FAE100] text-gray-900',
@@ -25,6 +25,7 @@ const ButtonVariants = cva(
     },
     defaultVariants: {
       variant: 'primary',
+      align: 'center',
     },
   },
 );
