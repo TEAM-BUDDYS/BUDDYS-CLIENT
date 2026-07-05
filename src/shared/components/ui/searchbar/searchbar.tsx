@@ -56,7 +56,7 @@ export const Searchbar = ({
           <XCircleIcon className="size-6 shrink-0 text-gray-200" />
         </button>
       ) : (
-        <SearchIcon className="shrink-0 text-gray-500" width={24} height={24} />
+        <SearchIcon className="size-6 shrink-0 text-gray-500" />
       )}
     </div>
   );
