@@ -15,6 +15,7 @@ const typographyTokens = [
   'body-r-14',
   'caption-m-12',
   'caption-r-12',
+  'caption-m-10',
 ];
 
 const twMerge = extendTailwindMerge({

@@ -12,7 +12,7 @@ interface CardProps {
   tagValue: string;
   startDate: string;
   endDate: string;
-  image: string;
+  image?: string;
 }
 
 export const Card = ({
@@ -27,28 +27,28 @@ export const Card = ({
   return (
     <article className="flex justify-between">
       <section className="flex flex-col gap-2">
-        <span className="flex gap-1.5">
+        <div className="flex gap-1.5">
           <PostStatusTag status={postStatus} />
           <Tag value={tagValue} />
-        </span>
+        </div>
         <div className="flex w-45.5 flex-col gap-1">
-          <span className="text-body-sb-16 truncate text-gray-800">
+          <header className="text-body-sb-16 truncate text-gray-800">
             {title}
-          </span>
-          <span className="text-caption-m-12 truncate text-gray-500">
-            {content}
-          </span>
+          </header>
+          <p className="text-caption-m-12 truncate text-gray-500">{content}</p>
         </div>
         <CardDate startDate={startDate} endDate={endDate} />
       </section>
-      <Image
-        src={image}
-        alt={`${title} 썸네일`}
-        width={108}
-        height={108}
-        unoptimized
-        className="size-27 rounded-xl"
-      />
+      {image && (
+        <Image
+          src={image}
+          alt={`${title} 썸네일`}
+          width={108}
+          height={108}
+          unoptimized
+          className="size-27 rounded-xl object-cover"
+        />
+      )}
     </article>
   );
 };
