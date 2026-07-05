@@ -105,24 +105,21 @@ const DateRangePickerContent = ({
       open
       onClose={onClose}
     >
-      <header className="flex shrink-0 flex-col items-center gap-4 border-b border-gray-200 px-4 pt-2 pb-4">
-        <div className="h-1.25 w-10 rounded-full bg-gray-100" />
-        <div className="flex h-11 w-full items-center justify-between gap-3 pl-1">
-          <h2
-            className="text-title-b-20 truncate text-center text-gray-800"
-            id={titleId}
-          >
-            {title}
-          </h2>
-          <button
-            aria-label="날짜 선택 닫기"
-            className="focus-visible:outline-mint-300 flex size-11 shrink-0 items-center justify-center rounded-full text-gray-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid"
-            type="button"
-            onClick={onClose}
-          >
-            <XIcon width={24} height={24} />
-          </button>
-        </div>
+      <header className="flex h-15 shrink-0 items-start justify-between gap-3 border-b border-gray-200 px-4 pb-4 pl-5">
+        <h2
+          className="text-title-b-20 truncate pt-2.5 text-center text-gray-800"
+          id={titleId}
+        >
+          {title}
+        </h2>
+        <button
+          aria-label="날짜 선택 닫기"
+          className="focus-visible:outline-mint-300 flex size-11 shrink-0 items-center justify-center rounded-full text-gray-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid"
+          type="button"
+          onClick={onClose}
+        >
+          <XIcon width={24} height={24} />
+        </button>
       </header>
       <div
         className="scrollbar-width:none flex min-h-0 flex-1 flex-col gap-10 overflow-y-auto px-4 py-6 [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
