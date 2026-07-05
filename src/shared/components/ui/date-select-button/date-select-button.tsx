@@ -2,6 +2,7 @@ import type { ButtonHTMLAttributes } from 'react';
 
 import { cn } from '@lib/cn';
 import { CalendarIcon } from '@shared/components/icons';
+import { formatDateWithWeekday } from '@shared/utils/format-date-range';
 
 interface DateSelectButtonProps extends Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -13,17 +14,6 @@ interface DateSelectButtonProps extends Omit<
     endDate?: Date | null;
   };
 }
-
-const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
-
-const formatDateButtonText = (date: Date) => {
-  const year = String(date.getFullYear()).slice(-2);
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const weekday = WEEKDAYS[date.getDay()];
-
-  return `${year}.${month}.${day} (${weekday})`;
-};
 
 export const DateSelectButton = ({
   label = '출발일/도착일',
@@ -37,7 +27,7 @@ export const DateSelectButton = ({
   const hasSelectedDateRange = Boolean(startDate && endDate);
   const displayText =
     startDate && endDate
-      ? `${formatDateButtonText(startDate)} ~ ${formatDateButtonText(endDate)}`
+      ? `${formatDateWithWeekday(startDate)} ~ ${formatDateWithWeekday(endDate)}`
       : label;
 
   return (
