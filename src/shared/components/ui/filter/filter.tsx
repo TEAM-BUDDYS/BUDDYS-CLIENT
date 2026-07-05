@@ -13,7 +13,7 @@ const COLORS = {
   },
 };
 
-type IconComponent = React.ComponentType<{ className?: string }>;
+type IconComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>;
 
 export interface FilterProps {
   label: string;
