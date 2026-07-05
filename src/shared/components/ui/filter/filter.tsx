@@ -38,7 +38,7 @@ export const Filter = ({
       onClick={onPress}
       aria-pressed={pressed}
       className={cn(
-        'inline-flex shrink-0 items-center gap-1.5 rounded-[30px] py-2 pr-3 pl-3.5',
+        'inline-flex shrink-0 items-center gap-1.5 rounded-[30px] py-2 pr-4 pl-3',
         bg,
         border,
       )}
