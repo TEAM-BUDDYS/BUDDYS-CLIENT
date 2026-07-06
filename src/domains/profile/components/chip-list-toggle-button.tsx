@@ -5,12 +5,15 @@ import { useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@shared/components/icons';
 import { cn } from '@/lib/cn';
 
-interface TagBadgeProps {
+interface ChipListToggleButtonProps {
   defaultOpen?: boolean;
   onToggle?: (isOpen: boolean) => void;
 }
 
-export const TagBadge = ({ defaultOpen = false, onToggle }: TagBadgeProps) => {
+export const ChipListToggleButton = ({
+  defaultOpen = false,
+  onToggle,
+}: ChipListToggleButtonProps) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   const handleClick = () => {
