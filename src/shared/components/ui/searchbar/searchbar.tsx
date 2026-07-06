@@ -14,6 +14,7 @@ interface SearchbarProps extends Omit<
 > {
   size: SearchbarSize;
   value: string;
+  isCompleted?: boolean;
   onChange: (value: string) => void;
 }
 
@@ -25,13 +26,14 @@ const searchbarStyle = {
 export const Searchbar = ({
   size,
   value,
+  isCompleted = false,
   onChange,
   placeholder = '검색어를 입력해주세요',
   ...inputProps
 }: SearchbarProps) => {
   const { className: inputClassName, ...restInputProps } = inputProps ?? {};
 
-  const isTyping = value.length > 0;
+  const showClearButton = value.length > 0 && !isCompleted;
 
   return (
     <div
@@ -47,7 +49,7 @@ export const Searchbar = ({
           inputClassName,
         )}
       />
-      {isTyping ? (
+      {showClearButton ? (
         <button
           type="button"
           onClick={() => onChange('')}

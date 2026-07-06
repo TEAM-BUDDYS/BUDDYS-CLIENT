@@ -12,34 +12,43 @@ interface SearchbarWithDropdownProps {
   size: SearchbarSize;
   options: string[];
   ariaLabel: string;
-  onSelect?: (option: string) => void;
+  selectedValue: string;
+  onChange: (value: string) => void;
 }
 
 export const SearchbarWithDropdown = ({
   size,
   options,
   ariaLabel,
-  onSelect,
+  selectedValue,
+  onChange,
 }: SearchbarWithDropdownProps) => {
   const [keyword, setKeyword] = useState('');
-  const [selectedOption, setSelectedOption] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+
   const listboxId = useId();
   const searchbarRef = useClickOutside<HTMLDivElement>(() => setIsOpen(false));
 
   const filteredOptions = options.filter((option) => option.includes(keyword));
+
   const isListboxOpen = isOpen && filteredOptions.length > 0;
+
+  const isSearchCompleted =
+    selectedValue.length > 0 && keyword === selectedValue;
 
   const handleChange = (value: string) => {
     setKeyword(value);
     setIsOpen(value.length > 0);
+
+    if (selectedValue && value !== selectedValue) {
+      onChange('');
+    }
   };
 
   const handleSelect = (option: string) => {
     setKeyword(option);
-    setSelectedOption(option);
     setIsOpen(false);
-    onSelect?.(option);
+    onChange(option);
   };
 
   return (
@@ -47,6 +56,7 @@ export const SearchbarWithDropdown = ({
       <Searchbar
         size={size}
         value={keyword}
+        isCompleted={isSearchCompleted}
         onChange={handleChange}
         role="combobox"
         aria-label={ariaLabel}
@@ -62,7 +72,7 @@ export const SearchbarWithDropdown = ({
             <OptionItem
               key={option}
               option={option}
-              isSelected={selectedOption === option}
+              isSelected={selectedValue === option}
               onSelect={() => handleSelect(option)}
             />
           ))}
