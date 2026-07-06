@@ -10,12 +10,13 @@ interface TagBadgeProps {
   onToggle?: (isOpen: boolean) => void;
 }
 
-export function TagBadge({ defaultOpen = false, onToggle }: TagBadgeProps) {
+export const TagBadge = ({ defaultOpen = false, onToggle }: TagBadgeProps) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   const handleClick = () => {
-    setIsOpen((prev) => !prev);
-    onToggle?.(!isOpen);
+    const nextIsOpen = !isOpen;
+    setIsOpen(nextIsOpen);
+    onToggle?.(nextIsOpen);
   };
 
   return (
@@ -23,6 +24,7 @@ export function TagBadge({ defaultOpen = false, onToggle }: TagBadgeProps) {
       type="button"
       onClick={handleClick}
       aria-expanded={isOpen}
+      aria-label={isOpen ? '태그 목록 접기' : '태그 목록 펼치기'}
       className={cn(
         'bg-mint-300 flex h-10 w-10 items-center justify-center rounded-full text-white',
         isOpen ? 'px-4 pt-1.75 pb-2.25' : 'px-4 pt-2.25 pb-1.75',
@@ -35,4 +37,4 @@ export function TagBadge({ defaultOpen = false, onToggle }: TagBadgeProps) {
       )}
     </button>
   );
-}
+};
