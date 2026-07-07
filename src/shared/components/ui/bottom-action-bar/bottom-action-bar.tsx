@@ -8,7 +8,13 @@ import { IconButton } from '@/shared/components/ui/button/icon-button';
 
 type BottomActionBarInputProps = Omit<
   ComponentPropsWithoutRef<'input'>,
-  'children' | 'className' | 'onChange' | 'placeholder' | 'type' | 'value'
+  | 'aria-label'
+  | 'children'
+  | 'className'
+  | 'onChange'
+  | 'placeholder'
+  | 'type'
+  | 'value'
 >;
 
 type BottomActionBarProps = Omit<
@@ -38,8 +44,8 @@ export const BottomActionBar = ({
       {...formProps}
     >
       <input
-        aria-label="내용 입력"
         {...inputProps}
+        aria-label="내용 입력"
         className="text-body-m-15 h-12 min-w-0 flex-1 rounded-full bg-gray-50 px-[20.5px] text-gray-800 outline-none placeholder:text-gray-500"
         onChange={(event) => onValueChange(event.target.value)}
         placeholder={placeholder}
