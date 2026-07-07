@@ -1,7 +1,7 @@
-import Image from 'next/image';
-
+import { cn } from '@/lib/cn';
 import { CardDate } from '@/shared/components/ui/card/card-date';
 import { PostStatusTag, Tag } from '@/shared/components/ui/card/card-tag';
+import { CommonImage } from '@/shared/components/ui/common-image/common-image';
 
 import type { RecruitmentStatus } from './card-tag';
 
@@ -31,7 +31,7 @@ export const Card = ({
           <PostStatusTag status={postStatus} />
           <Tag value={tagValue} />
         </div>
-        <div className="flex w-45.5 flex-col gap-1">
+        <div className={cn('flex flex-col gap-1', image ? 'w-45.5' : 'w-57.5')}>
           <header className="text-body-sb-16 truncate text-gray-800">
             {title}
           </header>
@@ -40,13 +40,13 @@ export const Card = ({
         <CardDate startDate={startDate} endDate={endDate} />
       </section>
       {image && (
-        <Image
+        <CommonImage
           src={image}
           alt={`${title} 썸네일`}
-          width={108}
-          height={108}
+          width={100}
+          height={100}
           unoptimized
-          className="size-27 rounded-xl object-cover"
+          radius="rounded-xl"
         />
       )}
     </article>
