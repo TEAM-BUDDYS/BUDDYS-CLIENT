@@ -34,8 +34,10 @@ export const CardProfile = ({
           unoptimized
           className="size-15 rounded-full object-cover"
         />
-        <div className="flex flex-col items-center">
-          <span className="text-body-sb-15 text-gray-800">{nickname}</span>
+        <div className="flex w-full flex-col items-center">
+          <span className="text-body-sb-15 w-30 truncate text-center text-gray-800">
+            {nickname}
+          </span>
           <span className="text-caption-m-10 text-gray-500">
             {country} · {ageGroup}
           </span>
