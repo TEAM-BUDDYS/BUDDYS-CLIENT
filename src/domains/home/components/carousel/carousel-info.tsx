@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-interface CarouselInfoProps {
+export interface CarouselInfoProps {
   profileImageUrl: string;
   title: string;
   country: string;
