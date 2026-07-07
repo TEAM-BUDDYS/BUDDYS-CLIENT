@@ -22,7 +22,7 @@ export const CommonImage = ({
       alt={alt}
       width={width}
       height={height}
-      className={cn('aspect-square shrink-0 object-cover', radius, className)}
+      className={cn('shrink-0 object-cover', radius, className)}
     />
   );
 };
