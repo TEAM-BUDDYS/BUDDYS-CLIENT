@@ -1,9 +1,8 @@
 import type { ButtonHTMLAttributes } from 'react';
 
+import type { PostRecruitmentStatusTypes } from '@domains/posts/model/post-recruitment-status';
 import { cn } from '@lib/cn';
 import { ChevronDownIcon } from '@shared/components/icons';
-
-type PostRecruitmentStatusTypes = 'recruiting' | 'completed';
 
 interface PostRecruitmentStatusButtonProps extends Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
