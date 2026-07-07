@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { ChevronDownIcon } from '@/shared/components/icons';
+import { ChevronDownIcon, ChevronUpIcon } from '@/shared/components/icons';
 import { ChipButton } from '@/shared/components/ui/chip/chip';
 
 import type { Tag } from '../../model/tag';
@@ -43,10 +43,10 @@ export const ChipGroup = ({
   };
 
   return (
-    <div className="relative max-w-[359px]">
+    <div className="relative">
       <div
         className={`flex min-w-0 gap-2 ${
-          isExpanded ? 'flex-wrap pr-20' : 'flex-nowrap overflow-hidden'
+          isExpanded ? 'flex-wrap pr-[77px]' : 'flex-nowrap overflow-hidden'
         }`}
       >
         {visibleTags.map((tag) => {
@@ -59,9 +59,6 @@ export const ChipGroup = ({
               key={tag.id}
               active={isSelected}
               aria-label={`${tag.name} 태그 ${isSelected ? '선택 해제' : '선택'}`}
-              className={`shrink-0 ${
-                isSelectionDisabled ? 'cursor-not-allowed opacity-40' : ''
-              }`}
               disabled={isSelectionDisabled}
               onClick={() => handleTagClick(tag.id)}
             >
@@ -74,14 +71,16 @@ export const ChipGroup = ({
       <button
         type="button"
         aria-label={isExpanded ? '태그 목록 접기' : '태그 목록 펼치기'}
-        className="absolute top-0 right-0 flex h-10 w-20 items-center justify-end bg-gradient-to-r from-white/0 via-white to-white text-gray-800"
+        className="absolute top-0 right-0 flex h-[39px] w-[77px] items-center justify-end bg-gradient-to-r from-white/0 via-white to-white text-gray-800"
         onClick={() => {
           setIsExpanded((prevIsExpanded) => !prevIsExpanded);
         }}
       >
-        <ChevronDownIcon
-          className={`size-6 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-        />
+        {isExpanded ? (
+          <ChevronUpIcon className="size-6 text-gray-500" />
+        ) : (
+          <ChevronDownIcon className="size-6 text-gray-500" />
+        )}
       </button>
     </div>
   );
