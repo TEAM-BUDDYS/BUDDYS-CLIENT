@@ -12,7 +12,6 @@ const typographyTokens = [
   'body-sb-15',
   'body-m-15',
   'body-sb-14',
-  'body-m-14',
   'body-r-14',
   'caption-m-12',
   'caption-r-12',
