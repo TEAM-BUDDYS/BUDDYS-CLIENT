@@ -8,12 +8,24 @@ export interface SearchHistoryItem {
   keyword: string;
 }
 
-interface SearchHistoryProps {
+interface BaseSearchHistoryProps {
   items: SearchHistoryItem[];
-  type: 'history' | 'suggestion';
   onSelect: (item: SearchHistoryItem) => void;
-  onDelete?: (id: string) => void;
 }
+
+interface HistorySearchHistoryProps extends BaseSearchHistoryProps {
+  type: 'history';
+  onDelete: (id: string) => void;
+}
+
+interface SuggestionSearchHistoryProps extends BaseSearchHistoryProps {
+  type: 'suggestion';
+  onDelete?: never;
+}
+
+type SearchHistoryProps =
+  | HistorySearchHistoryProps
+  | SuggestionSearchHistoryProps;
 
 export const SearchHistory = ({
   items,
@@ -45,7 +57,7 @@ export const SearchHistory = ({
               </span>
             </button>
 
-            {type === 'history' && onDelete && (
+            {type === 'history' && (
               <button
                 type="button"
                 aria-label={`${item.keyword} 검색 기록 삭제`}
