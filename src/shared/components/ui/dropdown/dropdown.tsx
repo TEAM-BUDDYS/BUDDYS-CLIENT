@@ -7,6 +7,7 @@ import { ChevronDownIcon, ChevronUpIcon } from '@/shared/components/icons';
 import { useClickOutside } from '@/shared/hooks/use-click-outside';
 
 import { OptionItem } from './option-item';
+import { OptionList } from './option-list';
 
 interface DropdownProps {
   options: string[];
@@ -52,11 +53,7 @@ export const Dropdown = ({
         )}
       </button>
       {isOpen && !disabled && (
-        <ul
-          className="absolute top-full z-10 mt-2 max-h-59 w-full overflow-y-auto rounded-xl border border-gray-200 bg-white px-4 py-2 shadow-[0_2px_2px_0_rgba(0,0,0,0.25)] [&::-webkit-scrollbar]:w-3 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border-4 [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:bg-clip-content [&::-webkit-scrollbar-track]:bg-transparent"
-          id={listboxId}
-          role="listbox"
-        >
+        <OptionList id={listboxId}>
           {options.map((option) => (
             <OptionItem
               key={option}
@@ -68,7 +65,7 @@ export const Dropdown = ({
               }}
             />
           ))}
-        </ul>
+        </OptionList>
       )}
     </article>
   );

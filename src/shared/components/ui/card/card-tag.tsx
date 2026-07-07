@@ -31,7 +31,7 @@ interface TagProps {
 
 export const Tag = ({ value }: TagProps) => {
   return (
-    <span className="text-mint-300 bg-mint-100 text-caption-m-10 rounded px-2 py-0.5">
+    <span className="text-mint-400 bg-mint-100 text-caption-m-10 rounded px-2 py-0.5 whitespace-nowrap">
       {value}
     </span>
   );
