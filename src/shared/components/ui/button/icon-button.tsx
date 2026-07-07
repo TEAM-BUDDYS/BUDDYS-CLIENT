@@ -60,7 +60,11 @@ export const IconButton = ({
       {...buttonProps}
       type={type}
       aria-label={ariaLabel}
-      className={cn(IconButtonVariants({ variant }), className)}
+      className={cn(
+        IconButtonVariants({ variant }),
+        !children && 'size-11 p-0',
+        className,
+      )}
     >
       <span
         aria-hidden

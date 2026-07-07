@@ -65,10 +65,12 @@ export const TextArea = ({
 
       <div
         className={cn(
-          'flex min-h-30 w-full flex-col rounded-xl border-2 border-transparent bg-gray-50 p-4',
-          'focus-within:border-mint-200 focus-within:bg-white',
-          disabled && 'cursor-not-allowed bg-gray-100',
-          isError && 'border-error-50 focus-within:border-error-50 bg-white',
+          'flex min-h-30 w-full flex-col rounded-xl border border-transparent bg-gray-50 p-4 outline outline-transparent',
+          !disabled &&
+            'focus-within:border-mint-200 focus-within:outline-mint-200 border-gray-200 focus-within:bg-white',
+          disabled && 'cursor-not-allowed',
+          isError &&
+            'border-error-50 focus-within:border-error-50 focus-within:outline-error-50 bg-white',
           className,
         )}
       >
