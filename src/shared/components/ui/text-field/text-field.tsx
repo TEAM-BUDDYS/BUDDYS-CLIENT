@@ -2,13 +2,13 @@
 
 import { type ComponentProps, type ReactNode, useId } from 'react';
 
-import { cn } from '@lib/cn';
+import { cn } from '@/lib/cn';
 import {
   CheckCircleIcon,
   EssentialIcon,
   WarningIcon,
   XCircleIcon,
-} from '@shared/components/icons';
+} from '@/shared/components/icons';
 
 export type TextFieldStatus = 'default' | 'success' | 'error';
 
