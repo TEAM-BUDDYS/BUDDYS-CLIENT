@@ -9,7 +9,7 @@ import type { Tag } from '../../model/tag';
 
 interface ChipGroupProps {
   tags: Tag[];
-  defaultSelectedTagIds?: number[];
+  currentSelectedTagIds?: number[];
   maxSelectionCount?: number;
   collapsedCount?: number;
   onChange?: (selectedTagIds: number[]) => void;
@@ -17,13 +17,13 @@ interface ChipGroupProps {
 
 export const ChipGroup = ({
   tags,
-  defaultSelectedTagIds = [],
+  currentSelectedTagIds = [],
   maxSelectionCount = 3,
   collapsedCount = 5,
   onChange,
 }: ChipGroupProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [selectedTagIds, setSelectedTagIds] = useState(defaultSelectedTagIds);
+  const [selectedTagIds, setSelectedTagIds] = useState(currentSelectedTagIds);
 
   const visibleTags = isExpanded ? tags : tags.slice(0, collapsedCount);
 
