@@ -41,15 +41,11 @@ export const PostRecruitmentStatusBottomSheet = ({
     onClose();
   };
 
-  if (!open) {
-    return null;
-  }
-
   return (
     <BottomSheet
       ariaLabelledBy={titleId}
       className="px-4 pb-8.5"
-      open
+      open={open}
       onClose={onClose}
     >
       <h2 className="sr-only" id={titleId}>
