@@ -4,13 +4,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ReactElement, SVGProps } from 'react';
 
-import { cn } from '@lib/cn';
+import { cn } from '@/lib/cn';
 import {
   HomeIcon,
   LocationIcon,
   MessageIcon,
   MyIcon,
-} from '@shared/components/icons';
+} from '@/shared/components/icons';
 
 interface BottomNavigationItem {
   key: string;

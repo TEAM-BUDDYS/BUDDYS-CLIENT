@@ -1,7 +1,7 @@
 'use client';
 
-import { ChevronDownIcon, ChevronUpIcon } from '@shared/components/icons';
 import { cn } from '@/lib/cn';
+import { ChevronDownIcon, ChevronUpIcon } from '@/shared/components/icons';
 
 interface ChipListToggleButtonProps {
   isOpen: boolean;

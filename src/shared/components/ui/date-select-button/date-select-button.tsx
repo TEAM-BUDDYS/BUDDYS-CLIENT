@@ -1,8 +1,8 @@
 import type { ButtonHTMLAttributes } from 'react';
 
-import { cn } from '@lib/cn';
-import { CalendarIcon } from '@shared/components/icons';
-import { formatDateWithWeekday } from '@shared/utils/format-date-range';
+import { cn } from '@/lib/cn';
+import { CalendarIcon } from '@/shared/components/icons';
+import { formatDateWithWeekday } from '@/shared/utils/format-date-range';
 
 interface DateSelectButtonProps extends Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,

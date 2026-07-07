@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react';
 import { Drawer } from 'vaul';
 
-import { cn } from '@lib/cn';
+import { cn } from '@/lib/cn';
 
 interface BottomSheetProps {
   open: boolean;

@@ -1,7 +1,7 @@
 import type { HTMLAttributes } from 'react';
 
-import { cn } from '@lib/cn';
-import { CommonImage } from '@shared/components/ui';
+import { cn } from '@/lib/cn';
+import { CommonImage } from '@/shared/components/ui';
 
 interface CommentAuthor {
   userId: number;
