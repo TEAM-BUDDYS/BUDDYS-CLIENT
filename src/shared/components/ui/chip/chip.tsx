@@ -12,6 +12,8 @@ const chipBase =
 
 const chipActive = 'border-mint-300 bg-mint-100 text-mint-300';
 
+const chipDisabled = 'border-gray-200 bg-gray-50 text-gray-200';
+
 interface ChipProps extends React.HTMLAttributes<HTMLSpanElement> {
   size?: ChipSize;
   active?: boolean;
@@ -48,6 +50,7 @@ export const ChipButton = ({
   size = 'sm',
   className,
   active = false,
+  disabled,
   ...props
 }: ChipButtonProps) => {
   return (
@@ -59,6 +62,7 @@ export const ChipButton = ({
         chipBase,
         chipSizeStyles[size],
         active && chipActive,
+        disabled && chipDisabled,
         className,
       )}
     />
