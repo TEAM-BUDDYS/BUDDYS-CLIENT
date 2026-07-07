@@ -1,25 +1,19 @@
 'use client';
 
-import { useState } from 'react';
-
 import { ChevronDownIcon, ChevronUpIcon } from '@shared/components/icons';
 import { cn } from '@/lib/cn';
 
 interface ChipListToggleButtonProps {
-  defaultOpen?: boolean;
-  onToggle?: (isOpen: boolean) => void;
+  isOpen: boolean;
+  onToggle: (isOpen: boolean) => void;
 }
 
 export const ChipListToggleButton = ({
-  defaultOpen = false,
+  isOpen,
   onToggle,
 }: ChipListToggleButtonProps) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-
   const handleClick = () => {
-    const nextIsOpen = !isOpen;
-    setIsOpen(nextIsOpen);
-    onToggle?.(nextIsOpen);
+    onToggle(!isOpen);
   };
 
   return (
