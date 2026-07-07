@@ -4,6 +4,7 @@ export { CalendarIcon } from './calendar-icon';
 export { CameraIcon } from './camera-icon';
 export { ChatIcon } from './chat-icon';
 export { CheckCircleIcon } from './check-circle-icon';
+export { CheckCircleLineIcon } from './check-circle-line-icon';
 export { ChevronDownIcon } from './chevron-down-icon';
 export { ChevronLeftIcon } from './chevron-left-icon';
 export { ChevronRightIcon } from './chevron-right-icon';
