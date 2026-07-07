@@ -1,6 +1,5 @@
-import Image from 'next/image';
-
 import { CardDate } from '@/shared/components/ui/card/card-date';
+import { CommonImage } from '@/shared/components/ui/common-image/common-image';
 
 interface SummaryCardProps {
   title: string;
@@ -29,13 +28,13 @@ export const SummaryCard = ({
         <CardDate startDate={startDate} endDate={endDate} />
       </section>
       {image && (
-        <Image
+        <CommonImage
           src={image}
           alt={`${title} 썸네일`}
-          width={108}
-          height={108}
+          width={72}
+          height={72}
           unoptimized
-          className="size-18 rounded-xl object-cover"
+          radius="rounded-xl"
         />
       )}
     </article>
