@@ -2,24 +2,26 @@ import { cn } from '@/lib/cn';
 import { CommonImage } from '@/shared/components/ui';
 
 import { formatChatTime } from '../../utils/format-chat-time';
-import profileImg from './달뭉.webp';
 
-interface ChatMessageProps {
-  type: 'incoming' | 'outgoing';
+interface BaseChatMessageProps {
   content: string;
   createdAt: string;
-  isRead?: boolean;
-  profileImageUrl?: string;
 }
 
-export const ChatMessage = ({
-  type,
-  content,
-  createdAt,
-  isRead,
-  profileImageUrl,
-}: ChatMessageProps) => {
-  const isOutgoing = type === 'outgoing';
+type ChatMessageProps =
+  | (BaseChatMessageProps & {
+      type: 'incoming';
+      profileImageUrl: string;
+      isRead?: never;
+    })
+  | (BaseChatMessageProps & {
+      type: 'outgoing';
+      profileImageUrl?: never;
+      isRead?: boolean;
+    });
+
+export const ChatMessage = (props: ChatMessageProps) => {
+  const isOutgoing = props.type === 'outgoing';
 
   return (
     <div
@@ -28,7 +30,7 @@ export const ChatMessage = ({
       {!isOutgoing && (
         <CommonImage
           radius="rounded-full"
-          src={profileImg}
+          src={props.profileImageUrl}
           alt="프로필 이미지"
           width={40}
           height={40}
@@ -43,7 +45,7 @@ export const ChatMessage = ({
         )}
       >
         <div className="flex items-end gap-2">
-          {isOutgoing && isRead && (
+          {isOutgoing && props.isRead && (
             <span className="text-caption-r-12 text-gray-500">읽음</span>
           )}
           <div
@@ -54,11 +56,11 @@ export const ChatMessage = ({
                 : 'rounded-tl-xs bg-gray-50',
             )}
           >
-            {content}
+            {props.content}
           </div>
         </div>
         <span className="text-caption-m-12 text-gray-500">
-          {formatChatTime(createdAt)}
+          {formatChatTime(props.createdAt)}
         </span>
       </div>
     </div>
