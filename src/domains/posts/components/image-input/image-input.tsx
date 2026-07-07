@@ -1,11 +1,13 @@
-import type { ComponentPropsWithoutRef } from 'react';
+'use client';
+
+import type { ComponentProps } from 'react';
 
 import { cn } from '@lib/cn';
 import { PlusIcon } from '@shared/components/icons';
 
 interface ImageInputProps extends Omit<
-  ComponentPropsWithoutRef<'input'>,
-  'children' | 'className' | 'type'
+  ComponentProps<'input'>,
+  'children' | 'className' | 'type' | 'value'
 > {
   className?: string;
   label?: string;
