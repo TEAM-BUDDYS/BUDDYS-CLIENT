@@ -1,7 +1,7 @@
 import type { HTMLAttributes } from 'react';
 
 import { cn } from '@lib/cn';
-import { ProfileIcon } from '@shared/components/icons';
+import { CommonImage } from '@shared/components/ui';
 
 interface CommentAuthor {
   userId: number;
@@ -27,7 +27,15 @@ export const CommentItem = ({
       className={cn('flex w-full items-start gap-3', className)}
       {...props}
     >
-      <ProfileIcon className="size-10 shrink-0" />
+      <CommonImage
+        src={author.profileImageUrl}
+        alt={`${author.nickname} 프로필 이미지`}
+        width={40}
+        height={40}
+        unoptimized
+        radius="rounded-full"
+        className="size-10"
+      />
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <div className="flex items-center gap-2 whitespace-nowrap">
           <span className="text-body-sb-15 text-gray-800">
