@@ -6,6 +6,11 @@ import { cn } from '@/lib/cn';
 import { SendIcon } from '@/shared/components/icons';
 import { IconButton } from '@/shared/components/ui/button/icon-button';
 
+type BottomActionBarInputProps = Omit<
+  ComponentPropsWithoutRef<'input'>,
+  'children' | 'className' | 'onChange' | 'placeholder' | 'type' | 'value'
+>;
+
 type BottomActionBarProps = Omit<
   ComponentPropsWithoutRef<'form'>,
   'children'
@@ -13,10 +18,12 @@ type BottomActionBarProps = Omit<
   placeholder?: string;
   value: string;
   onValueChange: (value: string) => void;
+  inputProps?: BottomActionBarInputProps;
 };
 
 export const BottomActionBar = ({
   className,
+  inputProps,
   placeholder = '내용을 입력해주세요.',
   value,
   onValueChange,
@@ -31,7 +38,8 @@ export const BottomActionBar = ({
       {...formProps}
     >
       <input
-        aria-label="댓글 입력"
+        aria-label="내용 입력"
+        {...inputProps}
         className="text-body-m-15 h-12 min-w-0 flex-1 rounded-full bg-gray-50 px-[20.5px] text-gray-800 outline-none placeholder:text-gray-500"
         onChange={(event) => onValueChange(event.target.value)}
         placeholder={placeholder}
@@ -39,7 +47,7 @@ export const BottomActionBar = ({
         value={value}
       />
       <IconButton
-        aria-label="댓글 작성"
+        aria-label="전송"
         className="shrink-0"
         icon={<SendIcon />}
         type="submit"
