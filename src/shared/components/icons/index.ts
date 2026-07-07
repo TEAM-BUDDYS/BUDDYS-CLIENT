@@ -9,6 +9,7 @@ export { ChevronDownIcon } from './chevron-down-icon';
 export { ChevronLeftIcon } from './chevron-left-icon';
 export { ChevronRightIcon } from './chevron-right-icon';
 export { ChevronUpIcon } from './chevron-up-icon';
+export { ClockIcon } from './clock-icon';
 export { DangerIcon } from './danger-icon';
 export { EssentialIcon } from './essential-icon';
 export { ForbidIcon } from './forbid-icon';
