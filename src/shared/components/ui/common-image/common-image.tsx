@@ -2,10 +2,7 @@ import Image, { type ImageProps } from 'next/image';
 
 import { cn } from '@/lib/cn';
 
-interface CommonImageProps extends Omit<
-  ImageProps,
-  'fill' | 'width' | 'height'
-> {
+interface CommonImageProps extends Omit<ImageProps, 'fill'> {
   size: number;
   radius: string;
 }
@@ -13,7 +10,8 @@ interface CommonImageProps extends Omit<
 export const CommonImage = ({
   src,
   alt,
-  size,
+  width,
+  height,
   radius,
   className,
   ...imageProps
@@ -23,8 +21,8 @@ export const CommonImage = ({
       {...imageProps}
       src={src}
       alt={alt}
-      width={size}
-      height={size}
+      width={width}
+      height={height}
       className={cn('aspect-square shrink-0 object-cover', radius, className)}
     />
   );
