@@ -2,7 +2,7 @@
 
 import { useId } from 'react';
 
-import { CheckCircleIcon, SandglassIcon } from '@shared/components/icons';
+import { CheckCircleLineIcon, SandglassIcon } from '@shared/components/icons';
 import { BottomSheet } from '@shared/components/ui/bottom-sheet/bottom-sheet';
 import { Button } from '@shared/components/ui/button/button';
 
@@ -24,7 +24,7 @@ const POST_RECRUITMENT_STATUS_OPTIONS = [
   {
     key: 'completed',
     label: '모집 완료',
-    icon: <CheckCircleIcon />,
+    icon: <CheckCircleLineIcon />,
   },
 ] as const;
 
@@ -63,11 +63,10 @@ export const PostRecruitmentStatusBottomSheet = ({
             aria-pressed={value === option.key}
             className={
               index === 0
-                ? 'h-13 flex-none rounded-b-none text-gray-800'
-                : 'h-13 flex-none rounded-t-none text-gray-800'
+                ? 'rounded-b-none text-gray-800'
+                : 'rounded-t-none text-gray-800'
             }
             icon={option.icon}
-            type="button"
             variant="neutral"
             onClick={() => handleStatusClick(option.key)}
           >
@@ -75,7 +74,7 @@ export const PostRecruitmentStatusBottomSheet = ({
           </Button>
         ))}
       </div>
-      <Button className="mt-5.5 flex-none" type="button" onClick={onClose}>
+      <Button className="mt-5.5" onClick={onClose}>
         닫기
       </Button>
     </BottomSheet>
