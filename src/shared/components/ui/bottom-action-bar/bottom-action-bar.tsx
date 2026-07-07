@@ -17,15 +17,15 @@ type BottomActionBarInputProps = Omit<
   | 'value'
 >;
 
-type BottomActionBarProps = Omit<
+interface BottomActionBarProps extends Omit<
   ComponentPropsWithoutRef<'form'>,
   'children'
-> & {
+> {
   placeholder?: string;
   value: string;
   onValueChange: (value: string) => void;
   inputProps?: BottomActionBarInputProps;
-};
+}
 
 export const BottomActionBar = ({
   className,
