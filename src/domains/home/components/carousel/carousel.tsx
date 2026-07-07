@@ -1,14 +1,12 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 
-import { CarouselIndicator } from '@/domains/home/components/carousel/carousel-indicator';
-import {
-  CarouselInfo,
-  type CarouselInfoProps,
-} from '@/domains/home/components/carousel/carousel-info';
-import { useCarousel } from '@/domains/home/components/carousel/use-carousel';
+import { CommonImage } from '@/shared/components/ui';
+
+import { CarouselIndicator } from './carousel-indicator';
+import { CarouselInfo, type CarouselInfoProps } from './carousel-info';
+import { useCarousel } from './use-carousel';
 
 interface CarouselItem {
   href: string;
@@ -35,13 +33,13 @@ export const Carousel = ({ items }: CarouselProps) => {
               href={item.href}
               className="relative block w-full shrink-0 overflow-hidden rounded-lg"
             >
-              <Image
+              <CommonImage
                 src={item.imageUrl}
                 alt={item.carouselInfo.title}
                 width={412}
                 height={264}
                 unoptimized
-                className="h-55 w-full object-cover"
+                radius="rounded-lg"
               />
 
               <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/60" />
