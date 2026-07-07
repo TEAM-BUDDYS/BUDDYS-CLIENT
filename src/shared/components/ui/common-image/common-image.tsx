@@ -4,8 +4,6 @@ import { cn } from '@/lib/cn';
 
 type Radius = 'full' | 'sm' | 'md' | 'lg';
 
-type Size = 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'xxxl';
-
 const radiusStyles = {
   full: 'rounded-full',
   sm: 'rounded-[4px]',
@@ -13,39 +11,26 @@ const radiusStyles = {
   lg: 'rounded-[12px]',
 };
 
-const imgSizes = {
-  xxs: 40,
-  xs: 48,
-  sm: 50,
-  md: 60,
-  lg: 72,
-  xl: 96,
-  xxl: 110,
-  xxxl: 120,
-};
-
-interface CommonImgProps extends Omit<ImageProps, 'width' | 'height'> {
-  size: Size;
+interface CommonImageProps extends Omit<ImageProps, 'fill'> {
   radius: Radius;
 }
 
 export const CommonImage = ({
   src,
   alt,
-  size,
+  width,
+  height,
   radius,
   className,
   ...imageProps
-}: CommonImgProps) => {
-  const imageSize = imgSizes[size];
-
+}: CommonImageProps) => {
   return (
     <Image
       {...imageProps}
       src={src}
       alt={alt}
-      width={imageSize}
-      height={imageSize}
+      width={width}
+      height={height}
       className={cn(
         'aspect-square shrink-0 object-cover',
         radiusStyles[radius],
