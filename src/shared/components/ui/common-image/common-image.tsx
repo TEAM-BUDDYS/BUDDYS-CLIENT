@@ -3,7 +3,6 @@ import Image, { type ImageProps } from 'next/image';
 import { cn } from '@/lib/cn';
 
 interface CommonImageProps extends Omit<ImageProps, 'fill'> {
-  size: number;
   radius: string;
 }
 
