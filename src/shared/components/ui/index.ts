@@ -1,3 +1,4 @@
+export { BottomActionBar } from './bottom-action-bar/bottom-action-bar';
 export { BottomSheet } from './bottom-sheet/bottom-sheet';
 export { Button, type ButtonProps } from './button/button';
 export { IconButton, type IconButtonProps } from './button/icon-button';
