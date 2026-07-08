@@ -1,7 +1,7 @@
 import { CardDate } from '@/shared/components/ui/card/card-date';
 import { CommonImage } from '@/shared/components/ui/common-image/common-image';
 
-interface CardProfileProps {
+interface ArchivePostCardProps {
   title: string;
   content: string;
   startDate: string;
@@ -9,13 +9,13 @@ interface CardProfileProps {
   image?: string;
 }
 
-export const CardProfile = ({
+export const ArchivePostCard = ({
   title,
   content,
   startDate,
   endDate,
   image,
-}: CardProfileProps) => {
+}: ArchivePostCardProps) => {
   return (
     <article className="flex w-full flex-col items-start gap-2.5 rounded-xl border border-gray-200 p-3">
       <div className="flex w-full gap-3">
