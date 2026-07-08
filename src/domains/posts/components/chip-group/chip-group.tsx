@@ -10,7 +10,7 @@ import type { Tag } from '../../model/tag';
 
 interface ChipGroupProps {
   tags: Tag[];
-  selectedTagIds?: number[];
+  selectedTagIds: number[];
   maxSelectionCount?: number;
   collapsedCount?: number;
   onChange: (selectedTagIds: number[]) => void;
@@ -68,21 +68,23 @@ export const ChipGroup = ({
         })}
       </div>
 
-      <button
-        type="button"
-        aria-label={isExpanded ? '태그 목록 접기' : '태그 목록 펼치기'}
-        aria-expanded={isExpanded}
-        className="absolute top-0 right-0 flex h-[39px] w-[77px] items-center justify-end bg-gradient-to-r from-white/0 via-white to-white text-gray-800"
-        onClick={() => {
-          setIsExpanded((prevIsExpanded) => !prevIsExpanded);
-        }}
-      >
-        {isExpanded ? (
-          <ChevronUpIcon className="size-6 text-gray-500" />
-        ) : (
-          <ChevronDownIcon className="size-6 text-gray-500" />
-        )}
-      </button>
+      {tags.length > collapsedCount && (
+        <button
+          type="button"
+          aria-label={isExpanded ? '태그 목록 접기' : '태그 목록 펼치기'}
+          aria-expanded={isExpanded}
+          className="absolute top-0 right-0 flex h-[39px] w-[77px] items-center justify-end bg-gradient-to-r from-white/0 via-white to-white text-gray-800"
+          onClick={() => {
+            setIsExpanded((prevIsExpanded) => !prevIsExpanded);
+          }}
+        >
+          {isExpanded ? (
+            <ChevronUpIcon className="size-6 text-gray-500" />
+          ) : (
+            <ChevronDownIcon className="size-6 text-gray-500" />
+          )}
+        </button>
+      )}
     </div>
   );
 };
