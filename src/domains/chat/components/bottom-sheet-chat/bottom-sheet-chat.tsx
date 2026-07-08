@@ -12,27 +12,35 @@ import {
 import { BottomSheet, Button } from '@/shared/components/ui';
 
 type ConfirmType = 'block' | 'leave' | null;
+type ChatBottomSheetAction =
+  | 'report'
+  | 'toggleNotification'
+  | 'block'
+  | 'leave';
 
 interface BottomSheetChatProps {
   open: boolean;
   isNotificationOn?: boolean;
-  onClose: () => void; // 닫기
-  onReport: () => void; // 신고하기
-  onToggleNotification: () => void;
-  onConfirmBlock: () => void; // 차단하기
-  onConfirmLeaveChat: () => void; // 채팅방 나가기
+  onClose: () => void;
+  onAction?: (action: ChatBottomSheetAction) => void;
 }
 
 export const BottomSheetChat = ({
   open,
   isNotificationOn = true,
   onClose,
-  onReport,
-  onToggleNotification,
-  onConfirmBlock,
-  onConfirmLeaveChat,
+  onAction,
 }: BottomSheetChatProps) => {
   const [confirmType, setConfirmType] = useState<ConfirmType>(null);
+
+  const handleAction = (action: ChatBottomSheetAction) => {
+    if (onAction) {
+      onAction(action);
+      return;
+    }
+
+    // TODO: 공통 Modal 컴포넌트 생기면 "구현중입니다" 모달 열기
+  };
 
   const handleBlockClick = () => {
     setConfirmType('block');
@@ -43,15 +51,17 @@ export const BottomSheetChat = ({
   };
 
   const handleConfirm = () => {
-    if (confirmType === 'block') {
-      onConfirmBlock();
+    if (!confirmType) {
+      return;
     }
 
-    if (confirmType === 'leave') {
-      onConfirmLeaveChat();
-    }
-
+    handleAction(confirmType);
     setConfirmType(null);
+  };
+
+  const handleClose = () => {
+    setConfirmType(null);
+    onClose();
   };
 
   const menuItems = [
@@ -63,18 +73,18 @@ export const BottomSheetChat = ({
     {
       label: '신고하기',
       icon: <DangerIcon />,
-      onClick: onReport,
+      onClick: () => handleAction('report'),
     },
     {
       label: isNotificationOn ? '알림 끄기' : '알림 켜기',
       icon: isNotificationOn ? <NoticeIcon /> : <BellIcon />,
-      onClick: onToggleNotification,
+      onClick: () => handleAction('toggleNotification'),
     },
   ];
 
   return (
     <>
-      <BottomSheet open={open} onClose={onClose} ariaLabel="채팅방 옵션">
+      <BottomSheet open={open} onClose={handleClose} ariaLabel="채팅방 옵션">
         <div className="mx-4 mb-8.5 flex flex-col gap-4">
           <div className="overflow-hidden rounded-xl [&>button]:rounded-none">
             {menuItems.map(({ label, icon, onClick }) => (
@@ -100,7 +110,7 @@ export const BottomSheetChat = ({
             채팅방 나가기
           </Button>
 
-          <Button onClick={onClose}>닫기</Button>
+          <Button onClick={handleClose}>닫기</Button>
         </div>
       </BottomSheet>
 
