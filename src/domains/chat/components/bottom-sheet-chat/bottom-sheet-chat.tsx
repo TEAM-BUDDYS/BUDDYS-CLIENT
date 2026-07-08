@@ -24,7 +24,7 @@ interface BottomSheetChatProps {
 }
 
 export const BottomSheetChat = ({
-  //open,
+  open,
   isNotificationOn = true,
   onClose,
   onReport,
@@ -74,7 +74,7 @@ export const BottomSheetChat = ({
 
   return (
     <>
-      <BottomSheet open={true} onClose={onClose}>
+      <BottomSheet open={open} onClose={onClose}>
         <div className="mx-4 mb-8.5 flex flex-col gap-4">
           <div className="overflow-hidden rounded-xl [&>button]:rounded-none">
             {menuItems.map(({ label, icon, onClick }) => (
