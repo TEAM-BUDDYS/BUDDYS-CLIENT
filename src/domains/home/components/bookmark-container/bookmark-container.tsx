@@ -7,43 +7,37 @@ import { BookmarkIcon } from '@/shared/components/icons';
 
 type BookmarkOverlayVariant = 'card' | 'summary';
 
+const textOnlyBookmarkPosition = 'top-1/2 right-0 -translate-y-1/2';
+
 const bookmarkPosition = {
-  card: {
-    image: 'top-2 right-2',
-    textOnly: 'top-1/2 right-0 -translate-y-1/2',
-  },
-  summary: {
-    image: 'top-1.5 right-1.5',
-    textOnly: 'top-1/2 right-0 -translate-y-1/2',
-  },
+  card: 'top-2 right-2',
+  summary: 'top-1.5 right-1.5',
 } as const;
 
 interface BookmarkContainerProps {
   hasImage: boolean;
   isBookmarked: boolean;
-  variant?: BookmarkOverlayVariant;
+  variant: BookmarkOverlayVariant;
   onBookmarkClick: () => void;
   children: ReactNode;
 }
 
-export const BookmarkOverlayContainer = ({
+export const BookmarkContainer = ({
   hasImage,
   isBookmarked,
-  variant = 'card',
+  variant,
   onBookmarkClick,
   children,
 }: BookmarkContainerProps) => {
   return (
-    <div className="relative">
+    <div className="relative w-full">
       {children}
 
       <button
         type="button"
         className={cn(
           'absolute',
-          hasImage
-            ? bookmarkPosition[variant].image
-            : bookmarkPosition[variant].textOnly,
+          hasImage ? bookmarkPosition[variant] : textOnlyBookmarkPosition,
           isBookmarked ? 'text-mint-300' : 'text-gray-200',
         )}
         aria-label={isBookmarked ? '북마크 해제' : '북마크 추가'}
