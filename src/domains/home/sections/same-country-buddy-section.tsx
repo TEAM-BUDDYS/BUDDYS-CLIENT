@@ -1,7 +1,7 @@
 import { CardProfile } from '@/domains/home/components/card-profile/card-profile';
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
 
-const buddySearchItems = [
+const sameCountryBuddyItems = [
   {
     nickname: '닉네임',
     country: '나라',
@@ -44,7 +44,7 @@ const buddySearchItems = [
   },
 ];
 
-export const BuddySearchSection = () => {
+export const SameCountryBuddySection = () => {
   return (
     <section className="flex flex-col gap-5">
       <SectionHeader
@@ -54,7 +54,7 @@ export const BuddySearchSection = () => {
 
       <div className="-mx-4 scrollbar-none overflow-x-auto px-4">
         <div className="flex gap-3">
-          {buddySearchItems.map((item) => (
+          {sameCountryBuddyItems.map((item) => (
             <CardProfile key={`${item.nickname}-${item.imageUrl}`} {...item} />
           ))}
         </div>
