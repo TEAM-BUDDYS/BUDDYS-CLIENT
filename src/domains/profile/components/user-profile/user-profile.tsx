@@ -29,7 +29,7 @@ export const UserProfile = ({
         className="mb-3"
       />
       <div className="flex items-center gap-2">
-        <span className="text-title-b-18">{nickname}</span>
+        <span className="text-title-b-18 text-gray-800">{nickname}</span>
         {badgeIcon && (
           <span
             aria-label={badgeLabel}
