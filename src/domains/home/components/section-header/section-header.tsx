@@ -1,3 +1,4 @@
+'use client';
 import type { ReactNode } from 'react';
 
 interface SectionHeaderProps {
@@ -25,7 +26,7 @@ export const SectionHeader = ({
         (onClick ? (
           <button
             type="button"
-            className="-mr-1.5 shrink-0"
+            className="-mr-4 flex size-11 shrink-0 items-center justify-center"
             aria-label={rightSlotLabel ?? title}
             onClick={onClick}
           >
