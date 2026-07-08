@@ -32,6 +32,7 @@ export const UserProfile = ({
         <span className="text-title-b-18 text-gray-800">{nickname}</span>
         {badgeIcon && (
           <span
+            aria-hidden={badgeLabel ? undefined : true}
             aria-label={badgeLabel}
             className="flex h-5 w-5 shrink-0 items-center justify-center"
             role={badgeLabel ? 'img' : undefined}
