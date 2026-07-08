@@ -4,7 +4,7 @@ import type { ComponentProps } from 'react';
 
 import { cn } from '@/lib/cn';
 import { CameraIcon } from '@/shared/components/icons';
-import { CommonImage } from '@/shared/components/ui';
+import { CommonImage } from '@/shared/components/ui/common-image/common-image';
 
 interface ProfileImageInputProps extends Omit<
   ComponentProps<'input'>,
