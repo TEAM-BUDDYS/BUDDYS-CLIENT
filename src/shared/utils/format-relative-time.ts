@@ -6,9 +6,15 @@ const YEAR = DAY * 365;
 
 export const formatRelativeTime = (date: string): string => {
   const targetDate = new Date(date);
-  const now = new Date();
+  const targetTime = targetDate.getTime();
 
-  const diffSeconds = Math.floor((now.getTime() - targetDate.getTime()) / 1000);
+  if (Number.isNaN(targetTime)) {
+    return '';
+  }
+
+  const nowTime = new Date().getTime();
+
+  const diffSeconds = Math.floor((nowTime - targetTime) / 1000);
 
   if (diffSeconds < MINUTE) return '방금 전';
   if (diffSeconds < HOUR) return `${Math.floor(diffSeconds / MINUTE)}분 전`;
