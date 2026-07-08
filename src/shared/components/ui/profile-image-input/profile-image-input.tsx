@@ -8,7 +8,7 @@ import { CommonImage } from '@/shared/components/ui/common-image/common-image';
 
 interface ProfileImageInputProps extends Omit<
   ComponentProps<'input'>,
-  'children' | 'className' | 'type' | 'value'
+  'aria-label' | 'children' | 'className' | 'type' | 'value'
 > {
   alt: string;
   className?: string;
@@ -51,7 +51,7 @@ export const ProfileImageInput = ({
         className="size-30"
       />
       <span className="bg-mint-50 text-mint-300 absolute right-0 bottom-0 flex size-10 items-center justify-center rounded-full">
-        <CameraIcon aria-hidden className="size-5" />
+        <CameraIcon className="size-5" />
       </span>
     </label>
   );
