@@ -16,6 +16,7 @@ export const formatRelativeTime = (date: string): string => {
 
   const diffSeconds = Math.floor((nowTime - targetTime) / 1000);
 
+  if (diffSeconds < 0) return '';
   if (diffSeconds < MINUTE) return '방금 전';
   if (diffSeconds < HOUR) return `${Math.floor(diffSeconds / MINUTE)}분 전`;
   if (diffSeconds < DAY) return `${Math.floor(diffSeconds / HOUR)}시간 전`;
