@@ -3,8 +3,6 @@ import { ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 import { CommonImage } from '@/shared/components/ui';
 
-const IMAGE_SIZE = 110;
-
 interface UserProfileProps {
   imageUrl: string;
   nickname: string;
@@ -25,8 +23,8 @@ export const UserProfile = ({
       <CommonImage
         src={imageUrl}
         alt={`${nickname}님의 프로필 이미지`}
-        width={IMAGE_SIZE}
-        height={IMAGE_SIZE}
+        width={110}
+        height={110}
         radius="rounded-full"
         className="mb-3"
       />
