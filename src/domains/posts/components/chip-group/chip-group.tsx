@@ -52,7 +52,6 @@ export const ChipGroup = ({
           'flex min-w-0 gap-2',
           hasToggle && !isExpanded && 'flex-nowrap overflow-hidden',
           (!hasToggle || isExpanded) && 'flex-wrap',
-          hasToggle && isExpanded && 'pr-[77px]',
         )}
       >
         {visibleTags.map((tag) => {
@@ -75,21 +74,23 @@ export const ChipGroup = ({
       </div>
 
       {hasToggle && (
-        <button
-          type="button"
-          aria-label={isExpanded ? '태그 목록 접기' : '태그 목록 펼치기'}
-          aria-expanded={isExpanded}
-          className="absolute top-0 right-0 flex h-[39px] w-[77px] items-center justify-end bg-gradient-to-r from-white/0 via-white to-white text-gray-800"
-          onClick={() => {
-            setIsExpanded((prevIsExpanded) => !prevIsExpanded);
-          }}
-        >
-          {isExpanded ? (
-            <ChevronUpIcon className="size-6 text-gray-500" />
-          ) : (
-            <ChevronDownIcon className="size-6 text-gray-500" />
-          )}
-        </button>
+        <div className="h-full">
+          <button
+            type="button"
+            aria-label={isExpanded ? '태그 목록 접기' : '태그 목록 펼치기'}
+            aria-expanded={isExpanded}
+            className="absolute top-0 right-0 flex h-[39px] w-[77px] items-center justify-end bg-gradient-to-r from-white/0 via-white to-white text-gray-800"
+            onClick={() => {
+              setIsExpanded((prevIsExpanded) => !prevIsExpanded);
+            }}
+          >
+            {isExpanded ? (
+              <ChevronUpIcon className="size-6 text-gray-500" />
+            ) : (
+              <ChevronDownIcon className="size-6 text-gray-500" />
+            )}
+          </button>
+        </div>
       )}
     </div>
   );
