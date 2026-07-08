@@ -15,7 +15,7 @@ const ButtonVariants = cva(
         secondary:
           'text-body-sb-16 bg-white border border-gray-200 text-gray-800 active:bg-mint-50 active:border-mint-200 active:text-mint-300 disabled:text-gray-200',
         neutral:
-          'text-body-m-15 bg-gray-50 active:bg-gray-100 disabled:text-gray-200',
+          'text-body-m-15 bg-gray-50 text-gray-800 active:bg-gray-100 disabled:text-gray-200',
         kakao: 'text-body-m-15 bg-[#FAE100] text-gray-900',
       },
       align: {
