@@ -1,0 +1,39 @@
+import type { ReactNode } from 'react';
+
+interface SectionHeaderProps {
+  label: string;
+  title: string;
+  rightSlot?: ReactNode;
+  rightSlotLabel?: string;
+  onClick?: () => void;
+}
+
+export const SectionHeader = ({
+  label,
+  title,
+  rightSlot,
+  rightSlotLabel,
+  onClick,
+}: SectionHeaderProps) => {
+  return (
+    <header className="flex items-center justify-between">
+      <div className="flex flex-col">
+        <span className="text-body-m-15 text-gray-500">{label}</span>
+        <h2 className="text-title-b-18 text-gray-800">{title}</h2>
+      </div>
+      {rightSlot &&
+        (onClick ? (
+          <button
+            type="button"
+            className="-mr-1.5 shrink-0"
+            aria-label={rightSlotLabel ?? title}
+            onClick={onClick}
+          >
+            {rightSlot}
+          </button>
+        ) : (
+          <div className="shrink-0">{rightSlot}</div>
+        ))}
+    </header>
+  );
+};
