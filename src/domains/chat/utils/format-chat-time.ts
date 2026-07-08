@@ -1,6 +1,10 @@
 export const formatChatTime = (date: Date | string) => {
   const targetDate = new Date(date);
 
+  if (Number.isNaN(targetDate.getTime())) {
+    return '';
+  }
+
   const hours = targetDate.getHours();
   const minutes = targetDate.getMinutes();
 
