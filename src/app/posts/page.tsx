@@ -1,7 +1,5 @@
+import { PostCreateFlow } from '@/domains/posts/features/post-create/post-create-flow';
+
 export default function PostsPage() {
-  return (
-    <main>
-      <h1>게시물</h1>
-    </main>
-  );
+  return <PostCreateFlow />;
 }
