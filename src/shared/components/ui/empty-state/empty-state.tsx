@@ -17,17 +17,17 @@ interface EmptyStateProps {
 const DEFAULT_IMAGE_WIDTH = 180;
 const DEFAULT_IMAGE_HEIGHT = 143;
 
-export default function EmptyState({
+export const EmptyState = ({
   imageSrc,
-  imageAlt = '',
+  imageAlt,
   imageWidth = DEFAULT_IMAGE_WIDTH,
   imageHeight = DEFAULT_IMAGE_HEIGHT,
   title,
   description,
   className,
-}: EmptyStateProps) {
+}: EmptyStateProps) => {
   return (
-    <div
+    <section
       className={cn(
         'flex flex-col items-center justify-center text-center',
         className,
@@ -35,7 +35,7 @@ export default function EmptyState({
     >
       <CommonImage
         src={imageSrc}
-        alt={imageAlt}
+        alt={imageAlt ?? title}
         width={imageWidth}
         height={imageHeight}
         radius="rounded-none"
@@ -44,6 +44,6 @@ export default function EmptyState({
 
       <p className="text-title-b-18 mt-6 text-gray-800">{title}</p>
       <p className="text-body-r-14 mt-1 text-gray-500">{description}</p>
-    </div>
+    </section>
   );
-}
+};

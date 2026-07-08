@@ -12,6 +12,7 @@ export { DateSelectButton } from './date-select-button/date-select-button';
 export { Dropdown } from './dropdown/dropdown';
 export { OptionItem } from './dropdown/option-item';
 export { OptionList } from './dropdown/option-list';
+export { EmptyState } from './empty-state/empty-state';
 export { Filter, type FilterProps } from './filter/filter';
 export { ProfileImageInput } from './profile-image-input/profile-image-input';
 export { ProgressBar } from './progress-bar/progress-bar';
