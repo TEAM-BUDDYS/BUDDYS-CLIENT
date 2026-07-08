@@ -1,4 +1,5 @@
 import { CommonImage } from '@/shared/components/ui';
+import { formatRelativeTime } from '@/shared/utils/format-relative-time';
 
 interface ChatListItemProps {
   imgUrl: string;
@@ -37,7 +38,9 @@ export const ChatListItem = ({
         </div>
       </div>
 
-      <span className="text-caption-m-12 text-gray-500">{sentAt}</span>
+      <span className="text-caption-m-12 text-gray-500">
+        {formatRelativeTime(sentAt)}
+      </span>
     </div>
   );
 };
