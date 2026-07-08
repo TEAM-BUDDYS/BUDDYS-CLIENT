@@ -1,7 +1,6 @@
+import { formatChatTime } from '@/domains/chat/utils/format-chat-time';
 import { cn } from '@/lib/cn';
 import { CommonImage } from '@/shared/components/ui';
-
-import { formatChatTime } from '../../utils/format-chat-time';
 
 interface BaseChatMessageProps {
   content: string;
@@ -50,7 +49,7 @@ export const ChatMessage = (props: ChatMessageProps) => {
           )}
           <div
             className={cn(
-              'text-body-r-14 max-w-55 rounded-lg p-3',
+              'text-body-r-14 max-w-55 rounded-lg p-3 break-all',
               isOutgoing
                 ? 'rounded-tr-xs bg-gray-800 text-white'
                 : 'rounded-tl-xs bg-gray-50',
@@ -59,9 +58,9 @@ export const ChatMessage = (props: ChatMessageProps) => {
             {props.content}
           </div>
         </div>
-        <span className="text-caption-m-12 text-gray-500">
+        <time className="text-caption-m-12 text-gray-500">
           {formatChatTime(props.createdAt)}
-        </span>
+        </time>
       </div>
     </div>
   );
