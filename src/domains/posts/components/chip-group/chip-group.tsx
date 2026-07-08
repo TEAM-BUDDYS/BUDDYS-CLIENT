@@ -13,6 +13,7 @@ interface ChipGroupProps {
   selectedTagIds: number[];
   maxSelectionCount?: number;
   collapsedCount?: number;
+  showToggleButton?: boolean;
   onChange: (selectedTagIds: number[]) => void;
 }
 
@@ -21,11 +22,14 @@ export const ChipGroup = ({
   selectedTagIds = [],
   maxSelectionCount = 3,
   collapsedCount = 5,
+  showToggleButton = true,
   onChange,
 }: ChipGroupProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const visibleTags = isExpanded ? tags : tags.slice(0, collapsedCount);
+  const hasToggle = showToggleButton && tags.length > collapsedCount;
+  const visibleTags =
+    hasToggle && !isExpanded ? tags.slice(0, collapsedCount) : tags;
 
   const handleTagClick = (tagId: number) => {
     const isSelected = selectedTagIds.includes(tagId);
@@ -46,7 +50,9 @@ export const ChipGroup = ({
       <div
         className={cn(
           'flex min-w-0 gap-2',
-          isExpanded ? 'flex-wrap pr-[77px]' : 'flex-nowrap overflow-hidden',
+          hasToggle && !isExpanded && 'flex-nowrap overflow-hidden',
+          (!hasToggle || isExpanded) && 'flex-wrap',
+          hasToggle && isExpanded && 'pr-[77px]',
         )}
       >
         {visibleTags.map((tag) => {
@@ -68,7 +74,7 @@ export const ChipGroup = ({
         })}
       </div>
 
-      {tags.length > collapsedCount && (
+      {hasToggle && (
         <button
           type="button"
           aria-label={isExpanded ? '태그 목록 접기' : '태그 목록 펼치기'}
