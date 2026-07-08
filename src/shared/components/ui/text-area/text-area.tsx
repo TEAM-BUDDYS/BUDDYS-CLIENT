@@ -2,8 +2,8 @@
 
 import { type ComponentProps, type ReactNode, useId } from 'react';
 
-import { cn } from '@lib/cn';
-import { EssentialIcon, WarningIcon } from '@shared/components/icons';
+import { cn } from '@/lib/cn';
+import { EssentialIcon, WarningIcon } from '@/shared/components/icons';
 
 export type TextAreaStatus = 'default' | 'error';
 

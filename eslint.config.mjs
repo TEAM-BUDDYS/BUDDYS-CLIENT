@@ -39,20 +39,10 @@ const eslintConfig = defineConfig([
             ['^\\u0000'],
 
             // Node.js builtins, external packages
-            [
-              '^node:',
-              '^(?!@(?:app|domains|lib|shared|types)(?:/|$))(?!@/)@?\\w',
-            ],
+            ['^node:', '^(?!@/)@?\\w'],
 
             // Path aliases
-            [
-              '^@app(?:/|$)',
-              '^@domains(?:/|$)',
-              '^@lib(?:/|$)',
-              '^@shared(?:/|$)',
-              '^@types(?:/|$)',
-              '^@/',
-            ],
+            ['^@/'],
 
             // Relative imports
             ['^\\.'],

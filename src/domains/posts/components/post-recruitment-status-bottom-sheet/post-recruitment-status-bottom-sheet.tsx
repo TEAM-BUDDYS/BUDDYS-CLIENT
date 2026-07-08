@@ -2,10 +2,10 @@
 
 import { useId } from 'react';
 
-import type { PostRecruitmentStatusTypes } from '@domains/posts/model/post-recruitment-status';
-import { CheckCircleLineIcon, SandglassIcon } from '@shared/components/icons';
-import { BottomSheet } from '@shared/components/ui/bottom-sheet/bottom-sheet';
-import { Button } from '@shared/components/ui/button/button';
+import type { PostRecruitmentStatusTypes } from '@/domains/posts/model/post-recruitment-status';
+import { CheckCircleLineIcon, SandglassIcon } from '@/shared/components/icons';
+import { BottomSheet } from '@/shared/components/ui/bottom-sheet/bottom-sheet';
+import { Button } from '@/shared/components/ui/button/button';
 
 interface PostRecruitmentStatusBottomSheetProps {
   open: boolean;

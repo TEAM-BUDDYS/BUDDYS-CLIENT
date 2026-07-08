@@ -2,10 +2,10 @@
 
 import { type UIEvent, useId, useMemo, useRef, useState } from 'react';
 
-import { cn } from '@lib/cn';
-import { XIcon } from '@shared/components/icons';
-import { BottomSheet } from '@shared/components/ui/bottom-sheet/bottom-sheet';
-import { Button } from '@shared/components/ui/button/button';
+import { cn } from '@/lib/cn';
+import { XIcon } from '@/shared/components/icons';
+import { BottomSheet } from '@/shared/components/ui/bottom-sheet/bottom-sheet';
+import { Button } from '@/shared/components/ui/button/button';
 
 import { CalendarMonth } from './calendar-month';
 import {
