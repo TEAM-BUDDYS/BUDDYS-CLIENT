@@ -143,15 +143,14 @@ export const ToastProvider = ({
         {toast && (
           <Toast
             key={toast.id}
+            message={toast.message}
             variant={toast.variant}
             className={
               isVisible
                 ? 'translate-y-0 scale-100 opacity-100'
                 : 'translate-y-3 scale-95 opacity-0'
             }
-          >
-            {toast.message}
-          </Toast>
+          />
         )}
       </div>
     </ToastContext.Provider>

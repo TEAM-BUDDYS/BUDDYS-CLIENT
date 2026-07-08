@@ -1,4 +1,4 @@
-import type { ComponentPropsWithoutRef, ReactNode } from 'react';
+import type { ComponentPropsWithoutRef } from 'react';
 
 import { cn } from '@/lib/cn';
 import { WarningIcon } from '@/shared/components/icons';
@@ -6,7 +6,7 @@ import { WarningIcon } from '@/shared/components/icons';
 export type ToastVariant = 'primary' | 'gray';
 
 interface ToastProps extends ComponentPropsWithoutRef<'div'> {
-  children: ReactNode;
+  message: string;
   variant?: ToastVariant;
 }
 
@@ -22,7 +22,7 @@ const toastVariantClassName = {
 } as const;
 
 export const Toast = ({
-  children,
+  message,
   variant = 'primary',
   className,
   ...props
@@ -44,7 +44,7 @@ export const Toast = ({
         aria-hidden="true"
         className={cn('size-5 shrink-0', variantClassName.icon)}
       />
-      <span className="whitespace-nowrap">{children}</span>
+      <span className="whitespace-nowrap">{message}</span>
     </div>
   );
 };
