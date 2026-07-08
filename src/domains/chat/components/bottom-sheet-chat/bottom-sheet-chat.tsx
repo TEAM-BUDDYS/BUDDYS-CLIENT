@@ -15,7 +15,7 @@ type ConfirmType = 'block' | 'leave' | null;
 
 interface BottomSheetChatProps {
   open: boolean;
-  isNotificationOn: boolean;
+  isNotificationOn?: boolean;
   onClose: () => void; // 닫기
   onReport: () => void; // 신고하기
   onToggleNotification: () => void;
@@ -74,7 +74,7 @@ export const BottomSheetChat = ({
 
   return (
     <>
-      <BottomSheet open={open} onClose={onClose}>
+      <BottomSheet open={open} onClose={onClose} ariaLabel="채팅방 옵션">
         <div className="mx-4 mb-8.5 flex flex-col gap-4">
           <div className="overflow-hidden rounded-xl [&>button]:rounded-none">
             {menuItems.map(({ label, icon, onClick }) => (
