@@ -12,7 +12,7 @@ export interface ChipGroupProps {
   selectedTagIds: number[];
   maxSelectionCount?: number;
   collapsedCount?: number;
-  showToggleButton?: boolean;
+  hasToggleButton?: boolean;
   onChange: (selectedTagIds: number[]) => void;
 }
 
@@ -21,12 +21,12 @@ export const ChipGroup = ({
   selectedTagIds = [],
   maxSelectionCount = 3,
   collapsedCount = 5,
-  showToggleButton = true,
+  hasToggleButton = true,
   onChange,
 }: ChipGroupProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const hasToggle = showToggleButton && tags.length > collapsedCount;
+  const hasToggle = hasToggleButton && tags.length > collapsedCount;
   const visibleTags =
     hasToggle && !isExpanded ? tags.slice(0, collapsedCount) : tags;
 
