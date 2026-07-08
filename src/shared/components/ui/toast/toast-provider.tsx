@@ -15,12 +15,14 @@ import { cn } from '@/lib/cn';
 import { Toast, type ToastVariant } from './toast';
 
 export interface ToastOptions {
+  bottomOffsetClassName?: string;
   duration?: number;
   variant?: ToastVariant;
 }
 
 interface ToastState {
   id: number;
+  bottomOffsetClassName?: string;
   message: string;
   variant: ToastVariant;
 }
@@ -98,6 +100,7 @@ export const ToastProvider = ({
 
       setToast({
         id: toastIdRef.current,
+        bottomOffsetClassName: options?.bottomOffsetClassName,
         message,
         variant: options?.variant ?? 'primary',
       });
@@ -137,7 +140,7 @@ export const ToastProvider = ({
       <div
         className={cn(
           'pointer-events-none fixed right-0 left-0 z-50 flex justify-center px-4',
-          bottomOffsetClassName ?? 'bottom-18',
+          toast?.bottomOffsetClassName ?? bottomOffsetClassName ?? 'bottom-18',
         )}
       >
         {toast && (
