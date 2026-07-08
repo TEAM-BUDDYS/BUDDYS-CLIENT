@@ -2,8 +2,8 @@
 
 import type { ComponentProps } from 'react';
 
-import { cn } from '@lib/cn';
-import { PlusIcon } from '@shared/components/icons';
+import { cn } from '@/lib/cn';
+import { PlusIcon } from '@/shared/components/icons';
 
 interface ImageInputProps extends Omit<
   ComponentProps<'input'>,
