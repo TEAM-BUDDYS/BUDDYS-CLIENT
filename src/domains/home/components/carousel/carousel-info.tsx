@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import { CommonImage } from '@/shared/components/ui';
 
 export interface CarouselInfoProps {
   profileImageUrl: string;
@@ -14,14 +14,14 @@ export const CarouselInfo = ({
   viewCount,
 }: CarouselInfoProps) => {
   return (
-    <div className="flex gap-2 bg-transparent">
-      <Image
+    <div className="flex items-center gap-2 bg-transparent">
+      <CommonImage
         src={profileImageUrl}
         alt={`${title} 작성자 프로필 이미지`}
         width={48}
         height={48}
+        radius="rounded-full"
         unoptimized
-        className="rounded-full object-cover"
       />
       <div className="flex w-37 flex-col gap-1">
         <span className="text-title-b-18 truncate text-white">{title}</span>
