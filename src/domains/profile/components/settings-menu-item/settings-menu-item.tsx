@@ -7,7 +7,7 @@ interface SettingsMenuItemProps {
   href: string;
 }
 
-export function SettingsMenuItem({ label, href }: SettingsMenuItemProps) {
+export const SettingsMenuItem = ({ label, href }: SettingsMenuItemProps) => {
   return (
     <Link
       href={href}
@@ -17,4 +17,4 @@ export function SettingsMenuItem({ label, href }: SettingsMenuItemProps) {
       <ChevronRightIcon className="size-6 text-gray-200" />
     </Link>
   );
-}
+};
