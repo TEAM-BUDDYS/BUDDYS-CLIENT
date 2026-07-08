@@ -9,6 +9,7 @@ interface UserProfileProps {
   imageUrl: string;
   nickname: string;
   badgeIcon?: ReactNode;
+  badgeLabel?: string;
   className?: string;
 }
 
@@ -16,6 +17,7 @@ export const UserProfile = ({
   imageUrl,
   nickname,
   badgeIcon,
+  badgeLabel,
   className,
 }: UserProfileProps) => {
   return (
@@ -31,7 +33,11 @@ export const UserProfile = ({
       <div className="flex items-center gap-2">
         <span className="text-title-b-18">{nickname}</span>
         {badgeIcon && (
-          <span className="flex h-5 w-5 shrink-0 items-center justify-center">
+          <span
+            aria-label={badgeLabel}
+            className="flex h-5 w-5 shrink-0 items-center justify-center"
+            role={badgeLabel ? 'img' : undefined}
+          >
             {badgeIcon}
           </span>
         )}
