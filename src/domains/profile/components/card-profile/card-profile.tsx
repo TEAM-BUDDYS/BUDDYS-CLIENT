@@ -21,14 +21,14 @@ export const CardProfile = ({
       <div className="flex w-full gap-3">
         <section className="flex min-w-0 flex-1 flex-col gap-3.75">
           <div className="flex w-full flex-col gap-1">
-            <header className="text-body-sb-14 truncate text-gray-800">
-              {title}
-            </header>
-            <p className="text-caption-m-12 line-clamp-2 text-gray-300">
+            <h3 className="text-body-sb-14 truncate text-gray-800">{title}</h3>
+            <p className="text-caption-m-12 line-clamp-2 min-h-9 text-gray-300">
               {content}
             </p>
           </div>
-          <CardDate startDate={startDate} endDate={endDate} />
+          <div className="mt-auto">
+            <CardDate startDate={startDate} endDate={endDate} />
+          </div>
         </section>
         {image && (
           <CommonImage
