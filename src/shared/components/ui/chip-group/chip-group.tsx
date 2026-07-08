@@ -6,9 +6,9 @@ import { cn } from '@/lib/cn';
 import { ChevronDownIcon, ChevronUpIcon } from '@/shared/components/icons';
 import { ChipButton } from '@/shared/components/ui/chip/chip';
 
-import type { Tag } from '../../model/tag';
+import type { Tag } from '../../../../domains/posts/model/tag';
 
-interface ChipGroupProps {
+export interface ChipGroupProps {
   tags: Tag[];
   selectedTagIds: number[];
   maxSelectionCount?: number;
