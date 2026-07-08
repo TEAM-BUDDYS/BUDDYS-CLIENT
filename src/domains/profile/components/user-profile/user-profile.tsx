@@ -12,12 +12,12 @@ interface UserProfileProps {
   className?: string;
 }
 
-export default function UserProfile({
+export const UserProfile = ({
   imageUrl,
   nickname,
   badgeIcon,
   className,
-}: UserProfileProps) {
+}: UserProfileProps) => {
   return (
     <div className={cn('flex flex-col items-center', className)}>
       <CommonImage
@@ -38,4 +38,4 @@ export default function UserProfile({
       </div>
     </div>
   );
-}
+};
