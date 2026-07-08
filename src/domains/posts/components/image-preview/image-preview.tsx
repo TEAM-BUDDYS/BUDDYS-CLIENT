@@ -35,7 +35,7 @@ export const ImagePreview = ({
       />
       <button
         type="button"
-        aria-label="이미지 삭제"
+        aria-label={`${alt} 삭제`}
         className="absolute top-1 right-1 flex size-5 items-center justify-center rounded-full bg-gray-50 text-gray-200"
         onClick={onRemove}
       >
