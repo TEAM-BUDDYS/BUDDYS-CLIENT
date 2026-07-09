@@ -35,7 +35,7 @@ export const EmptyState = ({
     >
       <CommonImage
         src={imageSrc}
-        alt={imageAlt ?? title}
+        alt={imageAlt ?? ''}
         width={imageWidth}
         height={imageHeight}
         radius="rounded-none"
