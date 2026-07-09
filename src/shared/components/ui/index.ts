@@ -1,3 +1,4 @@
+export { ArchivePostCard } from './archive-post-card/archive-post-card';
 export { BottomActionBar } from './bottom-action-bar/bottom-action-bar';
 export { BottomSheet } from './bottom-sheet/bottom-sheet';
 export { Button, type ButtonProps } from './button/button';
