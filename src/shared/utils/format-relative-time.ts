@@ -21,7 +21,7 @@ export const formatRelativeTime = (date: string): string => {
   if (diffSeconds < HOUR) return `${Math.floor(diffSeconds / MINUTE)}분 전`;
   if (diffSeconds < DAY) return `${Math.floor(diffSeconds / HOUR)}시간 전`;
   if (diffSeconds < MONTH) return `${Math.floor(diffSeconds / DAY)}일 전`;
-  if (diffSeconds < YEAR) return `${Math.floor(diffSeconds / MONTH)}개월 전`;
+  if (diffSeconds <= YEAR) return `${Math.floor(diffSeconds / MONTH)}개월 전`;
 
   return `${Math.floor(diffSeconds / YEAR)}년 전`;
 };
