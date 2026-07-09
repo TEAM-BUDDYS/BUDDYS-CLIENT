@@ -1,6 +1,6 @@
 import { PostRecruitmentStatusButton } from '@/domains/posts/components/post-recruitment-status-button/post-recruitment-status-button';
 import type { PostRecruitmentStatusTypes } from '@/domains/posts/model/post-recruitment-status';
-import { defaultProfileImage } from '@/shared/assets/image';
+import { defaultProfileImage } from '@/shared/assets/illustrations';
 import { Tag } from '@/shared/components/ui/card/card-tag';
 import { CommonImage } from '@/shared/components/ui/common-image/common-image';
 
