@@ -19,9 +19,7 @@ export default function LandingPage() {
         />
 
         <div className="flex flex-col items-center gap-2 text-center">
-          <span aria-label="버디즈">
-            <BuddysLogo />
-          </span>
+          <BuddysLogo aria-label="버디즈" />
           <p className="text-body-r-14 text-gray-500">
             취향에 맞는 교환학생 동행을 찾고 <br /> 함께한 코스를 기록하세요
           </p>
