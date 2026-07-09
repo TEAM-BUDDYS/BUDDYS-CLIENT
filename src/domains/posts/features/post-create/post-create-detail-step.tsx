@@ -26,6 +26,7 @@ import {
 import type { PostCreateDetailFormState } from './model';
 
 const MAX_POST_CONTENT_LENGTH = 120;
+const MAX_POST_TITLE_LENGTH = 14;
 
 interface PostCreateDetailStepProps {
   value: PostCreateDetailFormState;
@@ -65,6 +66,7 @@ export const PostCreateDetailStep = ({
         <TextField
           required
           label="제목"
+          maxLength={MAX_POST_TITLE_LENGTH}
           placeholder="게시물의 제목을 작성해주세요."
           value={value.title}
           onChange={(event) => onChange({ title: event.target.value })}
@@ -94,10 +96,11 @@ export const PostCreateDetailStep = ({
           onChange={(ageConditions) => onChange({ ageConditions })}
         />
         <ChipOptionGroup
+          multiple
           label="성별"
           options={GENDER_OPTIONS}
-          selectedValues={value.gender ? [value.gender] : []}
-          onChange={(values) => onChange({ gender: values[0] ?? '' })}
+          selectedValues={value.genderConditions}
+          onChange={(genderConditions) => onChange({ genderConditions })}
         />
       </section>
 
@@ -151,8 +154,8 @@ export const PostCreateDetailStep = ({
             관심사
           </FormLabel>
           <ChipGroup
-            collapsedCount={7}
-            maxSelectionCount={3}
+            collapsedCount={5}
+            maxSelectionCount={2}
             tags={INTEREST_TAGS}
             selectedTagIds={value.interestTagIds}
             onChange={(interestTagIds) => onChange({ interestTagIds })}
@@ -164,7 +167,7 @@ export const PostCreateDetailStep = ({
           </FormLabel>
           <ChipGroup
             collapsedCount={5}
-            maxSelectionCount={5}
+            maxSelectionCount={2}
             tags={COMPANION_STYLE_TAGS}
             selectedTagIds={value.companionStyleTagIds}
             onChange={(companionStyleTagIds) =>

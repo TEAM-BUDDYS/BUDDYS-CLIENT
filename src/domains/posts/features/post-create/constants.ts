@@ -1,12 +1,12 @@
 import type {
   AgeConditionType,
   CompanionType,
-  GenderType,
   RecruitmentCountType,
 } from '@/domains/posts/model/post-form';
 
 import type {
   LocationOption,
+  PostCreateGenderConditionType,
   PostCreateOption,
   PostCreateQuestionStep,
   PostCreateStep,
@@ -58,7 +58,7 @@ export const AGE_CONDITION_OPTIONS = [
 export const GENDER_OPTIONS = [
   { label: '남자', value: 'MALE' },
   { label: '여자', value: 'FEMALE' },
-] satisfies PostCreateOption<GenderType>[];
+] satisfies PostCreateOption<PostCreateGenderConditionType>[];
 
 export const COMPANION_TYPE_OPTIONS = [
   { label: '여행 전체 동행', value: 'FULL_TRIP' },

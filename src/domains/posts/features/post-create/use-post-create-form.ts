@@ -9,6 +9,7 @@ import { CITY_OPTIONS, MAX_IMAGE_COUNT } from './constants';
 import type {
   LocationOption,
   PostCreateDetailFormState,
+  PostCreateGenderConditionType,
   PostCreateStep,
 } from './model';
 
@@ -16,7 +17,7 @@ const INITIAL_DETAIL_FORM: PostCreateDetailFormState = {
   title: '',
   content: '',
   ageConditions: [],
-  gender: '',
+  genderConditions: [],
   companionType: '',
   recruitmentCountType: '',
   activityTagIds: [],
@@ -32,10 +33,19 @@ const formatDateForPayload = (date: Date) => {
   return `${year}-${month}-${day}`;
 };
 
+const getGenderForPayload = (
+  genderConditions: PostCreateGenderConditionType[],
+) => {
+  return genderConditions.length === 2 ? 'ANY' : genderConditions[0];
+};
+
 const isRequiredDetailComplete = (
   detail: PostCreateDetailFormState,
 ): detail is PostCreateDetailFormState & {
-  gender: Exclude<PostCreateDetailFormState['gender'], ''>;
+  genderConditions: [
+    PostCreateGenderConditionType,
+    ...PostCreateGenderConditionType[],
+  ];
   companionType: Exclude<PostCreateDetailFormState['companionType'], ''>;
   recruitmentCountType: Exclude<
     PostCreateDetailFormState['recruitmentCountType'],
@@ -46,7 +56,7 @@ const isRequiredDetailComplete = (
     detail.title.trim() &&
     detail.content.trim() &&
     detail.ageConditions.length > 0 &&
-    detail.gender &&
+    detail.genderConditions.length > 0 &&
     detail.companionType &&
     detail.recruitmentCountType &&
     detail.activityTagIds.length > 0,
@@ -166,7 +176,7 @@ export const usePostCreateForm = () => {
       startDate: formatDateForPayload(startDate),
       endDate: formatDateForPayload(endDate),
       ageConditions: detail.ageConditions,
-      gender: detail.gender,
+      gender: getGenderForPayload(detail.genderConditions),
       companionType: detail.companionType,
       recruitmentCountType: detail.recruitmentCountType,
       tagIds,

@@ -5,6 +5,8 @@ import type {
   RecruitmentCountType,
 } from '@/domains/posts/model/post-form';
 
+export type PostCreateGenderConditionType = Exclude<GenderType, 'ANY'>;
+
 export type PostCreateStep = 1 | 2 | 3 | 4;
 export type PostCreateQuestionStep = Exclude<PostCreateStep, 4>;
 
@@ -22,7 +24,7 @@ export interface PostCreateDetailFormState {
   title: string;
   content: string;
   ageConditions: AgeConditionType[];
-  gender: GenderType | '';
+  genderConditions: PostCreateGenderConditionType[];
   companionType: CompanionType | '';
   recruitmentCountType: RecruitmentCountType | '';
   activityTagIds: number[];
