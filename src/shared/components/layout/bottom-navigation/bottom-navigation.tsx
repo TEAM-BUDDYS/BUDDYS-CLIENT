@@ -12,6 +12,10 @@ import {
   MyIcon,
 } from '@/shared/components/icons';
 
+interface BottomNavigationProps {
+  className?: string;
+}
+
 interface BottomNavigationItem {
   key: string;
   href?: string;
@@ -45,13 +49,16 @@ const BOTTOM_NAVIGATION_ITEMS: BottomNavigationItem[] = [
   },
 ];
 
-export const BottomNavigation = () => {
+export const BottomNavigation = ({ className }: BottomNavigationProps) => {
   const pathname = usePathname();
 
   return (
     <nav
       aria-label="하단 네비게이션"
-      className="w-full rounded-t-2xl border border-gray-300/30 bg-white px-6.25 py-1"
+      className={cn(
+        'w-full rounded-t-2xl border border-gray-300/30 bg-white px-6.25 py-1',
+        className,
+      )}
     >
       <ul className="flex items-center justify-center gap-5.75">
         {BOTTOM_NAVIGATION_ITEMS.map(({ key, href, icon: Icon, label }) => {
