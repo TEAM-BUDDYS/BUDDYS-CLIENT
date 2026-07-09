@@ -10,6 +10,7 @@ import type { Tag } from '@/types/tag';
 
 export interface PreferenceBuddyItem {
   id: number;
+  href: string;
   title: string;
   content: string;
   startDate: string;

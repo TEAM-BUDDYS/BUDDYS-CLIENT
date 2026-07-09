@@ -16,6 +16,7 @@ const appliedFilterKeys: BuddyFilterKey[] = [];
 
 const customizedExploreItems = Array.from({ length: 7 }, (_, index) => ({
   id: index + 1,
+  href: `/posts/${index + 1}`,
   title: '최대 17자 제목이 들어가는 자리입니다',
   content: '최대 21자 본문이 들어가는 자리입니다.',
   postStatus: 'RECRUITING' as const,
@@ -81,6 +82,7 @@ export default function CustomizedExplore() {
               onBookmarkClick={() => handleBookmarkClick(item.id)}
             >
               <Card
+                href={item.href}
                 title={item.title}
                 content={item.content}
                 postStatus={item.postStatus}

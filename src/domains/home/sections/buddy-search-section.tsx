@@ -11,24 +11,27 @@ import {
 } from '@/domains/home/model/buddy-filter';
 import { ChevronRightIcon } from '@/shared/components/icons';
 import { Card, Filter } from '@/shared/components/ui';
+import type { RecruitmentStatus } from '@/shared/components/ui/card/card-tag';
 
 const appliedFilterKeys: BuddyFilterKey[] = [];
 
-const buddySearchItems = Array.from({ length: 4 }, (_, index) => ({
-  id: index + 1,
-  title: '최대 17자 제목이 들어가는 자리입니다',
-  content: '최대 21자 본문이 들어가는 자리입니다.',
-  postStatus: 'RECRUITING' as const,
-  tagValue: '국가',
-  startDate: '2026-07-10',
-  endDate: '2026-07-12',
-  image:
-    index % 2 === 0
-      ? undefined
-      : `https://loremflickr.com/100/100/travel?random=${index + 1}`,
-}));
+export interface BuddySearchItem {
+  id: number;
+  href: string;
+  title: string;
+  content: string;
+  postStatus: RecruitmentStatus;
+  tagValue: string;
+  startDate: string;
+  endDate: string;
+  image?: string;
+}
 
-export const BuddySearchSection = () => {
+interface BuddySearchSectionProps {
+  items: BuddySearchItem[];
+}
+
+export const BuddySearchSection = ({ items }: BuddySearchSectionProps) => {
   const router = useRouter();
   const [bookmarkedItemIds, setBookmarkedItemIds] = useState<number[]>([]);
 
@@ -68,7 +71,7 @@ export const BuddySearchSection = () => {
         </div>
       </div>
       <div className="flex flex-col gap-6 pt-6">
-        {buddySearchItems.map((item) => (
+        {items.map((item) => (
           <BookmarkContainer
             key={item.id}
             hasImage={Boolean(item.image)}
@@ -77,6 +80,7 @@ export const BuddySearchSection = () => {
             onBookmarkClick={() => handleBookmarkClick(item.id)}
           >
             <Card
+              href={item.href}
               title={item.title}
               content={item.content}
               postStatus={item.postStatus}
