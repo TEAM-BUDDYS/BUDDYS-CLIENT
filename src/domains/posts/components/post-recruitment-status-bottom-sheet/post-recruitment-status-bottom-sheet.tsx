@@ -16,12 +16,12 @@ interface PostRecruitmentStatusBottomSheetProps {
 
 const POST_RECRUITMENT_STATUS_OPTIONS = [
   {
-    key: 'recruiting',
+    key: 'RECRUITING',
     label: '모집 중',
     icon: <SandglassIcon />,
   },
   {
-    key: 'completed',
+    key: 'COMPLETED',
     label: '모집 완료',
     icon: <CheckCircleLineIcon />,
   },

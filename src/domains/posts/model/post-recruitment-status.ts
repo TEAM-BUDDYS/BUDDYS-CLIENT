@@ -1,1 +1,1 @@
-export type PostRecruitmentStatusTypes = 'recruiting' | 'completed';
+export type PostRecruitmentStatusTypes = 'RECRUITING' | 'COMPLETED';
