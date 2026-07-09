@@ -1,22 +1,28 @@
+'use client';
+
 import { Button } from '@/shared/components/ui';
 
 import { ProfileBio } from '../components/profile-bio/profile-bio';
 
-type ProfileViewerType = 'me' | 'other' | 'withdrawn';
+type ProfileIntroSectionProps =
+  | {
+      viewerType: 'me';
+      bio?: string | null;
+      onEditClick: () => void;
+    }
+  | {
+      viewerType: 'other';
+      bio?: string | null;
+      onChatClick: () => void;
+    }
+  | {
+      viewerType: 'withdrawn';
+      bio?: string | null;
+    };
 
-interface ProfileIntroSectionProps {
-  bio?: string | null;
-  viewerType: ProfileViewerType;
-  onEditClick?: () => void;
-  onChatClick?: () => void;
-}
+export const ProfileIntroSection = (props: ProfileIntroSectionProps) => {
+  const { bio, viewerType } = props;
 
-export const ProfileIntroSection = ({
-  bio,
-  viewerType,
-  onEditClick,
-  onChatClick,
-}: ProfileIntroSectionProps) => {
   return (
     <div className="flex w-full flex-col gap-3">
       {bio ? <ProfileBio bio={bio} /> : null}
@@ -26,11 +32,11 @@ export const ProfileIntroSection = ({
           탈퇴한 회원입니다
         </Button>
       ) : viewerType === 'me' ? (
-        <Button variant="secondary" align="center" onClick={onEditClick}>
+        <Button variant="secondary" align="center" onClick={props.onEditClick}>
           프로필 수정
         </Button>
       ) : (
-        <Button variant="secondary" align="center" onClick={onChatClick}>
+        <Button variant="secondary" align="center" onClick={props.onChatClick}>
           채팅하기
         </Button>
       )}
