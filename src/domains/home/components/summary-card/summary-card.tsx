@@ -17,7 +17,7 @@ export const SummaryCard = ({
   image,
 }: SummaryCardProps) => {
   return (
-    <article className="flex justify-between">
+    <article className="flex h-20 justify-between">
       <section className="flex flex-col gap-2">
         <div className="flex w-57.5 flex-col gap-1">
           <header className="text-body-sb-16 truncate text-gray-800">
@@ -31,8 +31,8 @@ export const SummaryCard = ({
         <CommonImage
           src={image}
           alt={`${title} 썸네일`}
-          width={72}
-          height={72}
+          width={80}
+          height={80}
           unoptimized
           radius="rounded-xl"
         />
