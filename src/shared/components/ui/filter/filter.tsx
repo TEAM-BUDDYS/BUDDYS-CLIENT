@@ -38,13 +38,13 @@ export const Filter = ({
       onClick={onPress}
       aria-pressed={pressed}
       className={cn(
-        'inline-flex shrink-0 items-center gap-1.5 rounded-[30px] py-2 pr-4 pl-3',
+        'inline-flex shrink-0 items-center gap-1.5 rounded-[30px] py-2.5 pr-4 pl-3',
         bg,
         border,
       )}
     >
-      {Icon && <Icon aria-hidden="true" className={cn('size-4', text)} />}
-      <span className={cn('text-caption-m-12', text)}>{label}</span>
+      {Icon && <Icon aria-hidden="true" className={cn('size-5', text)} />}
+      <span className={cn('text-body-sb-14', text)}>{label}</span>
     </button>
   );
 };
