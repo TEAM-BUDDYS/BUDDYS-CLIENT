@@ -2,10 +2,14 @@
 
 import type { ChangeEvent } from 'react';
 
-import { ChipGroup } from '@/domains/posts/components/chip-group/chip-group';
 import { ChipOptionGroup } from '@/domains/posts/components/chip-option-group/chip-option-group';
 import { ImageInput } from '@/domains/posts/components/image-input/image-input';
-import { FormLabel, TextArea, TextField } from '@/shared/components/ui';
+import {
+  ChipGroup,
+  FormLabel,
+  TextArea,
+  TextField,
+} from '@/shared/components/ui';
 import {
   ACTIVITY_TAGS,
   COMPANION_STYLE_TAGS,
