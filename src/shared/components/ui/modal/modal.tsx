@@ -13,7 +13,7 @@ export interface ModalProps {
   cancelLabel?: string;
   className?: string;
   description?: ReactNode;
-  icon?: ReactNode;
+  visual?: ReactNode;
   onClose: () => void;
   onConfirm: () => void;
 }
@@ -25,7 +25,7 @@ export const Modal = ({
   cancelLabel = '닫기',
   className,
   description,
-  icon,
+  visual,
   onClose,
   onConfirm,
 }: ModalProps) => {
@@ -76,13 +76,13 @@ export const Modal = ({
         role="dialog"
       >
         <div className="flex flex-col items-center gap-4">
-          {icon && (
+          {visual && (
             <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-lg">
-              {icon}
+              {visual}
             </div>
           )}
 
-          <div className="flex w-full max-w-[269px] flex-col items-center gap-3 text-center">
+          <div className="flex w-full flex-col items-center gap-3 text-center">
             <h2
               id={titleId}
               className="text-title-b-18 whitespace-pre-line text-gray-800"
@@ -93,7 +93,7 @@ export const Modal = ({
             {description && (
               <p
                 id={descriptionId}
-                className="text-body-m-15 max-w-[257px] whitespace-pre-line text-gray-500"
+                className="text-body-m-15 whitespace-pre-line text-gray-500"
               >
                 {description}
               </p>
