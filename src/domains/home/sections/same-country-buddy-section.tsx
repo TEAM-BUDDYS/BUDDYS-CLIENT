@@ -44,6 +44,19 @@ const sameCountryBuddyItems = [
   },
 ];
 
+interface SameCountryBuddyItem {
+  nickname: string;
+  country: string;
+  ageGroup: string;
+  matchingRate: number;
+  imageUrl: string;
+  href: string;
+}
+
+interface SameCountryBuddySectionProps {
+  items: SameCountryBuddyItem[];
+}
+
 export const SameCountryBuddySection = () => {
   return (
     <section className="flex flex-col gap-5">
@@ -57,6 +70,7 @@ export const SameCountryBuddySection = () => {
           {sameCountryBuddyItems.map((item) => (
             <CardProfile key={`${item.nickname}-${item.imageUrl}`} {...item} />
           ))}
+          <div aria-hidden="true" className="w-2 shrink-0" />
         </div>
       </div>
     </section>
