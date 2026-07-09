@@ -5,14 +5,14 @@ import { useState } from 'react';
 import { cn } from '@/lib/cn';
 import { ChevronDownIcon, ChevronUpIcon } from '@/shared/components/icons';
 import { ChipButton } from '@/shared/components/ui/chip/chip';
+import type { Tag } from '@/types/tag';
 
-import type { Tag } from '../../model/tag';
-
-interface ChipGroupProps {
+export interface ChipGroupProps {
   tags: Tag[];
   selectedTagIds: number[];
   maxSelectionCount?: number;
   collapsedCount?: number;
+  hasToggleButton?: boolean;
   onChange: (selectedTagIds: number[]) => void;
 }
 
@@ -21,11 +21,14 @@ export const ChipGroup = ({
   selectedTagIds = [],
   maxSelectionCount = 3,
   collapsedCount = 5,
+  hasToggleButton = true,
   onChange,
 }: ChipGroupProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const visibleTags = isExpanded ? tags : tags.slice(0, collapsedCount);
+  const hasToggle = hasToggleButton && tags.length > collapsedCount;
+  const visibleTags =
+    hasToggle && !isExpanded ? tags.slice(0, collapsedCount + 1) : tags;
 
   const handleTagClick = (tagId: number) => {
     const isSelected = selectedTagIds.includes(tagId);
@@ -46,7 +49,9 @@ export const ChipGroup = ({
       <div
         className={cn(
           'flex min-w-0 gap-2',
-          isExpanded ? 'flex-wrap pr-[77px]' : 'flex-nowrap overflow-hidden',
+          hasToggle && !isExpanded && 'flex-nowrap overflow-hidden',
+          (!hasToggle || isExpanded) && 'flex-wrap',
+          hasToggle && isExpanded && 'pr-[77px]',
         )}
       >
         {visibleTags.map((tag) => {
@@ -68,7 +73,7 @@ export const ChipGroup = ({
         })}
       </div>
 
-      {tags.length > collapsedCount && (
+      {hasToggle && (
         <button
           type="button"
           aria-label={isExpanded ? '태그 목록 접기' : '태그 목록 펼치기'}

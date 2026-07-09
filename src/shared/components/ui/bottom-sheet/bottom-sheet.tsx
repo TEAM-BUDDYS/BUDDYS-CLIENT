@@ -42,7 +42,7 @@ export const BottomSheet = ({
           )}
         >
           <div className="flex shrink-0 justify-center pt-2 pb-4">
-            <Drawer.Handle className="h-1.25 w-11 rounded-[15px] bg-gray-100" />
+            <Drawer.Handle className="h-1.25 w-11 rounded-[15px] bg-gray-200" />
           </div>
           {children}
         </Drawer.Content>
