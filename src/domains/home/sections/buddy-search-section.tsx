@@ -64,6 +64,7 @@ export const BuddySearchSection = () => {
               onPress={() => handleFilterPress(filterItem.key)}
             />
           ))}
+          <div aria-hidden="true" className="w-2 shrink-0" />
         </div>
       </div>
       <div className="flex flex-col gap-6 pt-6">
