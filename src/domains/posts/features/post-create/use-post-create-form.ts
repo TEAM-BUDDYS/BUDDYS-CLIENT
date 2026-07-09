@@ -107,6 +107,26 @@ export const usePostCreateForm = () => {
     );
   };
 
+  const getCompleteFormValues = () => {
+    if (
+      !selectedCountry ||
+      !selectedCity ||
+      !dateRange.startDate ||
+      !dateRange.endDate ||
+      !isRequiredDetailComplete(detail)
+    ) {
+      return null;
+    }
+
+    return {
+      selectedCountry,
+      selectedCity,
+      startDate: dateRange.startDate,
+      endDate: dateRange.endDate,
+      detail,
+    };
+  };
+
   const canGoNext = (currentStep: PostCreateStep) => {
     if (currentStep === 1) {
       return Boolean(selectedCountry);
@@ -120,26 +140,18 @@ export const usePostCreateForm = () => {
       return Boolean(dateRange.startDate && dateRange.endDate);
     }
 
-    return Boolean(
-      selectedCountry &&
-      selectedCity &&
-      dateRange.startDate &&
-      dateRange.endDate &&
-      isRequiredDetailComplete(detail),
-    );
+    return Boolean(getCompleteFormValues());
   };
 
   const getPostFormPayload = (): PostFormPayload | null => {
-    if (
-      !selectedCountry ||
-      !selectedCity ||
-      !dateRange.startDate ||
-      !dateRange.endDate ||
-      !isRequiredDetailComplete(detail)
-    ) {
+    const completeFormValues = getCompleteFormValues();
+
+    if (!completeFormValues) {
       return null;
     }
 
+    const { detail, endDate, selectedCity, selectedCountry, startDate } =
+      completeFormValues;
     const tagIds = [
       ...detail.activityTagIds,
       ...detail.interestTagIds,
@@ -151,8 +163,8 @@ export const usePostCreateForm = () => {
       cityId: selectedCity.id,
       title: detail.title.trim(),
       content: detail.content.trim(),
-      startDate: formatDateForPayload(dateRange.startDate),
-      endDate: formatDateForPayload(dateRange.endDate),
+      startDate: formatDateForPayload(startDate),
+      endDate: formatDateForPayload(endDate),
       ageConditions: detail.ageConditions,
       gender: detail.gender,
       companionType: detail.companionType,

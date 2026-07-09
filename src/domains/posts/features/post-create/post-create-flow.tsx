@@ -90,7 +90,11 @@ export const PostCreateFlow = () => {
     <main className="flex min-h-dvh flex-col bg-white">
       <div className="sticky top-0 z-10 bg-white">
         <Header
-          content="동행 글 작성하기"
+          content={
+            <span className="text-title-b-20 text-gray-800">
+              동행 글 작성하기
+            </span>
+          }
           contentAlign="center"
           hasBackButton
           onBackClick={handleBackClick}

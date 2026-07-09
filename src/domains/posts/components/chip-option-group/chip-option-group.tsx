@@ -1,5 +1,7 @@
 'use client';
 
+import { useId } from 'react';
+
 import { ChipButton } from '@/shared/components/ui';
 
 interface ChipOption<TValue extends string> {
@@ -22,6 +24,8 @@ export const ChipOptionGroup = <TValue extends string>({
   multiple = false,
   onChange,
 }: ChipOptionGroupProps<TValue>) => {
+  const groupLabelId = useId();
+
   const handleOptionClick = (value: TValue) => {
     const isSelected = selectedValues.includes(value);
 
@@ -39,8 +43,16 @@ export const ChipOptionGroup = <TValue extends string>({
 
   return (
     <div className="flex flex-col gap-2">
-      {label && <p className="text-body-r-14 text-gray-500">{label}</p>}
-      <div className="flex flex-wrap gap-2">
+      {label && (
+        <p id={groupLabelId} className="text-body-r-14 text-gray-500">
+          {label}
+        </p>
+      )}
+      <div
+        role="group"
+        aria-labelledby={label ? groupLabelId : undefined}
+        className="flex flex-wrap gap-2"
+      >
         {options.map((option) => {
           const isSelected = selectedValues.includes(option.value);
 

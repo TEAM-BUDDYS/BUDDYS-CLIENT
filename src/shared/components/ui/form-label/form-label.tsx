@@ -46,10 +46,13 @@ const getFormLabelContent = (
     <>
       {children}
       {required && (
-        <EssentialIcon
-          aria-hidden="true"
-          className={cn('text-error size-1.5 shrink-0', iconClassName)}
-        />
+        <>
+          <EssentialIcon
+            aria-hidden="true"
+            className={cn('text-error size-1.5 shrink-0', iconClassName)}
+          />
+          <span className="sr-only">필수</span>
+        </>
       )}
     </>
   );
