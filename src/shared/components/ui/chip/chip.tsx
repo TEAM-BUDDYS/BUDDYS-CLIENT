@@ -8,7 +8,7 @@ const chipSizeStyles = {
 type ChipSize = 'sm' | 'md';
 
 const chipBase =
-  'inline-flex py-2 items-center justify-center rounded-[30px] border border-gray-200 bg-white text-gray-800';
+  'inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-[30px] border border-gray-200 bg-white py-2 text-gray-800';
 
 const chipActive = 'border-mint-300 bg-mint-100 text-mint-300';
 
