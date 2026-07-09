@@ -1,24 +1,38 @@
 'use client';
 
-// TODO: COUNTRY_OPTIONS 삭제 후 서버 응답값으로 변경
-import { COUNTRY_OPTIONS } from '@/domains/posts/features/post-create/constants';
 import { Dropdown } from '@/shared/components/ui';
 
+import type { LocationOption } from './model';
+
 interface PostCreateCountryStepProps {
-  value: string;
-  onChange: (value: string) => void;
+  options: LocationOption[];
+  value: LocationOption | null;
+  onChange: (value: LocationOption) => void;
 }
 
 export const PostCreateCountryStep = ({
+  options,
   value,
   onChange,
 }: PostCreateCountryStepProps) => {
+  const countryNames = options.map((country) => country.name);
+
+  const handleCountryChange = (countryName: string) => {
+    const selectedCountry = options.find(
+      (country) => country.name === countryName,
+    );
+
+    if (selectedCountry) {
+      onChange(selectedCountry);
+    }
+  };
+
   return (
     <Dropdown
-      options={COUNTRY_OPTIONS}
+      options={countryNames}
       placeholder="국가를 선택해주세요"
-      value={value}
-      onChange={onChange}
+      value={value?.name ?? ''}
+      onChange={handleCountryChange}
     />
   );
 };

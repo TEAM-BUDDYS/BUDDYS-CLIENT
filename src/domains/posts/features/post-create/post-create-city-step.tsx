@@ -3,12 +3,14 @@
 // TODO: OptionItem 삭제 후 서버 응답값으로 변경
 import { OptionItem, OptionList, Searchbar } from '@/shared/components/ui';
 
+import type { LocationOption } from './model';
+
 interface PostCreateCityStepProps {
   city: string;
-  selectedCity: string;
-  cityResults: string[];
+  selectedCity: LocationOption | null;
+  cityResults: LocationOption[];
   onCityChange: (value: string) => void;
-  onCitySelect: (value: string) => void;
+  onCitySelect: (value: LocationOption) => void;
 }
 
 export const PostCreateCityStep = ({
@@ -39,9 +41,9 @@ export const PostCreateCityStep = ({
         <OptionList id="city-result-list" className="w-full">
           {cityResults.map((cityResult) => (
             <OptionItem
-              key={cityResult}
-              option={cityResult}
-              isSelected={selectedCity === cityResult}
+              key={cityResult.id}
+              option={cityResult.name}
+              isSelected={selectedCity?.id === cityResult.id}
               onSelect={() => onCitySelect(cityResult)}
             />
           ))}
