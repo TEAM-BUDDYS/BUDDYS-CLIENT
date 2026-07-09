@@ -4,7 +4,16 @@ import { useState } from 'react';
 
 import { BookmarkContainer } from '@/domains/home/components/bookmark-container/bookmark-container';
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
-import { BellIcon, SearchIcon } from '@/shared/components/icons';
+import {
+  AgeIcon,
+  BellIcon,
+  CertificationIcon,
+  CompanionIcon,
+  CountryIcon,
+  DateIcon,
+  GenderIcon,
+  SearchIcon,
+} from '@/shared/components/icons';
 import { BottomNavigation, Header } from '@/shared/components/layout';
 import { Card, Filter } from '@/shared/components/ui';
 
@@ -19,12 +28,12 @@ type FilterKey =
 type FilterIcon = React.ComponentType<React.SVGProps<SVGSVGElement>>;
 
 const filterItems = [
-  { key: 'country', label: '국가', icon: undefined },
-  { key: 'date', label: '날짜', icon: undefined },
-  { key: 'age', label: '나이', icon: undefined },
-  { key: 'gender', label: '성별', icon: undefined },
-  { key: 'buddyType', label: '동행 유형', icon: undefined },
-  { key: 'verification', label: '인증 상태', icon: undefined },
+  { key: 'country', label: '국가', icon: CountryIcon },
+  { key: 'date', label: '날짜', icon: DateIcon },
+  { key: 'age', label: '나이', icon: AgeIcon },
+  { key: 'gender', label: '성별', icon: GenderIcon },
+  { key: 'buddyType', label: '동행 유형', icon: CompanionIcon },
+  { key: 'verification', label: '인증 상태', icon: CertificationIcon },
 ] satisfies { key: FilterKey; label: string; icon?: FilterIcon }[];
 
 const appliedFilterKeys: FilterKey[] = [];
