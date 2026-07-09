@@ -28,7 +28,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer className="flex w-full flex-col items-center gap-4 pb-4">
+      <div className="flex w-full flex-col items-center gap-4 pb-[34px]">
         <Link href={'/login'} className="w-full">
           <Button>시작하기</Button>
         </Link>
@@ -38,7 +38,7 @@ export default function LandingPage() {
             <button className="text-body-sb-14 text-gray-800">로그인</button>
           </Link>
         </div>
-      </footer>
+      </div>
     </main>
   );
 }

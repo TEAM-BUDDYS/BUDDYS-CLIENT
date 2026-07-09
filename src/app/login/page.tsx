@@ -24,7 +24,7 @@ export default function LoginPage() {
         </div>
       </section>
 
-      <footer className="w-full pb-4">
+      <div className="w-full pb-[34px]">
         <Button
           variant="kakao"
           align="center"
@@ -33,7 +33,7 @@ export default function LoginPage() {
         >
           카카오로 시작하기
         </Button>
-      </footer>
+      </div>
     </main>
   );
 }
