@@ -71,7 +71,6 @@ export const BuddySearchSection = () => {
         {buddySearchItems.map((item) => (
           <BookmarkContainer
             key={item.id}
-            hasImage={Boolean(item.image)}
             isBookmarked={bookmarkedItemIds.includes(item.id)}
             variant="card"
             onBookmarkClick={() => handleBookmarkClick(item.id)}
