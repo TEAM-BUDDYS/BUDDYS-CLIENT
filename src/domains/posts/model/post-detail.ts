@@ -1,20 +1,12 @@
+import type {
+  AgeConditionType,
+  CompanionType,
+  GenderType,
+  RecruitmentCountType,
+} from './post-form';
 import type { PostRecruitmentStatusTypes } from './post-recruitment-status';
 
-export type PostAuthorGenderTypes = 'FEMALE' | 'MALE';
-
-export type PostGenderConditionTypes = 'ANY' | 'FEMALE' | 'MALE';
-
-export type PostRecruitmentCountTypes = 'ONE' | 'TWO' | 'THREE_OR_MORE';
-
-export type PostAgeConditionTypes =
-  | 'TEENS'
-  | 'EARLY_20S'
-  | 'MID_20S'
-  | 'LATE_20S'
-  | 'THIRTIES'
-  | 'FORTIES_OR_MORE';
-
-export type PostTravelTypes = 'FULL_TRIP' | 'PARTIAL_TRIP';
+export type PostAuthorGenderTypes = Exclude<GenderType, 'ANY'>;
 
 export interface PostDetailTag {
   tagId: number;
@@ -42,9 +34,9 @@ interface PostDetailAuthor {
 }
 
 interface PostDetailConditions {
-  ageConditions: PostAgeConditionTypes[];
-  genderCondition: PostGenderConditionTypes;
-  travelType: PostTravelTypes;
+  ageConditions: AgeConditionType[];
+  genderCondition: GenderType;
+  travelType: CompanionType;
   activityTags: PostDetailTag[];
   interestTags: PostDetailTag[];
   travelStyleTags: PostDetailTag[];
@@ -61,7 +53,7 @@ export interface PostDetail {
   city: PostDetailCity;
   startDate: string;
   endDate: string;
-  recruitmentCountType: PostRecruitmentCountTypes;
+  recruitmentCountType: RecruitmentCountType;
   content: string;
   conditions: PostDetailConditions;
   viewCount: number;

@@ -1,4 +1,5 @@
 import { PostDetailProfileHeader } from '@/domains/posts/components/post-detail-profile-header/post-detail-profile-header';
+import { POST_RECRUITMENT_COUNT_LABELS } from '@/domains/posts/model/post-condition';
 import type { PostDetail } from '@/domains/posts/model/post-detail';
 import { CalendarIcon, LocationIcon, MyIcon } from '@/shared/components/icons';
 import { CommonImage } from '@/shared/components/ui/common-image/common-image';
@@ -17,15 +18,6 @@ interface PostDetailMetaItemProps {
 const AUTHOR_GENDER_LABELS: Record<PostDetail['author']['gender'], string> = {
   FEMALE: '여',
   MALE: '남',
-};
-
-const RECRUITMENT_COUNT_LABELS: Record<
-  PostDetail['recruitmentCountType'],
-  string
-> = {
-  ONE: '1명',
-  THREE_OR_MORE: '3명 이상',
-  TWO: '2명',
 };
 
 const formatPostDetailDateRange = (startDate: string, endDate: string) => {
@@ -112,7 +104,7 @@ export const PostDetailContentSection = ({
           )}
           <PostDetailMetaItem
             icon={<MyIcon className="size-4" />}
-            label={RECRUITMENT_COUNT_LABELS[post.recruitmentCountType]}
+            label={POST_RECRUITMENT_COUNT_LABELS[post.recruitmentCountType]}
           />
         </div>
 
