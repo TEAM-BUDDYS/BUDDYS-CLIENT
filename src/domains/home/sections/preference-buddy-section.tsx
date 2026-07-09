@@ -3,10 +3,20 @@
 import { useState } from 'react';
 
 import { BookmarkContainer } from '@/domains/home/components/bookmark-container/bookmark-container';
+import { HomeChipGroup } from '@/domains/home/components/home-chip-group/home-chip-group';
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
 import { SummaryCard } from '@/domains/home/components/summary-card/summary-card';
 
 const temporaryThumbnail = 'https://loremflickr.com/72/72/person?random=1';
+
+const preferenceTags = [
+  { id: 1, name: '여행' },
+  { id: 2, name: '맛집 탐방' },
+  { id: 3, name: '언어교환' },
+  { id: 4, name: '생활 도움' },
+  { id: 5, name: '공부' },
+  { id: 6, name: '투어' },
+];
 
 const preferenceBuddyItems = [
   {
@@ -42,6 +52,9 @@ const preferenceBuddyItems = [
 ];
 
 export const PreferenceBuddySection = () => {
+  const [selectedPreferenceTagId, setSelectedPreferenceTagId] = useState<
+    number | null
+  >(null);
   const [bookmarkedItemIds, setBookmarkedItemIds] = useState<number[]>([]);
 
   const handleBookmarkClick = (itemId: number) => {
@@ -60,7 +73,11 @@ export const PreferenceBuddySection = () => {
         label="취향 기반 추천"
         title="이런 취향의 동행자는 어떠세요?"
       />
-
+      <HomeChipGroup
+        tags={preferenceTags}
+        selectedTagId={selectedPreferenceTagId}
+        onChange={setSelectedPreferenceTagId}
+      />
       <div className="flex flex-col gap-6">
         {preferenceBuddyItems.map((item) => (
           <BookmarkContainer
