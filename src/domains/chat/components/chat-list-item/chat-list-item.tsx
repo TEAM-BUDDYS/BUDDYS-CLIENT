@@ -21,7 +21,7 @@ export const ChatListItem = ({
   lastMessage,
   sentAt,
   unreadCount,
-  isNotificationOn,
+  isNotificationOn = true,
 }: ChatListItemProps) => {
   const hasUnread = unreadCount > 0;
 
