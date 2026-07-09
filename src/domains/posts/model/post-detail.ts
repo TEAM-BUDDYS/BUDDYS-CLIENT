@@ -31,17 +31,28 @@ interface PostDetailCity {
   name: string;
 }
 
+interface PostDetailAuthor {
+  userId: number;
+  nickname: string;
+  profileImageUrl?: string | null;
+  country: string;
+  age: number;
+  ageRange: string;
+  gender: PostAuthorGenderTypes;
+}
+
+interface PostDetailConditions {
+  ageConditions: PostAgeConditionTypes[];
+  genderCondition: PostGenderConditionTypes;
+  travelType: PostTravelTypes;
+  activityTags: PostDetailTag[];
+  interestTags: PostDetailTag[];
+  travelStyleTags: PostDetailTag[];
+}
+
 export interface PostDetail {
   postId: number;
-  author: {
-    userId: number;
-    nickname: string;
-    profileImageUrl?: string | null;
-    country: string;
-    age: number;
-    ageRange: string;
-    gender: PostAuthorGenderTypes;
-  };
+  author: PostDetailAuthor;
   isMine: boolean;
   recruitmentStatus: PostRecruitmentStatusTypes;
   title: string;
@@ -52,14 +63,7 @@ export interface PostDetail {
   endDate: string;
   recruitmentCountType: PostRecruitmentCountTypes;
   content: string;
-  conditions: {
-    ageConditions: PostAgeConditionTypes[];
-    genderCondition: PostGenderConditionTypes;
-    travelType: PostTravelTypes;
-    activityTags: PostDetailTag[];
-    interestTags: PostDetailTag[];
-    travelStyleTags: PostDetailTag[];
-  };
+  conditions: PostDetailConditions;
   viewCount: number;
   commentCount: number;
   createdAt: string;

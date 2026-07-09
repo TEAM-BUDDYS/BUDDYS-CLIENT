@@ -72,6 +72,7 @@ export const PostDetailContentSection = ({
   post,
 }: PostDetailContentSectionProps) => {
   const imageUrl = post.imageUrls[0];
+  const dateLabel = formatPostDetailDateRange(post.startDate, post.endDate);
 
   return (
     <section className="flex w-full flex-col gap-6">
@@ -103,10 +104,12 @@ export const PostDetailContentSection = ({
             icon={<LocationIcon className="size-4" />}
             label={post.city.name}
           />
-          <PostDetailMetaItem
-            icon={<CalendarIcon className="size-4" />}
-            label={formatPostDetailDateRange(post.startDate, post.endDate)}
-          />
+          {dateLabel && (
+            <PostDetailMetaItem
+              icon={<CalendarIcon className="size-4" />}
+              label={dateLabel}
+            />
+          )}
           <PostDetailMetaItem
             icon={<MyIcon className="size-4" />}
             label={RECRUITMENT_COUNT_LABELS[post.recruitmentCountType]}
