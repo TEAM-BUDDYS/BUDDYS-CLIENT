@@ -93,7 +93,7 @@ export default function CustomizedExplore() {
           ))}
         </div>
       </main>
-      <BottomNavigation className="fixed right-0 bottom-0 left-0 z-50 mx-auto max-w-[430px]" />
+      <BottomNavigation className="fixed right-0 bottom-0 left-0 z-20 mx-auto max-w-[430px]" />
     </>
   );
 }

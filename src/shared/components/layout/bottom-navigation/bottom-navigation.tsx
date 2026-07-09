@@ -56,7 +56,7 @@ export const BottomNavigation = ({ className }: BottomNavigationProps) => {
     <nav
       aria-label="하단 네비게이션"
       className={cn(
-        'w-full rounded-t-2xl border border-gray-300/30 bg-white px-6.25 py-1',
+        'h-18 w-full rounded-t-2xl border border-gray-300/30 bg-white px-6.25 py-1',
         className,
       )}
     >
