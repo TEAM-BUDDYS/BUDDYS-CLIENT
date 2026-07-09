@@ -1,4 +1,4 @@
-import documentImage from '@/domains/auth/asset/document.svg';
+import documentImage from '@/domains/auth/asset/illustrations/document.svg';
 import { KakaoIcon } from '@/shared/components/icons';
 import { CommonImage } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui';
