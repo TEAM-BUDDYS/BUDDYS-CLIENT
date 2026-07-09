@@ -5,38 +5,14 @@ import { useState } from 'react';
 import { BookmarkContainer } from '@/domains/home/components/bookmark-container/bookmark-container';
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
 import {
-  AgeIcon,
-  BellIcon,
-  CertificationIcon,
-  CompanionIcon,
-  CountryIcon,
-  DateIcon,
-  GenderIcon,
-  SearchIcon,
-} from '@/shared/components/icons';
+  buddyFilterItems,
+  type BuddyFilterKey,
+} from '@/domains/home/model/buddy-filter';
+import { BellIcon, SearchIcon } from '@/shared/components/icons';
 import { BottomNavigation, Header } from '@/shared/components/layout';
 import { Card, Filter } from '@/shared/components/ui';
 
-type FilterKey =
-  | 'country'
-  | 'date'
-  | 'age'
-  | 'gender'
-  | 'buddyType'
-  | 'verification';
-
-type FilterIcon = React.ComponentType<React.SVGProps<SVGSVGElement>>;
-
-const filterItems = [
-  { key: 'country', label: '국가', icon: CountryIcon },
-  { key: 'date', label: '날짜', icon: DateIcon },
-  { key: 'age', label: '나이', icon: AgeIcon },
-  { key: 'gender', label: '성별', icon: GenderIcon },
-  { key: 'buddyType', label: '동행 유형', icon: CompanionIcon },
-  { key: 'verification', label: '인증 상태', icon: CertificationIcon },
-] satisfies { key: FilterKey; label: string; icon?: FilterIcon }[];
-
-const appliedFilterKeys: FilterKey[] = [];
+const appliedFilterKeys: BuddyFilterKey[] = [];
 
 const customizedExploreItems = Array.from({ length: 7 }, (_, index) => ({
   id: index + 1,
@@ -52,7 +28,7 @@ const customizedExploreItems = Array.from({ length: 7 }, (_, index) => ({
 export default function CustomizedExplore() {
   const [bookmarkedItemIds, setBookmarkedItemIds] = useState<number[]>([]);
 
-  const handleFilterPress = (_filterKey: FilterKey) => {};
+  const handleFilterPress = (_filterKey: BuddyFilterKey) => {};
 
   const handleBookmarkClick = (itemId: number) => {
     setBookmarkedItemIds((prevBookmarkedItemIds) =>
@@ -83,7 +59,7 @@ export default function CustomizedExplore() {
         <SectionHeader label="" title="나에게 딱 맞는 동행을 만나보세요" />
         <div className="-mx-4 scrollbar-none overflow-x-auto border-b border-gray-100 px-4 pt-2 pb-4 [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           <div className="flex gap-2">
-            {filterItems.map((filterItem) => (
+            {buddyFilterItems.map((filterItem) => (
               <Filter
                 key={filterItem.key}
                 label={filterItem.label}

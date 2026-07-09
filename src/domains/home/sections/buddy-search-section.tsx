@@ -1,70 +1,38 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { BookmarkContainer } from '@/domains/home/components/bookmark-container/bookmark-container';
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
+import {
+  buddyFilterItems,
+  type BuddyFilterKey,
+} from '@/domains/home/model/buddy-filter';
 import { ChevronRightIcon } from '@/shared/components/icons';
-import { Filter } from '@/shared/components/ui';
-import { Card } from '@/shared/components/ui/card/card';
+import { Card, Filter } from '@/shared/components/ui';
 
-type FilterKey =
-  | 'country'
-  | 'date'
-  | 'age'
-  | 'gender'
-  | 'buddyType'
-  | 'verification';
+const appliedFilterKeys: BuddyFilterKey[] = [];
 
-type FilterIcon = React.ComponentType<React.SVGProps<SVGSVGElement>>;
-
-const filterItems = [
-  { key: 'country', label: '국가', icon: undefined },
-  { key: 'date', label: '날짜', icon: undefined },
-  { key: 'age', label: '나이', icon: undefined },
-  { key: 'gender', label: '성별', icon: undefined },
-  { key: 'buddyType', label: '동행 유형', icon: undefined },
-  { key: 'verification', label: '인증 상태', icon: undefined },
-] satisfies { key: FilterKey; label: string; icon?: FilterIcon }[];
-
-const appliedFilterKeys: FilterKey[] = [];
-
-const buddySearchItems = [
-  {
-    id: 1,
-    title: '최대 17자 제목이 들어가는 자리입니다',
-    content: '최대 21자 본문이 들어가는 자리입니다.',
-    postStatus: 'RECRUITING' as const,
-    tagValue: '국가',
-    startDate: '2026-07-10',
-    endDate: '2026-07-12',
-  },
-  {
-    id: 2,
-    title: '최대 17자 제목이 들어가는 자리입니다',
-    content: '최대 21자 본문이 들어가는 자리입니다.',
-    postStatus: 'RECRUITING' as const,
-    tagValue: '국가',
-    startDate: '2026-07-15',
-    endDate: '2026-07-16',
-    image: 'https://loremflickr.com/100/100/travel?random=1',
-  },
-  {
-    id: 3,
-    title: '최대 17자 제목이 들어가는 자리입니다',
-    content: '최대 21자 본문이 들어가는 자리입니다.',
-    postStatus: 'RECRUITING' as const,
-    tagValue: '국가',
-    startDate: '2026-08-01',
-    endDate: '2026-08-03',
-    image: 'https://loremflickr.com/100/100/travel?random=2',
-  },
-];
+const buddySearchItems = Array.from({ length: 4 }, (_, index) => ({
+  id: index + 1,
+  title: '최대 17자 제목이 들어가는 자리입니다',
+  content: '최대 21자 본문이 들어가는 자리입니다.',
+  postStatus: 'RECRUITING' as const,
+  tagValue: '국가',
+  startDate: '2026-07-10',
+  endDate: '2026-07-12',
+  image:
+    index % 2 === 0
+      ? undefined
+      : `https://loremflickr.com/100/100/travel?random=${index + 1}`,
+}));
 
 export const BuddySearchSection = () => {
+  const router = useRouter();
   const [bookmarkedItemIds, setBookmarkedItemIds] = useState<number[]>([]);
 
-  const handleFilterPress = (_filterKey: FilterKey) => {};
+  const handleFilterPress = (_filterKey: BuddyFilterKey) => {};
 
   const handleBookmarkClick = (itemId: number) => {
     setBookmarkedItemIds((prevBookmarkedItemIds) =>
@@ -83,10 +51,11 @@ export const BuddySearchSection = () => {
         title="원하는 조건의 동행을 찾아보세요"
         rightSlot={<ChevronRightIcon className="size-6 text-gray-500" />}
         rightSlotLabel="맞춤 탐색 더보기"
+        onClick={() => router.push('/customized-explore')}
       />
       <div className="-mx-4 scrollbar-none overflow-x-auto border-b border-gray-100 px-4 py-3 [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         <div className="flex gap-2">
-          {filterItems.map((filterItem) => (
+          {buddyFilterItems.map((filterItem) => (
             <Filter
               key={filterItem.key}
               label={filterItem.label}
