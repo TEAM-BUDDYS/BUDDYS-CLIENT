@@ -7,7 +7,7 @@ import { MessageIcon } from '@/shared/components/icons';
 interface PostDetailCommentAuthor {
   userId: number;
   nickname: string;
-  profileImageUrl: string;
+  profileImageUrl?: string | null;
 }
 
 export interface PostDetailComment {
