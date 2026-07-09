@@ -28,7 +28,7 @@ export const ChipGroup = ({
 
   const hasToggle = hasToggleButton && tags.length > collapsedCount;
   const visibleTags =
-    hasToggle && !isExpanded ? tags.slice(0, collapsedCount) : tags;
+    hasToggle && !isExpanded ? tags.slice(0, collapsedCount + 1) : tags;
 
   const handleTagClick = (tagId: number) => {
     const isSelected = selectedTagIds.includes(tagId);
