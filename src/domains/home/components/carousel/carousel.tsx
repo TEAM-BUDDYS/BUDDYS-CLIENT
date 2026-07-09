@@ -42,7 +42,7 @@ export const Carousel = ({ items }: CarouselProps) => {
                 radius="rounded-lg"
               />
 
-              <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/60" />
+              <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/40" />
 
               <div className="absolute bottom-5 left-5">
                 <CarouselInfo {...item.carouselInfo} />

@@ -24,8 +24,10 @@ export const CarouselInfo = ({
         unoptimized
       />
       <div className="flex w-37 flex-col gap-1">
-        <span className="text-title-b-18 truncate text-white">{title}</span>
-        <span className="text-body-m-15 truncate text-white">
+        <span className="text-title-b-18 truncate text-white [text-shadow:0_1px_2px_rgb(0_0_0/0.12)]">
+          {title}
+        </span>
+        <span className="text-body-m-15 truncate text-white [text-shadow:0_1px_2px_rgb(0_0_0/0.12)]">
           {country} | 조회수 {viewCount}
         </span>
       </div>
