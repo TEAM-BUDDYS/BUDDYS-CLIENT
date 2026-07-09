@@ -2,12 +2,12 @@ import earthImage from '@/domains/landing/asset/earth.svg';
 import { BuddysLogo } from '@/shared/components/icons/buddys-logo';
 import { CommonImage } from '@/shared/components/ui';
 
-export const MainSection = () => {
+export const LandingMain = () => {
   return (
     <section className="flex max-w-50 flex-col items-center gap-10">
       <CommonImage
         src={earthImage}
-        alt="지구 그림"
+        alt="지구 이미지"
         width={120}
         height={146}
         radius="rounded-none"
