@@ -75,7 +75,6 @@ export default function CustomizedExplore() {
           {customizedExploreItems.map((item) => (
             <BookmarkContainer
               key={item.id}
-              hasImage={Boolean(item.image)}
               isBookmarked={bookmarkedItemIds.includes(item.id)}
               variant="card"
               onBookmarkClick={() => handleBookmarkClick(item.id)}

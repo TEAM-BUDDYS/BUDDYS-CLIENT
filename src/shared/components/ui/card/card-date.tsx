@@ -11,13 +11,15 @@ export const CardDate = ({ startDate, endDate }: CardDateProps) => {
       endDate,
       startDate,
     });
+  const dateText =
+    startDate === endDate
+      ? `${formattedStartDate} (1일)`
+      : `${formattedStartDate} - ${formattedEndDate} (${durationDays}일)`;
 
   return (
     <div className="flex gap-1">
       <CalendarIcon className="text-mint-300 size-4" />
-      <span className="text-caption-r-12 text-gray-500">
-        {formattedStartDate} - {formattedEndDate} ({durationDays}일)
-      </span>
+      <span className="text-caption-r-12 text-gray-500">{dateText}</span>
     </div>
   );
 };

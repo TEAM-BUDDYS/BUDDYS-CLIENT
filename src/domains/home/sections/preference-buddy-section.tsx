@@ -56,7 +56,6 @@ export const PreferenceBuddySection = ({
         {items.map((item) => (
           <BookmarkContainer
             key={item.id}
-            hasImage={Boolean(item.image)}
             isBookmarked={bookmarkedItemIds.includes(item.id)}
             variant="summary"
             onBookmarkClick={() => handleBookmarkClick(item.id)}
