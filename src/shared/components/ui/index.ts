@@ -1,3 +1,4 @@
+export { ArchivePostCard } from './archive-post-card/archive-post-card';
 export { BottomActionBar } from './bottom-action-bar/bottom-action-bar';
 export { BottomSheet } from './bottom-sheet/bottom-sheet';
 export { Button, type ButtonProps } from './button/button';
@@ -6,6 +7,7 @@ export { Card } from './card/card';
 export { CardDate } from './card/card-date';
 export { PostStatusTag, type RecruitmentStatus, Tag } from './card/card-tag';
 export { Chip, ChipButton } from './chip/chip';
+export { ChipGroup, type ChipGroupProps } from './chip-group/chip-group';
 export { CommonImage } from './common-image/common-image';
 export { DateRangePickerSheet, type DateRangeTypes } from './date-range-picker';
 export { DateSelectButton } from './date-select-button/date-select-button';
