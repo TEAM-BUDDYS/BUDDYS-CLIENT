@@ -78,7 +78,7 @@ export const PreferenceBuddySection = () => {
         selectedTagId={selectedPreferenceTagId}
         onChange={setSelectedPreferenceTagId}
       />
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-5">
         {preferenceBuddyItems.map((item) => (
           <BookmarkContainer
             key={item.id}
