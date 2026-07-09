@@ -40,7 +40,7 @@ export const Dropdown = ({
         className={cn(
           'text-body-m-15 flex w-full justify-between rounded-xl bg-gray-50 px-4 py-3.5 text-gray-500',
           isOpen && 'bg-gray-100',
-          hasSelectedValue && 'text-gray-800',
+          hasSelectedValue && 'border border-gray-200 text-gray-800',
           disabled && 'bg-gray-50 text-gray-200',
         )}
         onClick={() => setIsOpen((prev) => !prev)}

@@ -19,6 +19,7 @@ export const OptionItem = ({
         aria-selected={isSelected}
         className={cn(
           'text-body-m-15 w-full rounded-lg px-4 py-3.5 text-left text-gray-500',
+          'active:bg-mint-50 active:text-mint-300',
           isSelected && 'bg-mint-50 text-mint-300',
         )}
         onClick={onSelect}
