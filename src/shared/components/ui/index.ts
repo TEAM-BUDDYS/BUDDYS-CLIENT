@@ -15,6 +15,7 @@ export { Dropdown } from './dropdown/dropdown';
 export { OptionItem } from './dropdown/option-item';
 export { OptionList } from './dropdown/option-list';
 export { Filter, type FilterProps } from './filter/filter';
+export { FormLabel, type FormLabelProps } from './form-label/form-label';
 export { Modal, type ModalProps } from './modal/modal';
 export { ProfileImageInput } from './profile-image-input/profile-image-input';
 export { ProgressBar } from './progress-bar/progress-bar';

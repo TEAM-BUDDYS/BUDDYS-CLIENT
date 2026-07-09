@@ -75,26 +75,31 @@ src/
   domains/
     auth/
       components/
+      features/
       hooks/
       api/
       model/
     onboarding/
       components/
+      features/
       hooks/
       api/
       model/
     posts/
       components/
+      features/
       hooks/
       api/
       model/
     profile/
       components/
+      features/
       hooks/
       api/
       model/
     chat/
       components/
+      features/
       hooks/
       api/
       model/
@@ -104,7 +109,7 @@ src/
 - 게시물 상세나 채팅방처럼 식별자가 필요한 화면은 요구사항이 확정된 뒤 `[postId]`, `[roomId]` 같은 dynamic route를 추가합니다.
 - 인증 전후 화면에서 서로 다른 layout이 실제로 필요해질 때 route group을 추가합니다.
 - 각 `page.tsx`는 현재 routing 확인을 위한 최소 화면이며, 실제 기능 구현 시 owner domain의 컴포넌트를 조합하는 route entry로 사용합니다.
-- 각 domain은 `components`, `hooks`, `api`, `model`을 기본 하위 폴더로 사용합니다.
+- 각 domain은 `components`, `features`, `hooks`, `api`, `model`을 기본 하위 폴더로 사용합니다.
 - `assets`와 추가 flow 폴더는 실제 구현에 필요한 시점에 추가합니다.
 
 ## Domain Structure
@@ -113,12 +118,15 @@ src/
 domains/{domain}/
   assets/
   components/
+  features/
   hooks/
   api/
   model/
 ```
 
 - 특정 도메인에서만 쓰는 컴포넌트, 훅, API, 타입과 에셋은 해당 도메인 내부에 둡니다.
+- 특정 사용자 흐름이나 화면 단위 기능처럼 상태, 여러 하위 컴포넌트, API 연동이 함께 묶이는 코드는 `features/{feature-name}`에 둡니다.
+- 작은 재사용 UI 조각이나 독립적인 도메인 컴포넌트는 `components`에 둡니다.
 - 공통화 여부는 아래 `Commonization Rules`를 기준으로 판단합니다.
 - `app` 내부에는 복잡한 비즈니스 로직을 두지 않습니다.
 - 도메인 폴더는 실제 기능명이 확정된 뒤 생성합니다.
