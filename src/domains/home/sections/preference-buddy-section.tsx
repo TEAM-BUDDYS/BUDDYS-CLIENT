@@ -6,52 +6,26 @@ import { BookmarkContainer } from '@/domains/home/components/bookmark-container/
 import { HomeChipGroup } from '@/domains/home/components/home-chip-group/home-chip-group';
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
 import { SummaryCard } from '@/domains/home/components/summary-card/summary-card';
+import type { Tag } from '@/types/tag';
 
-const temporaryThumbnail = 'https://loremflickr.com/72/72/person?random=1';
+export interface PreferenceBuddyItem {
+  id: number;
+  title: string;
+  content: string;
+  startDate: string;
+  endDate: string;
+  image?: string;
+}
 
-const preferenceTags = [
-  { id: 1, name: '여행' },
-  { id: 2, name: '맛집 탐방' },
-  { id: 3, name: '언어교환' },
-  { id: 4, name: '생활 도움' },
-  { id: 5, name: '공부' },
-  { id: 6, name: '투어' },
-];
+interface PreferenceBuddySectionProps {
+  tags: Tag[];
+  items: PreferenceBuddyItem[];
+}
 
-const preferenceBuddyItems = [
-  {
-    id: 1,
-    title: '최대 17자 제목이 들어가는 자리입니다',
-    content: '최대 18자 본문이 들어가는 자리입니다.',
-    startDate: '2026-07-10',
-    endDate: '2026-07-12',
-    image: temporaryThumbnail,
-  },
-  {
-    id: 2,
-    title: '최대 17자 제목이 들어가는 자리입니다',
-    content: '최대 18자 본문이 들어가는 자리입니다.',
-    startDate: '2026-07-15',
-    endDate: '2026-07-16',
-  },
-  {
-    id: 3,
-    title: '최대 17자 제목이 들어가는 자리입니다',
-    content: '최대 18자 본문이 들어가는 자리입니다.',
-    startDate: '2026-08-01',
-    endDate: '2026-08-03',
-    image: temporaryThumbnail,
-  },
-  {
-    id: 4,
-    title: '최대 17자 제목이 들어가는 자리입니다',
-    content: '최대 18자 본문이 들어가는 자리입니다.',
-    startDate: '2026-08-10',
-    endDate: '2026-08-10',
-  },
-];
-
-export const PreferenceBuddySection = () => {
+export const PreferenceBuddySection = ({
+  tags,
+  items,
+}: PreferenceBuddySectionProps) => {
   const [selectedPreferenceTagId, setSelectedPreferenceTagId] = useState<
     number | null
   >(null);
@@ -74,12 +48,12 @@ export const PreferenceBuddySection = () => {
         title="이런 취향의 동행자는 어떠세요?"
       />
       <HomeChipGroup
-        tags={preferenceTags}
+        tags={tags}
         selectedTagId={selectedPreferenceTagId}
         onChange={setSelectedPreferenceTagId}
       />
       <div className="flex flex-col gap-5">
-        {preferenceBuddyItems.map((item) => (
+        {items.map((item) => (
           <BookmarkContainer
             key={item.id}
             hasImage={Boolean(item.image)}
