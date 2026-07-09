@@ -46,9 +46,10 @@ export const PostCreateDetailStep = ({
   onImagesChange,
 }: PostCreateDetailStepProps) => {
   const handleImageInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const remainingImageCount = MAX_IMAGE_COUNT - imageCount;
     const files = Array.from(event.target.files ?? []).slice(
       0,
-      MAX_IMAGE_COUNT,
+      remainingImageCount,
     );
 
     if (files.length === 0) {
