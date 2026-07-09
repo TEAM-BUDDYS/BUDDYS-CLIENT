@@ -15,17 +15,17 @@ const POST_RECRUITMENT_STATUS_LABELS: Record<
   PostRecruitmentStatusTypes,
   string
 > = {
-  recruiting: '모집 중',
-  completed: '모집 완료',
+  COMPLETED: '모집 완료',
+  RECRUITING: '모집 중',
 };
 
 export const PostRecruitmentStatusButton = ({
-  status = 'recruiting',
+  status = 'RECRUITING',
   className,
   type = 'button',
   ...props
 }: PostRecruitmentStatusButtonProps) => {
-  const isCompleted = status === 'completed';
+  const isCompleted = status === 'COMPLETED';
 
   return (
     <button

@@ -5,6 +5,22 @@ interface FormatDateRangeParams {
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
 
+const DATE_ONLY_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+
+const parseDate = (date: Date | string) => {
+  if (date instanceof Date) {
+    return date;
+  }
+
+  if (DATE_ONLY_REGEX.test(date)) {
+    const [year, month, day] = date.split('-').map(Number);
+
+    return new Date(year, month - 1, day);
+  }
+
+  return new Date(date);
+};
+
 const getDateParts = (date: Date | string) => {
   if (typeof date === 'string') {
     const [year, month, day] = date.split('-');
@@ -29,6 +45,20 @@ export const formatDateWithWeekday = (date: Date) => {
   const weekday = WEEKDAYS[date.getDay()];
 
   return `${formatDate(date)} (${weekday})`;
+};
+
+export const formatMonthDayWithWeekday = (date: Date | string) => {
+  const targetDate = parseDate(date);
+
+  if (Number.isNaN(targetDate.getTime())) {
+    return '';
+  }
+
+  const month = targetDate.getMonth() + 1;
+  const day = targetDate.getDate();
+  const weekday = WEEKDAYS[targetDate.getDay()];
+
+  return `${month}월 ${day}일 (${weekday})`;
 };
 
 const getDurationDays = (startDate: string, endDate: string) => {
