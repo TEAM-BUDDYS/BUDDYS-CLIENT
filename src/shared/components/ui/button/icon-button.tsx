@@ -10,7 +10,7 @@ const IconButtonVariants = cva(
   {
     variants: {
       variant: {
-        primary: 'bg-mint-300 text-white enalbed:active:bg-mint-400',
+        primary: 'bg-mint-300 text-white enabled:active:bg-mint-400',
         secondary:
           'bg-mint-50 text-mint-300 border border-mint-200 enabled:active:border-mint-300 enabled:active:bg-mint-300 enabled:active:text-white',
       },
