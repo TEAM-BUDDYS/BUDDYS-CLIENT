@@ -14,9 +14,7 @@ export const LoginMain = () => {
       />
 
       <div className="flex flex-col items-center gap-2 text-center">
-        <header className="text-title-b-22 text-gray-800">
-          간편하게 시작하기
-        </header>
+        <h1 className="text-title-b-22 text-gray-800">간편하게 시작하기</h1>
         <p className="text-body-m-15 text-gray-500">
           소셜 계정으로 바로 가입하고 <br /> 동행을 찾아보세요
         </p>

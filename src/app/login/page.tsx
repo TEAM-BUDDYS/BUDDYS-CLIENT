@@ -1,6 +1,5 @@
+import { KaKaoLoginButton } from '@/domains/auth/components/kakao-login-button/kakao-login-button';
 import { LoginMain } from '@/domains/auth/components/login-main/login-main';
-import { KakaoIcon } from '@/shared/components/icons';
-import { Button } from '@/shared/components/ui';
 
 export default function LoginPage() {
   return (
@@ -10,14 +9,7 @@ export default function LoginPage() {
       </div>
 
       <footer className="w-full pb-4">
-        <Button
-          variant="kakao"
-          align="center"
-          icon={<KakaoIcon />}
-          iconSize="lg"
-        >
-          카카오로 시작하기
-        </Button>
+        <KaKaoLoginButton />
       </footer>
     </main>
   );
