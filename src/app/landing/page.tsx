@@ -1,13 +1,45 @@
-import { LandingFooter } from '@/domains/landing/components/landing-footer/landing-footer';
-import { LandingMain } from '@/domains/landing/components/landing-main/landing-main';
+import Link from 'next/link';
+
+import earthImage from '@/domains/landing/asset/earth.svg';
+import { BuddysLogo } from '@/shared/components/icons/buddys-logo';
+import { CommonImage } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui';
 
 export default function LandingPage() {
   return (
     <main className="flex min-h-dvh flex-col px-4">
       <div className="flex flex-1 items-center justify-center">
-        <LandingMain />
+        <section className="flex max-w-50 flex-col items-center gap-10">
+          <CommonImage
+            src={earthImage}
+            alt="지구 이미지"
+            width={120}
+            height={146}
+            radius="rounded-none"
+            preload
+          />
+
+          <div className="flex flex-col items-center gap-2 text-center">
+            <span aria-label="버디즈">
+              <BuddysLogo />
+            </span>
+            <p className="text-body-r-14 text-gray-500">
+              취향에 맞는 교환학생 동행을 찾고 <br /> 함께한 코스를 기록하세요
+            </p>
+          </div>
+        </section>
       </div>
-      <LandingFooter />
+      <footer className="flex w-full flex-col items-center gap-4 pb-4">
+        <Link href={'/login'} className="w-full">
+          <Button>시작하기</Button>
+        </Link>
+        <div className="flex items-center justify-center gap-2">
+          <p className="text-body-r-14 text-gray-500">이미 계정이 있나요?</p>
+          <Link href={'/login'}>
+            <button className="text-body-sb-14 text-gray-800">로그인</button>
+          </Link>
+        </div>
+      </footer>
     </main>
   );
 }
