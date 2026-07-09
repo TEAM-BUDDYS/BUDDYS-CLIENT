@@ -51,19 +51,18 @@ export const ChatListItem = ({
           </div>
 
           <div className="flex min-w-0 flex-col gap-1">
-            {isNotificationOn ? (
-              <div className="flex items-center gap-1">
-                <p className="text-body-sb-15 text-gray-800">{nickname}</p>
+            <div className="flex items-center gap-1">
+              <p className="text-body-sb-15 text-gray-800">{nickname}</p>
+              {!isNotificationOn && (
                 <span
                   aria-label="알람 끈 채팅방"
                   className="size-[14px] text-gray-300"
                 >
                   <NoticeIcon />
                 </span>
-              </div>
-            ) : (
-              <p className="text-body-sb-15 text-gray-800">{nickname}</p>
-            )}
+              )}
+            </div>
+
             <p className="text-body-r-14 truncate text-gray-300">
               {lastMessage}
             </p>
