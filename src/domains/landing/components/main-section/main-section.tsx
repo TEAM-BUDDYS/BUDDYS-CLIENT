@@ -9,15 +9,15 @@ export const MainSection = () => {
         src={earthImage}
         alt="지구 그림"
         width={120}
-        height={145}
+        height={146}
         radius="rounded-none"
         preload
       />
 
-      <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-col items-center gap-2 text-center">
         <span aria-label="버디즈">{<BuddysLogo />}</span>
         <p className="text-body-r-14 text-gray-500">
-          취향에 맞는 교환학생 동행을 찾고 함께한 코스를 기록하세요
+          취향에 맞는 교환학생 동행을 찾고 <br /> 함께한 코스를 기록하세요
         </p>
       </div>
     </section>
