@@ -105,12 +105,14 @@ export const Modal = ({
           <Button
             variant="secondary"
             autoFocus
-            className="text-body-m-16"
+            className="text-body-m-16 flex-1"
             onClick={onClose}
           >
             {cancelLabel}
           </Button>
-          <Button onClick={onConfirm}>{confirmLabel}</Button>
+          <Button className="flex-1" onClick={onConfirm}>
+            {confirmLabel}
+          </Button>
         </div>
       </section>
     </div>

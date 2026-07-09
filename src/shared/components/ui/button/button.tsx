@@ -6,7 +6,7 @@ import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
 const ButtonVariants = cva(
-  'flex h-13 w-full flex-1 items-center rounded-xl px-4 py-0',
+  'flex h-13 w-full items-center rounded-xl px-4 py-0',
   {
     variants: {
       variant: {
