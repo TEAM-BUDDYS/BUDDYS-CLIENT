@@ -1,3 +1,5 @@
+import defaultProfile from '@/shared/assets/illustrations/default-profile.svg';
+
 import { ChatRoomList } from '../../model/chat-list';
 import { ChatListItem } from './chat-list-item/chat-list-item';
 
@@ -29,7 +31,7 @@ export const ChatList = () => {
         <ChatListItem
           key={chatRoom.chatRoomId}
           chatRoomId={chatRoom.chatRoomId}
-          imgUrl={chatRoom.participant.profileImageUrl ?? ''}
+          imgUrl={chatRoom.participant.profileImageUrl ?? defaultProfile}
           nickname={chatRoom.participant.nickname}
           lastMessage={chatRoom.lastMessage}
           sentAt={chatRoom.lastMessageSentAt}
