@@ -4,17 +4,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { Tab } from '@/shared/components/ui';
-import { ArchivePostCard } from '@/shared/components/ui';
-import { CommonImage } from '@/shared/components/ui';
+import { ArchivePostCard, Tab } from '@/shared/components/ui';
 
 import { ContentEmptyState } from '../components/content-empty-state/content-empty-state';
-import type { ContentTabValue, CourseItem, PostItem } from '../model/content';
+import type { ContentTabValue, PostItem } from '../model/content';
 
 interface ContentSectionProps {
   posts: PostItem[];
-  courses: CourseItem[];
-  onCourseClick: (course: CourseItem) => void;
   onCreateCourseClick: () => void;
 }
 
@@ -25,8 +21,6 @@ const TAB_ITEMS: { label: string; value: ContentTabValue }[] = [
 
 export const ContentSection = ({
   posts,
-  courses,
-  onCourseClick,
   onCreateCourseClick,
 }: ContentSectionProps) => {
   const router = useRouter();
@@ -65,28 +59,6 @@ export const ContentSection = ({
             />
           </div>
         )
-      ) : courses.length > 0 ? (
-        <div className="grid grid-cols-3 gap-x-0.75 gap-y-1 px-1 py-3">
-          {courses.map((course) => (
-            <div
-              key={course.id}
-              onClick={() => onCourseClick(course)}
-              className="w-full cursor-pointer"
-            >
-              {course.image && (
-                <CommonImage
-                  src={course.image}
-                  alt="코스 썸네일"
-                  width={300}
-                  height={300}
-                  radius="rounded-none"
-                  unoptimized
-                  className="aspect-square w-full"
-                />
-              )}
-            </div>
-          ))}
-        </div>
       ) : (
         <div className="mt-25">
           <ContentEmptyState

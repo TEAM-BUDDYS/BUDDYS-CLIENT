@@ -1,5 +1,4 @@
-import { Button } from '@/shared/components/ui';
-import { EmptyState } from '@/shared/components/ui';
+import { Button, EmptyState } from '@/shared/components/ui';
 
 export interface ContentEmptyStateProps {
   title: string;

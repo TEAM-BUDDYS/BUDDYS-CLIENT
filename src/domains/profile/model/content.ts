@@ -7,9 +7,4 @@ export interface PostItem {
   image?: string;
 }
 
-export interface CourseItem {
-  id: string;
-  image?: string;
-}
-
 export type ContentTabValue = 'post' | 'course';
