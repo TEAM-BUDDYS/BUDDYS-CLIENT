@@ -10,6 +10,7 @@ import {
   TrashIcon,
 } from '@/shared/components/icons';
 import { BottomSheet, Button } from '@/shared/components/ui';
+import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
 
 type ConfirmType = 'block' | 'leave' | null;
 type ChatBottomSheetAction =
@@ -32,21 +33,37 @@ export const BottomSheetChat = ({
   onAction,
 }: BottomSheetChatProps) => {
   const [confirmType, setConfirmType] = useState<ConfirmType>(null);
+  const [isComingSoonModalOpen, setIsComingSoonModalOpen] = useState(false);
+
+  // TODO: 차단/나가기 확인 모달 연결 후 true로 변경
+  const isConfirmModalEnabled = false;
 
   const handleAction = (action: ChatBottomSheetAction) => {
+    onClose();
+
     if (onAction) {
       onAction(action);
       return;
     }
 
-    // TODO: 공통 Modal 컴포넌트 생기면 "구현중입니다" 모달 열기
+    setIsComingSoonModalOpen(true);
   };
 
   const handleBlockClick = () => {
+    if (!isConfirmModalEnabled) {
+      handleAction('block');
+      return;
+    }
+
     setConfirmType('block');
   };
 
   const handleLeaveChatClick = () => {
+    if (!isConfirmModalEnabled) {
+      handleAction('leave');
+      return;
+    }
+
     setConfirmType('leave');
   };
 
@@ -113,14 +130,16 @@ export const BottomSheetChat = ({
           <Button onClick={handleClose}>닫기</Button>
         </div>
       </BottomSheet>
-
-      {/* TODO: 공통 Modal 컴포넌트 생기면 여기서 confirmType에 따라 모달 띄우기 */}
       {/* 
         confirmType === 'block' -> 차단 확인 모달
         confirmType === 'leave' -> 채팅방 나가기 확인 모달
         확인 버튼 onClick -> handleConfirm
         취소 버튼 onClick -> setConfirmType(null)
       */}
+      <ComingSoonModal
+        open={isComingSoonModalOpen}
+        onClose={() => setIsComingSoonModalOpen(false)}
+      />
     </>
   );
 };
