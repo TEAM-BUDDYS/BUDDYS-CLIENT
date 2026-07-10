@@ -1,10 +1,11 @@
 import { ReactNode } from 'react';
 
 import { cn } from '@/lib/cn';
+import { defaultProfileImage } from '@/shared/assets/illustrations';
 import { CommonImage } from '@/shared/components/ui';
 
 interface UserProfileProps {
-  imageUrl: string;
+  imageUrl?: string;
   nickname: string;
   badgeIcon?: ReactNode;
   badgeLabel?: string;
@@ -12,7 +13,7 @@ interface UserProfileProps {
 }
 
 export const UserProfile = ({
-  imageUrl,
+  imageUrl = defaultProfileImage.src,
   nickname,
   badgeIcon,
   badgeLabel,
