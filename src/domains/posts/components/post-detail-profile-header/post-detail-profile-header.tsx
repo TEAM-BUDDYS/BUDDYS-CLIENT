@@ -1,3 +1,8 @@
+'use client';
+
+import { useState } from 'react';
+
+import { PostRecruitmentStatusBottomSheet } from '@/domains/posts/components/post-recruitment-status-bottom-sheet/post-recruitment-status-bottom-sheet';
 import { PostRecruitmentStatusButton } from '@/domains/posts/components/post-recruitment-status-button/post-recruitment-status-button';
 import type { PostRecruitmentStatusTypes } from '@/domains/posts/model/post-recruitment-status';
 import { defaultProfileImage } from '@/shared/assets/illustrations';
@@ -20,6 +25,17 @@ export const PostDetailProfileHeader = ({
   recruitmentStatus = 'RECRUITING',
 }: PostDetailProfileHeaderProps) => {
   const profileImageSrc = profileImageUrl ?? defaultProfileImage;
+  const [selectedRecruitmentStatus, setSelectedRecruitmentStatus] =
+    useState(recruitmentStatus);
+  const [isStatusBottomSheetOpen, setIsStatusBottomSheetOpen] = useState(false);
+
+  const handleStatusButtonClick = () => {
+    setIsStatusBottomSheetOpen(true);
+  };
+
+  const handleStatusBottomSheetClose = () => {
+    setIsStatusBottomSheetOpen(false);
+  };
 
   return (
     <header className="flex w-full items-center justify-between">
@@ -47,8 +63,17 @@ export const PostDetailProfileHeader = ({
       </div>
 
       <PostRecruitmentStatusButton
-        status={recruitmentStatus}
+        aria-expanded={isStatusBottomSheetOpen}
+        aria-haspopup="dialog"
         className="shrink-0"
+        status={selectedRecruitmentStatus}
+        onClick={handleStatusButtonClick}
+      />
+      <PostRecruitmentStatusBottomSheet
+        open={isStatusBottomSheetOpen}
+        value={selectedRecruitmentStatus}
+        onClose={handleStatusBottomSheetClose}
+        onSelect={setSelectedRecruitmentStatus}
       />
     </header>
   );
