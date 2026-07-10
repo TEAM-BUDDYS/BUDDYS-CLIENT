@@ -3,7 +3,7 @@
 import {
   type FilterSheetValue,
   useFilterSheet,
-} from '@/domains/home/hooks/use-filter-sheet';
+} from '@/domains/home/features/filter-sheet/use-filter-sheet';
 import { XIcon } from '@/shared/components/icons';
 import { Header } from '@/shared/components/layout';
 import {

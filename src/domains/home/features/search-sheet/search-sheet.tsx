@@ -1,7 +1,7 @@
 'use client';
 
 import { SearchHistory } from '@/domains/home/components/search-history/search-history';
-import { useSearchSheet } from '@/domains/home/hooks/use-search-sheet';
+import { useSearchSheet } from '@/domains/home/features/search-sheet/use-search-sheet';
 import { Header } from '@/shared/components/layout';
 import { FormLabel, Searchbar } from '@/shared/components/ui';
 
