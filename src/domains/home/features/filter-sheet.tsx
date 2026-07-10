@@ -53,41 +53,36 @@ interface FilterSheetProps {
   onApply?: (value: FilterSheetValue) => void;
 }
 
+const initialFilterValue: FilterSheetValue = {
+  country: '',
+  startDate: '',
+  endDate: '',
+  ageTagIds: [],
+  genderTagIds: [],
+  buddyTypeTagIds: [],
+  verificationTagIds: [],
+};
+
 export const FilterSheet = ({ onClose, onApply }: FilterSheetProps) => {
-  const [selectedCountry, setSelectedCountry] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [selectedAgeTagIds, setSelectedAgeTagIds] = useState<number[]>([]);
-  const [selectedGenderTagIds, setSelectedGenderTagIds] = useState<number[]>(
-    [],
-  );
-  const [selectedBuddyTypeTagIds, setSelectedBuddyTypeTagIds] = useState<
-    number[]
-  >([]);
-  const [selectedVerificationTagIds, setSelectedVerificationTagIds] = useState<
-    number[]
-  >([]);
+  const [filterValue, setFilterValue] =
+    useState<FilterSheetValue>(initialFilterValue);
+
+  const updateFilterValue = <Key extends keyof FilterSheetValue>(
+    key: Key,
+    value: FilterSheetValue[Key],
+  ) => {
+    setFilterValue((prevFilterValue) => ({
+      ...prevFilterValue,
+      [key]: value,
+    }));
+  };
 
   const handleResetClick = () => {
-    setSelectedCountry('');
-    setStartDate('');
-    setEndDate('');
-    setSelectedAgeTagIds([]);
-    setSelectedGenderTagIds([]);
-    setSelectedBuddyTypeTagIds([]);
-    setSelectedVerificationTagIds([]);
+    setFilterValue(initialFilterValue);
   };
 
   const handleApplyClick = () => {
-    onApply?.({
-      country: selectedCountry,
-      startDate,
-      endDate,
-      ageTagIds: selectedAgeTagIds,
-      genderTagIds: selectedGenderTagIds,
-      buddyTypeTagIds: selectedBuddyTypeTagIds,
-      verificationTagIds: selectedVerificationTagIds,
-    });
+    onApply?.(filterValue);
     onClose();
   };
 
@@ -115,9 +110,9 @@ export const FilterSheet = ({ onClose, onApply }: FilterSheetProps) => {
           </FormLabel>
           <Dropdown
             options={countryOptions}
-            value={selectedCountry}
+            value={filterValue.country}
             placeholder="선택해주세요."
-            onChange={setSelectedCountry}
+            onChange={(value) => updateFilterValue('country', value)}
           />
         </div>
         <div className="flex flex-col gap-3">
@@ -128,17 +123,21 @@ export const FilterSheet = ({ onClose, onApply }: FilterSheetProps) => {
             <TextField
               aria-label="시작일"
               placeholder="시작일"
-              value={startDate}
+              value={filterValue.startDate}
               className="text-body-m-15 h-13 text-gray-500"
-              onChange={(event) => setStartDate(event.target.value)}
+              onChange={(event) =>
+                updateFilterValue('startDate', event.target.value)
+              }
             />
             <span className="text-title-b-20 text-gray-500">~</span>
             <TextField
               aria-label="종료일"
               placeholder="종료일"
-              value={endDate}
+              value={filterValue.endDate}
               className="text-body-m-15 h-13 text-gray-500"
-              onChange={(event) => setEndDate(event.target.value)}
+              onChange={(event) =>
+                updateFilterValue('endDate', event.target.value)
+              }
             />
           </div>
         </div>
@@ -148,12 +147,12 @@ export const FilterSheet = ({ onClose, onApply }: FilterSheetProps) => {
           </FormLabel>
           <ChipGroup
             tags={ageFilterTags}
-            selectedTagIds={selectedAgeTagIds}
+            selectedTagIds={filterValue.ageTagIds}
             maxSelectionCount={ageFilterTags.length}
             hasToggleButton={false}
             chipClassName="h-10 w-20"
             wrap={false}
-            onChange={setSelectedAgeTagIds}
+            onChange={(tagIds) => updateFilterValue('ageTagIds', tagIds)}
           />
         </div>
         <div className="flex flex-col gap-3">
@@ -162,10 +161,10 @@ export const FilterSheet = ({ onClose, onApply }: FilterSheetProps) => {
           </FormLabel>
           <ChipGroup
             tags={genderFilterTags}
-            selectedTagIds={selectedGenderTagIds}
+            selectedTagIds={filterValue.genderTagIds}
             maxSelectionCount={genderFilterTags.length}
             hasToggleButton={false}
-            onChange={setSelectedGenderTagIds}
+            onChange={(tagIds) => updateFilterValue('genderTagIds', tagIds)}
           />
         </div>
         <div className="flex flex-col gap-3">
@@ -174,10 +173,10 @@ export const FilterSheet = ({ onClose, onApply }: FilterSheetProps) => {
           </FormLabel>
           <ChipGroup
             tags={buddyTypeFilterTags}
-            selectedTagIds={selectedBuddyTypeTagIds}
+            selectedTagIds={filterValue.buddyTypeTagIds}
             maxSelectionCount={buddyTypeFilterTags.length}
             hasToggleButton={false}
-            onChange={setSelectedBuddyTypeTagIds}
+            onChange={(tagIds) => updateFilterValue('buddyTypeTagIds', tagIds)}
           />
         </div>
         <div className="flex flex-col gap-3">
@@ -186,10 +185,12 @@ export const FilterSheet = ({ onClose, onApply }: FilterSheetProps) => {
           </FormLabel>
           <ChipGroup
             tags={verificationFilterTags}
-            selectedTagIds={selectedVerificationTagIds}
+            selectedTagIds={filterValue.verificationTagIds}
             maxSelectionCount={verificationFilterTags.length}
             hasToggleButton={false}
-            onChange={setSelectedVerificationTagIds}
+            onChange={(tagIds) =>
+              updateFilterValue('verificationTagIds', tagIds)
+            }
           />
         </div>
       </main>
