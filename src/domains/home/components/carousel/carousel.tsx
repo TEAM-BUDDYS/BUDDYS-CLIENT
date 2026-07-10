@@ -3,10 +3,10 @@
 import Link from 'next/link';
 
 import { CommonImage } from '@/shared/components/ui';
+import { useCarouselIndex } from '@/shared/hooks/use-carousel-index';
 
 import { CarouselIndicator } from './carousel-indicator';
 import { CarouselInfo, type CarouselInfoProps } from './carousel-info';
-import { useCarousel } from './use-carousel';
 
 interface CarouselItem {
   href: string;
@@ -19,7 +19,9 @@ interface CarouselProps {
 }
 
 export const Carousel = ({ items }: CarouselProps) => {
-  const { currentIndex, emblaRef, handleIndicatorChange } = useCarousel();
+  const { currentIndex, emblaRef, handleIndexChange } = useCarouselIndex({
+    loop: true,
+  });
 
   if (items.length === 0) return null;
 
@@ -40,6 +42,7 @@ export const Carousel = ({ items }: CarouselProps) => {
                 height={264}
                 unoptimized
                 radius="rounded-lg"
+                className="block w-full"
               />
 
               <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/40" />
@@ -55,7 +58,7 @@ export const Carousel = ({ items }: CarouselProps) => {
       <CarouselIndicator
         total={items.length}
         currentIndex={currentIndex}
-        onChange={handleIndicatorChange}
+        onChange={handleIndexChange}
       />
     </div>
   );

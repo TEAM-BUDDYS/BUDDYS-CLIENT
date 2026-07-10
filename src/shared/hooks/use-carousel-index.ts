@@ -3,17 +3,21 @@
 import useEmblaCarousel from 'embla-carousel-react';
 import { useCallback, useEffect, useState } from 'react';
 
-export const useCarousel = () => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+type CarouselIndexOptions = Parameters<typeof useEmblaCarousel>[0];
+
+export const useCarouselIndex = (options?: CarouselIndexOptions) => {
+  const [emblaRef, emblaApi] = useEmblaCarousel(options);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleSelect = useCallback(() => {
-    if (!emblaApi) return;
+    if (!emblaApi) {
+      return;
+    }
 
     setCurrentIndex(emblaApi.selectedScrollSnap());
   }, [emblaApi]);
 
-  const handleIndicatorChange = useCallback(
+  const handleIndexChange = useCallback(
     (index: number) => {
       emblaApi?.scrollTo(index);
     },
@@ -21,7 +25,9 @@ export const useCarousel = () => {
   );
 
   useEffect(() => {
-    if (!emblaApi) return;
+    if (!emblaApi) {
+      return;
+    }
 
     emblaApi.on('select', handleSelect);
     emblaApi.on('reInit', handleSelect);
@@ -35,6 +41,6 @@ export const useCarousel = () => {
   return {
     currentIndex,
     emblaRef,
-    handleIndicatorChange,
+    handleIndexChange,
   };
 };
