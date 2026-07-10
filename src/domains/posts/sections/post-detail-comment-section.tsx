@@ -35,16 +35,17 @@ export const PostDetailCommentSection = ({
         </div>
       </div>
 
-      <div className="flex flex-col gap-6">
+      <ul className="flex flex-col gap-6">
         {comments.map((comment) => (
-          <CommentItem
-            key={comment.commentId}
-            content={comment.content}
-            author={comment.author}
-            createdAt={comment.createdAt}
-          />
+          <li key={comment.commentId}>
+            <CommentItem
+              content={comment.content}
+              author={comment.author}
+              createdAt={comment.createdAt}
+            />
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 };
