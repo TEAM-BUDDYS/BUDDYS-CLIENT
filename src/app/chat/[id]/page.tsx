@@ -1,6 +1,6 @@
 import { ChatRoom } from '@/domains/chat/features/chat-room/chat-room';
+import { ChatRoomMenu } from '@/domains/chat/features/chat-room-menu/chat-room-menu';
 import { ChatMessageData } from '@/domains/chat/model/chat-room';
-import { MoreIcon } from '@/shared/components/icons';
 import { Header } from '@/shared/components/layout';
 
 const MOCK_CHAT_ROOM_DETAIL = {
@@ -108,7 +108,7 @@ export default function ChatRoomPage() {
         content={MOCK_CHAT_ROOM_DETAIL.participant.nickname}
         hasBackButton
         contentAlign="center"
-        right={<MoreIcon />}
+        right={<ChatRoomMenu />}
       />
       <ChatRoom
         createdAt={MOCK_CHAT_ROOM_DETAIL.createdDate}
