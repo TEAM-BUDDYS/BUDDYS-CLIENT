@@ -37,7 +37,11 @@ export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
         <UserProfile
           imageUrl={profile.imageUrl}
           nickname={profile.nickname}
-          badgeIcon={profile.isVerified ? <ProfileBadgeIcon /> : undefined}
+          badgeIcon={
+            profile.isVerified ? (
+              <ProfileBadgeIcon className="size-6" />
+            ) : undefined
+          }
           badgeLabel={profile.isVerified ? '인증된 사용자' : undefined}
           className="px-4"
         />

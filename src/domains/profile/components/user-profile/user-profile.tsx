@@ -29,7 +29,7 @@ export const UserProfile = ({
         radius="rounded-full"
         className="mb-3"
       />
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
         <span className="text-title-b-18 text-gray-800">{nickname}</span>
         {badgeIcon && (
           <span
