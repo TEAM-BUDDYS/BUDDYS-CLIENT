@@ -3,9 +3,9 @@ export type OnboardProgressStep = 1 | 2 | 3 | 4 | 5;
 export type OnboardStep =
   | 'interest-location'
   | 'exchange-info'
-  | 'activity-type'
+  | 'activity-tags'
   | 'interest-tags'
-  | 'companion-style'
+  | 'companion-tags'
   | 'profile'
   | 'complete';
 

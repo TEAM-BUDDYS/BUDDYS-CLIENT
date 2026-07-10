@@ -3,21 +3,34 @@
 import { useState } from 'react';
 
 import { Button, ProgressBar } from '@/shared/components/ui';
+import {
+  ACTIVITY_TAGS,
+  COMPANION_STYLE_TAGS,
+  INTEREST_TAGS,
+} from '@/shared/constants/preference-tags';
 
 import { TOTAL_PROGRESS_STEP } from './constant';
 import type { OnboardProgressStep, OnboardStep } from './model';
 import { OnboardExchangeInfoStep } from './onboard-exchange-info-step';
 import { OnboardInterestLocationStep } from './onboard-interest-location-step';
+import { OnboardTagSelectStep } from './onboard-tag-select-step';
 import { useOnboardForm } from './use-onboard-form';
 
 const PROGRESS_STEP_BY_STEP = {
   'interest-location': 1,
   'exchange-info': 2,
+  'activity-tags': 3,
+  'interest-tags': 4,
+  'companion-tags': 5,
 } satisfies Partial<Record<OnboardStep, OnboardProgressStep>>;
 
 const NEXT_STEP_BY_STEP = {
   'interest-location': 'exchange-info',
-  'exchange-info': 'activity-type',
+  'exchange-info': 'activity-tags',
+  'activity-tags': 'interest-tags',
+  'interest-tags': 'companion-tags',
+  'companion-tags': 'profile',
+  profile: 'complete',
 } satisfies Partial<Record<OnboardStep, OnboardStep>>;
 
 export const OnboardFlow = () => {
@@ -42,7 +55,7 @@ export const OnboardFlow = () => {
   };
 
   const handleSkipClick = () => {
-    setCurrentStep('activity-type');
+    setCurrentStep('activity-tags');
   };
 
   return (
@@ -84,7 +97,38 @@ export const OnboardFlow = () => {
           />
         )}
 
-        {currentStep === 'activity-type' && <p>구현중</p>}
+        {currentStep === 'activity-tags' && (
+          <OnboardTagSelectStep
+            title="어떤 활동을 함께하고 싶나요?"
+            description="원하는 동행 유형을 추천해드릴게요"
+            tags={ACTIVITY_TAGS}
+            selectedTagIds={onboardForm.activityTagIds}
+            maxSelectionCount={3}
+            onChange={onboardForm.handleActivityTagIdsChange}
+          />
+        )}
+
+        {currentStep === 'interest-tags' && (
+          <OnboardTagSelectStep
+            title="관심사를 선택해주세요"
+            description="취향이 비슷한 사람을 연결해드릴게요"
+            tags={INTEREST_TAGS}
+            selectedTagIds={onboardForm.interestTagIds}
+            maxSelectionCount={3}
+            onChange={onboardForm.handleInterestTagIdsChange}
+          />
+        )}
+
+        {currentStep === 'companion-tags' && (
+          <OnboardTagSelectStep
+            title="동행 스타일은요?"
+            description="함께할 사람의 성향을 맞춰볼게요 "
+            tags={COMPANION_STYLE_TAGS}
+            selectedTagIds={onboardForm.companionTagIds}
+            maxSelectionCount={5}
+            onChange={onboardForm.handleCompanionTagIdsChange}
+          />
+        )}
       </section>
 
       <div className="flex flex-col gap-4">

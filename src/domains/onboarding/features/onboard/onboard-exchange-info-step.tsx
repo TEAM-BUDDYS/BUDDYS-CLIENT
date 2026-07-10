@@ -78,7 +78,6 @@ export const OnboardExchangeInfoStep = ({
         <div className="flex items-center gap-4">
           <TextField
             aria-label="파견 시작월"
-            inputMode="decimal"
             placeholder="YYYY.MM"
             value={startMonth}
             onChange={(event) => onStartMonthChange(event.target.value)}
@@ -86,7 +85,6 @@ export const OnboardExchangeInfoStep = ({
           <span className="text-title-b-20 text-gray-500">~</span>
           <TextField
             aria-label="파견 종료월"
-            inputMode="decimal"
             placeholder="YYYY.MM"
             value={endMonth}
             onChange={(event) => onEndMonthChange(event.target.value)}

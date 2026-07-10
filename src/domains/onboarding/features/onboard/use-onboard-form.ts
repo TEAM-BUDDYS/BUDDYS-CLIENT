@@ -57,6 +57,9 @@ export const useOnboardForm = () => {
   const [exchangeMonths, setExchangeMonths] = useState(
     getDefaultExchangeMonths,
   );
+  const [activityTagIds, setActivityTagIds] = useState<number[]>([]);
+  const [interestTagIds, setInterestTagIds] = useState<number[]>([]);
+  const [companionTagIds, setCompanionTagIds] = useState<number[]>([]);
 
   const countryOptions = useMemo(
     () => [...ONBOARD_COUNTRY_OPTIONS],
@@ -145,6 +148,18 @@ export const useOnboardForm = () => {
     }));
   };
 
+  const handleActivityTagIdsChange = (value: number[]) => {
+    setActivityTagIds(value);
+  };
+
+  const handleInterestTagIdsChange = (value: number[]) => {
+    setInterestTagIds(value);
+  };
+
+  const handleCompanionTagIdsChange = (value: number[]) => {
+    setCompanionTagIds(value);
+  };
+
   const canGoNext = (step: OnboardStep) => {
     if (step === 'interest-location') {
       return Boolean(interestCountry && selectedInterestCity);
@@ -156,6 +171,18 @@ export const useOnboardForm = () => {
         selectedExchangeSchool &&
         exchangeMonths.startMonth.trim() &&
         exchangeMonths.endMonth.trim(),
+      );
+    }
+
+    if (
+      step === 'activity-tags' ||
+      step === 'interest-tags' ||
+      step === 'companion-tags'
+    ) {
+      return Boolean(
+        activityTagIds.length > 0 ||
+        interestTagIds.length > 0 ||
+        companionTagIds.length > 0,
       );
     }
 
@@ -174,6 +201,9 @@ export const useOnboardForm = () => {
     exchangeSchoolResults,
     startMonth: exchangeMonths.startMonth,
     endMonth: exchangeMonths.endMonth,
+    activityTagIds,
+    interestTagIds,
+    companionTagIds,
     handleInterestCountrySelect,
     handleInterestCityChange,
     handleInterestCitySelect,
@@ -182,6 +212,9 @@ export const useOnboardForm = () => {
     handleExchangeSchoolSelect,
     handleStartMonthChange,
     handleEndMonthChange,
+    handleActivityTagIdsChange,
+    handleInterestTagIdsChange,
+    handleCompanionTagIdsChange,
     canGoNext,
   };
 };
