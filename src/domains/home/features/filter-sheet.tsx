@@ -91,16 +91,14 @@ export const FilterSheet = ({ onClose, onApply }: FilterSheetProps) => {
       <Header
         content="필터"
         right={
-          <>
-            <button
-              type="button"
-              aria-label="필터 닫기"
-              className="flex size-11 items-center justify-center"
-              onClick={onClose}
-            >
-              <XIcon className="size-6" />
-            </button>
-          </>
+          <button
+            type="button"
+            aria-label="필터 닫기"
+            className="flex size-11 items-center justify-center"
+            onClick={onClose}
+          >
+            <XIcon className="size-6" />
+          </button>
         }
       />
       <main className="flex flex-col gap-6 px-4 pb-13">
