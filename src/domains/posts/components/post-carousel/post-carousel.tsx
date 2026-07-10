@@ -1,10 +1,8 @@
 'use client';
 
-import useEmblaCarousel from 'embla-carousel-react';
-import { useCallback, useEffect, useState } from 'react';
-
 import { cn } from '@/lib/cn';
 import { CommonImage } from '@/shared/components/ui';
+import { useCarouselIndex } from '@/shared/hooks/use-carousel-index';
 
 interface PostCarouselProps {
   imageUrls: string[];
@@ -17,33 +15,10 @@ export const PostCarousel = ({
   title,
   className,
 }: PostCarouselProps) => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({
+  const { currentIndex, emblaRef } = useCarouselIndex({
     align: 'start',
     loop: imageUrls.length > 1,
   });
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const handleSelect = useCallback(() => {
-    if (!emblaApi) {
-      return;
-    }
-
-    setCurrentIndex(emblaApi.selectedScrollSnap());
-  }, [emblaApi]);
-
-  useEffect(() => {
-    if (!emblaApi) {
-      return;
-    }
-
-    emblaApi.on('select', handleSelect);
-    emblaApi.on('reInit', handleSelect);
-
-    return () => {
-      emblaApi.off('select', handleSelect);
-      emblaApi.off('reInit', handleSelect);
-    };
-  }, [emblaApi, handleSelect]);
 
   if (imageUrls.length === 0) {
     return null;
@@ -88,7 +63,7 @@ export const PostCarousel = ({
         </div>
       </div>
 
-      <div className="text-caption-m-12 bg-opacity-60 absolute top-4 right-4 rounded px-2 py-1 text-white">
+      <div className="text-caption-m-12 absolute top-4 right-4 rounded bg-black/60 px-2 py-1 text-white">
         {currentIndex + 1}/{imageUrls.length}
       </div>
     </div>
