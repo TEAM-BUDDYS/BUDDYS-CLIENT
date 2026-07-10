@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-
+import {
+  type FilterSheetValue,
+  useFilterSheet,
+} from '@/domains/home/hooks/use-filter-sheet';
 import { XIcon } from '@/shared/components/icons';
 import { Header } from '@/shared/components/layout';
 import {
@@ -38,53 +40,19 @@ const verificationFilterTags = [
   { id: 3, name: '파견교 인증' },
 ];
 
-export interface FilterSheetValue {
-  country: string;
-  startDate: string;
-  endDate: string;
-  ageTagIds: number[];
-  genderTagIds: number[];
-  buddyTypeTagIds: number[];
-  verificationTagIds: number[];
-}
-
 interface FilterSheetProps {
   onClose: () => void;
   onApply?: (value: FilterSheetValue) => void;
 }
 
-const initialFilterValue: FilterSheetValue = {
-  country: '',
-  startDate: '',
-  endDate: '',
-  ageTagIds: [],
-  genderTagIds: [],
-  buddyTypeTagIds: [],
-  verificationTagIds: [],
-};
-
 export const FilterSheet = ({ onClose, onApply }: FilterSheetProps) => {
-  const [filterValue, setFilterValue] =
-    useState<FilterSheetValue>(initialFilterValue);
-
-  const updateFilterValue = <Key extends keyof FilterSheetValue>(
-    key: Key,
-    value: FilterSheetValue[Key],
-  ) => {
-    setFilterValue((prevFilterValue) => ({
-      ...prevFilterValue,
-      [key]: value,
-    }));
-  };
-
-  const handleResetClick = () => {
-    setFilterValue(initialFilterValue);
-  };
-
-  const handleApplyClick = () => {
-    onApply?.(filterValue);
-    onClose();
-  };
+  const {
+    filterValue,
+    updateFilterValue,
+    updateDateFilterValue,
+    handleResetClick,
+    handleApplyClick,
+  } = useFilterSheet({ onClose, onApply });
 
   return (
     <>
@@ -120,21 +88,23 @@ export const FilterSheet = ({ onClose, onApply }: FilterSheetProps) => {
           <div className="flex flex-1 items-center gap-5">
             <TextField
               aria-label="시작일"
+              inputMode="numeric"
               placeholder="시작일"
               value={filterValue.startDate}
               className="text-body-m-15 h-13 text-gray-500"
               onChange={(event) =>
-                updateFilterValue('startDate', event.target.value)
+                updateDateFilterValue('startDate', event.target.value)
               }
             />
             <span className="text-title-b-20 text-gray-500">~</span>
             <TextField
               aria-label="종료일"
+              inputMode="numeric"
               placeholder="종료일"
               value={filterValue.endDate}
               className="text-body-m-15 h-13 text-gray-500"
               onChange={(event) =>
-                updateFilterValue('endDate', event.target.value)
+                updateDateFilterValue('endDate', event.target.value)
               }
             />
           </div>
