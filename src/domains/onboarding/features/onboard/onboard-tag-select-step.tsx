@@ -36,6 +36,8 @@ export const OnboardTagSelectStep = ({
           selectedTagIds={selectedTagIds}
           maxSelectionCount={maxSelectionCount}
           hasToggleButton={false}
+          rowGap="md"
+          chipClassName="px-4"
           onChange={onChange}
         />
       </div>
