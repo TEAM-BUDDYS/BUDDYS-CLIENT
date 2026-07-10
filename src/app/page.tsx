@@ -1,7 +1,4 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
-
+import { WriteFloatingButton } from '@/domains/home/components/write-floating-button/write-floating-button';
 import {
   type BuddySearchItem,
   BuddySearchSection,
@@ -15,10 +12,9 @@ import {
   SameCountryBuddySection,
 } from '@/domains/home/sections/same-country-buddy-section';
 import { TodayBuddySection } from '@/domains/home/sections/today-buddy-section';
-import { BellIcon, PlusIcon, SearchIcon } from '@/shared/components/icons';
+import { BellIcon, SearchIcon } from '@/shared/components/icons';
 import { BuddysLogo } from '@/shared/components/icons/buddys-logo';
 import { BottomNavigation, Header } from '@/shared/components/layout';
-import { IconButton } from '@/shared/components/ui';
 import type { Tag } from '@/types/tag';
 
 const temporaryImage = 'https://loremflickr.com/412/264/travel?random=1';
@@ -114,8 +110,6 @@ const preferenceBuddyItems: PreferenceBuddyItem[] = Array.from(
 );
 
 export default function Home() {
-  const router = useRouter();
-
   return (
     <>
       <Header
@@ -133,25 +127,17 @@ export default function Home() {
       />
       <main className="px-4 pb-33">
         <TodayBuddySection items={todayBuddyItems} />
-        <div className="-mx-4 my-6 h-2 bg-gray-50" />
+        <div className="-mx-4 my-6 h-2 bg-gray-50 opacity-50" />
         <BuddySearchSection items={buddySearchItems} />
-        <div className="-mx-4 my-6 h-2 bg-gray-50" />
+        <div className="-mx-4 my-6 h-2 bg-gray-50 opacity-50" />
         <SameCountryBuddySection items={sameCountryBuddyItems} />
-        <div className="-mx-4 my-6 h-2 bg-gray-50" />
+        <div className="-mx-4 my-6 h-2 bg-gray-50 opacity-50" />
         <PreferenceBuddySection
           tags={preferenceTags}
           items={preferenceBuddyItems}
         />
       </main>
-      <div className="fixed right-3.75 bottom-22 z-20">
-        <IconButton
-          variant="primary"
-          icon={<PlusIcon />}
-          onClick={() => router.push('/posts')}
-        >
-          글쓰기
-        </IconButton>
-      </div>
+      <WriteFloatingButton />
       <BottomNavigation className="fixed right-0 bottom-0 left-0 z-20 mx-auto max-w-[430px]" />
     </>
   );

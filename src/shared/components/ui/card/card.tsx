@@ -36,9 +36,7 @@ export const Card = ({
             <PostStatusTag status={postStatus} />
             <Tag value={tagValue} />
           </div>
-          <div
-            className={cn('flex flex-col gap-1', image ? 'w-45.5' : 'w-57.5')}
-          >
+          <div className={cn('flex flex-col gap-1', image ? 'w-50' : 'w-57.5')}>
             <header className="text-body-sb-16 truncate text-gray-800">
               {title}
             </header>
