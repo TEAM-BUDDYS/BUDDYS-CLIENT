@@ -1,9 +1,7 @@
 import { ProfilePageView } from '@/domains/profile/components/profile-page-view/profile-page-view';
 import type { MyProfile } from '@/domains/profile/model/profile';
-import { defaultProfileImage } from '@/shared/assets/illustrations';
 
 const MOCK_PROFILE: MyProfile = {
-  imageUrl: defaultProfileImage.src,
   nickname: '테스트유저',
   isVerified: true,
   tags: [

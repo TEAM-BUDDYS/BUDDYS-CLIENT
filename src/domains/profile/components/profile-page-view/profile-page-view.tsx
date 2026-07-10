@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
-import { SettingIcon } from '@/shared/components/icons';
+import { ProfileBadgeIcon, SettingIcon } from '@/shared/components/icons';
 import { BottomNavigation, Header } from '@/shared/components/layout';
 
 import type { MyProfile } from '../../model/profile';
@@ -37,6 +37,7 @@ export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
         <UserProfile
           imageUrl={profile.imageUrl}
           nickname={profile.nickname}
+          badgeIcon={profile.isVerified ? <ProfileBadgeIcon /> : undefined}
           badgeLabel={profile.isVerified ? '인증된 사용자' : undefined}
           className="px-4"
         />

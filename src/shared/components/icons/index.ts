@@ -27,6 +27,7 @@ export { MoreIcon } from './more-icon';
 export { MyIcon } from './my-icon';
 export { NoticeIcon } from './notice-icon';
 export { PlusIcon } from './plus-icon';
+export { ProfileBadgeIcon } from './profile-badge-icon';
 export { ProfileIcon } from './profile-icon';
 export { SandglassIcon } from './sandglass-icon';
 export { SearchIcon } from './search-icon';
