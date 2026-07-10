@@ -2,7 +2,7 @@ import { PostDetailComments } from '@/domains/posts/features/post-detail/post-de
 import type { PostDetailComment } from '@/domains/posts/model/comment';
 import type { PostDetail } from '@/domains/posts/model/post-detail';
 import { PostDetailConditionSection } from '@/domains/posts/sections/post-detail-condition-section';
-import { PostDetailContentSection } from '@/domains/posts/sections/post-detail-content-section/post-detail-content-section';
+import { PostDetailContentSection } from '@/domains/posts/sections/post-detail-content-section';
 import { ChatIcon, MoreIcon } from '@/shared/components/icons';
 import { Header } from '@/shared/components/layout';
 import { IconButton } from '@/shared/components/ui';
