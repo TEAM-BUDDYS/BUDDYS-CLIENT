@@ -3,6 +3,7 @@ import { PostDetailProfileHeader } from '@/domains/posts/components/post-detail-
 import { POST_RECRUITMENT_COUNT_LABELS } from '@/domains/posts/model/post-condition';
 import type { PostDetail } from '@/domains/posts/model/post-detail';
 import { CalendarIcon, LocationIcon, MyIcon } from '@/shared/components/icons';
+import { PostStatusTag } from '@/shared/components/ui';
 import { formatMonthDayWithWeekday } from '@/shared/utils/format-date-range';
 import { formatRelativeTime } from '@/shared/utils/format-relative-time';
 
@@ -76,31 +77,35 @@ export const PostDetailContentSection = ({
         isMine={post.isMine}
       />
 
-      <div className="flex flex-col gap-4">
-        <h1 className="text-title-b-20 text-gray-800">{post.title}</h1>
+      <div className="flex w-full flex-col items-start gap-2">
+        {!post.isMine && <PostStatusTag status={post.recruitmentStatus} />}
 
-        <PostCarousel imageUrls={post.imageUrls} title={post.title} />
+        <div className="flex w-full flex-col gap-4">
+          <h1 className="text-title-b-20 text-gray-800">{post.title}</h1>
 
-        <div className="flex flex-col gap-2">
-          <PostDetailMetaItem
-            icon={<LocationIcon className="size-4" />}
-            label={post.city.name}
-          />
-          {dateLabel && (
+          <PostCarousel imageUrls={post.imageUrls} title={post.title} />
+
+          <div className="flex flex-col gap-2">
             <PostDetailMetaItem
-              icon={<CalendarIcon className="size-4" />}
-              label={dateLabel}
+              icon={<LocationIcon className="size-4" />}
+              label={post.city.name}
             />
-          )}
-          <PostDetailMetaItem
-            icon={<MyIcon className="size-4" />}
-            label={POST_RECRUITMENT_COUNT_LABELS[post.recruitmentCountType]}
-          />
-        </div>
+            {dateLabel && (
+              <PostDetailMetaItem
+                icon={<CalendarIcon className="size-4" />}
+                label={dateLabel}
+              />
+            )}
+            <PostDetailMetaItem
+              icon={<MyIcon className="size-4" />}
+              label={POST_RECRUITMENT_COUNT_LABELS[post.recruitmentCountType]}
+            />
+          </div>
 
-        <p className="text-body-m-15 whitespace-pre-line text-gray-800">
-          {post.content}
-        </p>
+          <p className="text-body-m-15 whitespace-pre-line text-gray-800">
+            {post.content}
+          </p>
+        </div>
       </div>
     </section>
   );
