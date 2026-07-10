@@ -1,3 +1,9 @@
+import {
+  POST_AGE_CONDITION_LABELS,
+  POST_COMPANION_TYPE_LABELS,
+  POST_GENDER_CONDITION_LABELS,
+  POST_RECRUITMENT_COUNT_LABELS,
+} from '@/domains/posts/model/post-condition';
 import type {
   AgeConditionType,
   CompanionType,
@@ -49,31 +55,34 @@ export const STEP_CONTENTS = {
 >;
 
 export const AGE_CONDITION_OPTIONS = [
-  { label: '20대 초반', value: 'EARLY_20S' },
-  { label: '20대 중반', value: 'MID_20S' },
-  { label: '20대 후반', value: 'LATE_20S' },
-  { label: '30대 이상', value: 'OVER_30S' },
+  { label: POST_AGE_CONDITION_LABELS.EARLY_20S, value: 'EARLY_20S' },
+  { label: POST_AGE_CONDITION_LABELS.MID_20S, value: 'MID_20S' },
+  { label: POST_AGE_CONDITION_LABELS.LATE_20S, value: 'LATE_20S' },
+  { label: POST_AGE_CONDITION_LABELS.OVER_30S, value: 'OVER_30S' },
 ] satisfies PostCreateOption<AgeConditionType>[];
 
 export const GENDER_OPTIONS = [
-  { label: '남자', value: 'MALE' },
-  { label: '여자', value: 'FEMALE' },
+  { label: POST_GENDER_CONDITION_LABELS.MALE, value: 'MALE' },
+  { label: POST_GENDER_CONDITION_LABELS.FEMALE, value: 'FEMALE' },
 ] satisfies PostCreateOption<PostCreateGenderConditionType>[];
 
 export const COMPANION_TYPE_OPTIONS = [
-  { label: '여행 전체 동행', value: 'FULL_TRIP' },
-  { label: '여행 부분 동행', value: 'PARTIAL_TRIP' },
-  { label: '숙박 공유', value: 'ACCOMMODATION_SHARE' },
-  { label: '투어 동행', value: 'TOUR' },
-  { label: '식사 동행', value: 'MEAL' },
-  { label: '생활 동행', value: 'DAILY_LIFE' },
-  { label: '공동 구매', value: 'GROUP_PURCHASE' },
+  { label: POST_COMPANION_TYPE_LABELS.FULL_TRIP, value: 'FULL_TRIP' },
+  { label: POST_COMPANION_TYPE_LABELS.PARTIAL_TRIP, value: 'PARTIAL_TRIP' },
+  {
+    label: POST_COMPANION_TYPE_LABELS.ACCOMMODATION_SHARE,
+    value: 'ACCOMMODATION_SHARE',
+  },
+  { label: POST_COMPANION_TYPE_LABELS.TOUR, value: 'TOUR' },
+  { label: POST_COMPANION_TYPE_LABELS.MEAL, value: 'MEAL' },
+  { label: POST_COMPANION_TYPE_LABELS.DAILY_LIFE, value: 'DAILY_LIFE' },
+  { label: POST_COMPANION_TYPE_LABELS.GROUP_PURCHASE, value: 'GROUP_PURCHASE' },
 ] satisfies PostCreateOption<CompanionType>[];
 
 export const RECRUITMENT_COUNT_OPTIONS = [
-  { label: '미정', value: 'UNDECIDED' },
-  { label: '1인', value: 'ONE' },
-  { label: '2인', value: 'TWO' },
-  { label: '3인', value: 'THREE' },
-  { label: '4인 이상', value: 'FOUR_OR_MORE' },
+  { label: POST_RECRUITMENT_COUNT_LABELS.UNDECIDED, value: 'UNDECIDED' },
+  { label: POST_RECRUITMENT_COUNT_LABELS.ONE, value: 'ONE' },
+  { label: POST_RECRUITMENT_COUNT_LABELS.TWO, value: 'TWO' },
+  { label: POST_RECRUITMENT_COUNT_LABELS.THREE, value: 'THREE' },
+  { label: POST_RECRUITMENT_COUNT_LABELS.FOUR_OR_MORE, value: 'FOUR_OR_MORE' },
 ] satisfies PostCreateOption<RecruitmentCountType>[];
