@@ -118,7 +118,7 @@ export const FilterSheet = ({ onClose, onApply }: FilterSheetProps) => {
             selectedTagIds={filterValue.ageTagIds}
             maxSelectionCount={ageFilterTags.length}
             hasToggleButton={false}
-            chipClassName="h-10 w-20"
+            chipClassName="h-10 min-w-0 flex-1 shrink px-0"
             wrap={false}
             onChange={(tagIds) => updateFilterValue('ageTagIds', tagIds)}
           />
