@@ -1,13 +1,9 @@
 import type { HTMLAttributes } from 'react';
 
+import type { CommentAuthor } from '@/domains/posts/model/comment';
 import { cn } from '@/lib/cn';
+import { defaultProfileImage } from '@/shared/assets/illustrations';
 import { CommonImage } from '@/shared/components/ui';
-
-interface CommentAuthor {
-  userId: number;
-  nickname: string;
-  profileImageUrl: string;
-}
 
 interface CommentItemProps extends HTMLAttributes<HTMLElement> {
   content: string;
@@ -22,17 +18,19 @@ export const CommentItem = ({
   className,
   ...props
 }: CommentItemProps) => {
+  const profileImageSrc = author.profileImageUrl ?? defaultProfileImage;
+
   return (
     <article
       className={cn('flex w-full items-start gap-3', className)}
       {...props}
     >
       <CommonImage
-        src={author.profileImageUrl}
+        src={profileImageSrc}
         alt={`${author.nickname} 프로필 이미지`}
         width={40}
         height={40}
-        unoptimized
+        unoptimized={Boolean(author.profileImageUrl)}
         radius="rounded-full"
         className="size-10"
       />
