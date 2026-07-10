@@ -8,7 +8,7 @@ import { useCarouselIndex } from '@/shared/hooks/use-carousel-index';
 import { CarouselIndicator } from './carousel-indicator';
 import { CarouselInfo, type CarouselInfoProps } from './carousel-info';
 
-interface CarouselItem {
+export interface CarouselItem {
   href: string;
   imageUrl: string;
   carouselInfo: CarouselInfoProps;

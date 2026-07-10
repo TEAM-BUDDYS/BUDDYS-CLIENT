@@ -3,7 +3,6 @@
 import { useState } from 'react';
 
 import { BookmarkContainer } from '@/domains/home/components/bookmark-container/bookmark-container';
-import { SectionHeader } from '@/domains/home/components/section-header/section-header';
 import {
   buddyFilterItems,
   type BuddyFilterKey,
@@ -16,6 +15,7 @@ const appliedFilterKeys: BuddyFilterKey[] = [];
 
 const customizedExploreItems = Array.from({ length: 7 }, (_, index) => ({
   id: index + 1,
+  href: `/posts/${index + 1}`,
   title: '최대 17자 제목이 들어가는 자리입니다',
   content: '최대 21자 본문이 들어가는 자리입니다.',
   postStatus: 'RECRUITING' as const,
@@ -56,7 +56,9 @@ export default function CustomizedExplore() {
         }
       />
       <main className="px-4 pb-19">
-        <SectionHeader label="" title="나에게 딱 맞는 동행을 만나보세요" />
+        <h2 className="text-title-b-20 my-2">
+          나에게 딱 맞는 동행을 만나보세요
+        </h2>
         <div className="-mx-4 scrollbar-none overflow-x-auto border-b border-gray-100 px-4 pt-2 pb-4 [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           <div className="flex gap-2">
             {buddyFilterItems.map((filterItem) => (
@@ -80,6 +82,7 @@ export default function CustomizedExplore() {
               onBookmarkClick={() => handleBookmarkClick(item.id)}
             >
               <Card
+                href={item.href}
                 title={item.title}
                 content={item.content}
                 postStatus={item.postStatus}
@@ -92,7 +95,7 @@ export default function CustomizedExplore() {
           ))}
         </div>
       </main>
-      <BottomNavigation className="fixed right-0 bottom-0 left-0 z-20 mx-auto max-w-[430px]" />
+      <BottomNavigation className="fixed right-0 bottom-0 left-0 z-20 mx-auto max-w-107.5" />
     </>
   );
 }
