@@ -1,6 +1,6 @@
 export const ChatSystemMessage = () => {
   return (
-    <div className="text-caption-r-12 flex h-38.25 w-85.75 shrink-0 flex-col items-center justify-center rounded-2xl bg-gray-50 px-4 pt-2.5 pb-4.25 text-center text-gray-800">
+    <div className="text-caption-r-12 flex h-38.25 w-full shrink-0 flex-col items-center justify-center rounded-2xl bg-gray-50 px-4 pt-2.5 pb-4.25 text-center text-gray-800">
       <strong className="text-caption-m-12">
         버디와의 대화를 위한 공간이에요.
       </strong>

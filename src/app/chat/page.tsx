@@ -9,7 +9,7 @@ const MOCK_CHAT_ROOM_LIST: ChatRoomList = {
       participant: {
         userId: 2,
         nickname: '민지',
-        profileImageUrl: '/images/profile.png',
+        profileImageUrl: null,
       },
       lastMessage: '내일 몇 시에 만날까요?',
       lastMessageSentAt: '2026-07-05T14:30:00',
