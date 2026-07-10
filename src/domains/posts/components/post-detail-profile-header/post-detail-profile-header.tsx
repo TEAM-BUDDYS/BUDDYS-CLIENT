@@ -29,6 +29,7 @@ export const PostDetailProfileHeader = ({
   isMine,
 }: PostDetailProfileHeaderProps) => {
   const profileImageSrc = profileImageUrl ?? defaultProfileImage;
+  // TODO: API 연동 시 React Query 낙관적 업데이트로 전환하고 로컬 상태 제거
   const [selectedRecruitmentStatus, setSelectedRecruitmentStatus] =
     useState(recruitmentStatus);
   const [isStatusBottomSheetOpen, setIsStatusBottomSheetOpen] = useState(false);

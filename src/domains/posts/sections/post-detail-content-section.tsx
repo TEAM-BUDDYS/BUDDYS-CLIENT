@@ -69,6 +69,7 @@ export const PostDetailContentSection = ({
   return (
     <section className="flex w-full flex-col gap-6">
       <PostDetailProfileHeader
+        key={post.postId}
         nickname={post.author.nickname}
         country={post.author.country}
         profileDescription={getAuthorDescription(post)}
