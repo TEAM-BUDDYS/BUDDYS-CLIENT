@@ -13,6 +13,8 @@ export interface ChipGroupProps {
   maxSelectionCount?: number;
   collapsedCount?: number;
   hasToggleButton?: boolean;
+  wrap?: boolean;
+  chipClassName?: string;
   onChange: (selectedTagIds: number[]) => void;
 }
 
@@ -22,6 +24,8 @@ export const ChipGroup = ({
   maxSelectionCount = 3,
   collapsedCount = 5,
   hasToggleButton = true,
+  wrap = true,
+  chipClassName,
   onChange,
 }: ChipGroupProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -50,7 +54,7 @@ export const ChipGroup = ({
         className={cn(
           'flex min-w-0 gap-2',
           hasToggle && !isExpanded && 'flex-nowrap overflow-hidden',
-          (!hasToggle || isExpanded) && 'flex-wrap',
+          (!hasToggle || isExpanded) && (wrap ? 'flex-wrap' : 'flex-nowrap'),
           hasToggle && isExpanded && 'pr-[77px]',
         )}
       >
@@ -63,6 +67,7 @@ export const ChipGroup = ({
             <ChipButton
               key={tag.id}
               active={isSelected}
+              className={chipClassName}
               aria-label={`${tag.name} 태그 ${isSelected ? '선택 해제' : '선택'}`}
               disabled={isSelectionDisabled}
               onClick={() => handleTagClick(tag.id)}
