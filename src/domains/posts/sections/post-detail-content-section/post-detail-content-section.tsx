@@ -73,6 +73,7 @@ export const PostDetailContentSection = ({
         profileDescription={getAuthorDescription(post)}
         profileImageUrl={post.author.profileImageUrl ?? undefined}
         recruitmentStatus={post.recruitmentStatus}
+        isMine={post.isMine}
       />
 
       <div className="flex flex-col gap-4">

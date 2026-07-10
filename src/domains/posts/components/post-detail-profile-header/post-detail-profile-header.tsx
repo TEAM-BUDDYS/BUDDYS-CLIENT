@@ -5,7 +5,9 @@ import { useState } from 'react';
 import { PostRecruitmentStatusBottomSheet } from '@/domains/posts/components/post-recruitment-status-bottom-sheet/post-recruitment-status-bottom-sheet';
 import { PostRecruitmentStatusButton } from '@/domains/posts/components/post-recruitment-status-button/post-recruitment-status-button';
 import type { PostRecruitmentStatusTypes } from '@/domains/posts/model/post-recruitment-status';
+import { cn } from '@/lib/cn';
 import { defaultProfileImage } from '@/shared/assets/illustrations';
+import { BookmarkIcon } from '@/shared/components/icons';
 import { Tag } from '@/shared/components/ui/card/card-tag';
 import { CommonImage } from '@/shared/components/ui/common-image/common-image';
 
@@ -15,6 +17,7 @@ interface PostDetailProfileHeaderProps {
   profileDescription: string;
   profileImageUrl?: string;
   recruitmentStatus?: PostRecruitmentStatusTypes;
+  isMine: boolean;
 }
 
 export const PostDetailProfileHeader = ({
@@ -23,11 +26,13 @@ export const PostDetailProfileHeader = ({
   profileDescription,
   profileImageUrl,
   recruitmentStatus = 'RECRUITING',
+  isMine,
 }: PostDetailProfileHeaderProps) => {
   const profileImageSrc = profileImageUrl ?? defaultProfileImage;
   const [selectedRecruitmentStatus, setSelectedRecruitmentStatus] =
     useState(recruitmentStatus);
   const [isStatusBottomSheetOpen, setIsStatusBottomSheetOpen] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
   const handleStatusButtonClick = () => {
     setIsStatusBottomSheetOpen(true);
@@ -35,6 +40,10 @@ export const PostDetailProfileHeader = ({
 
   const handleStatusBottomSheetClose = () => {
     setIsStatusBottomSheetOpen(false);
+  };
+
+  const handleBookmarkClick = () => {
+    setIsBookmarked((currentIsBookmarked) => !currentIsBookmarked);
   };
 
   return (
@@ -62,19 +71,38 @@ export const PostDetailProfileHeader = ({
         </div>
       </div>
 
-      <PostRecruitmentStatusButton
-        aria-expanded={isStatusBottomSheetOpen}
-        aria-haspopup="dialog"
-        className="shrink-0"
-        status={selectedRecruitmentStatus}
-        onClick={handleStatusButtonClick}
-      />
-      <PostRecruitmentStatusBottomSheet
-        open={isStatusBottomSheetOpen}
-        value={selectedRecruitmentStatus}
-        onClose={handleStatusBottomSheetClose}
-        onSelect={setSelectedRecruitmentStatus}
-      />
+      {isMine ? (
+        <>
+          <PostRecruitmentStatusButton
+            aria-expanded={isStatusBottomSheetOpen}
+            aria-haspopup="dialog"
+            className="shrink-0"
+            status={selectedRecruitmentStatus}
+            onClick={handleStatusButtonClick}
+          />
+          <PostRecruitmentStatusBottomSheet
+            open={isStatusBottomSheetOpen}
+            value={selectedRecruitmentStatus}
+            onClose={handleStatusBottomSheetClose}
+            onSelect={setSelectedRecruitmentStatus}
+          />
+        </>
+      ) : (
+        <button
+          aria-label={isBookmarked ? '북마크 해제' : '북마크 추가'}
+          aria-pressed={isBookmarked}
+          className={cn(
+            'flex size-12 shrink-0 items-center justify-center',
+            isBookmarked ? 'text-mint-300' : 'text-gray-500',
+          )}
+          type="button"
+          onClick={handleBookmarkClick}
+        >
+          <BookmarkIcon
+            className={cn('size-6', isBookmarked && 'fill-current')}
+          />
+        </button>
+      )}
     </header>
   );
 };

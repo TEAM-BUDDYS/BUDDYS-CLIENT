@@ -14,7 +14,7 @@ export const getSamplePostDetail = (postId: number): PostDetail => ({
     ageRange: '20대',
     gender: 'FEMALE',
   },
-  isMine: true,
+  isMine: postId === 1,
   recruitmentStatus: 'RECRUITING',
   title: '주말에 서울 근교 함께 가실 분!',
   imageUrls: [],
