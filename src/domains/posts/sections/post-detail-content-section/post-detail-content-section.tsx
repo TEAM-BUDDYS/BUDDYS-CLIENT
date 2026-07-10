@@ -1,8 +1,8 @@
+import { PostCarousel } from '@/domains/posts/components/post-carousel/post-carousel';
 import { PostDetailProfileHeader } from '@/domains/posts/components/post-detail-profile-header/post-detail-profile-header';
 import { POST_RECRUITMENT_COUNT_LABELS } from '@/domains/posts/model/post-condition';
 import type { PostDetail } from '@/domains/posts/model/post-detail';
 import { CalendarIcon, LocationIcon, MyIcon } from '@/shared/components/icons';
-import { CommonImage } from '@/shared/components/ui/common-image/common-image';
 import { formatMonthDayWithWeekday } from '@/shared/utils/format-date-range';
 import { formatRelativeTime } from '@/shared/utils/format-relative-time';
 
@@ -63,7 +63,6 @@ const PostDetailMetaItem = ({ icon, label }: PostDetailMetaItemProps) => {
 export const PostDetailContentSection = ({
   post,
 }: PostDetailContentSectionProps) => {
-  const imageUrl = post.imageUrls[0];
   const dateLabel = formatPostDetailDateRange(post.startDate, post.endDate);
 
   return (
@@ -79,17 +78,7 @@ export const PostDetailContentSection = ({
       <div className="flex flex-col gap-4">
         <h1 className="text-title-b-20 text-gray-800">{post.title}</h1>
 
-        {imageUrl && (
-          <CommonImage
-            src={imageUrl}
-            alt={`${post.title} 이미지`}
-            width={343}
-            height={240}
-            unoptimized
-            radius="rounded-2xl"
-            className="h-60 w-full"
-          />
-        )}
+        <PostCarousel imageUrls={post.imageUrls} title={post.title} />
 
         <div className="flex flex-col gap-2">
           <PostDetailMetaItem
