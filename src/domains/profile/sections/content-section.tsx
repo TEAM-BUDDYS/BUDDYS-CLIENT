@@ -62,8 +62,8 @@ export const ContentSection = ({
       ) : (
         <div className="mt-25">
           <ContentEmptyState
-            title="아직 기록된 게시물이 없어요"
-            description="첫 번째 게시물을 공유해보세요"
+            title="아직 기록된 코스가 없어요"
+            description="첫 번째 코스를 공유해보세요"
             buttonLabel="코스 작성하러 가기"
             onButtonClick={onCreateCourseClick}
           />
