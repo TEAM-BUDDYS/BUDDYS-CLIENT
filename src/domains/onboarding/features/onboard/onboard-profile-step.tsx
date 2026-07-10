@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import firstProfilImage from '@/shared/assets/icons/profile.svg';
 import {
   Dropdown,
@@ -36,6 +38,8 @@ export const OnboardProfileStep = ({
   const selectedGenderLabel =
     GENDER_OPTIONS.find((option) => option.value === gender)?.label ?? '';
   const genderLabels = GENDER_OPTIONS.map((option) => option.label);
+  const [isBlur, setIsBlur] = useState(false);
+  const [currentNickname, setCurrentNickname] = useState('');
 
   const handleGenderChange = (label: string) => {
     const selectedGender = GENDER_OPTIONS.find(
@@ -57,14 +61,18 @@ export const OnboardProfileStep = ({
     <div className="mt-[39px] flex flex-col gap-10">
       <div className="flex flex-col items-center gap-6">
         <h1 className="text-title-b-22 text-gray-800">프로필 등록</h1>
-        <ProfileImageInput
-          alt="기본 프로필 이미지"
-          className="size-30"
-          label="프로필 이미지 등록"
-          src={firstProfilImage}
-          onChange={handleProfileImageChange}
-        />
-        <p className="text-body-m-15 text-gray-800">{nickname}</p>
+        <div className="flex flex-col items-center gap-3">
+          <ProfileImageInput
+            alt="기본 프로필 이미지"
+            className="size-30"
+            label="프로필 이미지 등록"
+            src={firstProfilImage}
+            onChange={handleProfileImageChange}
+          />
+          <p className="text-body-m-15 text-gray-800">
+            {isBlur && currentNickname.length > 0 ? currentNickname : '닉네임'}
+          </p>
+        </div>
       </div>
 
       <div className="mb-[59px] flex flex-col gap-7">
@@ -75,6 +83,10 @@ export const OnboardProfileStep = ({
           required
           value={nickname}
           onChange={(event) => onNicknameChange(event.target.value)}
+          onBlur={(event) => {
+            setCurrentNickname(event.target.value);
+            setIsBlur(true);
+          }}
         />
         <div className="flex flex-col gap-2">
           <FormLabel as="h2" required>
