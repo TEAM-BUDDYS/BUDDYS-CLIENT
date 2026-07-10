@@ -33,7 +33,7 @@ export const SearchSheet = () => {
         <FormLabel as="p" className="text-body-sb-16">
           {searchHistoryTitle}
         </FormLabel>
-        <div className="mt-6">
+        <div className="mt-4">
           {searchHistoryType === 'history' ? (
             <SearchHistory
               type="history"
