@@ -12,4 +12,5 @@ export type OnboardStep =
 export interface OnboardLocationOption {
   id: number;
   name: string;
+  koreanName?: string;
 }

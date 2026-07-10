@@ -13,6 +13,7 @@ import { TOTAL_PROGRESS_STEP } from './constant';
 import type { OnboardProgressStep, OnboardStep } from './model';
 import { OnboardExchangeInfoStep } from './onboard-exchange-info-step';
 import { OnboardInterestLocationStep } from './onboard-interest-location-step';
+import { OnboardProfileStep } from './onboard-profile-step';
 import { OnboardTagSelectStep } from './onboard-tag-select-step';
 import { useOnboardForm } from './use-onboard-form';
 
@@ -127,6 +128,21 @@ export const OnboardFlow = () => {
             selectedTagIds={onboardForm.companionTagIds}
             maxSelectionCount={5}
             onChange={onboardForm.handleCompanionTagIdsChange}
+          />
+        )}
+
+        {currentStep === 'profile' && (
+          <OnboardProfileStep
+            nickname={onboardForm.nickname}
+            gender={onboardForm.gender}
+            birthDate={onboardForm.birthDate}
+            bio={onboardForm.bio}
+            profileImageFile={onboardForm.profileImageFile}
+            onNicknameChange={onboardForm.handleNicknameChange}
+            onGenderChange={onboardForm.handleGenderChange}
+            onBirthDateChange={onboardForm.handleBirthDateChange}
+            onBioChange={onboardForm.handleBioChange}
+            onProfileImageChange={onboardForm.handleProfileImageChange}
           />
         )}
       </section>

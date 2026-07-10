@@ -1,6 +1,8 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
+
+import type { GenderType } from '@/types/gender';
 
 import {
   EXCHANGE_SCHOOL_OPTIONS_BY_COUNTRY_ID,
@@ -8,13 +10,6 @@ import {
   ONBOARD_COUNTRY_OPTIONS,
 } from './constant';
 import type { OnboardLocationOption, OnboardStep } from './model';
-
-const getDefaultExchangeMonths = () => {
-  return {
-    startMonth: '',
-    endMonth: '',
-  };
-};
 
 const getOptionsByCountry = <
   TOptions extends Record<number, readonly OnboardLocationOption[]>,
@@ -36,11 +31,19 @@ const getSearchResults = (
 ) => {
   const trimmedQuery = query.trim();
 
-  if (!trimmedQuery || selectedOption?.name === query) {
+  if (!trimmedQuery || getOptionDisplayName(selectedOption) === query) {
     return [];
   }
 
-  return options.filter((option) => option.name.includes(trimmedQuery));
+  return options.filter((option) => {
+    return [option.name, option.koreanName].some((name) =>
+      name?.toLowerCase().includes(trimmedQuery.toLowerCase()),
+    );
+  });
+};
+
+const getOptionDisplayName = (option: OnboardLocationOption | null) => {
+  return option?.koreanName ?? option?.name ?? '';
 };
 
 export const useOnboardForm = () => {
@@ -54,17 +57,20 @@ export const useOnboardForm = () => {
   const [exchangeSchool, setExchangeSchool] = useState('');
   const [selectedExchangeSchool, setSelectedExchangeSchool] =
     useState<OnboardLocationOption | null>(null);
-  const [exchangeMonths, setExchangeMonths] = useState(
-    getDefaultExchangeMonths,
-  );
+  const [exchangeMonths, setExchangeMonths] = useState({
+    startMonth: '',
+    endMonth: '',
+  });
   const [activityTagIds, setActivityTagIds] = useState<number[]>([]);
   const [interestTagIds, setInterestTagIds] = useState<number[]>([]);
   const [companionTagIds, setCompanionTagIds] = useState<number[]>([]);
+  const [nickname, setNickname] = useState('');
+  const [gender, setGender] = useState<GenderType | null>(null);
+  const [birthDate, setBirthDate] = useState('');
+  const [bio, setBio] = useState('');
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
 
-  const countryOptions = useMemo(
-    () => [...ONBOARD_COUNTRY_OPTIONS],
-    [],
-  ) satisfies OnboardLocationOption[];
+  const countryOptions: OnboardLocationOption[] = [...ONBOARD_COUNTRY_OPTIONS];
 
   const interestCityOptions = getOptionsByCountry(
     INTEREST_CITY_OPTIONS_BY_COUNTRY_ID,
@@ -100,13 +106,16 @@ export const useOnboardForm = () => {
   const handleInterestCityChange = (value: string) => {
     setInterestCity(value);
 
-    if (selectedInterestCity && selectedInterestCity.name !== value) {
+    if (
+      selectedInterestCity &&
+      getOptionDisplayName(selectedInterestCity) !== value
+    ) {
       setSelectedInterestCity(null);
     }
   };
 
   const handleInterestCitySelect = (value: OnboardLocationOption) => {
-    setInterestCity(value.name);
+    setInterestCity(getOptionDisplayName(value));
     setSelectedInterestCity(value);
   };
 
@@ -160,6 +169,26 @@ export const useOnboardForm = () => {
     setCompanionTagIds(value);
   };
 
+  const handleNicknameChange = (value: string) => {
+    setNickname(value.slice(0, 8));
+  };
+
+  const handleGenderChange = (value: GenderType) => {
+    setGender(value);
+  };
+
+  const handleBirthDateChange = (value: string) => {
+    setBirthDate(value);
+  };
+
+  const handleBioChange = (value: string) => {
+    setBio(value.slice(0, 30));
+  };
+
+  const handleProfileImageChange = (file: File | null) => {
+    setProfileImageFile(file);
+  };
+
   const canGoNext = (step: OnboardStep) => {
     if (step === 'interest-location') {
       return Boolean(interestCountry && selectedInterestCity);
@@ -174,16 +203,20 @@ export const useOnboardForm = () => {
       );
     }
 
-    if (
-      step === 'activity-tags' ||
-      step === 'interest-tags' ||
-      step === 'companion-tags'
-    ) {
-      return Boolean(
-        activityTagIds.length > 0 ||
-        interestTagIds.length > 0 ||
-        companionTagIds.length > 0,
-      );
+    if (step === 'activity-tags') {
+      return activityTagIds.length > 0;
+    }
+
+    if (step === 'interest-tags') {
+      return interestTagIds.length > 0;
+    }
+
+    if (step === 'companion-tags') {
+      return companionTagIds.length > 0;
+    }
+
+    if (step === 'profile') {
+      return Boolean(nickname.trim() && gender && birthDate.trim());
     }
 
     return false;
@@ -204,6 +237,11 @@ export const useOnboardForm = () => {
     activityTagIds,
     interestTagIds,
     companionTagIds,
+    nickname,
+    gender,
+    birthDate,
+    bio,
+    profileImageFile,
     handleInterestCountrySelect,
     handleInterestCityChange,
     handleInterestCitySelect,
@@ -215,6 +253,11 @@ export const useOnboardForm = () => {
     handleActivityTagIdsChange,
     handleInterestTagIdsChange,
     handleCompanionTagIdsChange,
+    handleNicknameChange,
+    handleGenderChange,
+    handleBirthDateChange,
+    handleBioChange,
+    handleProfileImageChange,
     canGoNext,
   };
 };

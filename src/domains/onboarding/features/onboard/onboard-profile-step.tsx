@@ -1,0 +1,107 @@
+import firstProfilImage from '@/shared/assets/icons/profile.svg';
+import {
+  Dropdown,
+  FormLabel,
+  ProfileImageInput,
+  TextField,
+} from '@/shared/components/ui';
+import type { GenderType } from '@/types/gender';
+
+import { GENDER_OPTIONS } from './constant';
+
+interface OnboardProfileStepProps {
+  nickname: string;
+  gender: GenderType | null;
+  birthDate: string;
+  bio: string;
+  profileImageFile: File | null;
+  onNicknameChange: (value: string) => void;
+  onGenderChange: (value: GenderType) => void;
+  onBirthDateChange: (value: string) => void;
+  onBioChange: (value: string) => void;
+  onProfileImageChange: (file: File | null) => void;
+}
+
+export const OnboardProfileStep = ({
+  nickname,
+  gender,
+  birthDate,
+  bio,
+  onNicknameChange,
+  onGenderChange,
+  onBirthDateChange,
+  onBioChange,
+  onProfileImageChange,
+}: OnboardProfileStepProps) => {
+  const selectedGenderLabel =
+    GENDER_OPTIONS.find((option) => option.value === gender)?.label ?? '';
+  const genderLabels = GENDER_OPTIONS.map((option) => option.label);
+
+  const handleGenderChange = (label: string) => {
+    const selectedGender = GENDER_OPTIONS.find(
+      (option) => option.label === label,
+    );
+
+    if (selectedGender) {
+      onGenderChange(selectedGender.value);
+    }
+  };
+
+  const handleProfileImageChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    onProfileImageChange(event.target.files?.[0] ?? null);
+  };
+
+  return (
+    <div className="mt-[39px] flex flex-col gap-10">
+      <div className="flex flex-col items-center gap-6">
+        <h1 className="text-title-b-22 text-gray-800">프로필 등록</h1>
+        <ProfileImageInput
+          alt="기본 프로필 이미지"
+          className="size-30"
+          label="프로필 이미지 등록"
+          src={firstProfilImage}
+          onChange={handleProfileImageChange}
+        />
+        <p className="text-body-m-15 text-gray-800">{nickname}</p>
+      </div>
+
+      <div className="mb-[59px] flex flex-col gap-7">
+        <TextField
+          label="닉네임"
+          maxLength={8}
+          placeholder="닉네임을 입력하세요"
+          required
+          value={nickname}
+          onChange={(event) => onNicknameChange(event.target.value)}
+        />
+        <div className="flex flex-col gap-2">
+          <FormLabel as="h2" required>
+            성별
+          </FormLabel>
+          <Dropdown
+            options={genderLabels}
+            placeholder="성별을 선택해주세요"
+            value={selectedGenderLabel}
+            onChange={handleGenderChange}
+          />
+        </div>
+        <TextField
+          label="생년월일"
+          placeholder="예: 2002.04.04"
+          required
+          value={birthDate}
+          onChange={(event) => onBirthDateChange(event.target.value)}
+        />
+        <TextField
+          label="소개"
+          maxLength={30}
+          placeholder="한 줄로 나를 소개해보세요"
+          value={bio}
+          onChange={(event) => onBioChange(event.target.value)}
+        />
+      </div>
+    </div>
+  );
+};

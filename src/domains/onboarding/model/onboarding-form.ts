@@ -1,4 +1,4 @@
-export type GenderType = 'FEMALE' | 'MALE';
+import type { GenderType } from '@/types/gender';
 
 export interface OnboardingFormPayload {
   interestCountryId: number;

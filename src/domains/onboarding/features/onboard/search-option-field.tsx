@@ -29,6 +29,9 @@ export const SearchOptionField = ({
 }: SearchOptionFieldProps) => {
   const isResultOpen = results.length > 0;
   const listboxId = `${id}-result-list`;
+  const getOptionLabel = (option: OnboardLocationOption) => {
+    return option.koreanName ?? option.name;
+  };
 
   return (
     <div className="relative w-full">
@@ -50,7 +53,7 @@ export const SearchOptionField = ({
           {results.map((result) => (
             <OptionItem
               key={result.id}
-              option={result.name}
+              option={getOptionLabel(result)}
               isSelected={selectedOption?.id === result.id}
               onSelect={() => onSelect(result)}
             />
