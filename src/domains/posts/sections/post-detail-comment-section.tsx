@@ -1,19 +1,14 @@
 import type { HTMLAttributes } from 'react';
 
 import { CommentItem } from '@/domains/posts/components/comment-item/comment-item';
+import type { CommentAuthor } from '@/domains/posts/model/comment';
 import { cn } from '@/lib/cn';
 import { MessageIcon } from '@/shared/components/icons';
-
-interface PostDetailCommentAuthor {
-  userId: number;
-  nickname: string;
-  profileImageUrl?: string | null;
-}
 
 export interface PostDetailComment {
   commentId: number;
   content: string;
-  author: PostDetailCommentAuthor;
+  author: CommentAuthor;
   createdAt: string;
 }
 

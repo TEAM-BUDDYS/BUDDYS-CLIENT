@@ -1,14 +1,9 @@
 import type { HTMLAttributes } from 'react';
 
+import type { CommentAuthor } from '@/domains/posts/model/comment';
 import { cn } from '@/lib/cn';
 import { defaultProfileImage } from '@/shared/assets/illustrations';
 import { CommonImage } from '@/shared/components/ui';
-
-interface CommentAuthor {
-  userId: number;
-  nickname: string;
-  profileImageUrl?: string | null;
-}
 
 interface CommentItemProps extends HTMLAttributes<HTMLElement> {
   content: string;
