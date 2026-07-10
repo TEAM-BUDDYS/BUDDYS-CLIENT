@@ -7,6 +7,11 @@ import { ChevronDownIcon, ChevronUpIcon } from '@/shared/components/icons';
 import { ChipButton } from '@/shared/components/ui/chip/chip';
 import type { Tag } from '@/types/tag';
 
+const rowGapStyles = {
+  sm: 'gap-y-2',
+  md: 'gap-y-3',
+};
+
 export interface ChipGroupProps {
   tags: Tag[];
   selectedTagIds: number[];
@@ -14,6 +19,7 @@ export interface ChipGroupProps {
   collapsedCount?: number;
   hasToggleButton?: boolean;
   wrap?: boolean;
+  rowGap?: keyof typeof rowGapStyles;
   chipClassName?: string;
   onChange: (selectedTagIds: number[]) => void;
 }
@@ -25,6 +31,7 @@ export const ChipGroup = ({
   collapsedCount = 5,
   hasToggleButton = true,
   wrap = true,
+  rowGap = 'sm',
   chipClassName,
   onChange,
 }: ChipGroupProps) => {
@@ -52,7 +59,8 @@ export const ChipGroup = ({
     <div className="relative">
       <div
         className={cn(
-          'flex min-w-0 gap-2',
+          'flex min-w-0 gap-x-2',
+          rowGapStyles[rowGap],
           hasToggle && !isExpanded && 'flex-nowrap overflow-hidden',
           (!hasToggle || isExpanded) && (wrap ? 'flex-wrap' : 'flex-nowrap'),
           hasToggle && isExpanded && 'pr-[77px]',
