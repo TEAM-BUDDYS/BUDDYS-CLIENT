@@ -19,6 +19,13 @@ const relatedSearchItems: SearchHistoryItem[] = [
   { id: '6', keyword: '루브르 박물관 동행' },
 ];
 
+const createSearchHistoryItem = (keyword: string): SearchHistoryItem => {
+  return {
+    id: `${Date.now()}`,
+    keyword,
+  };
+};
+
 export const useSearchSheet = () => {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [searchHistoryItems, setSearchHistoryItems] = useState(
@@ -53,6 +60,13 @@ export const useSearchSheet = () => {
 
   const handleSearchHistorySelect = (item: SearchHistoryItem) => {
     setSearchKeyword(item.keyword);
+    setSearchHistoryItems((prevSearchHistoryItems) => {
+      const nextSearchHistoryItems = prevSearchHistoryItems.filter(
+        (searchHistoryItem) => searchHistoryItem.keyword !== item.keyword,
+      );
+
+      return [createSearchHistoryItem(item.keyword), ...nextSearchHistoryItems];
+    });
   };
 
   const handleSearchHistoryDelete = (id: string) => {
