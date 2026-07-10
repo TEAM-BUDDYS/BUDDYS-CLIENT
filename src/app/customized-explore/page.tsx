@@ -56,7 +56,9 @@ export default function CustomizedExplore() {
         }
       />
       <main className="px-4 pb-19">
-        <p className="text-title-b-20 my-2">나에게 딱 맞는 동행을 만나보세요</p>
+        <h2 className="text-title-b-20 my-2">
+          나에게 딱 맞는 동행을 만나보세요
+        </h2>
         <div className="-mx-4 scrollbar-none overflow-x-auto border-b border-gray-100 px-4 pt-2 pb-4 [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           <div className="flex gap-2">
             {buddyFilterItems.map((filterItem) => (

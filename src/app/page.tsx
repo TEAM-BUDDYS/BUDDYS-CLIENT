@@ -127,18 +127,27 @@ export default function Home() {
       />
       <main className="px-4 pb-33">
         <TodayBuddySection items={todayBuddyItems} />
-        <div className="-mx-4 my-6 h-2 bg-gray-50 opacity-50" />
+        <hr
+          className="-mx-4 my-6 h-2 border-0 bg-gray-50 opacity-50"
+          aria-hidden="true"
+        />
         <BuddySearchSection items={buddySearchItems} />
-        <div className="-mx-4 my-6 h-2 bg-gray-50 opacity-50" />
+        <hr
+          className="-mx-4 my-6 h-2 border-0 bg-gray-50 opacity-50"
+          aria-hidden="true"
+        />
         <SameCountryBuddySection items={sameCountryBuddyItems} />
-        <div className="-mx-4 my-6 h-2 bg-gray-50 opacity-50" />
+        <hr
+          className="-mx-4 my-6 h-2 border-0 bg-gray-50 opacity-50"
+          aria-hidden="true"
+        />
         <PreferenceBuddySection
           tags={preferenceTags}
           items={preferenceBuddyItems}
         />
       </main>
       <WriteFloatingButton />
-      <BottomNavigation className="fixed right-0 bottom-0 left-0 z-20 mx-auto max-w-[430px]" />
+      <BottomNavigation className="fixed right-0 bottom-0 left-0 z-20 mx-auto max-w-107.5" />
     </>
   );
 }
