@@ -39,6 +39,7 @@ export const ChatListItem = ({
               width={50}
               height={50}
               radius="rounded-full"
+              className="size-12.5"
             />
             {hasUnread && (
               <span

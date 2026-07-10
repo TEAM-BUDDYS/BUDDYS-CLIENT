@@ -7,12 +7,20 @@ import { ChevronDownIcon, ChevronUpIcon } from '@/shared/components/icons';
 import { ChipButton } from '@/shared/components/ui/chip/chip';
 import type { Tag } from '@/types/tag';
 
+const rowGapStyles = {
+  sm: 'gap-y-2',
+  md: 'gap-y-3',
+};
+
 export interface ChipGroupProps {
   tags: Tag[];
   selectedTagIds: number[];
   maxSelectionCount?: number;
   collapsedCount?: number;
   hasToggleButton?: boolean;
+  wrap?: boolean;
+  rowGap?: keyof typeof rowGapStyles;
+  chipClassName?: string;
   onChange: (selectedTagIds: number[]) => void;
 }
 
@@ -22,6 +30,9 @@ export const ChipGroup = ({
   maxSelectionCount = 3,
   collapsedCount = 5,
   hasToggleButton = true,
+  wrap = true,
+  rowGap = 'sm',
+  chipClassName,
   onChange,
 }: ChipGroupProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -48,9 +59,10 @@ export const ChipGroup = ({
     <div className="relative">
       <div
         className={cn(
-          'flex min-w-0 gap-2',
+          'flex min-w-0 gap-x-2',
+          rowGapStyles[rowGap],
           hasToggle && !isExpanded && 'flex-nowrap overflow-hidden',
-          (!hasToggle || isExpanded) && 'flex-wrap',
+          (!hasToggle || isExpanded) && (wrap ? 'flex-wrap' : 'flex-nowrap'),
           hasToggle && isExpanded && 'pr-[77px]',
         )}
       >
@@ -63,6 +75,7 @@ export const ChipGroup = ({
             <ChipButton
               key={tag.id}
               active={isSelected}
+              className={chipClassName}
               aria-label={`${tag.name} 태그 ${isSelected ? '선택 해제' : '선택'}`}
               disabled={isSelectionDisabled}
               onClick={() => handleTagClick(tag.id)}
