@@ -4,10 +4,10 @@ export interface OnboardingFormPayload {
   interestCountryId: number;
   interestCityId: number;
 
-  exchangeCountryId: number;
-  exchangeUniversity: string;
-  exchangeStartDate: string;
-  exchangeEndDate: string;
+  exchangeCountryId: number | null;
+  exchangeUniversity: string | null;
+  exchangeStartDate: string | null;
+  exchangeEndDate: string | null;
 
   activityTagIds: number[];
   interestTagIds: number[];

@@ -64,7 +64,6 @@ export const OnboardProfileStep = ({
         <div className="flex flex-col items-center gap-3">
           <ProfileImageInput
             alt="기본 프로필 이미지"
-            className="size-30"
             label="프로필 이미지 등록"
             src={firstProfilImage}
             onChange={handleProfileImageChange}

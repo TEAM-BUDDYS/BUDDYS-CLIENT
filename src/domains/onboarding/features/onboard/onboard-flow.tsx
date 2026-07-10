@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { Button, ProgressBar } from '@/shared/components/ui';
@@ -9,8 +10,13 @@ import {
   INTEREST_TAGS,
 } from '@/shared/constants/preference-tags';
 
-import { TOTAL_PROGRESS_STEP } from './constant';
+import {
+  RECOMMENDED_POSTS,
+  RECOMMENDED_PROFILE,
+  TOTAL_PROGRESS_STEP,
+} from './constant';
 import type { OnboardProgressStep, OnboardStep } from './model';
+import { OnboardComplete } from './onboard-complete';
 import { OnboardExchangeInfoStep } from './onboard-exchange-info-step';
 import { OnboardInterestLocationStep } from './onboard-interest-location-step';
 import { OnboardProfileStep } from './onboard-profile-step';
@@ -42,8 +48,20 @@ export const OnboardFlow = () => {
     PROGRESS_STEP_BY_STEP[currentStep as keyof typeof PROGRESS_STEP_BY_STEP];
   const canGoNext = onboardForm.canGoNext(currentStep);
 
+  const router = useRouter();
+
   const handleNextClick = () => {
     if (!canGoNext) {
+      return;
+    }
+
+    if (currentStep === 'profile') {
+      const profileImageUrl = '';
+
+      const payload = onboardForm.getOnboardingFormPayload(profileImageUrl);
+      if (!payload) return;
+
+      setCurrentStep('complete');
       return;
     }
 
@@ -145,22 +163,42 @@ export const OnboardFlow = () => {
             onProfileImageChange={onboardForm.handleProfileImageChange}
           />
         )}
+
+        {currentStep === 'complete' && (
+          <>
+            <OnboardComplete
+              nickname={onboardForm.nickname}
+              otherNickname={RECOMMENDED_PROFILE.nickname}
+              similarityScore={RECOMMENDED_PROFILE.similarityScore}
+              recommendedPosts={RECOMMENDED_POSTS}
+            />
+            <div className="fixed right-4 bottom-0 left-4 h-[145px] w-full bg-gradient-to-b from-white/0 via-white to-white" />
+            <Button
+              onClick={() => router.push('/')}
+              className="fixed right-4 bottom-[34px] left-4 w-auto"
+            >
+              시작하기
+            </Button>
+          </>
+        )}
       </section>
 
-      <div className="flex flex-col gap-4">
-        <Button disabled={!canGoNext} onClick={handleNextClick}>
-          다음
-        </Button>
-        {currentStep === 'exchange-info' && (
-          <button
-            className="text-body-r-14 text-gray-500"
-            type="button"
-            onClick={handleSkipClick}
-          >
-            건너뛰기
-          </button>
-        )}
-      </div>
+      {currentStep !== 'complete' && (
+        <div className="flex flex-col gap-4">
+          <Button disabled={!canGoNext} onClick={handleNextClick}>
+            다음
+          </Button>
+          {currentStep === 'exchange-info' && (
+            <button
+              className="text-body-r-14 text-gray-500"
+              type="button"
+              onClick={handleSkipClick}
+            >
+              건너뛰기
+            </button>
+          )}
+        </div>
+      )}
     </main>
   );
 };

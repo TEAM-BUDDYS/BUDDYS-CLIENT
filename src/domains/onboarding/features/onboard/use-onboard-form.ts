@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import type { GenderType } from '@/types/gender';
 
+import type { OnboardingFormPayload } from '../../model/onboarding-form';
 import {
   EXCHANGE_SCHOOL_OPTIONS_BY_COUNTRY_ID,
   INTEREST_CITY_OPTIONS_BY_COUNTRY_ID,
@@ -222,6 +223,40 @@ export const useOnboardForm = () => {
     return false;
   };
 
+  const getOnboardingFormPayload = (
+    profileImageUrl: string,
+  ): OnboardingFormPayload | null => {
+    if (
+      !interestCountry ||
+      !selectedInterestCity ||
+      activityTagIds.length === 0 ||
+      interestTagIds.length === 0 ||
+      companionTagIds.length === 0 ||
+      !nickname.trim() ||
+      !gender ||
+      !birthDate.trim()
+    ) {
+      return null;
+    }
+
+    return {
+      interestCountryId: interestCountry.id,
+      interestCityId: selectedInterestCity.id,
+      exchangeCountryId: exchangeCountry?.id ?? null,
+      exchangeUniversity: selectedExchangeSchool?.name ?? null,
+      exchangeStartDate: exchangeMonths.startMonth.trim() || null,
+      exchangeEndDate: exchangeMonths.endMonth.trim() || null,
+      activityTagIds,
+      interestTagIds,
+      travelStyleTagIds: companionTagIds,
+      nickname: nickname.trim(),
+      gender,
+      birthDate: birthDate.trim(),
+      bio: bio.trim(),
+      profileImageUrl,
+    };
+  };
+
   return {
     countryOptions,
     interestCountry,
@@ -258,6 +293,7 @@ export const useOnboardForm = () => {
     handleBirthDateChange,
     handleBioChange,
     handleProfileImageChange,
+    getOnboardingFormPayload,
     canGoNext,
   };
 };
