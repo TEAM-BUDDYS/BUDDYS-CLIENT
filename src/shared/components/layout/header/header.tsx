@@ -64,7 +64,7 @@ export const Header = ({
         {contentNode}
       </div>
       {right && (
-        <div className="flex shrink-0 items-center justify-end gap-5">
+        <div className="ml-auto flex shrink-0 items-center justify-end gap-5">
           {right}
         </div>
       )}

@@ -1,16 +1,17 @@
 import { formatChatTime } from '@/domains/chat/utils/format-chat-time';
 import { cn } from '@/lib/cn';
+import { defaultProfileImage } from '@/shared/assets/illustrations';
 import { CommonImage } from '@/shared/components/ui';
 
 interface BaseChatMessageProps {
   content: string;
-  createdAt: string;
+  sentAt: string;
 }
 
 type ChatMessageProps =
   | (BaseChatMessageProps & {
       type: 'incoming';
-      profileImageUrl: string;
+      profileImageUrl: string | null;
       isRead?: never;
     })
   | (BaseChatMessageProps & {
@@ -29,7 +30,7 @@ export const ChatMessage = (props: ChatMessageProps) => {
       {!isOutgoing && (
         <CommonImage
           radius="rounded-full"
-          src={props.profileImageUrl}
+          src={props.profileImageUrl ?? defaultProfileImage}
           alt="프로필 이미지"
           width={40}
           height={40}
@@ -58,8 +59,11 @@ export const ChatMessage = (props: ChatMessageProps) => {
             {props.content}
           </div>
         </div>
-        <time className="text-caption-m-12 text-gray-500">
-          {formatChatTime(props.createdAt)}
+        <time
+          dateTime={props.sentAt}
+          className="text-caption-m-12 text-gray-500"
+        >
+          {formatChatTime(props.sentAt)}
         </time>
       </div>
     </div>
