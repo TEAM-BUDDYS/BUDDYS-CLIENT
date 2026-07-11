@@ -4,13 +4,13 @@ import { useState } from 'react';
 
 import type { GenderType } from '@/types/gender';
 
+import type { OnboardLocationOption, OnboardStep } from '../../model/onboard';
 import type { OnboardingFormPayload } from '../../model/onboarding-form';
 import {
   EXCHANGE_SCHOOL_OPTIONS_BY_COUNTRY_ID,
   INTEREST_CITY_OPTIONS_BY_COUNTRY_ID,
   ONBOARD_COUNTRY_OPTIONS,
 } from './constant';
-import type { OnboardLocationOption, OnboardStep } from './model';
 
 const getOptionsByCountry = <
   TOptions extends Record<number, readonly OnboardLocationOption[]>,

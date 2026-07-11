@@ -2,7 +2,7 @@
 
 import { OptionItem, OptionList, Searchbar } from '@/shared/components/ui';
 
-import type { OnboardLocationOption } from './model';
+import type { OnboardLocationOption } from '../../model/onboard';
 
 interface SearchOptionFieldProps {
   id: string;

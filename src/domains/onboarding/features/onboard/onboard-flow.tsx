@@ -10,12 +10,12 @@ import {
   INTEREST_TAGS,
 } from '@/shared/constants/preference-tags';
 
+import type { OnboardProgressStep, OnboardStep } from '../../model/onboard';
 import {
   RECOMMENDED_POSTS,
   RECOMMENDED_PROFILE,
   TOTAL_PROGRESS_STEP,
 } from './constant';
-import type { OnboardProgressStep, OnboardStep } from './model';
 import { OnboardComplete } from './onboard-complete';
 import { OnboardExchangeInfoStep } from './onboard-exchange-info-step';
 import { OnboardInterestLocationStep } from './onboard-interest-location-step';

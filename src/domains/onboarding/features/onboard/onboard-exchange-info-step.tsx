@@ -2,8 +2,8 @@
 
 import { Dropdown, FormLabel, TextField } from '@/shared/components/ui';
 
-import type { OnboardLocationOption } from './model';
-import { SearchOptionField } from './search-option-field';
+import { SearchOptionField } from '../../components/search-option-field/search-option-field';
+import type { OnboardLocationOption } from '../../model/onboard';
 
 interface OnboardExchangeInfoStepProps {
   countryOptions: OnboardLocationOption[];
