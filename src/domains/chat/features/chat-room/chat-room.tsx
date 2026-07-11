@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { BottomActionBar } from '@/shared/components/ui';
 import { formatMonthDayWithWeekday } from '@/shared/utils/format-date-range';
@@ -16,45 +16,51 @@ interface ChatRoomProps {
 
 export const ChatRoom = ({ createdAt, initialMessages }: ChatRoomProps) => {
   const [message, setMessage] = useState('');
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView();
+  }, [initialMessages]);
 
   const handleSubmit = () => {
     if (!message.trim()) return;
 
     // 웹소켓 전송
     // sendMessage(message);
-    console.log(message);
     setMessage('');
   };
 
   return (
     <main className="flex min-h-0 flex-1 flex-col">
-      <div className="flex min-h-0 flex-1 scrollbar-none flex-col gap-6 overflow-y-auto px-4 [&::-webkit-scrollbar]:hidden">
+      <div className="flex min-h-0 flex-1 scrollbar-none flex-col overflow-y-auto border-b border-b-gray-100 px-4 [&::-webkit-scrollbar]:hidden">
         <div className="mt-2 flex flex-col items-center gap-2">
           <span className="text-body-r-14 text-gray-500">
             {formatMonthDayWithWeekday(createdAt)}
           </span>
           <ChatSystemMessage />
         </div>
-
-        {initialMessages.map((message) =>
-          message.mine ? (
-            <ChatMessage
-              key={message.messageId}
-              type="outgoing"
-              content={message.content}
-              sentAt={message.sentAt}
-              isRead={message.readByParticipant}
-            />
-          ) : (
-            <ChatMessage
-              key={message.messageId}
-              type="incoming"
-              content={message.content}
-              sentAt={message.sentAt}
-              profileImageUrl={message.sender.profileImageUrl}
-            />
-          ),
-        )}
+        <div className="flex flex-col gap-3.5 pt-6">
+          {initialMessages.map((message) =>
+            message.mine ? (
+              <ChatMessage
+                key={message.messageId}
+                type="outgoing"
+                content={message.content}
+                sentAt={message.sentAt}
+                isRead={message.readByParticipant}
+              />
+            ) : (
+              <ChatMessage
+                key={message.messageId}
+                type="incoming"
+                content={message.content}
+                sentAt={message.sentAt}
+                profileImageUrl={message.sender.profileImageUrl}
+              />
+            ),
+          )}
+        </div>
+        <div ref={bottomRef} />
       </div>
 
       <BottomActionBar

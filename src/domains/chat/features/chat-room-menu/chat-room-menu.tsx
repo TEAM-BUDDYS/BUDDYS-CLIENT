@@ -11,8 +11,13 @@ export const ChatRoomMenu = () => {
 
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)}>
-        <MoreIcon />
+      <button
+        className="-mr-2 p-2.5"
+        type="button"
+        aria-label="채팅방 메뉴 열기"
+        onClick={() => setOpen(true)}
+      >
+        <MoreIcon width={24} height={24} />
       </button>
 
       <BottomSheetChat open={open} onClose={() => setOpen(false)} />

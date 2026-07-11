@@ -59,7 +59,10 @@ export const ChatMessage = (props: ChatMessageProps) => {
             {props.content}
           </div>
         </div>
-        <time className="text-caption-m-12 text-gray-500">
+        <time
+          dateTime={props.sentAt}
+          className="text-caption-m-12 text-gray-500"
+        >
           {formatChatTime(props.sentAt)}
         </time>
       </div>
