@@ -27,13 +27,14 @@ export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
             aria-label="설정"
             type="button"
             onClick={() => router.push('/profile/settings')}
+            className="flex size-11 shrink-0 items-center justify-center"
           >
             <SettingIcon className="size-6 text-gray-500" />
           </button>
         }
       />
 
-      <main className="flex flex-1 flex-col items-center overflow-y-auto pt-9 pb-18">
+      <main className="flex flex-1 flex-col items-center overflow-y-auto pt-9 pb-45.75">
         <UserProfile
           imageUrl={profile.imageUrl}
           nickname={profile.nickname}
@@ -62,11 +63,11 @@ export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
         <ContentSection
           posts={profile.posts}
           onCreateCourseClick={() => router.push('/courses')}
-          className="mt-6 mb-27.75"
+          className="mt-6"
         />
       </main>
 
-      <BottomNavigation className="fixed inset-x-0 bottom-0" />
+      <BottomNavigation className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[430px]" />
     </div>
   );
 };

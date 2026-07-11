@@ -5,7 +5,7 @@ import { defaultProfileImage } from '@/shared/assets/illustrations';
 import { CommonImage } from '@/shared/components/ui';
 
 interface UserProfileProps {
-  imageUrl?: string;
+  imageUrl?: string | null;
   nickname: string;
   badgeIcon?: ReactNode;
   badgeLabel?: string;
@@ -13,7 +13,7 @@ interface UserProfileProps {
 }
 
 export const UserProfile = ({
-  imageUrl = defaultProfileImage.src,
+  imageUrl,
   nickname,
   badgeIcon,
   badgeLabel,
@@ -22,10 +22,10 @@ export const UserProfile = ({
   return (
     <div className={cn('flex flex-col items-center', className)}>
       <CommonImage
-        src={imageUrl}
+        src={imageUrl ?? defaultProfileImage.src}
         alt={`${nickname}님의 프로필 이미지`}
-        width={110}
-        height={110}
+        width={120}
+        height={120}
         radius="rounded-full"
         className="mb-3"
       />

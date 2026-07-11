@@ -3,7 +3,7 @@ import type { Tag } from '@/types/tag';
 import type { PostItem } from './content';
 
 export interface MyProfile {
-  imageUrl?: string;
+  imageUrl?: string | null;
   nickname: string;
   isVerified: boolean;
   tags: Tag[];
