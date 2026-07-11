@@ -1,8 +1,9 @@
+import { PostCarousel } from '@/domains/posts/components/post-carousel/post-carousel';
 import { PostDetailProfileHeader } from '@/domains/posts/components/post-detail-profile-header/post-detail-profile-header';
 import { POST_RECRUITMENT_COUNT_LABELS } from '@/domains/posts/model/post-condition';
 import type { PostDetail } from '@/domains/posts/model/post-detail';
 import { CalendarIcon, LocationIcon, MyIcon } from '@/shared/components/icons';
-import { CommonImage } from '@/shared/components/ui/common-image/common-image';
+import { PostStatusTag } from '@/shared/components/ui';
 import { formatMonthDayWithWeekday } from '@/shared/utils/format-date-range';
 import { formatRelativeTime } from '@/shared/utils/format-relative-time';
 
@@ -63,54 +64,49 @@ const PostDetailMetaItem = ({ icon, label }: PostDetailMetaItemProps) => {
 export const PostDetailContentSection = ({
   post,
 }: PostDetailContentSectionProps) => {
-  const imageUrl = post.imageUrls[0];
   const dateLabel = formatPostDetailDateRange(post.startDate, post.endDate);
 
   return (
     <section className="flex w-full flex-col gap-6">
       <PostDetailProfileHeader
+        key={post.postId}
         nickname={post.author.nickname}
         country={post.author.country}
         profileDescription={getAuthorDescription(post)}
         profileImageUrl={post.author.profileImageUrl ?? undefined}
         recruitmentStatus={post.recruitmentStatus}
+        isMine={post.isMine}
       />
 
-      <div className="flex flex-col gap-4">
-        <h1 className="text-title-b-20 text-gray-800">{post.title}</h1>
+      <div className="flex w-full flex-col items-start gap-2">
+        {!post.isMine && <PostStatusTag status={post.recruitmentStatus} />}
 
-        {imageUrl && (
-          <CommonImage
-            src={imageUrl}
-            alt={`${post.title} 이미지`}
-            width={343}
-            height={240}
-            unoptimized
-            radius="rounded-2xl"
-            className="h-60 w-full"
-          />
-        )}
+        <div className="flex w-full flex-col gap-4">
+          <h1 className="text-title-b-20 text-gray-800">{post.title}</h1>
 
-        <div className="flex flex-col gap-2">
-          <PostDetailMetaItem
-            icon={<LocationIcon className="size-4" />}
-            label={post.city.name}
-          />
-          {dateLabel && (
+          <PostCarousel imageUrls={post.imageUrls} title={post.title} />
+
+          <div className="flex flex-col gap-2">
             <PostDetailMetaItem
-              icon={<CalendarIcon className="size-4" />}
-              label={dateLabel}
+              icon={<LocationIcon className="size-4" />}
+              label={post.city.name}
             />
-          )}
-          <PostDetailMetaItem
-            icon={<MyIcon className="size-4" />}
-            label={POST_RECRUITMENT_COUNT_LABELS[post.recruitmentCountType]}
-          />
-        </div>
+            {dateLabel && (
+              <PostDetailMetaItem
+                icon={<CalendarIcon className="size-4" />}
+                label={dateLabel}
+              />
+            )}
+            <PostDetailMetaItem
+              icon={<MyIcon className="size-4" />}
+              label={POST_RECRUITMENT_COUNT_LABELS[post.recruitmentCountType]}
+            />
+          </div>
 
-        <p className="text-body-m-15 whitespace-pre-line text-gray-800">
-          {post.content}
-        </p>
+          <p className="text-body-m-15 whitespace-pre-line text-gray-800">
+            {post.content}
+          </p>
+        </div>
       </div>
     </section>
   );
