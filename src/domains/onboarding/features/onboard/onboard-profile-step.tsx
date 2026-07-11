@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import firstProfilImage from '@/shared/assets/icons/profile.svg';
+import firstProfileImage from '@/shared/assets/icons/profile.svg';
 import {
   Dropdown,
   FormLabel,
@@ -29,6 +29,7 @@ export const OnboardProfileStep = ({
   gender,
   birthDate,
   bio,
+  profileImageFile,
   onNicknameChange,
   onGenderChange,
   onBirthDateChange,
@@ -57,6 +58,24 @@ export const OnboardProfileStep = ({
     onProfileImageChange(event.target.files?.[0] ?? null);
   };
 
+  const profileImagePreviewUrl = useMemo(() => {
+    if (!profileImageFile) {
+      return null;
+    }
+
+    return URL.createObjectURL(profileImageFile);
+  }, [profileImageFile]);
+
+  useEffect(() => {
+    return () => {
+      if (profileImagePreviewUrl) {
+        URL.revokeObjectURL(profileImagePreviewUrl);
+      }
+    };
+  }, [profileImagePreviewUrl]);
+
+  const profileImageSrc = profileImagePreviewUrl ?? firstProfileImage;
+
   return (
     <div className="mt-[39px] flex flex-col gap-10">
       <div className="flex flex-col items-center gap-6">
@@ -65,7 +84,7 @@ export const OnboardProfileStep = ({
           <ProfileImageInput
             alt="기본 프로필 이미지"
             label="프로필 이미지 등록"
-            src={firstProfilImage}
+            src={profileImageSrc}
             onChange={handleProfileImageChange}
           />
           <p className="text-body-m-15 text-gray-800">

@@ -56,11 +56,7 @@ export const OnboardFlow = () => {
     }
 
     if (currentStep === 'profile') {
-      const profileImageUrl = '';
-
-      const payload = onboardForm.getOnboardingFormPayload(profileImageUrl);
-      if (!payload) return;
-
+      // TODO: 이미지 업로드 및 온보딩 등록 API 성공 시 complete 단계로 이동
       setCurrentStep('complete');
       return;
     }
@@ -74,6 +70,7 @@ export const OnboardFlow = () => {
   };
 
   const handleSkipClick = () => {
+    onboardForm.resetExchangeInfo();
     setCurrentStep('activity-tags');
   };
 
@@ -172,13 +169,12 @@ export const OnboardFlow = () => {
               similarityScore={RECOMMENDED_PROFILE.similarityScore}
               recommendedPosts={RECOMMENDED_POSTS}
             />
-            <div className="fixed right-4 bottom-0 left-4 h-[145px] w-full bg-gradient-to-b from-white/0 via-white to-white" />
-            <Button
-              onClick={() => router.push('/')}
-              className="fixed right-4 bottom-[34px] left-4 w-auto"
-            >
-              시작하기
-            </Button>
+            <div className="fixed bottom-0 left-1/2 z-10 w-full max-w-100 -translate-x-1/2 px-4 pb-[34px]">
+              <div className="absolute right-0 bottom-0 left-0 -z-10 h-[145px] bg-gradient-to-b from-white/0 via-white to-white" />
+              <Button onClick={() => router.push('/')} className="w-full">
+                시작하기
+              </Button>
+            </div>
           </>
         )}
       </section>

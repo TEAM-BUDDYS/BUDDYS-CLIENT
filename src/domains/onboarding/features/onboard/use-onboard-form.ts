@@ -2,10 +2,13 @@
 
 import { useState } from 'react';
 
+import { formatDateInput } from '@/shared/utils/format-date-input';
 import type { GenderType } from '@/types/gender';
 
 import type { OnboardLocationOption, OnboardStep } from '../../model/onboard';
 import type { OnboardingFormPayload } from '../../model/onboarding-form';
+import { isValidDate } from '../../utils/is-valid-date';
+import { isValidYearMonth } from '../../utils/is-valid-year-month';
 import {
   EXCHANGE_SCHOOL_OPTIONS_BY_COUNTRY_ID,
   INTEREST_CITY_OPTIONS_BY_COUNTRY_ID,
@@ -147,15 +150,29 @@ export const useOnboardForm = () => {
   const handleStartMonthChange = (value: string) => {
     setExchangeMonths((prevMonths) => ({
       ...prevMonths,
-      startMonth: value,
+      startMonth: formatDateInput(value, prevMonths.startMonth, {
+        variant: 'yearMonth',
+      }),
     }));
   };
 
   const handleEndMonthChange = (value: string) => {
     setExchangeMonths((prevMonths) => ({
       ...prevMonths,
-      endMonth: value,
+      endMonth: formatDateInput(value, prevMonths.endMonth, {
+        variant: 'yearMonth',
+      }),
     }));
+  };
+
+  const resetExchangeInfo = () => {
+    setExchangeCountry(null);
+    setExchangeSchool('');
+    setSelectedExchangeSchool(null);
+    setExchangeMonths({
+      startMonth: '',
+      endMonth: '',
+    });
   };
 
   const handleActivityTagIdsChange = (value: number[]) => {
@@ -179,7 +196,11 @@ export const useOnboardForm = () => {
   };
 
   const handleBirthDateChange = (value: string) => {
-    setBirthDate(value);
+    setBirthDate((prevBirthDate) =>
+      formatDateInput(value, prevBirthDate, {
+        variant: 'date',
+      }),
+    );
   };
 
   const handleBioChange = (value: string) => {
@@ -199,8 +220,9 @@ export const useOnboardForm = () => {
       return Boolean(
         exchangeCountry &&
         selectedExchangeSchool &&
-        exchangeMonths.startMonth.trim() &&
-        exchangeMonths.endMonth.trim(),
+        isValidYearMonth(exchangeMonths.startMonth) &&
+        isValidYearMonth(exchangeMonths.endMonth) &&
+        exchangeMonths.startMonth <= exchangeMonths.endMonth,
       );
     }
 
@@ -217,7 +239,7 @@ export const useOnboardForm = () => {
     }
 
     if (step === 'profile') {
-      return Boolean(nickname.trim() && gender && birthDate.trim());
+      return Boolean(nickname.trim() && gender && isValidDate(birthDate));
     }
 
     return false;
@@ -285,6 +307,7 @@ export const useOnboardForm = () => {
     handleExchangeSchoolSelect,
     handleStartMonthChange,
     handleEndMonthChange,
+    resetExchangeInfo,
     handleActivityTagIdsChange,
     handleInterestTagIdsChange,
     handleCompanionTagIdsChange,
