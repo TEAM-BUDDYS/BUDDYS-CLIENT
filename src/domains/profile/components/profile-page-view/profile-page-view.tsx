@@ -1,9 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 import { ProfileBadgeIcon, SettingIcon } from '@/shared/components/icons';
 import { BottomNavigation, Header } from '@/shared/components/layout';
+import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
 
 import type { MyProfile } from '../../model/profile';
 import { ContentSection } from '../../sections/content-section';
@@ -17,6 +19,7 @@ interface ProfilePageViewProps {
 
 export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
   const router = useRouter();
+  const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -62,12 +65,17 @@ export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
 
         <ContentSection
           posts={profile.posts}
-          onCreateCourseClick={() => router.push('/courses')}
+          onCreateCourseClick={() => setIsComingSoonOpen(true)}
           className="mt-6"
         />
       </main>
 
       <BottomNavigation className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[430px]" />
+
+      <ComingSoonModal
+        open={isComingSoonOpen}
+        onClose={() => setIsComingSoonOpen(false)}
+      />
     </div>
   );
 };
