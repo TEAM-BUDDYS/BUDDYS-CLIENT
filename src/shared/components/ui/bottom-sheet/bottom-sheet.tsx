@@ -37,7 +37,7 @@ export const BottomSheet = ({
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledBy}
           className={cn(
-            'fixed right-0 bottom-0 left-0 z-50 mx-auto max-h-[calc(100dvh-24px)] w-full max-w-93.75 overflow-hidden rounded-t-[28px] bg-white shadow-[0_4px_2px_0_rgba(0,0,0,0.25)]',
+            'fixed right-0 bottom-0 left-0 z-50 mx-auto max-h-[calc(100dvh-24px)] w-full max-w-[430px] overflow-hidden rounded-t-[28px] bg-white shadow-[0_4px_2px_0_rgba(0,0,0,0.25)]',
             className,
           )}
         >

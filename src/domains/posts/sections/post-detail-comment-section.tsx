@@ -1,16 +1,9 @@
 import type { HTMLAttributes } from 'react';
 
 import { CommentItem } from '@/domains/posts/components/comment-item/comment-item';
-import type { CommentAuthor } from '@/domains/posts/model/comment';
+import type { PostDetailComment } from '@/domains/posts/model/comment';
 import { cn } from '@/lib/cn';
 import { MessageIcon } from '@/shared/components/icons';
-
-export interface PostDetailComment {
-  commentId: number;
-  content: string;
-  author: CommentAuthor;
-  createdAt: string;
-}
 
 interface PostDetailCommentSectionProps extends HTMLAttributes<HTMLElement> {
   viewCount: number;

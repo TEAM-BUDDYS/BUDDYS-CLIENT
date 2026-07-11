@@ -6,29 +6,37 @@ import { useEffect, useId } from 'react';
 import { cn } from '@/lib/cn';
 import { Button } from '@/shared/components/ui/button/button';
 
-export interface ModalProps {
+interface BaseModalProps {
   open: boolean;
   title: ReactNode;
-  confirmLabel: string;
   cancelLabel?: string;
   className?: string;
   description?: ReactNode;
   visual?: ReactNode;
   onClose: () => void;
-  onConfirm: () => void;
 }
 
-export const Modal = ({
-  open,
-  title,
-  confirmLabel,
-  cancelLabel = '닫기',
-  className,
-  description,
-  visual,
-  onClose,
-  onConfirm,
-}: ModalProps) => {
+type ModalProps =
+  | (BaseModalProps & {
+      type: 'alert';
+    })
+  | (BaseModalProps & {
+      type?: 'confirm';
+      confirmLabel: string;
+      onConfirm: () => void;
+    });
+
+export const Modal = (props: ModalProps) => {
+  const {
+    open,
+    title,
+    cancelLabel = '닫기',
+    className,
+    description,
+    visual,
+    onClose,
+  } = props;
+
   const titleId = useId();
   const descriptionId = useId();
 
@@ -110,9 +118,11 @@ export const Modal = ({
           >
             {cancelLabel}
           </Button>
-          <Button className="flex-1" onClick={onConfirm}>
-            {confirmLabel}
-          </Button>
+          {props.type !== 'alert' && (
+            <Button className="flex-1" onClick={props.onConfirm}>
+              {props.confirmLabel}
+            </Button>
+          )}
         </div>
       </section>
     </div>
