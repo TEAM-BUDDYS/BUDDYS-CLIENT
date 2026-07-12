@@ -1,10 +1,10 @@
+import type { GenderType } from '@/types/gender';
+
 export type AgeConditionType =
   | 'EARLY_20S'
   | 'MID_20S'
   | 'LATE_20S'
   | 'OVER_30S';
-
-export type GenderType = 'MALE' | 'FEMALE' | 'ANY';
 
 export type CompanionType =
   | 'FULL_TRIP'

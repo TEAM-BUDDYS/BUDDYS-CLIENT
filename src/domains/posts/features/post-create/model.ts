@@ -1,11 +1,11 @@
 import type {
   AgeConditionType,
   CompanionType,
-  GenderType,
   RecruitmentCountType,
 } from '@/domains/posts/model/post-form';
+import type { GenderType } from '@/types/gender';
 
-export type PostCreateGenderConditionType = Exclude<GenderType, 'ANY'>;
+export type PostCreateGenderConditionType = GenderType;
 
 export type PostCreateStep = 1 | 2 | 3 | 4;
 export type PostCreateQuestionStep = Exclude<PostCreateStep, 4>;

@@ -36,7 +36,7 @@ const formatDateForPayload = (date: Date) => {
 const getGenderForPayload = (
   genderConditions: PostCreateGenderConditionType[],
 ) => {
-  return genderConditions.length === 2 ? 'ANY' : genderConditions[0];
+  return genderConditions[0];
 };
 
 const isRequiredDetailComplete = (

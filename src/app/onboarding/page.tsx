@@ -1,7 +1,5 @@
+import { OnboardFlow } from '@/domains/onboarding/features/onboard/onboard-flow';
+
 export default function OnboardingPage() {
-  return (
-    <main>
-      <h1>온보딩</h1>
-    </main>
-  );
+  return <OnboardFlow />;
 }
