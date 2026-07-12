@@ -8,3 +8,4 @@ export {
   TAG_QUERY_KEY,
   USER_QUERY_KEY,
 } from './query-key';
+export { createSearchParams } from './search-params';
