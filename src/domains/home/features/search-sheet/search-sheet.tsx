@@ -5,7 +5,11 @@ import { useSearchSheet } from '@/domains/home/features/search-sheet/use-search-
 import { Header } from '@/shared/components/layout';
 import { FormLabel, Searchbar } from '@/shared/components/ui';
 
-export const SearchSheet = () => {
+interface SearchSheetProps {
+  onClose?: () => void;
+}
+
+export const SearchSheet = ({ onClose }: SearchSheetProps) => {
   const {
     searchKeyword,
     searchHistoryItems,
@@ -21,6 +25,7 @@ export const SearchSheet = () => {
     <>
       <Header
         hasBackButton
+        onBackClick={onClose}
         content={
           <Searchbar
             size="small"
