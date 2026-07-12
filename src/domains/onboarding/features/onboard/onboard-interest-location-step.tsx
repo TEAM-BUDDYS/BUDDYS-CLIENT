@@ -4,6 +4,7 @@ import { Dropdown, FormLabel } from '@/shared/components/ui';
 
 import { SearchOptionField } from '../../components/search-option-field/search-option-field';
 import type { OnboardLocationOption } from '../../model/onboard';
+import { findCountryByName } from '../../utils/country-options';
 
 interface OnboardInterestLocationStepProps {
   countryOptions: OnboardLocationOption[];
@@ -29,9 +30,7 @@ export const OnboardInterestLocationStep = ({
   const countryNames = countryOptions.map((country) => country.name);
 
   const handleCountryChange = (countryName: string) => {
-    const selectedCountry = countryOptions.find(
-      (country) => country.name === countryName,
-    );
+    const selectedCountry = findCountryByName(countryOptions, countryName);
 
     if (selectedCountry) {
       onCountryChange(selectedCountry);
