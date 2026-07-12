@@ -10,7 +10,8 @@ type GetQueryParams<Path extends keyof paths> = paths[Path]['get'] extends {
 
 export const CHAT_ROOM_QUERY_KEY = {
   ALL: ['chat-rooms'] as const,
-  LIST: () => ['chat-rooms'] as const,
+  LIST: (params?: GetQueryParams<'/api/v1/chat-rooms'>) =>
+    [...CHAT_ROOM_QUERY_KEY.ALL, 'list', params ?? {}] as const,
   DETAIL: (chatRoomId: number) =>
     [...CHAT_ROOM_QUERY_KEY.ALL, 'detail', chatRoomId] as const,
   MESSAGES: (

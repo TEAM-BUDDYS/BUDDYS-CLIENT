@@ -50,7 +50,7 @@ const getMessages = async (chatRoomId: number, params?: GetMessagesParams) => {
 export const CHAT_QUERY_OPTIONS = {
   LIST: (params?: GetChatRoomsParams) =>
     queryOptions({
-      queryKey: CHAT_ROOM_QUERY_KEY.LIST(),
+      queryKey: CHAT_ROOM_QUERY_KEY.LIST(params),
       queryFn: () => getChatRooms(params),
     }),
   DETAIL: (chatRoomId: number) =>
