@@ -1,10 +1,13 @@
 'use client';
 
+import { cn } from '@/lib/cn';
 import { Button } from '@/shared/components/ui';
 
 import { ProfileBio } from '../components/profile-bio/profile-bio';
 
-type ProfileIntroSectionProps =
+type ProfileIntroSectionProps = {
+  className?: string;
+} & (
   | {
       viewerType: 'me';
       bio?: string | null;
@@ -18,13 +21,14 @@ type ProfileIntroSectionProps =
   | {
       viewerType: 'withdrawn';
       bio?: string | null;
-    };
+    }
+);
 
 export const ProfileIntroSection = (props: ProfileIntroSectionProps) => {
-  const { bio, viewerType } = props;
+  const { bio, viewerType, className } = props;
 
   return (
-    <div className="flex w-full flex-col gap-3">
+    <div className={cn('flex w-full flex-col gap-3', className)}>
       {bio ? <ProfileBio bio={bio} /> : null}
 
       {viewerType === 'withdrawn' ? (

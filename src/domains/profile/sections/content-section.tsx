@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { cn } from '@/lib/cn';
 import { ArchivePostCard, Tab } from '@/shared/components/ui';
 
 import { ContentEmptyState } from '../components/content-empty-state/content-empty-state';
@@ -12,6 +13,7 @@ import type { ContentTabValue, PostItem } from '../model/content';
 interface ContentSectionProps {
   posts: PostItem[];
   onCreateCourseClick: () => void;
+  className?: string;
 }
 
 const TAB_ITEMS: { label: string; value: ContentTabValue }[] = [
@@ -70,11 +72,12 @@ const CourseTabPanel = ({
 export const ContentSection = ({
   posts,
   onCreateCourseClick,
+  className,
 }: ContentSectionProps) => {
   const [tab, setTab] = useState<ContentTabValue>('post');
 
   return (
-    <div className="flex w-full flex-col">
+    <div className={cn('flex w-full flex-col', className)}>
       <Tab
         items={TAB_ITEMS}
         value={tab}
