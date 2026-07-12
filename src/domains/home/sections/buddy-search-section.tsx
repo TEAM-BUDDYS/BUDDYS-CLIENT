@@ -72,7 +72,7 @@ export const BuddySearchSection = ({ items }: BuddySearchSectionProps) => {
           rightSlotLabel="맞춤 탐색 더보기"
           onClick={handleMoreClick}
         />
-        <div className="-mx-4 scrollbar-none overflow-x-auto border-b border-gray-100 px-4 py-3 [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        <div className="-mx-4 scrollbar-none overflow-x-auto border-b border-gray-100 px-4 py-3">
           <div className="flex gap-2">
             {buddyFilterItems.map((filterItem) => (
               <Filter
