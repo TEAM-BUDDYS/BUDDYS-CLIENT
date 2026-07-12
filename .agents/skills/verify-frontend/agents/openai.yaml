@@ -1,0 +1,4 @@
+interface:
+  display_name: '프론트엔드 검증'
+  short_description: '변경 범위에 맞는 정적 검사와 동작 검증을 수행합니다'
+  default_prompt: 'Use $verify-frontend to validate the current frontend changes.'

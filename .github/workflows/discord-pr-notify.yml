@@ -1,0 +1,231 @@
+name: Discord PR Notify
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - ready_for_review
+      - review_requested
+      - closed
+  pull_request_review:
+    types:
+      - submitted
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  notify:
+    name: Send PR notification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send notification to Discord
+        uses: actions/github-script@v7
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          script: |
+            const webhookUrl = process.env.DISCORD_WEBHOOK_URL
+
+            if (!webhookUrl) {
+              core.setFailed('DISCORD_WEBHOOK_URL secret is required.')
+              return
+            }
+
+            const colors = {
+              opened: 0x57cc99,
+              reviewRequested: 0x4dabf7,
+              approved: 0x80ed99,
+              changesRequested: 0xffd166,
+              merged: 0x90dbf4,
+            }
+
+            const truncate = (text, maxLength = 300) => {
+              if (!text) {
+                return '내용 없음'
+              }
+
+              return text.length > maxLength
+                ? `${text.slice(0, maxLength)}...`
+                : text
+            }
+
+            const getAuthor = (user) => ({
+              name: user.login,
+              icon_url: user.avatar_url,
+              url: user.html_url,
+            })
+
+            const createPrFields = (pullRequest) => [
+              {
+                name: '작성자',
+                value: `@${pullRequest.user.login}`,
+                inline: true,
+              },
+              {
+                name: '대상 브랜치',
+                value: pullRequest.base.ref,
+                inline: true,
+              },
+            ]
+
+            const sendDiscord = async ({
+              title,
+              pullRequest,
+              description,
+              color,
+              author,
+              fields = [],
+            }) => {
+              const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  allowed_mentions: {
+                    parse: [],
+                  },
+                  embeds: [
+                    {
+                      title,
+                      url: pullRequest.html_url,
+                      description,
+                      color,
+                      author,
+                      fields,
+                      footer: {
+                        text: 'BUDDYS GitHub Automation',
+                      },
+                      timestamp: new Date().toISOString(),
+                    },
+                  ],
+                }),
+              })
+
+              if (!response.ok) {
+                const responseBody = await response.text()
+                throw new Error(
+                  `Discord notification failed: ${response.status} ${responseBody}`,
+                )
+              }
+            }
+
+            if (context.eventName === 'pull_request_target') {
+              const pullRequest = context.payload.pull_request
+              const action = context.payload.action
+
+              if (action === 'closed' && !pullRequest.merged) {
+                core.info('PR was closed without merge. Skipping notification.')
+                return
+              }
+
+              const notificationByAction = {
+                opened: {
+                  title: pullRequest.draft
+                    ? '새 Draft PR이 등록됐어요'
+                    : '새 PR이 등록됐어요',
+                  color: colors.opened,
+                },
+                reopened: {
+                  title: 'PR이 다시 열렸어요',
+                  color: colors.opened,
+                },
+                ready_for_review: {
+                  title: 'PR이 리뷰 준비 상태가 됐어요',
+                  color: colors.reviewRequested,
+                },
+                closed: {
+                  title: 'PR이 머지됐어요',
+                  color: colors.merged,
+                },
+              }
+
+              if (action === 'review_requested') {
+                const requestedReviewer = context.payload.requested_reviewer
+                const requestedTeam = context.payload.requested_team
+                const reviewerName = requestedReviewer
+                  ? `@${requestedReviewer.login}`
+                  : requestedTeam
+                    ? `@${requestedTeam.name}`
+                    : '확인할 수 없음'
+
+                await sendDiscord({
+                  title: 'PR 리뷰가 요청됐어요',
+                  pullRequest,
+                  description: `[#${pullRequest.number}] ${pullRequest.title}`,
+                  color: colors.reviewRequested,
+                  author: getAuthor(pullRequest.user),
+                  fields: [
+                    ...createPrFields(pullRequest),
+                    {
+                      name: '리뷰어',
+                      value: reviewerName,
+                      inline: true,
+                    },
+                  ],
+                })
+
+                return
+              }
+
+              const notification = notificationByAction[action]
+
+              if (!notification) {
+                core.info(`Unsupported pull request action: ${action}`)
+                return
+              }
+
+              await sendDiscord({
+                title: notification.title,
+                pullRequest,
+                description: `[#${pullRequest.number}] ${pullRequest.title}\n\n${truncate(pullRequest.body)}`,
+                color: notification.color,
+                author: getAuthor(pullRequest.user),
+                fields: createPrFields(pullRequest),
+              })
+
+              return
+            }
+
+            if (context.eventName === 'pull_request_review') {
+              const pullRequest = context.payload.pull_request
+              const review = context.payload.review
+              const reviewState = review.state.toLowerCase()
+
+              const notificationByState = {
+                approved: {
+                  title: 'PR 리뷰가 승인됐어요',
+                  color: colors.approved,
+                },
+                changes_requested: {
+                  title: 'PR에 변경 요청이 등록됐어요',
+                  color: colors.changesRequested,
+                },
+              }
+
+              const notification = notificationByState[reviewState]
+
+              if (!notification) {
+                core.info(`Skipping review state: ${reviewState}`)
+                return
+              }
+
+              await sendDiscord({
+                title: notification.title,
+                pullRequest,
+                description: `[#${pullRequest.number}] ${pullRequest.title}\n\n${truncate(review.body)}`,
+                color: notification.color,
+                author: getAuthor(review.user),
+                fields: [
+                  ...createPrFields(pullRequest),
+                  {
+                    name: '리뷰어',
+                    value: `@${review.user.login}`,
+                    inline: true,
+                  },
+                ],
+              })
+            }

@@ -1,0 +1,36 @@
+@theme {
+  /* Mint */
+  --color-mint-50: #e6fafb;
+  --color-mint-100: #d9f8f9;
+  --color-mint-200: #b0f0f3;
+  --color-mint-300: #00cfd7;
+  --color-mint-400: #00a6ac;
+  --color-mint-500: #005d61;
+
+  /* Gray */
+  --color-gray-50: #f1f4f9;
+  --color-gray-100: #e5eaf2;
+  --color-gray-200: #cdd3de;
+  --color-gray-300: #b3b9c6;
+  --color-gray-400: #9398a4;
+  --color-gray-500: #757a83;
+  --color-gray-600: #666a75;
+  --color-gray-700: #474b54;
+  --color-gray-800: #2c3037;
+  --color-gray-900: #212328;
+
+  /* Base / Sub */
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-sub-1: #ecff56;
+  --color-opacity-60: rgb(0 0 0 / 60%);
+
+  /* System */
+  --color-info: #36a6ff;
+  --color-success: #00e092;
+  --color-warning: #ffcf3a;
+  --color-error: #ff5c4e;
+  --color-info-50: #9bd3ff;
+  --color-error-50: #ffada6;
+  --color-badge: #ff968d;
+}

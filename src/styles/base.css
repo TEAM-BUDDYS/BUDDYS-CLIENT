@@ -1,0 +1,22 @@
+@layer base {
+  html,
+  body {
+    width: 100%;
+    scroll-behavior: smooth;
+    background-color: var(--color-white);
+    font-family: var(--font-pretendard);
+  }
+
+  body {
+    margin: 0;
+    color: var(--color-gray-900);
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
