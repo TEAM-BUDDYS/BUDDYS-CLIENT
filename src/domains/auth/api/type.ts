@@ -6,3 +6,5 @@ export type KakaoLoginResponse =
 
 export type ReissueResponse =
   components['schemas']['BaseResponseLoginResponse'];
+
+export type AuthErrorResponse = components['schemas']['BaseResponse'];

@@ -14,13 +14,13 @@ import {
 
 import { setAccessToken, setAccessTokenRefreshHandler } from '@/shared/api';
 
-import { loginWithKakao, reissueAccessToken } from '../../api/auth-api';
-import type { AuthStatusTypes, LoginResponse } from '../../model/auth';
+import { loginWithKakao, reissueAccessToken } from '../../api/query';
+import type { AuthSession, AuthStatusTypes } from '../../model/auth';
 
 interface AuthSessionContextValue {
   status: AuthStatusTypes;
   onboardingCompleted: boolean | null;
-  authenticateWithKakao: (code: string) => Promise<LoginResponse>;
+  authenticateWithKakao: (code: string) => Promise<AuthSession>;
 }
 
 interface AuthSessionProviderProps {
@@ -39,16 +39,13 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
     boolean | null
   >(null);
 
-  const setAuthenticatedSession = useCallback(
-    (loginResponse: LoginResponse) => {
-      setAccessToken(loginResponse.accessToken);
-      setOnboardingCompleted(loginResponse.onboardingCompleted);
-      setStatus('authenticated');
+  const setAuthenticatedSession = useCallback((loginResponse: AuthSession) => {
+    setAccessToken(loginResponse.accessToken);
+    setOnboardingCompleted(loginResponse.onboardingCompleted);
+    setStatus('authenticated');
 
-      return loginResponse.accessToken;
-    },
-    [],
-  );
+    return loginResponse.accessToken;
+  }, []);
 
   const clearSession = useCallback(() => {
     setAccessToken(null);
@@ -68,7 +65,7 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
 
   const authenticateWithKakao = useCallback(
     async (code: string) => {
-      const loginResponse = await loginWithKakao(code);
+      const loginResponse = await loginWithKakao({ code });
       setAuthenticatedSession(loginResponse);
       return loginResponse;
     },

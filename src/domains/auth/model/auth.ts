@@ -1,11 +1,4 @@
-export interface ApiResponse<T> {
-  success: boolean;
-  code: string;
-  message: string;
-  data: T | null;
-}
-
-export interface LoginResponse {
+export interface AuthSession {
   accessToken: string;
   onboardingCompleted: boolean;
 }

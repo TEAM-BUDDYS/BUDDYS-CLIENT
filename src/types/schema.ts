@@ -657,6 +657,12 @@ export interface components {
        * @example 1
        */
       chatRoomId?: number;
+      /**
+       * Format: date-time
+       * @description 채팅방 생성 시각. UTC 기준입니다.
+       * @example 2026-07-07T14:30:00Z
+       */
+      createdAt?: string;
       /** @description 상대방 사용자 정보 */
       participant?: components['schemas']['ChatParticipantResponse'];
     };
