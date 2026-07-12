@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import earthImage from '@/domains/landing/asset/illustrations/earth.svg';
+import { earthImage } from '@/shared/assets/illustrations';
 import { BuddysLogo } from '@/shared/components/icons/buddys-logo';
 import { CommonImage } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui';
