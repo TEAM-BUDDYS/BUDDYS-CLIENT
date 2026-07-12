@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { formatDateInput } from '@/domains/home/utils/format-date-input';
+import { formatDateInput } from '@/shared/utils/format-date-input';
 
 export interface FilterSheetValue {
   country: string;

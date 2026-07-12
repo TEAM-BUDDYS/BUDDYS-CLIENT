@@ -1,12 +1,13 @@
+import type { GenderType } from '@/types/gender';
+
 import type {
   AgeConditionType,
   CompanionType,
-  GenderType,
   RecruitmentCountType,
 } from './post-form';
 import type { PostRecruitmentStatusTypes } from './post-recruitment-status';
 
-export type PostAuthorGenderTypes = Exclude<GenderType, 'ANY'>;
+export type PostAuthorGenderTypes = GenderType;
 
 export interface PostDetailTag {
   tagId: number;
