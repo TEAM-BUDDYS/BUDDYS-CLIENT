@@ -75,7 +75,6 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
   useEffect(() => {
     setAccessTokenRefreshHandler(refreshSession);
 
-    // callback에서는 새 카카오 로그인 결과를 기다리고, 그 외에는 기존 세션을 한 번 확인합니다.
     queueMicrotask(() => {
       if (hasBootstrappedRef.current) {
         return;

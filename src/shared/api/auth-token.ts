@@ -21,7 +21,6 @@ export const refreshAccessToken = async () => {
     throw new Error('Access token refresh handler is not registered');
   }
 
-  // 여러 요청이 동시에 401을 받아도 토큰 재발급은 한 번만 실행합니다.
   if (!refreshPromise) {
     refreshPromise = refreshHandler().finally(() => {
       refreshPromise = null;
