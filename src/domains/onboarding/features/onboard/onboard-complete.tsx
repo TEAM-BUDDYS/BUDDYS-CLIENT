@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { defaultProfileImage } from '@/shared/assets/illustrations';
 import { ArchivePostCard } from '@/shared/components/ui';
 
@@ -50,14 +52,15 @@ export const OnboardComplete = ({
 
       <div className="flex flex-col items-center gap-2 pb-20">
         {recommendedPosts.map((post) => (
-          <ArchivePostCard
-            key={post.postId}
-            title={post.title}
-            content={post.content}
-            startDate={post.period.startDate}
-            endDate={post.period.endDate}
-            image={post.thumbnailUrl ?? undefined}
-          />
+          <Link key={post.postId} href={`/posts/${post.postId}`}>
+            <ArchivePostCard
+              title={post.title}
+              content={post.content}
+              startDate={post.period.startDate}
+              endDate={post.period.endDate}
+              image={post.thumbnailUrl ?? undefined}
+            />
+          </Link>
         ))}
       </div>
     </div>

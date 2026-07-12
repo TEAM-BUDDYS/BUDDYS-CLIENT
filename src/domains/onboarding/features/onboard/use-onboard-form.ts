@@ -143,7 +143,7 @@ export const useOnboardForm = () => {
   };
 
   const handleExchangeSchoolSelect = (value: OnboardLocationOption) => {
-    setExchangeSchool(value.name);
+    setExchangeSchool(getOptionDisplayName(value));
     setSelectedExchangeSchool(value);
   };
 
