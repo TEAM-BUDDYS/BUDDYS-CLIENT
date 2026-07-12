@@ -14,6 +14,10 @@ export const setAccessTokenRefreshHandler = (
   handler: (() => Promise<string>) | null,
 ) => {
   refreshHandler = handler;
+
+  if (!handler) {
+    refreshPromise = null;
+  }
 };
 
 export const refreshAccessToken = async () => {
@@ -22,9 +26,13 @@ export const refreshAccessToken = async () => {
   }
 
   if (!refreshPromise) {
-    refreshPromise = refreshHandler().finally(() => {
-      refreshPromise = null;
+    const currentRefreshPromise = refreshHandler().finally(() => {
+      if (refreshPromise === currentRefreshPromise) {
+        refreshPromise = null;
+      }
     });
+
+    refreshPromise = currentRefreshPromise;
   }
 
   return refreshPromise;
