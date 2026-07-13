@@ -11,6 +11,7 @@ import {
   MessageIcon,
   MyIcon,
 } from '@/shared/components/icons';
+import { ROUTES } from '@/shared/config';
 
 interface BottomNavigationProps {
   className?: string;
@@ -26,7 +27,7 @@ interface BottomNavigationItem {
 const BOTTOM_NAVIGATION_ITEMS: BottomNavigationItem[] = [
   {
     key: 'home',
-    href: '/',
+    href: ROUTES.HOME,
     icon: HomeIcon,
     label: '홈',
   },
@@ -37,13 +38,13 @@ const BOTTOM_NAVIGATION_ITEMS: BottomNavigationItem[] = [
   },
   {
     key: 'chat',
-    href: '/chat',
+    href: ROUTES.CHAT.ROOT,
     icon: MessageIcon,
     label: '채팅',
   },
   {
     key: 'profile',
-    href: '/profile',
+    href: ROUTES.PROFILE.ROOT,
     icon: MyIcon,
     label: '프로필',
   },

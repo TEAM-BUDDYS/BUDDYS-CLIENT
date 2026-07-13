@@ -6,6 +6,7 @@ import { useState } from 'react';
 
 import { cn } from '@/lib/cn';
 import { ArchivePostCard, Tab } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
 
 import { ContentEmptyState } from '../components/content-empty-state/content-empty-state';
 import type { ContentTabValue, PostItem } from '../model/content';
@@ -31,7 +32,7 @@ const PostTabPanel = ({ posts }: { posts: PostItem[] }) => {
           title="아직 기록된 게시물이 없어요"
           description="첫 번째 게시물을 공유해보세요"
           buttonLabel="게시물 작성하러 가기"
-          onButtonClick={() => router.push('/posts')}
+          onButtonClick={() => router.push(ROUTES.POST.ROOT)}
         />
       </div>
     );
@@ -40,7 +41,7 @@ const PostTabPanel = ({ posts }: { posts: PostItem[] }) => {
   return (
     <div className="flex flex-col gap-2 px-4 py-3">
       {posts.map((post) => (
-        <Link key={post.id} href={`/posts/${post.id}`}>
+        <Link key={post.id} href={ROUTES.POST.DETAIL(post.id)}>
           <ArchivePostCard
             title={post.title}
             content={post.content}

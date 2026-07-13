@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { Button, ProgressBar } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
 import {
   ACTIVITY_TAGS,
   COMPANION_STYLE_TAGS,
@@ -171,7 +172,10 @@ export const OnboardFlow = () => {
             />
             <div className="fixed bottom-0 left-1/2 z-10 w-full max-w-100 -translate-x-1/2 px-4 pb-[34px]">
               <div className="absolute right-0 bottom-0 left-0 -z-10 h-[145px] bg-gradient-to-b from-white/0 via-white to-white" />
-              <Button onClick={() => router.push('/')} className="w-full">
+              <Button
+                onClick={() => router.push(ROUTES.HOME)}
+                className="w-full"
+              >
                 시작하기
               </Button>
             </div>
