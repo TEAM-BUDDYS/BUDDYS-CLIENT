@@ -34,12 +34,15 @@ export const CardProfile = ({
         className="flex h-42 w-35.25 flex-col items-center justify-between gap-2 rounded-2xl border border-gray-200 px-10 py-4"
       >
         <CommonImage
-          src={profileImageUrl ?? defaultProfileImage.src}
+          src={profileImageUrl || defaultProfileImage.src}
           alt={`${nickname} 프로필 이미지`}
           width={60}
           height={60}
           unoptimized
           radius="rounded-full"
+          onError={(event) => {
+            event.currentTarget.src = defaultProfileImage.src;
+          }}
         />
         <div className="flex w-full flex-col items-center">
           <span className="text-body-sb-15 w-30 text-center text-gray-800">
