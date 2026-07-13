@@ -1,29 +1,29 @@
-import type { PreferenceTag } from '@/shared/api';
+'use client';
+
+import { useSuspenseQuery } from '@tanstack/react-query';
+
+import { TAG_QUERY_OPTIONS, type TagType } from '@/shared/api';
 import { ChipGroup } from '@/shared/components/ui';
 
 interface OnboardTagSelectStepProps {
   title: string;
   description: string;
-  tags: PreferenceTag[];
-  isLoading: boolean;
-  isError: boolean;
+  tagType: TagType;
   selectedTagIds: number[];
   maxSelectionCount: number;
   onChange: (tagIds: number[]) => void;
-  onRetry: () => void;
 }
 
 export const OnboardTagSelectStep = ({
   title,
   description,
-  tags,
-  isLoading,
-  isError,
+  tagType,
   selectedTagIds,
   maxSelectionCount,
   onChange,
-  onRetry,
 }: OnboardTagSelectStepProps) => {
+  const { data: tags } = useSuspenseQuery(TAG_QUERY_OPTIONS.LIST(tagType));
+
   return (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-2">
@@ -37,34 +37,15 @@ export const OnboardTagSelectStep = ({
           {maxSelectionCount})
         </p>
 
-        {isLoading && (
-          <p className="text-body-r-14 text-gray-500">태그를 불러오는 중...</p>
-        )}
-        {isError && (
-          <div className="flex items-center gap-3">
-            <p className="text-body-r-14 text-gray-500">
-              태그를 불러오지 못했습니다.
-            </p>
-            <button
-              type="button"
-              className="text-body-sb-14 text-mint-400"
-              onClick={onRetry}
-            >
-              다시 시도
-            </button>
-          </div>
-        )}
-        {!isLoading && !isError && (
-          <ChipGroup
-            tags={tags}
-            selectedTagIds={selectedTagIds}
-            maxSelectionCount={maxSelectionCount}
-            hasToggleButton={false}
-            rowGap="md"
-            chipClassName="px-4"
-            onChange={onChange}
-          />
-        )}
+        <ChipGroup
+          tags={tags}
+          selectedTagIds={selectedTagIds}
+          maxSelectionCount={maxSelectionCount}
+          hasToggleButton={false}
+          rowGap="md"
+          chipClassName="px-4"
+          onChange={onChange}
+        />
       </div>
     </div>
   );
