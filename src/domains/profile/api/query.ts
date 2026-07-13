@@ -35,7 +35,7 @@ const getMyProfile = async (): Promise<MyProfile> => {
     .get(END_POINT.USER.ME)
     .json<GetMyProfileResponse>();
 
-  if (!response.success) {
+  if (response.success === false) {
     throw new Error(response.message || '프로필을 불러오지 못했습니다.');
   }
 
@@ -52,7 +52,7 @@ const getMyProfile = async (): Promise<MyProfile> => {
   } = response.data;
 
   return {
-    imageUrl: profileImageUrl ?? null,
+    imageUrl: profileImageUrl || null,
     nickname,
     isVerified: Boolean(verificationBadge),
     tags: (representativeTags ?? []).map((name, index) => ({
