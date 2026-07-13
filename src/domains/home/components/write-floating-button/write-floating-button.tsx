@@ -13,6 +13,7 @@ export const WriteFloatingButton = () => {
       <IconButton
         variant="primary"
         icon={<PlusIcon />}
+        className="pointer-events-auto"
         onClick={() => router.push('/posts')}
       >
         글쓰기

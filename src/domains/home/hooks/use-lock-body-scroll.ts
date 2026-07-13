@@ -33,7 +33,7 @@ export const useLockBodyScroll = (locked: boolean) => {
       document.body.style.position = prevBodyPosition;
       document.body.style.top = prevBodyTop;
       document.body.style.width = prevBodyWidth;
-      window.scrollTo(0, scrollY);
+      window.scrollTo({ top: scrollY, left: 0, behavior: 'instant' });
     };
   }, [locked]);
 };

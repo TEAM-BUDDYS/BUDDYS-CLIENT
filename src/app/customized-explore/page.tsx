@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { BookmarkContainer } from '@/domains/home/components/bookmark-container/bookmark-container';
 import { SearchSheetButton } from '@/domains/home/components/search-sheet-button/search-sheet-button';
 import { FilterSheet } from '@/domains/home/features/filter-sheet/filter-sheet';
-import { useAppliedFilterKeys } from '@/domains/home/hooks/use-applied-filter-keys';
+import { useFilterSheetValue } from '@/domains/home/hooks/use-filter-sheet-value';
 import { useSheetScroll } from '@/domains/home/hooks/use-sheet-scroll';
 import {
   buddyFilterItems,
@@ -31,7 +31,8 @@ const customizedExploreItems = Array.from({ length: 7 }, (_, index) => ({
 export default function CustomizedExplore() {
   const [bookmarkedItemIds, setBookmarkedItemIds] = useState<number[]>([]);
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
-  const { appliedFilterKeys, handleFilterApply } = useAppliedFilterKeys();
+  const { filterValue, appliedFilterKeys, handleFilterApply } =
+    useFilterSheetValue();
   const { sheetRef, sheetScrollClassName } = useSheetScroll(isFilterSheetOpen);
 
   const handleFilterPress = (_filterKey: BuddyFilterKey) => {
@@ -115,6 +116,7 @@ export default function CustomizedExplore() {
           )}
         >
           <FilterSheet
+            value={filterValue}
             onClose={handleFilterSheetClose}
             onApply={handleFilterApply}
           />

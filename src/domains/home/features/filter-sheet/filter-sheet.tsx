@@ -41,18 +41,19 @@ const verificationFilterTags = [
 ];
 
 interface FilterSheetProps {
+  value: FilterSheetValue;
   onClose: () => void;
   onApply?: (value: FilterSheetValue) => void;
 }
 
-export const FilterSheet = ({ onClose, onApply }: FilterSheetProps) => {
+export const FilterSheet = ({ value, onClose, onApply }: FilterSheetProps) => {
   const {
     filterValue,
     updateFilterValue,
     updateDateFilterValue,
     handleResetClick,
     handleApplyClick,
-  } = useFilterSheet({ onClose, onApply });
+  } = useFilterSheet({ initialValue: value, onClose, onApply });
 
   return (
     <>

@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
-import type { FilterSheetValue } from '@/domains/home/features/filter-sheet/use-filter-sheet';
+import {
+  type FilterSheetValue,
+  initialFilterValue,
+} from '@/domains/home/features/filter-sheet/use-filter-sheet';
 import type { BuddyFilterKey } from '@/domains/home/model/buddy-filter';
 
 const getAppliedFilterKeys = (filterValue: FilterSheetValue) => {
@@ -33,16 +36,20 @@ const getAppliedFilterKeys = (filterValue: FilterSheetValue) => {
   return appliedFilterKeys;
 };
 
-export const useAppliedFilterKeys = () => {
-  const [appliedFilterKeys, setAppliedFilterKeys] = useState<BuddyFilterKey[]>(
-    [],
+export const useFilterSheetValue = () => {
+  const [filterValue, setFilterValue] =
+    useState<FilterSheetValue>(initialFilterValue);
+  const appliedFilterKeys = useMemo(
+    () => getAppliedFilterKeys(filterValue),
+    [filterValue],
   );
 
   const handleFilterApply = (filterValue: FilterSheetValue) => {
-    setAppliedFilterKeys(getAppliedFilterKeys(filterValue));
+    setFilterValue(filterValue);
   };
 
   return {
+    filterValue,
     appliedFilterKeys,
     handleFilterApply,
   };

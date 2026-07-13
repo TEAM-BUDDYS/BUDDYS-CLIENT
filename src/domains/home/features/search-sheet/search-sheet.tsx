@@ -30,6 +30,7 @@ export const SearchSheet = ({ onClose }: SearchSheetProps) => {
           <Searchbar
             size="small"
             value={searchKeyword}
+            autoFocus
             onChange={handleSearchKeywordChange}
           />
         }
