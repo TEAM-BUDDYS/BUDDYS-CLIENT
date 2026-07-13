@@ -1,22 +1,28 @@
+import type { PreferenceTag } from '@/shared/api';
 import { ChipGroup } from '@/shared/components/ui';
-import { PreferenceTag } from '@/shared/constants/preference-tags';
 
 interface OnboardTagSelectStepProps {
   title: string;
   description: string;
   tags: PreferenceTag[];
+  isLoading: boolean;
+  isError: boolean;
   selectedTagIds: number[];
   maxSelectionCount: number;
   onChange: (tagIds: number[]) => void;
+  onRetry: () => void;
 }
 
 export const OnboardTagSelectStep = ({
   title,
   description,
   tags,
+  isLoading,
+  isError,
   selectedTagIds,
   maxSelectionCount,
   onChange,
+  onRetry,
 }: OnboardTagSelectStepProps) => {
   return (
     <div className="flex flex-col gap-10">
@@ -31,15 +37,34 @@ export const OnboardTagSelectStep = ({
           {maxSelectionCount})
         </p>
 
-        <ChipGroup
-          tags={tags}
-          selectedTagIds={selectedTagIds}
-          maxSelectionCount={maxSelectionCount}
-          hasToggleButton={false}
-          rowGap="md"
-          chipClassName="px-4"
-          onChange={onChange}
-        />
+        {isLoading && (
+          <p className="text-body-r-14 text-gray-500">태그를 불러오는 중...</p>
+        )}
+        {isError && (
+          <div className="flex items-center gap-3">
+            <p className="text-body-r-14 text-gray-500">
+              태그를 불러오지 못했습니다.
+            </p>
+            <button
+              type="button"
+              className="text-body-sb-14 text-mint-400"
+              onClick={onRetry}
+            >
+              다시 시도
+            </button>
+          </div>
+        )}
+        {!isLoading && !isError && (
+          <ChipGroup
+            tags={tags}
+            selectedTagIds={selectedTagIds}
+            maxSelectionCount={maxSelectionCount}
+            hasToggleButton={false}
+            rowGap="md"
+            chipClassName="px-4"
+            onChange={onChange}
+          />
+        )}
       </div>
     </div>
   );

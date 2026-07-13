@@ -1,14 +1,11 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { TAG_QUERY_OPTIONS } from '@/shared/api';
 import { Button, ProgressBar } from '@/shared/components/ui';
-import {
-  ACTIVITY_TAGS,
-  COMPANION_STYLE_TAGS,
-  INTEREST_TAGS,
-} from '@/shared/constants/preference-tags';
 
 import type { OnboardProgressStep, OnboardStep } from '../../model/onboard';
 import {
@@ -49,6 +46,9 @@ export const OnboardFlow = () => {
   const canGoNext = onboardForm.canGoNext(currentStep);
 
   const router = useRouter();
+  const activityTagsQuery = useQuery(TAG_QUERY_OPTIONS.LIST('ACTIVITY'));
+  const interestTagsQuery = useQuery(TAG_QUERY_OPTIONS.LIST('INTEREST'));
+  const travelStyleTagsQuery = useQuery(TAG_QUERY_OPTIONS.LIST('TRAVEL_STYLE'));
 
   const handleNextClick = () => {
     if (!canGoNext) {
@@ -117,10 +117,13 @@ export const OnboardFlow = () => {
           <OnboardTagSelectStep
             title="어떤 활동을 함께하고 싶나요?"
             description="원하는 동행 유형을 추천해드릴게요"
-            tags={ACTIVITY_TAGS}
+            tags={activityTagsQuery.data ?? []}
+            isLoading={activityTagsQuery.isPending}
+            isError={activityTagsQuery.isError}
             selectedTagIds={onboardForm.activityTagIds}
             maxSelectionCount={3}
             onChange={onboardForm.handleActivityTagIdsChange}
+            onRetry={() => void activityTagsQuery.refetch()}
           />
         )}
 
@@ -128,10 +131,13 @@ export const OnboardFlow = () => {
           <OnboardTagSelectStep
             title="관심사를 선택해주세요"
             description="취향이 비슷한 사람을 연결해드릴게요"
-            tags={INTEREST_TAGS}
+            tags={interestTagsQuery.data ?? []}
+            isLoading={interestTagsQuery.isPending}
+            isError={interestTagsQuery.isError}
             selectedTagIds={onboardForm.interestTagIds}
             maxSelectionCount={3}
             onChange={onboardForm.handleInterestTagIdsChange}
+            onRetry={() => void interestTagsQuery.refetch()}
           />
         )}
 
@@ -139,10 +145,13 @@ export const OnboardFlow = () => {
           <OnboardTagSelectStep
             title="동행 스타일은요?"
             description="함께할 사람의 성향을 맞춰볼게요 "
-            tags={COMPANION_STYLE_TAGS}
+            tags={travelStyleTagsQuery.data ?? []}
+            isLoading={travelStyleTagsQuery.isPending}
+            isError={travelStyleTagsQuery.isError}
             selectedTagIds={onboardForm.companionTagIds}
             maxSelectionCount={5}
             onChange={onboardForm.handleCompanionTagIdsChange}
+            onRetry={() => void travelStyleTagsQuery.refetch()}
           />
         )}
 
