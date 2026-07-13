@@ -1,27 +1,19 @@
+import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 
+import { HOME_QUERY_OPTIONS } from '@/domains/home/api/query';
 import { defaultProfileImage } from '@/shared/assets/illustrations';
 import { ArchivePostCard } from '@/shared/components/ui';
 
 import { RecommendedProfile } from '../../components/recommended-profile/recommended-profile';
 
-interface RecommendedPost {
-  postId: number;
-  title: string;
-  content: string;
-  period: {
-    startDate: string;
-    endDate: string;
-  };
+const RECOMMENDED_POST_SIZE = 4;
 
-  thumbnailUrl?: string | null;
-}
 interface OnboardCompleteProps {
   nickname: string;
   otherNickname: string;
   otherProfileImageUrl?: string | null;
   similarityScore: number;
-  recommendedPosts: RecommendedPost[];
 }
 
 export const OnboardComplete = ({
@@ -29,9 +21,18 @@ export const OnboardComplete = ({
   otherNickname,
   otherProfileImageUrl,
   similarityScore,
-  recommendedPosts,
 }: OnboardCompleteProps) => {
+  const { data } = useQuery(
+    HOME_QUERY_OPTIONS.RECOMMENDED_POSTS({
+      size: RECOMMENDED_POST_SIZE,
+    }),
+  );
+
+  const recommendedPosts = (data?.data?.posts ?? []).filter(
+    (post) => post.postId && post.period?.startDate && post.period.endDate,
+  );
   const recommendedProfileImage = otherProfileImageUrl ?? defaultProfileImage;
+
   return (
     <div className="flex flex-col gap-15">
       <div className="flex flex-col gap-10">
@@ -58,10 +59,10 @@ export const OnboardComplete = ({
             className="w-full"
           >
             <ArchivePostCard
-              title={post.title}
-              content={post.content}
-              startDate={post.period.startDate}
-              endDate={post.period.endDate}
+              title={post.title ?? ''}
+              content={post.content ?? ''}
+              startDate={post.period?.startDate ?? ''}
+              endDate={post.period?.endDate ?? ''}
               image={post.thumbnailUrl ?? undefined}
             />
           </Link>
