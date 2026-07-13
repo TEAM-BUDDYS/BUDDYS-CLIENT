@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { cn } from '@/lib/cn';
 import { Header } from '@/shared/components/layout';
 import {
+  AsyncBoundary,
   Button,
   type DateRangeTypes,
   ProgressBar,
@@ -87,81 +88,83 @@ export const PostCreateFlow = () => {
   };
 
   return (
-    <main className="flex min-h-dvh flex-col bg-white">
-      <div className="sticky top-0 z-10 bg-white">
-        <Header
-          content={
-            <span className="text-title-b-20 text-gray-800">
-              동행 글 작성하기
-            </span>
-          }
-          contentAlign="center"
-          hasBackButton
-          onBackClick={handleBackClick}
-        />
-        <div className="px-4">
-          <ProgressBar currentStep={currentStep} totalStep={TOTAL_STEP} />
+    <AsyncBoundary>
+      <main className="flex min-h-dvh flex-col bg-white">
+        <div className="sticky top-0 z-10 bg-white">
+          <Header
+            content={
+              <span className="text-title-b-20 text-gray-800">
+                동행 글 작성하기
+              </span>
+            }
+            contentAlign="center"
+            hasBackButton
+            onBackClick={handleBackClick}
+          />
+          <div className="px-4">
+            <ProgressBar currentStep={currentStep} totalStep={TOTAL_STEP} />
+          </div>
         </div>
-      </div>
 
-      <section className="flex flex-1 flex-col px-4 pt-10">
-        <div className="flex flex-col gap-6">
-          {isQuestionStep(currentStep) && (
-            <PostCreateQuestionHeader
-              title={STEP_CONTENTS[currentStep].title}
-              description={STEP_CONTENTS[currentStep].description}
-            />
-          )}
+        <section className="flex flex-1 flex-col px-4 pt-10">
+          <div className="flex flex-col gap-6">
+            {isQuestionStep(currentStep) && (
+              <PostCreateQuestionHeader
+                title={STEP_CONTENTS[currentStep].title}
+                description={STEP_CONTENTS[currentStep].description}
+              />
+            )}
 
-          {currentStep === 1 && (
-            <PostCreateCountryStep
-              options={COUNTRY_OPTIONS}
-              value={postCreateForm.selectedCountry}
-              onChange={postCreateForm.handleCountrySelect}
-            />
-          )}
+            {currentStep === 1 && (
+              <PostCreateCountryStep
+                options={COUNTRY_OPTIONS}
+                value={postCreateForm.selectedCountry}
+                onChange={postCreateForm.handleCountrySelect}
+              />
+            )}
 
-          {currentStep === 2 && (
-            <PostCreateCityStep
-              city={postCreateForm.city}
-              selectedCity={postCreateForm.selectedCity}
-              cityResults={postCreateForm.cityResults}
-              onCityChange={postCreateForm.handleCityChange}
-              onCitySelect={postCreateForm.handleCitySelect}
-            />
-          )}
+            {currentStep === 2 && (
+              <PostCreateCityStep
+                city={postCreateForm.city}
+                selectedCity={postCreateForm.selectedCity}
+                cityResults={postCreateForm.cityResults}
+                onCityChange={postCreateForm.handleCityChange}
+                onCitySelect={postCreateForm.handleCitySelect}
+              />
+            )}
 
-          {currentStep === 3 && (
-            <PostCreateDateStep
-              dateRange={postCreateForm.dateRange}
-              isDatePickerOpen={isDatePickerOpen}
-              onDateClick={handleDateClick}
-              onDatePickerClose={() => setIsDatePickerOpen(false)}
-              onDateConfirm={handleDateConfirm}
-            />
-          )}
+            {currentStep === 3 && (
+              <PostCreateDateStep
+                dateRange={postCreateForm.dateRange}
+                isDatePickerOpen={isDatePickerOpen}
+                onDateClick={handleDateClick}
+                onDatePickerClose={() => setIsDatePickerOpen(false)}
+                onDateConfirm={handleDateConfirm}
+              />
+            )}
 
-          {currentStep === 4 && (
-            <PostCreateDetailStep
-              value={postCreateForm.detail}
-              imageCount={postCreateForm.imageCount}
-              onChange={postCreateForm.updateDetail}
-              onImagesChange={postCreateForm.addImages}
-            />
+            {currentStep === 4 && (
+              <PostCreateDetailStep
+                value={postCreateForm.detail}
+                imageCount={postCreateForm.imageCount}
+                onChange={postCreateForm.updateDetail}
+                onImagesChange={postCreateForm.addImages}
+              />
+            )}
+          </div>
+        </section>
+
+        <div
+          className={cn(
+            'flex flex-col gap-4 px-4 pb-8.5',
+            currentStep === 4 && 'pt-10',
           )}
+        >
+          <Button disabled={!canGoNext} onClick={handleNextClick}>
+            다음
+          </Button>
         </div>
-      </section>
-
-      <div
-        className={cn(
-          'flex flex-col gap-4 px-4 pb-8.5',
-          currentStep === 4 && 'pt-10',
-        )}
-      >
-        <Button disabled={!canGoNext} onClick={handleNextClick}>
-          다음
-        </Button>
-      </div>
-    </main>
+      </main>
+    </AsyncBoundary>
   );
 };
