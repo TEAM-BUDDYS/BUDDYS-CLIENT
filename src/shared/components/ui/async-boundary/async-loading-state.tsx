@@ -18,7 +18,7 @@ export const AsyncLoadingState = ({
       role="status"
       aria-live="polite"
       className={cn(
-        'flex w-full items-center justify-center px-4 py-10',
+        'flex min-h-dvh w-full items-center justify-center px-4 py-10',
         className,
       )}
     >

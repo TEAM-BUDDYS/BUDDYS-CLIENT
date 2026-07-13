@@ -25,7 +25,7 @@ export default function Error({ error, unstable_retry }: ErrorProps) {
 
   return (
     <main>
-      <AsyncErrorState className="min-h-dvh" onRetry={handleRetry} />
+      <AsyncErrorState onRetry={handleRetry} />
     </main>
   );
 }

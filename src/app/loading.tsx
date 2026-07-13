@@ -4,7 +4,7 @@ export default function Loading() {
   return (
     <main>
       <DelayedFallback>
-        <AsyncLoadingState className="min-h-dvh" />
+        <AsyncLoadingState />
       </DelayedFallback>
     </main>
   );
