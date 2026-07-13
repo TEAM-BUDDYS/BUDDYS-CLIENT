@@ -1,5 +1,6 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -25,8 +26,13 @@ export const KakaoLoginButton = () => {
 
     try {
       window.location.assign(createKakaoAuthorizeUrl());
-    } catch {
+    } catch (error) {
       setIsRedirecting(false);
+      Sentry.captureException(error);
+
+      if (process.env.NODE_ENV === 'development') {
+        console.error('카카오 로그인 URL 생성에 실패했습니다.', error);
+      }
     }
   };
 
