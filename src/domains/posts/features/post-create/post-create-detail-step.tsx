@@ -55,11 +55,17 @@ export const PostCreateDetailStep = ({
     travelStyleTagsQuery.isError;
 
   const handleTagsRetry = () => {
-    void Promise.all([
-      activityTagsQuery.refetch(),
-      interestTagsQuery.refetch(),
-      travelStyleTagsQuery.refetch(),
-    ]);
+    if (activityTagsQuery.isError) {
+      void activityTagsQuery.refetch();
+    }
+
+    if (interestTagsQuery.isError) {
+      void interestTagsQuery.refetch();
+    }
+
+    if (travelStyleTagsQuery.isError) {
+      void travelStyleTagsQuery.refetch();
+    }
   };
 
   const handleImageInputChange = (event: ChangeEvent<HTMLInputElement>) => {
