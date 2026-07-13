@@ -1,5 +1,3 @@
-type RouteId = string | number;
-
 export const ROUTES = {
   HOME: '/',
   LANDING: '/landing',
@@ -11,15 +9,15 @@ export const ROUTES = {
   CUSTOMIZED_EXPLORE: '/customized-explore',
   POST: {
     ROOT: '/posts',
-    DETAIL: (postId: RouteId) => `/posts/${postId}` as const,
+    DETAIL: (postId: number) => `/posts/${postId}` as const,
   },
   CHAT: {
     ROOT: '/chat',
-    DETAIL: (chatRoomId: RouteId) => `/chat/${chatRoomId}` as const,
+    DETAIL: (chatRoomId: number) => `/chat/${chatRoomId}` as const,
   },
   PROFILE: {
     ROOT: '/profile',
-    DETAIL: (userId: RouteId) => `/profile/${userId}` as const,
+    DETAIL: (userId: number) => `/profile/${userId}` as const,
     SETTINGS: '/profile/settings',
     EDIT: '/profile/edit',
   },
