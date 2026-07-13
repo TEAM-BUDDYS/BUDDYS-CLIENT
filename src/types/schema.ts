@@ -381,6 +381,31 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/countries/{countryId}/universities/search': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 대학교 검색
+     * @description 특정 국가(countryId)에 속한 대학교를 이름으로 검색합니다.
+     *
+     *     - 파견국가 선택 화면에서 국가를 먼저 고른 뒤, 그 국가에 속한 대학교만 목록으로 노출할 때 사용합니다.
+     *     - keyword는 대소문자 구분 없이 부분 일치(contains)로 검색되며, 검색 결과는 대학교 이름 오름차순으로 정렬됩니다.
+     *     - 다른 국가에 동명의 대학교가 있어도 결과에 섞이지 않고 countryId로 지정한 국가로만 범위가 제한됩니다.
+     *     - 커서 없는 Slice 기반 페이지네이션을 사용하며, 다음 페이지 존재 여부는 응답의 hasNext로 확인합니다.
+     */
+    get: operations['searchUniversities'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/countries/{countryId}/cities/search': {
     parameters: {
       query?: never;
@@ -1131,6 +1156,16 @@ export interface components {
       period?: components['schemas']['PeriodResponse'];
       /** @description 썸네일 이미지 주소 */
       thumbnailUrl?: string | null;
+      /** @description 작성자 프로필 이미지 URL */
+      authorProfileImageUrl?: string | null;
+      /** @description 게시글 국가 */
+      country?: components['schemas']['CountryResponse'];
+      /**
+       * Format: int64
+       * @description 조회수
+       * @example 10
+       */
+      viewCount?: number;
     };
     BaseResponsePostListResponse: {
       success?: boolean;
@@ -3302,6 +3337,135 @@ export interface operations {
            *       "success": false,
            *       "code": "GLB-E002",
            *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  searchUniversities: {
+    parameters: {
+      query?: {
+        /**
+         * @description 검색 키워드. 대소문자 구분 없이 대학교 이름에 부분 일치합니다. 생략하거나 빈 문자열/공백만 전달하면 빈 리스트가 반환됩니다.
+         * @example Yonsei
+         */
+        keyword?: string;
+        /**
+         * @description 페이지 번호. 0 이상입니다.
+         * @example 0
+         */
+        page?: number;
+        /**
+         * @description 페이지 크기. 1 이상 100 이하입니다.
+         * @example 20
+         */
+        size?: number;
+      };
+      header?: never;
+      path: {
+        /**
+         * @description 국가 ID. 존재하지 않는 ID를 전달하면 404가 반환됩니다.
+         * @example 31
+         */
+        countryId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 검색 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": true,
+           *       "code": "GLB-S001",
+           *       "message": "요청이 성공했습니다.",
+           *       "data": {
+           *         "universities": [
+           *           {
+           *             "id": 1,
+           *             "name": "Yonsei University",
+           *             "domain": "yonsei.ac.kr"
+           *           }
+           *         ],
+           *         "page": 0,
+           *         "size": 20,
+           *         "hasNext": false
+           *       }
+           *     }
+           */
+          'application/json': unknown;
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 국가를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "LOC-E001",
+           *       "message": "국가를 찾을 수 없습니다.",
            *       "data": null
            *     }
            */

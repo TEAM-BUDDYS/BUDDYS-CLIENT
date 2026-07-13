@@ -5,3 +5,5 @@ export type GetRecommendedPostsParams =
 
 export type GetRecommendedPostsResponse =
   components['schemas']['BaseResponseRecommendedPostListResponse'];
+
+export type RecommendedPost = components['schemas']['RecommendedPostResponse'];
