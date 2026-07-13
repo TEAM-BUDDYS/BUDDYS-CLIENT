@@ -18,8 +18,10 @@ export default function GlobalError({
 
   return (
     <html lang="ko">
-      <body className="min-h-dvh">
+      <head>
         <title>오류 | BUDDYS</title>
+      </head>
+      <body className="min-h-dvh">
         <main className="mx-auto flex min-h-dvh w-full max-w-[430px] min-w-[375px] flex-col items-center justify-center bg-white px-4 text-center">
           <h1 className="text-title-b-20 text-gray-800">문제가 발생했어요</h1>
           <p className="text-body-r-14 mt-1 text-gray-500">
