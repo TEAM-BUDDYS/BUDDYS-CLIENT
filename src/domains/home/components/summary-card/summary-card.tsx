@@ -1,43 +1,53 @@
 import Link from 'next/link';
 
+import type { PostSummary } from '@/domains/posts/api/type';
 import { CardDate } from '@/shared/components/ui/card/card-date';
 import { CommonImage } from '@/shared/components/ui/common-image/common-image';
 
 interface SummaryCardProps {
-  href: string;
+  post: PostSummary;
+}
+
+type DisplayablePostSummary = PostSummary & {
+  postId: number;
   title: string;
   content: string;
   startDate: string;
   endDate: string;
-  image?: string;
-}
+};
 
-export const SummaryCard = ({
-  href,
-  title,
-  content,
-  startDate,
-  endDate,
-  image,
-}: SummaryCardProps) => {
+const isDisplayablePostSummary = (
+  post: PostSummary,
+): post is DisplayablePostSummary => {
+  return Boolean(
+    post.postId && post.title && post.content && post.startDate && post.endDate,
+  );
+};
+
+export const SummaryCard = ({ post }: SummaryCardProps) => {
+  if (!isDisplayablePostSummary(post)) return null;
+
   return (
     <article>
-      <Link href={href} className="flex h-20 justify-between">
+      <Link
+        href={`/posts/${post.postId}`}
+        className="flex h-20 justify-between"
+      >
         <section className="flex flex-col gap-2">
           <div className="flex w-57.5 flex-col gap-1">
             <header className="text-body-sb-16 truncate text-gray-800">
-              {title}
+              {post.title}
             </header>
             <p className="text-caption-m-12 truncate text-gray-500">
-              {content}
+              {post.content}
             </p>
           </div>
-          <CardDate startDate={startDate} endDate={endDate} />
+          <CardDate startDate={post.startDate} endDate={post.endDate} />
         </section>
-        {image && (
+        {post.thumbnailImageUrl && (
           <CommonImage
-            src={image}
-            alt={`${title} 썸네일`}
+            src={post.thumbnailImageUrl}
+            alt={`${post.title} 썸네일`}
             width={80}
             height={80}
             unoptimized

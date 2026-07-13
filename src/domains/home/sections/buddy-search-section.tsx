@@ -1,5 +1,6 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -12,34 +13,47 @@ import {
   buddyFilterItems,
   type BuddyFilterKey,
 } from '@/domains/home/model/buddy-filter';
+import {
+  AGE_CONDITION_BY_TAG_ID,
+  BUDDY_SEARCH_SIZE,
+  COMPANION_TYPE_BY_TAG_ID,
+  GENDER_CONDITION_BY_TAG_ID,
+  getMappedValues,
+  hasPostCardFields,
+} from '@/domains/home/model/buddy-search';
+import { POST_QUERY_OPTIONS } from '@/domains/posts/api/query';
 import { cn } from '@/lib/cn';
 import { ChevronRightIcon } from '@/shared/components/icons';
 import { Card, Filter } from '@/shared/components/ui';
-import type { RecruitmentStatus } from '@/shared/components/ui/card/card-tag';
 
-export interface BuddySearchItem {
-  id: number;
-  href: string;
-  title: string;
-  content: string;
-  postStatus: RecruitmentStatus;
-  tagValue: string;
-  startDate: string;
-  endDate: string;
-  image?: string;
-}
-
-interface BuddySearchSectionProps {
-  items: BuddySearchItem[];
-}
-
-export const BuddySearchSection = ({ items }: BuddySearchSectionProps) => {
+export const BuddySearchSection = () => {
   const router = useRouter();
   const [bookmarkedItemIds, setBookmarkedItemIds] = useState<number[]>([]);
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const { filterValue, appliedFilterKeys, handleFilterApply } =
     useFilterSheetValue();
   const { sheetRef, sheetScrollClassName } = useSheetScroll(isFilterSheetOpen);
+  const { data } = useQuery(
+    POST_QUERY_OPTIONS.LIST({
+      size: BUDDY_SEARCH_SIZE,
+      startDate: filterValue.startDate || undefined,
+      endDate: filterValue.endDate || undefined,
+      ageConditions: getMappedValues(
+        filterValue.ageTagIds,
+        AGE_CONDITION_BY_TAG_ID,
+      ),
+      genderConditions: getMappedValues(
+        filterValue.genderTagIds,
+        GENDER_CONDITION_BY_TAG_ID,
+      ),
+      companionTypes: getMappedValues(
+        filterValue.buddyTypeTagIds,
+        COMPANION_TYPE_BY_TAG_ID,
+      ),
+    }),
+  );
+
+  const posts = (data?.data?.content ?? []).filter(hasPostCardFields);
 
   const handleMoreClick = () => {
     router.push('/customized-explore');
@@ -88,22 +102,22 @@ export const BuddySearchSection = ({ items }: BuddySearchSectionProps) => {
           </div>
         </div>
         <div className="flex flex-col gap-6 pt-6">
-          {items.map((item) => (
+          {posts.map((post) => (
             <BookmarkContainer
-              key={item.id}
-              isBookmarked={bookmarkedItemIds.includes(item.id)}
+              key={post.postId}
+              isBookmarked={bookmarkedItemIds.includes(post.postId)}
               variant="card"
-              onBookmarkClick={() => handleBookmarkClick(item.id)}
+              onBookmarkClick={() => handleBookmarkClick(post.postId)}
             >
               <Card
-                href={item.href}
-                title={item.title}
-                content={item.content}
-                postStatus={item.postStatus}
-                tagValue={item.tagValue}
-                startDate={item.startDate}
-                endDate={item.endDate}
-                image={item.image}
+                href={`/posts/${post.postId}`}
+                title={post.title}
+                content={post.content}
+                postStatus={post.recruitmentStatus}
+                tagValue={post.country.name}
+                startDate={post.startDate}
+                endDate={post.endDate}
+                image={post.thumbnailImageUrl}
               />
             </BookmarkContainer>
           ))}

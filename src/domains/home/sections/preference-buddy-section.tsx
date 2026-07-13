@@ -1,36 +1,40 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { BookmarkContainer } from '@/domains/home/components/bookmark-container/bookmark-container';
 import { HomeChipGroup } from '@/domains/home/components/home-chip-group/home-chip-group';
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
 import { SummaryCard } from '@/domains/home/components/summary-card/summary-card';
-import type { Tag } from '@/types/tag';
+import {
+  DEFAULT_PREFERENCE_TAG_NAME,
+  hasPostId,
+  PREFERENCE_BUDDY_SIZE,
+  PREFERENCE_TAGS,
+} from '@/domains/home/model/preference-buddy';
+import { POST_QUERY_OPTIONS } from '@/domains/posts/api/query';
+import { EmptyState } from '@/shared/components/ui';
 
-export interface PreferenceBuddyItem {
-  id: number;
-  href: string;
-  title: string;
-  content: string;
-  startDate: string;
-  endDate: string;
-  image?: string;
-}
-
-interface PreferenceBuddySectionProps {
-  tags: Tag[];
-  items: PreferenceBuddyItem[];
-}
-
-export const PreferenceBuddySection = ({
-  tags,
-  items,
-}: PreferenceBuddySectionProps) => {
-  const [selectedPreferenceTagId, setSelectedPreferenceTagId] = useState<
-    number | null
-  >(null);
+export const PreferenceBuddySection = () => {
+  const defaultTagId =
+    PREFERENCE_TAGS.find((tag) => tag.name === DEFAULT_PREFERENCE_TAG_NAME)
+      ?.id ??
+    PREFERENCE_TAGS[0]?.id ??
+    0;
+  const [selectedPreferenceTagId, setSelectedPreferenceTagId] =
+    useState(defaultTagId);
   const [bookmarkedItemIds, setBookmarkedItemIds] = useState<number[]>([]);
+  const { data, isFetched } = useQuery({
+    ...POST_QUERY_OPTIONS.LIST({
+      tagId: selectedPreferenceTagId,
+      size: PREFERENCE_BUDDY_SIZE,
+    }),
+    enabled: selectedPreferenceTagId > 0,
+  });
+
+  const posts = (data?.data?.content ?? []).filter(hasPostId);
+  const isEmpty = isFetched && posts.length === 0;
 
   const handleBookmarkClick = (itemId: number) => {
     setBookmarkedItemIds((prevBookmarkedItemIds) =>
@@ -49,21 +53,29 @@ export const PreferenceBuddySection = ({
         title="이런 취향의 동행자는 어떠세요?"
       />
       <HomeChipGroup
-        tags={tags}
+        tags={PREFERENCE_TAGS}
         selectedTagId={selectedPreferenceTagId}
         onChange={setSelectedPreferenceTagId}
       />
       <div className="flex flex-col gap-5">
-        {items.map((item) => (
-          <BookmarkContainer
-            key={item.id}
-            isBookmarked={bookmarkedItemIds.includes(item.id)}
-            variant="summary"
-            onBookmarkClick={() => handleBookmarkClick(item.id)}
-          >
-            <SummaryCard {...item} />
-          </BookmarkContainer>
-        ))}
+        {isEmpty ? (
+          <EmptyState
+            title="아직 취향에 맞는 게시물이 없어요"
+            description="다른 태그를 선택해 동행 게시물을 찾아보세요"
+            className="py-8"
+          />
+        ) : (
+          posts.map((post) => (
+            <BookmarkContainer
+              key={post.postId}
+              isBookmarked={bookmarkedItemIds.includes(post.postId)}
+              variant="summary"
+              onBookmarkClick={() => handleBookmarkClick(post.postId)}
+            >
+              <SummaryCard post={post} />
+            </BookmarkContainer>
+          ))
+        )}
       </div>
     </section>
   );
