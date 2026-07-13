@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 
-import { HOME_QUERY_OPTIONS } from '@/domains/home/api/query';
+import { RECOMMENDATION_QUERY_OPTIONS } from '@/shared/api';
 import { defaultProfileImage } from '@/shared/assets/illustrations';
 import { ArchivePostCard } from '@/shared/components/ui';
 
@@ -23,7 +23,7 @@ export const OnboardComplete = ({
   similarityScore,
 }: OnboardCompleteProps) => {
   const { data } = useQuery(
-    HOME_QUERY_OPTIONS.RECOMMENDED_POSTS({
+    RECOMMENDATION_QUERY_OPTIONS.RECOMMENDED_POSTS({
       size: RECOMMENDED_POST_SIZE,
     }),
   );

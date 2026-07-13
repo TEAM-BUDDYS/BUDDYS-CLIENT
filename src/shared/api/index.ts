@@ -9,4 +9,5 @@ export {
   TAG_QUERY_KEY,
   USER_QUERY_KEY,
 } from './query-key';
+export { RECOMMENDATION_QUERY_OPTIONS } from './recommended-posts/query';
 export { createSearchParams } from './search-params';

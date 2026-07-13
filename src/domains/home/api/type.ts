@@ -8,11 +8,6 @@ export type GetExchangeCountryRecommendedUsersParams =
 export type GetExchangeCountryRecommendedUsersResponse =
   components['schemas']['BaseResponseExchangeCountryRecommendedUserListResponse'];
 
-export type GetRecommendedPostsParams =
-  operations['getRecommendedPosts']['parameters']['query'];
-export type GetRecommendedPostsResponse =
-  components['schemas']['BaseResponseRecommendedPostListResponse'];
-
 export type GetCountriesParams =
   operations['getCountries']['parameters']['query'];
 export type GetCountriesResponse =
