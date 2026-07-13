@@ -18,14 +18,14 @@ export default function Error({ error, unstable_retry }: ErrorProps) {
     Sentry.captureException(error);
   }, [error]);
 
-  const handleRetry = () => {
+  const handleRetryClick = () => {
     resetQueryErrors();
     unstable_retry();
   };
 
   return (
     <main>
-      <AsyncErrorState onRetry={handleRetry} />
+      <AsyncErrorState onRetry={handleRetryClick} />
     </main>
   );
 }
