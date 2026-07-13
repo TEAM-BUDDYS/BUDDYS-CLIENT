@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import type { PostFormPayload } from '@/domains/posts/model/post-form';
+import type { CreatePostRequest } from '@/domains/posts/api/type';
 import type { DateRangeTypes } from '@/shared/components/ui';
 
 import { CITY_OPTIONS, MAX_IMAGE_COUNT } from './constants';
@@ -31,12 +31,6 @@ const formatDateForPayload = (date: Date) => {
   const day = `${date.getDate()}`.padStart(2, '0');
 
   return `${year}-${month}-${day}`;
-};
-
-const getGenderForPayload = (
-  genderConditions: PostCreateGenderConditionType[],
-) => {
-  return genderConditions[0];
 };
 
 const isRequiredDetailComplete = (
@@ -153,7 +147,7 @@ export const usePostCreateForm = () => {
     return Boolean(getCompleteFormValues());
   };
 
-  const getPostFormPayload = (): PostFormPayload | null => {
+  const getPostFormPayload = (): CreatePostRequest | null => {
     const completeFormValues = getCompleteFormValues();
 
     if (!completeFormValues) {
@@ -176,12 +170,10 @@ export const usePostCreateForm = () => {
       startDate: formatDateForPayload(startDate),
       endDate: formatDateForPayload(endDate),
       ageConditions: detail.ageConditions,
-      gender: getGenderForPayload(detail.genderConditions),
+      genderConditions: detail.genderConditions,
       companionType: detail.companionType,
       recruitmentCountType: detail.recruitmentCountType,
       tagIds,
-      // TODO: 이미지 업로드 API 연동 후 업로드 결과 URL로 변경
-      imageUrls: [],
     };
   };
 

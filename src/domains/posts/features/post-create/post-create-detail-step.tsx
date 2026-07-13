@@ -97,6 +97,7 @@ export const PostCreateDetailStep = ({
           onChange={(ageConditions) => onChange({ ageConditions })}
         />
         <ChipOptionGroup
+          multiple
           label="성별"
           options={GENDER_OPTIONS}
           selectedValues={value.genderConditions}
