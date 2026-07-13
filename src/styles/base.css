@@ -4,7 +4,7 @@
     width: 100%;
     scroll-behavior: smooth;
     scrollbar-width: none;
-    background-color: var(--color-white);
+    background-color: var(--color-gray-50);
     font-family: var(--font-pretendard);
   }
 
