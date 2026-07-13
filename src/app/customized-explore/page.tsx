@@ -15,10 +15,11 @@ import { cn } from '@/lib/cn';
 import { BellIcon } from '@/shared/components/icons';
 import { BottomNavigation, Header } from '@/shared/components/layout';
 import { Card, Filter } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
 
 const customizedExploreItems = Array.from({ length: 7 }, (_, index) => ({
   id: index + 1,
-  href: `/posts/${index + 1}`,
+  href: ROUTES.POST.DETAIL(index + 1),
   title: '최대 17자 제목이 들어가는 자리입니다',
   content: '최대 21자 본문이 들어가는 자리입니다.',
   postStatus: 'RECRUITING' as const,
