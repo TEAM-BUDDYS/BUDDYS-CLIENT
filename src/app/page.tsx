@@ -1,4 +1,5 @@
 import { AuthEntryGuard } from '@/domains/auth/features/auth-session/auth-entry-guard';
+import { SearchSheetButton } from '@/domains/home/components/search-sheet-button/search-sheet-button';
 import { WriteFloatingButton } from '@/domains/home/components/write-floating-button/write-floating-button';
 import {
   type BuddySearchItem,
@@ -13,7 +14,7 @@ import {
   SameCountryBuddySection,
 } from '@/domains/home/sections/same-country-buddy-section';
 import { TodayBuddySection } from '@/domains/home/sections/today-buddy-section';
-import { BellIcon, SearchIcon } from '@/shared/components/icons';
+import { BellIcon } from '@/shared/components/icons';
 import { BuddysLogo } from '@/shared/components/icons/buddys-logo';
 import { BottomNavigation, Header } from '@/shared/components/layout';
 import type { Tag } from '@/types/tag';
@@ -117,9 +118,7 @@ export default function Home() {
         content={<BuddysLogo width={90} height={24} />}
         right={
           <>
-            <button type="button" aria-label="검색">
-              <SearchIcon className="size-6" />
-            </button>
+            <SearchSheetButton />
             <button type="button" aria-label="알림">
               <BellIcon className="size-6" />
             </button>

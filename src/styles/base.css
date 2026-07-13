@@ -3,8 +3,14 @@
   body {
     width: 100%;
     scroll-behavior: smooth;
-    background-color: var(--color-white);
+    scrollbar-width: none;
+    background-color: var(--color-gray-50);
     font-family: var(--font-pretendard);
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none;
   }
 
   body {

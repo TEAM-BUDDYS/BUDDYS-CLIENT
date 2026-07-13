@@ -13,11 +13,12 @@ export interface FilterSheetValue {
 }
 
 interface UseFilterSheetParams {
+  initialValue?: FilterSheetValue;
   onClose: () => void;
   onApply?: (value: FilterSheetValue) => void;
 }
 
-const initialFilterValue: FilterSheetValue = {
+export const initialFilterValue: FilterSheetValue = {
   country: '',
   startDate: '',
   endDate: '',
@@ -27,9 +28,13 @@ const initialFilterValue: FilterSheetValue = {
   verificationTagIds: [],
 };
 
-export const useFilterSheet = ({ onClose, onApply }: UseFilterSheetParams) => {
+export const useFilterSheet = ({
+  initialValue = initialFilterValue,
+  onClose,
+  onApply,
+}: UseFilterSheetParams) => {
   const [filterValue, setFilterValue] =
-    useState<FilterSheetValue>(initialFilterValue);
+    useState<FilterSheetValue>(initialValue);
 
   const updateFilterValue = <Key extends keyof FilterSheetValue>(
     key: Key,

@@ -3,15 +3,18 @@
 import { useState } from 'react';
 
 import { BookmarkContainer } from '@/domains/home/components/bookmark-container/bookmark-container';
+import { SearchSheetButton } from '@/domains/home/components/search-sheet-button/search-sheet-button';
+import { FilterSheet } from '@/domains/home/features/filter-sheet/filter-sheet';
+import { useFilterSheetValue } from '@/domains/home/hooks/use-filter-sheet-value';
+import { useSheetScroll } from '@/domains/home/hooks/use-sheet-scroll';
 import {
   buddyFilterItems,
   type BuddyFilterKey,
 } from '@/domains/home/model/buddy-filter';
-import { BellIcon, SearchIcon } from '@/shared/components/icons';
+import { cn } from '@/lib/cn';
+import { BellIcon } from '@/shared/components/icons';
 import { BottomNavigation, Header } from '@/shared/components/layout';
 import { Card, Filter } from '@/shared/components/ui';
-
-const appliedFilterKeys: BuddyFilterKey[] = [];
 
 const customizedExploreItems = Array.from({ length: 7 }, (_, index) => ({
   id: index + 1,
@@ -27,8 +30,18 @@ const customizedExploreItems = Array.from({ length: 7 }, (_, index) => ({
 
 export default function CustomizedExplore() {
   const [bookmarkedItemIds, setBookmarkedItemIds] = useState<number[]>([]);
+  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
+  const { filterValue, appliedFilterKeys, handleFilterApply } =
+    useFilterSheetValue();
+  const { sheetRef, sheetScrollClassName } = useSheetScroll(isFilterSheetOpen);
 
-  const handleFilterPress = (_filterKey: BuddyFilterKey) => {};
+  const handleFilterPress = (_filterKey: BuddyFilterKey) => {
+    setIsFilterSheetOpen(true);
+  };
+
+  const handleFilterSheetClose = () => {
+    setIsFilterSheetOpen(false);
+  };
 
   const handleBookmarkClick = (itemId: number) => {
     setBookmarkedItemIds((prevBookmarkedItemIds) =>
@@ -46,9 +59,7 @@ export default function CustomizedExplore() {
         hasBackButton
         right={
           <>
-            <button type="button" aria-label="검색">
-              <SearchIcon className="size-6" />
-            </button>
+            <SearchSheetButton />
             <button type="button" aria-label="알림">
               <BellIcon className="size-6" />
             </button>
@@ -96,6 +107,21 @@ export default function CustomizedExplore() {
         </div>
       </main>
       <BottomNavigation className="fixed right-0 bottom-0 left-0 z-20 mx-auto max-w-107.5" />
+      {isFilterSheetOpen && (
+        <div
+          ref={sheetRef}
+          className={cn(
+            'fixed inset-0 z-50 mx-auto h-dvh max-w-107.5 bg-white',
+            sheetScrollClassName,
+          )}
+        >
+          <FilterSheet
+            value={filterValue}
+            onClose={handleFilterSheetClose}
+            onApply={handleFilterApply}
+          />
+        </div>
+      )}
     </>
   );
 }
