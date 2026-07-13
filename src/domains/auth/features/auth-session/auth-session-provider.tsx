@@ -75,6 +75,12 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
   useEffect(() => {
     setAccessTokenRefreshHandler(refreshSession);
 
+    return () => {
+      setAccessTokenRefreshHandler(null);
+    };
+  }, [refreshSession]);
+
+  useEffect(() => {
     queueMicrotask(() => {
       if (hasBootstrappedRef.current) {
         return;
@@ -89,10 +95,6 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
 
       refreshSession().catch(() => undefined);
     });
-
-    return () => {
-      setAccessTokenRefreshHandler(null);
-    };
   }, [clearSession, refreshSession, shouldSkipSessionBootstrap]);
 
   const value = useMemo(
