@@ -1,3 +1,4 @@
+import { AuthEntryGuard } from '@/domains/auth/features/auth-session/auth-entry-guard';
 import { WriteFloatingButton } from '@/domains/home/components/write-floating-button/write-floating-button';
 import {
   type BuddySearchItem,
@@ -111,7 +112,7 @@ const preferenceBuddyItems: PreferenceBuddyItem[] = Array.from(
 
 export default function Home() {
   return (
-    <>
+    <AuthEntryGuard>
       <Header
         content={<BuddysLogo width={90} height={24} />}
         right={
@@ -148,6 +149,6 @@ export default function Home() {
       </main>
       <WriteFloatingButton />
       <BottomNavigation className="fixed right-0 bottom-0 left-0 z-20 mx-auto max-w-107.5" />
-    </>
+    </AuthEntryGuard>
   );
 }
