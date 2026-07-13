@@ -22,6 +22,7 @@ import { POST_QUERY_OPTIONS } from '@/domains/posts/api/query';
 import { cn } from '@/lib/cn';
 import { ChevronRightIcon } from '@/shared/components/icons';
 import { Card, Filter } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
 
 export const BuddySearchSection = () => {
   const router = useRouter();
@@ -39,7 +40,7 @@ export const BuddySearchSection = () => {
   const posts = (data?.data?.content ?? []).filter(hasPostCardFields);
 
   const handleMoreClick = () => {
-    router.push('/customized-explore');
+    router.push(ROUTES.CUSTOMIZED_EXPLORE);
   };
 
   const handleFilterPress = (_filterKey: BuddyFilterKey) => {
@@ -93,7 +94,7 @@ export const BuddySearchSection = () => {
               onBookmarkClick={() => handleBookmarkClick(post.postId)}
             >
               <Card
-                href={`/posts/${post.postId}`}
+                href={ROUTES.POST.DETAIL(post.postId)}
                 title={post.title}
                 content={post.content}
                 postStatus={post.recruitmentStatus}

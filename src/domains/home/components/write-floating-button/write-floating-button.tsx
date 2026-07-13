@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 
 import { PlusIcon } from '@/shared/components/icons';
 import { IconButton } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
 
 export const WriteFloatingButton = () => {
   const router = useRouter();
@@ -14,7 +15,7 @@ export const WriteFloatingButton = () => {
         variant="primary"
         icon={<PlusIcon />}
         className="pointer-events-auto"
-        onClick={() => router.push('/posts')}
+        onClick={() => router.push(ROUTES.POST.ROOT)}
       >
         글쓰기
       </IconButton>
