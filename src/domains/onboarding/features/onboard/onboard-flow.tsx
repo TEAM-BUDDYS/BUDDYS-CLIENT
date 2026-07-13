@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { useCountryList } from '@/shared/api';
 import { Button, ProgressBar } from '@/shared/components/ui';
 import {
   ACTIVITY_TAGS,
@@ -49,6 +50,12 @@ export const OnboardFlow = () => {
   const canGoNext = onboardForm.canGoNext(currentStep);
 
   const router = useRouter();
+  const {
+    countryOptions,
+    hasMoreCountries,
+    isLoadingMoreCountries,
+    loadMoreCountries,
+  } = useCountryList();
 
   const handleNextClick = () => {
     if (!canGoNext) {
@@ -85,12 +92,15 @@ export const OnboardFlow = () => {
       <section className="flex flex-1 flex-col pt-10">
         {currentStep === 'interest-location' && (
           <OnboardInterestLocationStep
-            countryOptions={onboardForm.countryOptions}
+            countryOptions={countryOptions}
             selectedCountry={onboardForm.interestCountry}
+            hasMoreCountries={hasMoreCountries}
+            isLoadingMoreCountries={isLoadingMoreCountries}
             city={onboardForm.interestCity}
             selectedCity={onboardForm.selectedInterestCity}
             cityResults={onboardForm.interestCityResults}
             onCountryChange={onboardForm.handleInterestCountrySelect}
+            onLoadMoreCountries={loadMoreCountries}
             onCityChange={onboardForm.handleInterestCityChange}
             onCitySelect={onboardForm.handleInterestCitySelect}
           />
@@ -98,14 +108,17 @@ export const OnboardFlow = () => {
 
         {currentStep === 'exchange-info' && (
           <OnboardExchangeInfoStep
-            countryOptions={onboardForm.countryOptions}
+            countryOptions={countryOptions}
             selectedCountry={onboardForm.exchangeCountry}
+            hasMoreCountries={hasMoreCountries}
+            isLoadingMoreCountries={isLoadingMoreCountries}
             school={onboardForm.exchangeSchool}
             selectedSchool={onboardForm.selectedExchangeSchool}
             schoolResults={onboardForm.exchangeSchoolResults}
             startMonth={onboardForm.startMonth}
             endMonth={onboardForm.endMonth}
             onCountryChange={onboardForm.handleExchangeCountrySelect}
+            onLoadMoreCountries={loadMoreCountries}
             onSchoolChange={onboardForm.handleExchangeSchoolChange}
             onSchoolSelect={onboardForm.handleExchangeSchoolSelect}
             onStartMonthChange={onboardForm.handleStartMonthChange}

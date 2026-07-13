@@ -14,20 +14,36 @@ interface DropdownProps {
   value: string;
   disabled?: boolean;
   placeholder?: string;
+  hasMore?: boolean;
+  isLoadingMore?: boolean;
   onChange?: (value: string) => void;
+  onLoadMore?: () => void;
 }
 
 export const Dropdown = ({
   options,
   value,
   disabled = false,
+  hasMore = false,
+  isLoadingMore = false,
   onChange,
+  onLoadMore,
   placeholder = '선택해주세요.',
 }: DropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const listboxId = useId();
   const dropdownRef = useClickOutside<HTMLElement>(() => setIsOpen(false));
   const hasSelectedValue = Boolean(value);
+
+  const handleOptionListScroll = (event: React.UIEvent<HTMLUListElement>) => {
+    const { clientHeight, scrollHeight, scrollTop } = event.currentTarget;
+
+    const isNearBottom = scrollHeight - clientHeight - scrollTop <= 20;
+
+    if (isNearBottom && hasMore && !isLoadingMore) {
+      onLoadMore?.();
+    }
+  };
 
   return (
     <article ref={dropdownRef} className="relative">
@@ -53,7 +69,7 @@ export const Dropdown = ({
         )}
       </button>
       {isOpen && !disabled && (
-        <OptionList id={listboxId}>
+        <OptionList id={listboxId} onScroll={handleOptionListScroll}>
           {options.map((option) => (
             <OptionItem
               key={option}

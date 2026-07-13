@@ -4,6 +4,7 @@ import {
   type FilterSheetValue,
   useFilterSheet,
 } from '@/domains/home/features/filter-sheet/use-filter-sheet';
+import { useCountryList } from '@/shared/api';
 import { XIcon } from '@/shared/components/icons';
 import { Header } from '@/shared/components/layout';
 import {
@@ -14,7 +15,6 @@ import {
   TextField,
 } from '@/shared/components/ui';
 
-const countryOptions = ['일본', '중국', '미국', '프랑스', '영국'];
 const ageFilterTags = [
   { id: 1, name: '20대 초반' },
   { id: 2, name: '20대 중반' },
@@ -48,6 +48,14 @@ interface FilterSheetProps {
 
 export const FilterSheet = ({ value, onClose, onApply }: FilterSheetProps) => {
   const {
+    countryOptions,
+    hasMoreCountries,
+    isLoadingMoreCountries,
+    loadMoreCountries,
+  } = useCountryList();
+  const countryNames = countryOptions.map((country) => country.name);
+
+  const {
     filterValue,
     updateFilterValue,
     updateDateFilterValue,
@@ -76,10 +84,13 @@ export const FilterSheet = ({ value, onClose, onApply }: FilterSheetProps) => {
             국가
           </FormLabel>
           <Dropdown
-            options={countryOptions}
+            options={countryNames}
             value={filterValue.country}
             placeholder="선택해주세요."
+            hasMore={hasMoreCountries}
+            isLoadingMore={isLoadingMoreCountries}
             onChange={(value) => updateFilterValue('country', value)}
+            onLoadMore={loadMoreCountries}
           />
         </div>
         <div className="flex flex-col gap-3">

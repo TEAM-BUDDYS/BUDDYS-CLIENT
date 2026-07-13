@@ -21,16 +21,6 @@ import type {
 export const TOTAL_STEP = 4 satisfies PostCreateStep;
 export const MAX_IMAGE_COUNT = 10;
 
-// TODO: 국가 목록 API 연동 후 삭제
-export const COUNTRY_OPTIONS = [
-  { id: 1, name: '프랑스' },
-  { id: 2, name: '미국' },
-  { id: 3, name: '영국' },
-  { id: 4, name: '독일' },
-  { id: 5, name: '일본' },
-  { id: 6, name: '호주' },
-] satisfies LocationOption[];
-
 // TODO: 도시 검색 API 연동 후 삭제
 export const CITY_OPTIONS = [
   { id: 3, name: '뉴욕' },
