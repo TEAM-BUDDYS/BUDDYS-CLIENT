@@ -38,6 +38,8 @@ export const POST_QUERY_KEY = {
   ALL: ['posts'] as const,
   LIST: (params?: GetQueryParams<'/api/v1/posts'>) =>
     [...POST_QUERY_KEY.ALL, 'list', params ?? {}] as const,
+  INFINITE_LIST: (params?: GetQueryParams<'/api/v1/posts'>) =>
+    [...POST_QUERY_KEY.ALL, 'infinite-list', params ?? {}] as const,
   DETAIL: (postId: number) =>
     [...POST_QUERY_KEY.ALL, 'detail', postId] as const,
   COMMENTS: (

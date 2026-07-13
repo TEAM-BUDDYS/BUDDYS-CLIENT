@@ -1,3 +1,4 @@
+import type { FilterSheetValue } from '@/domains/home/features/filter-sheet/use-filter-sheet';
 import type { GetPostsParams, PostSummary } from '@/domains/posts/api/type';
 
 export const BUDDY_SEARCH_SIZE = 3;
@@ -64,4 +65,27 @@ export const getMappedValues = <Value extends string>(
   return tagIds
     .map((tagId) => valueMap[tagId])
     .filter((value): value is Value => value !== undefined);
+};
+
+export const getBuddySearchParams = (
+  filterValue: FilterSheetValue,
+  size: number,
+): GetPostsParams => {
+  return {
+    size,
+    startDate: filterValue.startDate || undefined,
+    endDate: filterValue.endDate || undefined,
+    ageConditions: getMappedValues(
+      filterValue.ageTagIds,
+      AGE_CONDITION_BY_TAG_ID,
+    ),
+    genderConditions: getMappedValues(
+      filterValue.genderTagIds,
+      GENDER_CONDITION_BY_TAG_ID,
+    ),
+    companionTypes: getMappedValues(
+      filterValue.buddyTypeTagIds,
+      COMPANION_TYPE_BY_TAG_ID,
+    ),
+  };
 };

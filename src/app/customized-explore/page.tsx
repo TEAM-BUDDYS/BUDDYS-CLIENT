@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
+import { useCallback, useState } from 'react';
 
 import { BookmarkContainer } from '@/domains/home/components/bookmark-container/bookmark-container';
 import { SearchSheetButton } from '@/domains/home/components/search-sheet-button/search-sheet-button';
@@ -11,22 +12,18 @@ import {
   buddyFilterItems,
   type BuddyFilterKey,
 } from '@/domains/home/model/buddy-filter';
+import {
+  getBuddySearchParams,
+  hasPostCardFields,
+} from '@/domains/home/model/buddy-search';
+import { POST_QUERY_OPTIONS } from '@/domains/posts/api/query';
 import { cn } from '@/lib/cn';
 import { BellIcon } from '@/shared/components/icons';
 import { BottomNavigation, Header } from '@/shared/components/layout';
-import { Card, Filter } from '@/shared/components/ui';
+import { Card, EmptyState, Filter } from '@/shared/components/ui';
+import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 
-const customizedExploreItems = Array.from({ length: 7 }, (_, index) => ({
-  id: index + 1,
-  href: `/posts/${index + 1}`,
-  title: '최대 17자 제목이 들어가는 자리입니다',
-  content: '최대 21자 본문이 들어가는 자리입니다.',
-  postStatus: 'RECRUITING' as const,
-  tagValue: '국가',
-  startDate: '2026-07-10',
-  endDate: '2026-07-12',
-  image: `https://loremflickr.com/100/100/travel?random=${index + 1}`,
-}));
+const CUSTOMIZED_EXPLORE_SIZE = 10;
 
 export default function CustomizedExplore() {
   const [bookmarkedItemIds, setBookmarkedItemIds] = useState<number[]>([]);
@@ -34,6 +31,24 @@ export default function CustomizedExplore() {
   const { filterValue, appliedFilterKeys, handleFilterApply } =
     useFilterSheetValue();
   const { sheetRef, sheetScrollClassName } = useSheetScroll(isFilterSheetOpen);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useSuspenseInfiniteQuery(
+      POST_QUERY_OPTIONS.INFINITE_LIST(
+        getBuddySearchParams(filterValue, CUSTOMIZED_EXPLORE_SIZE),
+      ),
+    );
+
+  const posts = (data?.pages ?? [])
+    .flatMap((page) => page.data?.content ?? [])
+    .filter(hasPostCardFields);
+  const isEmpty = posts.length === 0;
+  const handleIntersect = useCallback(() => {
+    fetchNextPage();
+  }, [fetchNextPage]);
+  const loadMoreRef = useInfiniteScroll<HTMLDivElement>({
+    enabled: Boolean(hasNextPage) && !isFetchingNextPage,
+    onIntersect: handleIntersect,
+  });
 
   const handleFilterPress = (_filterKey: BuddyFilterKey) => {
     setIsFilterSheetOpen(true);
@@ -85,25 +100,34 @@ export default function CustomizedExplore() {
           </div>
         </div>
         <div className="flex flex-col gap-6 py-6">
-          {customizedExploreItems.map((item) => (
-            <BookmarkContainer
-              key={item.id}
-              isBookmarked={bookmarkedItemIds.includes(item.id)}
-              variant="card"
-              onBookmarkClick={() => handleBookmarkClick(item.id)}
-            >
-              <Card
-                href={item.href}
-                title={item.title}
-                content={item.content}
-                postStatus={item.postStatus}
-                tagValue={item.tagValue}
-                startDate={item.startDate}
-                endDate={item.endDate}
-                image={item.image}
-              />
-            </BookmarkContainer>
-          ))}
+          {isEmpty ? (
+            <EmptyState
+              title="조건에 맞는 게시물이 없어요"
+              description="필터를 조정해 다른 동행 게시물을 찾아보세요"
+              className="py-20"
+            />
+          ) : (
+            posts.map((post) => (
+              <BookmarkContainer
+                key={post.postId}
+                isBookmarked={bookmarkedItemIds.includes(post.postId)}
+                variant="card"
+                onBookmarkClick={() => handleBookmarkClick(post.postId)}
+              >
+                <Card
+                  href={`/posts/${post.postId}`}
+                  title={post.title}
+                  content={post.content}
+                  postStatus={post.recruitmentStatus}
+                  tagValue={post.country.name}
+                  startDate={post.startDate}
+                  endDate={post.endDate}
+                  image={post.thumbnailImageUrl}
+                />
+              </BookmarkContainer>
+            ))
+          )}
+          <div ref={loadMoreRef} className="h-1" aria-hidden="true" />
         </div>
       </main>
       <BottomNavigation className="fixed right-0 bottom-0 left-0 z-20 mx-auto max-w-107.5" />

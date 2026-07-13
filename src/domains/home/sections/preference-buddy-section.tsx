@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { BookmarkContainer } from '@/domains/home/components/bookmark-container/bookmark-container';
@@ -25,16 +25,15 @@ export const PreferenceBuddySection = () => {
   const [selectedPreferenceTagId, setSelectedPreferenceTagId] =
     useState(defaultTagId);
   const [bookmarkedItemIds, setBookmarkedItemIds] = useState<number[]>([]);
-  const { data, isFetched } = useQuery({
-    ...POST_QUERY_OPTIONS.LIST({
+  const { data } = useSuspenseQuery(
+    POST_QUERY_OPTIONS.LIST({
       tagId: selectedPreferenceTagId,
       size: PREFERENCE_BUDDY_SIZE,
     }),
-    enabled: selectedPreferenceTagId > 0,
-  });
+  );
 
   const posts = (data?.data?.content ?? []).filter(hasPostId);
-  const isEmpty = isFetched && posts.length === 0;
+  const isEmpty = posts.length === 0;
 
   const handleBookmarkClick = (itemId: number) => {
     setBookmarkedItemIds((prevBookmarkedItemIds) =>

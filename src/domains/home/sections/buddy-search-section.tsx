@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -14,11 +14,8 @@ import {
   type BuddyFilterKey,
 } from '@/domains/home/model/buddy-filter';
 import {
-  AGE_CONDITION_BY_TAG_ID,
   BUDDY_SEARCH_SIZE,
-  COMPANION_TYPE_BY_TAG_ID,
-  GENDER_CONDITION_BY_TAG_ID,
-  getMappedValues,
+  getBuddySearchParams,
   hasPostCardFields,
 } from '@/domains/home/model/buddy-search';
 import { POST_QUERY_OPTIONS } from '@/domains/posts/api/query';
@@ -33,24 +30,10 @@ export const BuddySearchSection = () => {
   const { filterValue, appliedFilterKeys, handleFilterApply } =
     useFilterSheetValue();
   const { sheetRef, sheetScrollClassName } = useSheetScroll(isFilterSheetOpen);
-  const { data } = useQuery(
-    POST_QUERY_OPTIONS.LIST({
-      size: BUDDY_SEARCH_SIZE,
-      startDate: filterValue.startDate || undefined,
-      endDate: filterValue.endDate || undefined,
-      ageConditions: getMappedValues(
-        filterValue.ageTagIds,
-        AGE_CONDITION_BY_TAG_ID,
-      ),
-      genderConditions: getMappedValues(
-        filterValue.genderTagIds,
-        GENDER_CONDITION_BY_TAG_ID,
-      ),
-      companionTypes: getMappedValues(
-        filterValue.buddyTypeTagIds,
-        COMPANION_TYPE_BY_TAG_ID,
-      ),
-    }),
+  const { data } = useSuspenseQuery(
+    POST_QUERY_OPTIONS.LIST(
+      getBuddySearchParams(filterValue, BUDDY_SEARCH_SIZE),
+    ),
   );
 
   const posts = (data?.data?.content ?? []).filter(hasPostCardFields);
