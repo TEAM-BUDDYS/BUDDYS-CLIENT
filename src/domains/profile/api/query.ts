@@ -7,6 +7,7 @@ import {
   USER_QUERY_KEY,
 } from '@/shared/api';
 
+import type { MyProfile } from '../model/profile';
 import type {
   GetMyPostsParams,
   GetMyPostsResponse,
@@ -16,8 +17,51 @@ import type {
   GetUserProfileResponse,
 } from './type';
 
-const getMyProfile = async () => {
-  return apiClient.get(END_POINT.USER.ME).json<GetMyProfileResponse>();
+type UserProfileData = NonNullable<GetMyProfileResponse['data']>;
+type ValidatedUserProfileData = UserProfileData & { nickname: string };
+
+const isUserProfileData = (data: unknown): data is ValidatedUserProfileData => {
+  if (typeof data !== 'object' || data === null) {
+    return false;
+  }
+
+  const { nickname } = data as Partial<UserProfileData>;
+
+  return typeof nickname === 'string';
+};
+
+const getMyProfile = async (): Promise<MyProfile> => {
+  const response = await apiClient
+    .get(END_POINT.USER.ME)
+    .json<GetMyProfileResponse>();
+
+  if (!response.success) {
+    throw new Error(response.message || '프로필을 불러오지 못했습니다.');
+  }
+
+  if (!isUserProfileData(response.data)) {
+    throw new Error('프로필 응답 형식이 올바르지 않습니다.');
+  }
+
+  const {
+    profileImageUrl,
+    nickname,
+    verificationBadge,
+    representativeTags,
+    bio,
+  } = response.data;
+
+  return {
+    imageUrl: profileImageUrl ?? null,
+    nickname,
+    isVerified: Boolean(verificationBadge),
+    tags: (representativeTags ?? []).map((name, index) => ({
+      id: index,
+      name,
+    })),
+    bio: bio ?? null,
+    posts: [], // TODO: getMyPosts 연동 후 채우기
+  };
 };
 
 const getMyPosts = async (params?: GetMyPostsParams) => {
