@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { type ReactNode, useState } from 'react';
 
+import { AuthSessionProvider } from '@/domains/auth/features/auth-session/auth-session-provider';
 import { ToastProvider } from '@/shared/components/ui';
 
 interface ProvidersProps {
@@ -26,7 +27,9 @@ export const Providers = ({ children }: ProvidersProps) => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ToastProvider>{children}</ToastProvider>
+      <AuthSessionProvider>
+        <ToastProvider>{children}</ToastProvider>
+      </AuthSessionProvider>
       {process.env.NODE_ENV === 'development' && (
         <ReactQueryDevtools initialIsOpen={false} />
       )}

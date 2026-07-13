@@ -1,4 +1,5 @@
 export { apiClient } from './api-client';
+export { setAccessToken, setAccessTokenRefreshHandler } from './auth-token';
 export { END_POINT } from './end-point';
 export {
   CHAT_ROOM_QUERY_KEY,
