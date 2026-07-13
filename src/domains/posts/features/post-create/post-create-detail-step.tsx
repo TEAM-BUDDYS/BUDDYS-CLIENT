@@ -1,20 +1,17 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
 import type { ChangeEvent } from 'react';
 
 import { ChipOptionGroup } from '@/domains/posts/components/chip-option-group/chip-option-group';
 import { ImageInput } from '@/domains/posts/components/image-input/image-input';
+import { TAG_QUERY_OPTIONS } from '@/shared/api';
 import {
   ChipGroup,
   FormLabel,
   TextArea,
   TextField,
 } from '@/shared/components/ui';
-import {
-  ACTIVITY_TAGS,
-  COMPANION_STYLE_TAGS,
-  INTEREST_TAGS,
-} from '@/shared/constants/preference-tags';
 
 import {
   AGE_CONDITION_OPTIONS,
@@ -45,6 +42,26 @@ export const PostCreateDetailStep = ({
   onChange,
   onImagesChange,
 }: PostCreateDetailStepProps) => {
+  const activityTagsQuery = useQuery(TAG_QUERY_OPTIONS.LIST('ACTIVITY'));
+  const interestTagsQuery = useQuery(TAG_QUERY_OPTIONS.LIST('INTEREST'));
+  const travelStyleTagsQuery = useQuery(TAG_QUERY_OPTIONS.LIST('TRAVEL_STYLE'));
+  const isTagsLoading =
+    activityTagsQuery.isPending ||
+    interestTagsQuery.isPending ||
+    travelStyleTagsQuery.isPending;
+  const isTagsError =
+    activityTagsQuery.isError ||
+    interestTagsQuery.isError ||
+    travelStyleTagsQuery.isError;
+
+  const handleTagsRetry = () => {
+    void Promise.all([
+      activityTagsQuery.refetch(),
+      interestTagsQuery.refetch(),
+      travelStyleTagsQuery.refetch(),
+    ]);
+  };
+
   const handleImageInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const remainingImageCount = Math.max(0, MAX_IMAGE_COUNT - imageCount);
     const files = Array.from(event.target.files ?? []).slice(
@@ -137,44 +154,65 @@ export const PostCreateDetailStep = ({
 
       <section className="flex flex-col gap-6">
         <FormLabel as="h2">취향 태그</FormLabel>
-        <div className="flex flex-col gap-2">
-          <FormLabel as="p" required variant="field">
-            활동
-          </FormLabel>
-          <ChipGroup
-            collapsedCount={5}
-            maxSelectionCount={3}
-            tags={ACTIVITY_TAGS}
-            selectedTagIds={value.activityTagIds}
-            onChange={(activityTagIds) => onChange({ activityTagIds })}
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <FormLabel as="p" variant="field">
-            관심사
-          </FormLabel>
-          <ChipGroup
-            collapsedCount={5}
-            maxSelectionCount={2}
-            tags={INTEREST_TAGS}
-            selectedTagIds={value.interestTagIds}
-            onChange={(interestTagIds) => onChange({ interestTagIds })}
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <FormLabel as="p" variant="field">
-            동행 스타일
-          </FormLabel>
-          <ChipGroup
-            collapsedCount={5}
-            maxSelectionCount={2}
-            tags={COMPANION_STYLE_TAGS}
-            selectedTagIds={value.companionStyleTagIds}
-            onChange={(companionStyleTagIds) =>
-              onChange({ companionStyleTagIds })
-            }
-          />
-        </div>
+        {isTagsLoading && (
+          <p className="text-body-r-14 text-gray-500">태그를 불러오는 중...</p>
+        )}
+        {isTagsError && (
+          <div className="flex items-center gap-3">
+            <p className="text-body-r-14 text-gray-500">
+              태그를 불러오지 못했습니다.
+            </p>
+            <button
+              type="button"
+              className="text-body-sb-14 text-mint-400"
+              onClick={handleTagsRetry}
+            >
+              다시 시도
+            </button>
+          </div>
+        )}
+        {!isTagsLoading && !isTagsError && (
+          <>
+            <div className="flex flex-col gap-2">
+              <FormLabel as="p" required variant="field">
+                활동
+              </FormLabel>
+              <ChipGroup
+                collapsedCount={5}
+                maxSelectionCount={3}
+                tags={activityTagsQuery.data ?? []}
+                selectedTagIds={value.activityTagIds}
+                onChange={(activityTagIds) => onChange({ activityTagIds })}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <FormLabel as="p" variant="field">
+                관심사
+              </FormLabel>
+              <ChipGroup
+                collapsedCount={5}
+                maxSelectionCount={2}
+                tags={interestTagsQuery.data ?? []}
+                selectedTagIds={value.interestTagIds}
+                onChange={(interestTagIds) => onChange({ interestTagIds })}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <FormLabel as="p" variant="field">
+                동행 스타일
+              </FormLabel>
+              <ChipGroup
+                collapsedCount={5}
+                maxSelectionCount={2}
+                tags={travelStyleTagsQuery.data ?? []}
+                selectedTagIds={value.companionStyleTagIds}
+                onChange={(companionStyleTagIds) =>
+                  onChange({ companionStyleTagIds })
+                }
+              />
+            </div>
+          </>
+        )}
       </section>
 
       <Divider />
