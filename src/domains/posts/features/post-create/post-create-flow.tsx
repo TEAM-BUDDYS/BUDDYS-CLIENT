@@ -1,9 +1,12 @@
 'use client';
 
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { POST_MUTATION_OPTIONS } from '@/domains/posts/api/query';
 import { cn } from '@/lib/cn';
+import { POST_QUERY_KEY } from '@/shared/api';
 import { Header } from '@/shared/components/layout';
 import {
   Button,
@@ -42,13 +45,20 @@ const isQuestionStep = (
 
 export const PostCreateFlow = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState<PostCreateStep>(1);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const postCreateForm = usePostCreateForm();
+  const createPostMutation = useMutation(POST_MUTATION_OPTIONS.CREATE());
 
   const canGoNext = postCreateForm.canGoNext(currentStep);
+  const isSubmitStep = currentStep === TOTAL_STEP;
 
   const handleBackClick = () => {
+    if (createPostMutation.isPending) {
+      return;
+    }
+
     if (currentStep === 1) {
       router.back();
       return;
@@ -58,7 +68,7 @@ export const PostCreateFlow = () => {
   };
 
   const handleNextClick = () => {
-    if (!canGoNext) {
+    if (!canGoNext || createPostMutation.isPending) {
       return;
     }
 
@@ -69,8 +79,14 @@ export const PostCreateFlow = () => {
         return;
       }
 
-      // TODO: 게시물 생성 API 연동 시 payload를 mutation에 전달
-      void payload;
+      createPostMutation.mutate(payload, {
+        onSuccess: (postId) => {
+          void queryClient.invalidateQueries({
+            queryKey: POST_QUERY_KEY.ALL,
+          });
+          router.replace(`/posts/${postId}`);
+        },
+      });
       return;
     }
 
@@ -158,8 +174,16 @@ export const PostCreateFlow = () => {
           currentStep === 4 && 'pt-10',
         )}
       >
-        <Button disabled={!canGoNext} onClick={handleNextClick}>
-          다음
+        <Button
+          aria-busy={createPostMutation.isPending}
+          disabled={!canGoNext || createPostMutation.isPending}
+          onClick={handleNextClick}
+        >
+          {isSubmitStep
+            ? createPostMutation.isPending
+              ? '작성 중...'
+              : '작성하기'
+            : '다음'}
         </Button>
       </div>
     </main>

@@ -32,11 +32,26 @@ const getPosts = async (params?: GetPostsParams) => {
 };
 
 const createPost = async (body: CreatePostRequest) => {
-  return apiClient
+  const response = await apiClient
     .post(END_POINT.POST.CREATE, {
       json: body,
     })
     .json<CreatePostResponse>();
+
+  const postId = response.data?.postId;
+
+  if (
+    response.success !== true ||
+    typeof postId !== 'number' ||
+    !Number.isSafeInteger(postId) ||
+    postId <= 0
+  ) {
+    throw new Error(
+      response.message || '게시글 작성 응답이 올바르지 않습니다.',
+    );
+  }
+
+  return postId;
 };
 
 const getPostDetail = async (postId: number) => {
@@ -101,6 +116,7 @@ export const POST_QUERY_OPTIONS = {
 export const POST_MUTATION_OPTIONS = {
   CREATE: () =>
     mutationOptions({
+      mutationKey: [...POST_QUERY_KEY.ALL, 'create'],
       mutationFn: (body: CreatePostRequest) => createPost(body),
     }),
   UPDATE_STATUS: () =>
