@@ -75,7 +75,7 @@ export const OnboardFlow = () => {
   };
 
   return (
-    <main className="flex min-h-dvh w-full max-w-100 flex-col px-4 pt-7 pb-[34px]">
+    <main className="flex min-h-dvh w-full flex-col px-4 pt-7 pb-[34px]">
       {progressStep && (
         <ProgressBar
           currentStep={progressStep}
