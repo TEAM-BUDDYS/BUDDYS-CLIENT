@@ -1,22 +1,25 @@
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+
+import { useAuthSession } from '@/domains/auth/features/auth-session/auth-session-provider';
+import { HOME_QUERY_OPTIONS } from '@/domains/home/api/query';
 import { CardProfile } from '@/domains/home/components/card-profile/card-profile';
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
 
-export interface SameCountryBuddyItem {
-  nickname: string;
-  country: string;
-  ageGroup: string;
-  matchingRate: number;
-  imageUrl: string;
-  href: string;
-}
+const SAME_COUNTRY_BUDDY_SIZE = 5;
 
-interface SameCountryBuddySectionProps {
-  items: SameCountryBuddyItem[];
-}
+export const SameCountryBuddySection = () => {
+  const { status } = useAuthSession();
+  const { data } = useQuery({
+    ...HOME_QUERY_OPTIONS.EXCHANGE_COUNTRY_RECOMMENDED_USERS({
+      size: SAME_COUNTRY_BUDDY_SIZE,
+    }),
+    enabled: status === 'authenticated',
+  });
 
-export const SameCountryBuddySection = ({
-  items,
-}: SameCountryBuddySectionProps) => {
+  const users = (data?.data?.users ?? []).filter((user) => user.userId);
+
   return (
     <section className="flex flex-col gap-5">
       <SectionHeader
@@ -26,8 +29,8 @@ export const SameCountryBuddySection = ({
 
       <div className="-mx-4 scrollbar-none overflow-x-auto px-4">
         <div className="flex gap-3">
-          {items.map((item) => (
-            <CardProfile key={`${item.nickname}-${item.imageUrl}`} {...item} />
+          {users.map((user) => (
+            <CardProfile key={user.userId} {...user} />
           ))}
           <div aria-hidden="true" className="w-2 shrink-0" />
         </div>

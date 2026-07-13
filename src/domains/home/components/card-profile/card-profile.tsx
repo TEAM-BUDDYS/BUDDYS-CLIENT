@@ -1,33 +1,40 @@
 import Link from 'next/link';
 
+import { defaultProfileImage } from '@/shared/assets/illustrations';
 import { Tag } from '@/shared/components/ui/card/card-tag';
 import { CommonImage } from '@/shared/components/ui/common-image/common-image';
 
 interface CardProfileProps {
-  nickname: string;
-  country: string;
-  ageGroup: string;
-  matchingRate: number;
-  imageUrl: string;
-  href: string;
+  userId?: number;
+  nickname?: string;
+  exchangeCountry?: {
+    name?: string;
+  };
+  ageRange?: string;
+  matchingPercentage?: number;
+  profileImageUrl?: string;
 }
 
 export const CardProfile = ({
+  userId,
   nickname,
-  country,
-  ageGroup,
-  matchingRate,
-  imageUrl,
-  href,
+  exchangeCountry,
+  ageRange,
+  matchingPercentage,
+  profileImageUrl,
 }: CardProfileProps) => {
+  const profileDescription = [exchangeCountry?.name, ageRange]
+    .filter(Boolean)
+    .join(' · ');
+
   return (
     <article>
       <Link
-        href={href}
+        href={`/profile/${userId}`}
         className="flex h-42 w-35.25 flex-col items-center justify-between gap-2 rounded-2xl border border-gray-200 px-10 py-4"
       >
         <CommonImage
-          src={imageUrl}
+          src={profileImageUrl ?? defaultProfileImage.src}
           alt={`${nickname} 프로필 이미지`}
           width={60}
           height={60}
@@ -39,10 +46,10 @@ export const CardProfile = ({
             {nickname}
           </span>
           <span className="text-caption-m-10 text-gray-500">
-            {country} · {ageGroup}
+            {profileDescription}
           </span>
         </div>
-        <Tag value={`매칭 ${matchingRate}%`} />
+        <Tag value={`매칭 ${matchingPercentage ?? 0}%`} />
       </Link>
     </article>
   );

@@ -9,10 +9,7 @@ import {
   type PreferenceBuddyItem,
   PreferenceBuddySection,
 } from '@/domains/home/sections/preference-buddy-section';
-import {
-  type SameCountryBuddyItem,
-  SameCountryBuddySection,
-} from '@/domains/home/sections/same-country-buddy-section';
+import { SameCountryBuddySection } from '@/domains/home/sections/same-country-buddy-section';
 import { TodayBuddySection } from '@/domains/home/sections/today-buddy-section';
 import { BellIcon } from '@/shared/components/icons';
 import { BuddysLogo } from '@/shared/components/icons/buddys-logo';
@@ -74,18 +71,6 @@ const buddySearchItems: BuddySearchItem[] = Array.from(
   }),
 );
 
-const sameCountryBuddyItems: SameCountryBuddyItem[] = Array.from(
-  { length: 5 },
-  (_, index) => ({
-    nickname: '닉네임',
-    country: '일본',
-    ageGroup: '20대',
-    matchingRate: 100,
-    imageUrl: `https://loremflickr.com/60/60/person?random=${index + 1}`,
-    href: `/profile/${index + 1}`,
-  }),
-);
-
 const preferenceTags: Tag[] = [
   { id: 1, name: '여행' },
   { id: 2, name: '맛집 탐방' },
@@ -136,7 +121,7 @@ export default function Home() {
           className="-mx-4 my-6 h-2 border-0 bg-gray-50 opacity-50"
           aria-hidden="true"
         />
-        <SameCountryBuddySection items={sameCountryBuddyItems} />
+        <SameCountryBuddySection />
         <hr
           className="-mx-4 my-6 h-2 border-0 bg-gray-50 opacity-50"
           aria-hidden="true"
