@@ -1,33 +1,26 @@
-import { ChatList } from '@/domains/chat/components/chat-list/chat-list';
-import { ChatRoomList } from '@/domains/chat/model/chat-list';
+import { ChatListFeature } from '@/domains/chat/features/chat-list/chat-list-feature';
 import { BottomNavigation, Header } from '@/shared/components/layout';
-
-const MOCK_CHAT_ROOM_LIST: ChatRoomList = {
-  chatRooms: [
-    {
-      chatRoomId: 1,
-      participant: {
-        userId: 2,
-        nickname: '민지',
-        profileImageUrl: null,
-      },
-      lastMessage: '내일 몇 시에 만날까요?',
-      lastMessageSentAt: '2026-07-05T14:30:00',
-      unreadMessageCount: 3,
-    },
-  ],
-  page: 0,
-  size: 20,
-  hasNext: true,
-};
+import { AsyncBoundary } from '@/shared/components/ui';
 
 export default function ChatPage() {
   return (
     <div className="flex h-dvh flex-col">
       <Header content="채팅" />
+
       <main className="min-h-0 flex-1 scrollbar-none overflow-y-auto [&::-webkit-scrollbar]:hidden">
-        <ChatList chatRooms={MOCK_CHAT_ROOM_LIST.chatRooms} />
+        <AsyncBoundary
+          loadingState={{
+            title: '채팅 목록을 불러오고 있어요',
+          }}
+          errorState={{
+            title: '채팅 목록을 불러오지 못했어요',
+            description: '잠시 후 다시 시도해 주세요',
+          }}
+        >
+          <ChatListFeature />
+        </AsyncBoundary>
       </main>
+
       <BottomNavigation />
     </div>
   );
