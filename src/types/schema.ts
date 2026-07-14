@@ -1260,7 +1260,7 @@ export interface components {
        * @description 도시 ID
        * @example 1
        */
-      cityId?: number;
+      id?: number;
       /**
        * @description 도시 이름
        * @example Tokyo

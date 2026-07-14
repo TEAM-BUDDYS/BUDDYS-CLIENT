@@ -14,8 +14,6 @@ import type {
   GetRecommendedPostsParams,
   GetRecommendedPostsResponse,
   GetRecommendedUsersResponse,
-  SearchCitiesParams,
-  SearchCitiesResponse,
   SearchCountriesParams,
   SearchCountriesResponse,
 } from './type';
@@ -52,14 +50,6 @@ const searchCountries = async (params: SearchCountriesParams) => {
     .json<SearchCountriesResponse>();
 };
 
-const searchCities = async (countryId: number, params: SearchCitiesParams) => {
-  return apiClient
-    .get(END_POINT.COUNTRY.CITY_SEARCH(countryId), {
-      searchParams: createSearchParams(params),
-    })
-    .json<SearchCitiesResponse>();
-};
-
 export const HOME_QUERY_OPTIONS = {
   RECOMMENDED_USERS: () =>
     queryOptions({
@@ -82,10 +72,5 @@ export const HOME_QUERY_OPTIONS = {
     queryOptions({
       queryKey: COUNTRY_QUERY_KEY.SEARCH(params),
       queryFn: () => searchCountries(params),
-    }),
-  SEARCH_CITIES: (countryId: number, params: SearchCitiesParams) =>
-    queryOptions({
-      queryKey: COUNTRY_QUERY_KEY.CITY_SEARCH(countryId, params),
-      queryFn: () => searchCities(countryId, params),
     }),
 };

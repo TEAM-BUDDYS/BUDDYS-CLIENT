@@ -1,5 +1,6 @@
 'use client';
 
+import type { City } from '@/shared/api';
 import { Dropdown, FormLabel } from '@/shared/components/ui';
 
 import { SearchOptionField } from '../../components/search-option-field/search-option-field';
@@ -11,12 +12,12 @@ interface OnboardInterestLocationStepProps {
   hasMoreCountries: boolean;
   isLoadingMoreCountries: boolean;
   city: string;
-  selectedCity: OnboardLocationOption | null;
-  cityResults: OnboardLocationOption[];
+  selectedCity: City | null;
+  cityResults: City[];
   onCountryChange: (value: OnboardLocationOption) => void;
   onLoadMoreCountries: () => void;
   onCityChange: (value: string) => void;
-  onCitySelect: (value: OnboardLocationOption) => void;
+  onCitySelect: (value: City) => void;
 }
 
 export const OnboardInterestLocationStep = ({
@@ -59,6 +60,8 @@ export const OnboardInterestLocationStep = ({
           value={city}
           selectedOption={selectedCity}
           results={cityResults}
+          getOptionKey={(city) => city.id ?? ''}
+          getOptionLabel={(city) => city.koreanName ?? city.name ?? ''}
           onChange={onCityChange}
           onSelect={onCitySelect}
         />

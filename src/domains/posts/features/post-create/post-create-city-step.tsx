@@ -1,16 +1,14 @@
 'use client';
 
-// TODO: OptionItem 삭제 후 서버 응답값으로 변경
+import type { City } from '@/shared/api';
 import { OptionItem, OptionList, Searchbar } from '@/shared/components/ui';
-
-import type { LocationOption } from './model';
 
 interface PostCreateCityStepProps {
   city: string;
-  selectedCity: LocationOption | null;
-  cityResults: LocationOption[];
+  selectedCity: City | null;
+  cityResults: City[];
   onCityChange: (value: string) => void;
-  onCitySelect: (value: LocationOption) => void;
+  onCitySelect: (value: City) => void;
 }
 
 export const PostCreateCityStep = ({
@@ -42,7 +40,7 @@ export const PostCreateCityStep = ({
           {cityResults.map((cityResult) => (
             <OptionItem
               key={cityResult.id}
-              option={cityResult.name}
+              option={cityResult.koreanName ?? cityResult.name ?? ''}
               isSelected={selectedCity?.id === cityResult.id}
               onSelect={() => onCitySelect(cityResult)}
             />

@@ -19,8 +19,3 @@ export type SearchCountriesParams =
   operations['searchCountries']['parameters']['query'];
 export type SearchCountriesResponse =
   components['schemas']['BaseResponseCountryListResponse'];
-
-export type SearchCitiesParams =
-  operations['searchCities']['parameters']['query'];
-export type SearchCitiesResponse =
-  components['schemas']['BaseResponseCityListResponse'];

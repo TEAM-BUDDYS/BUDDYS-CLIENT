@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { useCountryList } from '@/shared/api';
+import { useCitySearch, useCountryList } from '@/shared/api';
 import { TAG_QUERY_OPTIONS } from '@/shared/api';
 import { Button, ProgressBar } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
@@ -57,6 +57,11 @@ export const OnboardFlow = () => {
     isLoadingMoreCountries,
     loadMoreCountries,
   } = useCountryList();
+  const interestCityResults = useCitySearch({
+    countryId: onboardForm.interestCountry?.id,
+    keyword: onboardForm.interestCity,
+    selectedCity: onboardForm.selectedInterestCity,
+  });
 
   useEffect(() => {
     ONBOARD_TAG_TYPES.forEach((tagType) => {
@@ -105,7 +110,7 @@ export const OnboardFlow = () => {
             isLoadingMoreCountries={isLoadingMoreCountries}
             city={onboardForm.interestCity}
             selectedCity={onboardForm.selectedInterestCity}
-            cityResults={onboardForm.interestCityResults}
+            cityResults={interestCityResults}
             onCountryChange={onboardForm.handleInterestCountrySelect}
             onLoadMoreCountries={loadMoreCountries}
             onCityChange={onboardForm.handleInterestCityChange}

@@ -11,7 +11,6 @@ import type {
 } from '@/domains/posts/model/post-form';
 
 import type {
-  LocationOption,
   PostCreateGenderConditionType,
   PostCreateOption,
   PostCreateQuestionStep,
@@ -20,11 +19,6 @@ import type {
 
 export const TOTAL_STEP = 4 satisfies PostCreateStep;
 export const MAX_IMAGE_COUNT = 10;
-
-// TODO: 도시 검색 API 연동 후 삭제
-export const CITY_OPTIONS = [
-  { id: 3, name: '뉴욕' },
-] satisfies LocationOption[];
 
 export const STEP_CONTENTS = {
   1: {

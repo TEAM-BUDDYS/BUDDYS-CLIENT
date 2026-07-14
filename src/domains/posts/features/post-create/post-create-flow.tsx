@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { cn } from '@/lib/cn';
-import { useCountryList } from '@/shared/api';
+import { useCitySearch, useCountryList } from '@/shared/api';
 import { Header } from '@/shared/components/layout';
 import {
   Button,
@@ -52,6 +52,11 @@ export const PostCreateFlow = () => {
     isLoadingMoreCountries,
     loadMoreCountries,
   } = useCountryList();
+  const cityResults = useCitySearch({
+    countryId: postCreateForm.selectedCountry?.id,
+    keyword: postCreateForm.city,
+    selectedCity: postCreateForm.selectedCity,
+  });
 
   const canGoNext = postCreateForm.canGoNext(currentStep);
 
@@ -135,7 +140,7 @@ export const PostCreateFlow = () => {
             <PostCreateCityStep
               city={postCreateForm.city}
               selectedCity={postCreateForm.selectedCity}
-              cityResults={postCreateForm.cityResults}
+              cityResults={cityResults}
               onCityChange={postCreateForm.handleCityChange}
               onCitySelect={postCreateForm.handleCitySelect}
             />
