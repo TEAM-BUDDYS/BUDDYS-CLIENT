@@ -73,6 +73,7 @@ export const getBuddySearchParams = (
 ): GetPostsParams => {
   return {
     size,
+    countryId: filterValue.country?.id,
     startDate: filterValue.startDate || undefined,
     endDate: filterValue.endDate || undefined,
     ageConditions: getMappedValues(

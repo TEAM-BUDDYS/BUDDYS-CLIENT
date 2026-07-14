@@ -9,31 +9,52 @@ import { useClickOutside } from '@/shared/hooks/use-click-outside';
 import { OptionItem } from './option-item';
 import { OptionList } from './option-list';
 
-interface DropdownProps {
-  options: string[];
-  value: string;
+type DropdownOptionKey = string | number;
+
+interface DropdownProps<TOption> {
+  options: TOption[];
+  value: TOption | null;
   disabled?: boolean;
   placeholder?: string;
   hasMore?: boolean;
   isLoadingMore?: boolean;
-  onChange?: (value: string) => void;
+  getOptionLabel?: (option: TOption) => string;
+  getOptionKey?: (option: TOption) => DropdownOptionKey;
+  isOptionEqual?: (option: TOption, value: TOption) => boolean;
+  onChange?: (value: TOption) => void;
   onLoadMore?: () => void;
 }
 
-export const Dropdown = ({
+export const Dropdown = <TOption,>({
   options,
   value,
   disabled = false,
   hasMore = false,
   isLoadingMore = false,
+  getOptionLabel,
+  getOptionKey,
+  isOptionEqual,
   onChange,
   onLoadMore,
   placeholder = '선택해주세요.',
-}: DropdownProps) => {
+}: DropdownProps<TOption>) => {
   const [isOpen, setIsOpen] = useState(false);
   const listboxId = useId();
   const dropdownRef = useClickOutside<HTMLElement>(() => setIsOpen(false));
-  const hasSelectedValue = Boolean(value);
+  const getLabel = (option: TOption) =>
+    getOptionLabel?.(option) ?? String(option);
+  const getKey = (option: TOption) =>
+    getOptionKey?.(option) ?? getLabel(option);
+  const selectedLabel = value ? getLabel(value) : '';
+  const hasSelectedValue = Boolean(selectedLabel);
+
+  const isSelectedOption = (option: TOption) => {
+    if (!value) return false;
+
+    return isOptionEqual
+      ? isOptionEqual(option, value)
+      : getKey(option) === getKey(value);
+  };
 
   const handleOptionListScroll = (event: React.UIEvent<HTMLUListElement>) => {
     const { clientHeight, scrollHeight, scrollTop } = event.currentTarget;
@@ -61,7 +82,7 @@ export const Dropdown = ({
         )}
         onClick={() => setIsOpen((prev) => !prev)}
       >
-        {hasSelectedValue ? value : placeholder}
+        {hasSelectedValue ? selectedLabel : placeholder}
         {isOpen ? (
           <ChevronUpIcon width={24} height={24} />
         ) : (
@@ -72,9 +93,9 @@ export const Dropdown = ({
         <OptionList id={listboxId} onScroll={handleOptionListScroll}>
           {options.map((option) => (
             <OptionItem
-              key={option}
-              option={option}
-              isSelected={value === option}
+              key={getKey(option)}
+              label={getLabel(option)}
+              isSelected={isSelectedOption(option)}
               onSelect={() => {
                 onChange?.(option);
                 setIsOpen(false);
