@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { defaultProfileImage } from '@/shared/assets/illustrations';
 import { ArchivePostCard } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
 
 import { RecommendedProfile } from '../../components/recommended-profile/recommended-profile';
 
@@ -54,7 +55,7 @@ export const OnboardComplete = ({
         {recommendedPosts.map((post) => (
           <Link
             key={post.postId}
-            href={`/posts/${post.postId}`}
+            href={ROUTES.POST.DETAIL(post.postId)}
             className="w-full"
           >
             <ArchivePostCard

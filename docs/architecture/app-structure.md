@@ -44,6 +44,18 @@ src/
 - route group은 URL을 바꾸지 않고 레이아웃을 나눌 때만 사용합니다.
 - route handler는 서버 경계가 필요할 때만 `app/api`에 둡니다.
 
+## Route Path Configuration
+
+- 앱 내부 화면 경로는 `src/shared/config/routes.ts`의 `ROUTES`에서 관리합니다.
+- 정적 경로는 상수로 사용하고 식별자가 필요한 동적 경로는 팩토리 함수로 생성합니다.
+- `Link`, `router.push`, `router.replace` 등에서 같은 경로 문자열을 직접 반복하지 않습니다.
+- API 요청 주소는 `src/shared/api/end-point.ts`의 `END_POINT`가 담당하며 화면 경로와 섞지 않습니다.
+
+```tsx
+router.push(ROUTES.POST.ROOT);
+router.replace(ROUTES.POST.DETAIL(postId));
+```
+
 ## Confirmed Routes And Domains
 
 | Screen | URL           | Route entry                   | Owner domain | Notes                                   |

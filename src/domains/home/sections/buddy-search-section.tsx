@@ -16,6 +16,7 @@ import { cn } from '@/lib/cn';
 import { ChevronRightIcon } from '@/shared/components/icons';
 import { Card, Filter } from '@/shared/components/ui';
 import type { RecruitmentStatus } from '@/shared/components/ui/card/card-tag';
+import { ROUTES } from '@/shared/config';
 
 export interface BuddySearchItem {
   id: number;
@@ -42,7 +43,7 @@ export const BuddySearchSection = ({ items }: BuddySearchSectionProps) => {
   const { sheetRef, sheetScrollClassName } = useSheetScroll(isFilterSheetOpen);
 
   const handleMoreClick = () => {
-    router.push('/customized-explore');
+    router.push(ROUTES.CUSTOMIZED_EXPLORE);
   };
 
   const handleFilterPress = (_filterKey: BuddyFilterKey) => {

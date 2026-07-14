@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { NoticeIcon } from '@/shared/components/icons';
 import { CommonImage } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
 import { formatRelativeTime } from '@/shared/utils/format-relative-time';
 
 interface ChatListItemProps {
@@ -28,7 +29,7 @@ export const ChatListItem = ({
   return (
     <li>
       <Link
-        href={`/chat/${chatRoomId}`}
+        href={ROUTES.CHAT.DETAIL(chatRoomId)}
         className="flex w-full justify-between border-b border-gray-100 pt-4 pr-6 pb-3.5 pl-6.5"
       >
         <div className="flex max-w-[270px] items-start gap-[13px]">

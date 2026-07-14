@@ -17,3 +17,4 @@ export {
   USER_QUERY_KEY,
 } from './query-key';
 export { createSearchParams } from './search-params';
+export { type PreferenceTag, TAG_QUERY_OPTIONS, type TagType } from './tag';
