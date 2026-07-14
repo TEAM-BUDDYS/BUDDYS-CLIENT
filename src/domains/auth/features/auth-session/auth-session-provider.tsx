@@ -20,6 +20,7 @@ import type { AuthSession, AuthStatusTypes } from '../../model/auth';
 
 interface AuthSessionContextValue {
   status: AuthStatusTypes;
+  userId: number | null;
   onboardingCompleted: boolean | null;
   authenticateWithKakao: (code: string) => Promise<AuthSession>;
 }
@@ -35,12 +36,14 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
   const shouldSkipSessionBootstrap = pathname === ROUTES.AUTH.KAKAO_CALLBACK;
   const hasBootstrappedRef = useRef(false);
   const [status, setStatus] = useState<AuthStatusTypes>('initializing');
+  const [userId, setUserId] = useState<number | null>(null);
   const [onboardingCompleted, setOnboardingCompleted] = useState<
     boolean | null
   >(null);
 
   const setAuthenticatedSession = useCallback((loginResponse: AuthSession) => {
     setAccessToken(loginResponse.accessToken);
+    setUserId(loginResponse.userId);
     setOnboardingCompleted(loginResponse.onboardingCompleted);
     setStatus('authenticated');
 
@@ -49,6 +52,7 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
 
   const clearSession = useCallback(() => {
     setAccessToken(null);
+    setUserId(null);
     setOnboardingCompleted(null);
     setStatus('unauthenticated');
   }, []);
@@ -100,10 +104,11 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
   const value = useMemo(
     () => ({
       status,
+      userId,
       onboardingCompleted,
       authenticateWithKakao,
     }),
-    [authenticateWithKakao, onboardingCompleted, status],
+    [authenticateWithKakao, onboardingCompleted, status, userId],
   );
 
   return (
