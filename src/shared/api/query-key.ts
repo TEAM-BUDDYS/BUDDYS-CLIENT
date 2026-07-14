@@ -32,6 +32,17 @@ export const COUNTRY_QUERY_KEY = {
     params: GetQueryParams<'/api/v1/countries/{countryId}/cities/search'>,
   ) =>
     [...COUNTRY_QUERY_KEY.ALL, countryId, 'cities', 'search', params] as const,
+  UNIVERSITY_SEARCH: (
+    countryId: number,
+    params: GetQueryParams<'/api/v1/countries/{countryId}/universities/search'>,
+  ) =>
+    [
+      ...COUNTRY_QUERY_KEY.ALL,
+      countryId,
+      'universities',
+      'search',
+      params,
+    ] as const,
 };
 
 export const POST_QUERY_KEY = {

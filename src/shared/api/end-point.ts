@@ -15,6 +15,8 @@ export const END_POINT = {
     SEARCH: 'api/v1/countries/search',
     CITY_SEARCH: (countryId: number) =>
       `api/v1/countries/${countryId}/cities/search`,
+    UNIVERSITY_SEARCH: (countryId: number) =>
+      `api/v1/countries/${countryId}/universities/search`,
   },
   IMAGE: {
     PRESIGNED_URL: 'api/v1/images/presigned-url',
