@@ -4,3 +4,4 @@ export type {
   CreatePresignedUrlResponse,
   UploadImageVariables,
 } from './type';
+export { useImageUpload } from './use-image-upload';

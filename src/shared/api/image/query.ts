@@ -1,4 +1,5 @@
 import { mutationOptions } from '@tanstack/react-query';
+import { isHTTPError, isKyError, isNetworkError, isTimeoutError } from 'ky';
 
 import { apiClient } from '../api-client';
 import { END_POINT } from '../end-point';
@@ -16,6 +17,31 @@ const SUPPORTED_IMAGE_TYPES = [
 
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
 
+const DEFAULT_IMAGE_UPLOAD_ERROR_MESSAGE = '이미지 업로드에 실패하였습니다.';
+
+const getImageUploadErrorMessage = (error: unknown) => {
+  if (isNetworkError(error)) {
+    return '네트워크 연결을 확인한 뒤 다시 시도해 주세요.';
+  }
+  if (isTimeoutError(error)) {
+    return '요청 시간이 초과되었습니다. 다시 시도해 주세요.';
+  }
+  if (isHTTPError(error)) {
+    if (error.response.status >= 500) {
+      return '서버에 일시적인 문제가 발생했습니다.';
+    }
+    const response = error.data as
+      | {
+          message?: string;
+        }
+      | undefined;
+
+    return response?.message || DEFAULT_IMAGE_UPLOAD_ERROR_MESSAGE;
+  }
+
+  return DEFAULT_IMAGE_UPLOAD_ERROR_MESSAGE;
+};
+
 const isSupportedImageType = (
   type: string,
 ): type is CreatePresignedUrlRequest['contentType'] => {
@@ -23,26 +49,32 @@ const isSupportedImageType = (
 };
 
 const createPresignedUrl = async (body: CreatePresignedUrlRequest) => {
-  const response = await apiClient
-    .post(END_POINT.IMAGE.PRESIGNED_URL, {
-      json: body,
-    })
-    .json<CreatePresignedUrlResponse>();
+  try {
+    const response = await apiClient
+      .post(END_POINT.IMAGE.PRESIGNED_URL, {
+        json: body,
+      })
+      .json<CreatePresignedUrlResponse>();
 
-  if (!response.success) {
-    throw new Error(
-      response.message || '이미지 업로드 URL을 발급하지 못했습니다.',
-    );
+    if (!response.success) {
+      throw new Error(response.message || DEFAULT_IMAGE_UPLOAD_ERROR_MESSAGE);
+    }
+
+    const uploadUrl = response.data?.uploadUrl;
+    const imageUrl = response.data?.imageUrl;
+
+    if (!uploadUrl || !imageUrl) {
+      throw new Error('이미지 업로드 URL 응답 형식이 올바르지 않습니다.');
+    }
+
+    return { imageUrl, uploadUrl };
+  } catch (error) {
+    if (!isKyError(error)) {
+      throw error;
+    }
+
+    throw new Error(getImageUploadErrorMessage(error));
   }
-
-  const uploadUrl = response.data?.uploadUrl;
-  const imageUrl = response.data?.imageUrl;
-
-  if (!uploadUrl || !imageUrl) {
-    throw new Error('이미지 업로드 URL 응답 형식이 올바르지 않습니다.');
-  }
-
-  return { imageUrl, uploadUrl };
 };
 
 const uploadImageToStorage = async (uploadUrl: string, file: File) => {

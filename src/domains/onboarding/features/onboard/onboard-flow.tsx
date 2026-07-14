@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { useCountryList } from '@/shared/api';
 import { TAG_QUERY_OPTIONS } from '@/shared/api';
-import { useImageUpload } from '@/shared/api/image/use-image-upload';
+import { useImageUpload } from '@/shared/api/image';
 import { Button, ProgressBar, useToast } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
