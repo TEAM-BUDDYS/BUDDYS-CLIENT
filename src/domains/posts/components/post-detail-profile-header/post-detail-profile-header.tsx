@@ -1,17 +1,22 @@
 'use client';
 
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
+import { POST_MUTATION_OPTIONS } from '@/domains/posts/api/query';
 import { PostRecruitmentStatusBottomSheet } from '@/domains/posts/components/post-recruitment-status-bottom-sheet/post-recruitment-status-bottom-sheet';
 import { PostRecruitmentStatusButton } from '@/domains/posts/components/post-recruitment-status-button/post-recruitment-status-button';
 import type { PostRecruitmentStatusTypes } from '@/domains/posts/model/post-recruitment-status';
 import { cn } from '@/lib/cn';
+import { POST_QUERY_KEY, RECOMMENDATION_QUERY_KEY } from '@/shared/api';
 import { defaultProfileImage } from '@/shared/assets/illustrations';
 import { BookmarkIcon } from '@/shared/components/icons';
+import { useToast } from '@/shared/components/ui';
 import { Tag } from '@/shared/components/ui/card/card-tag';
 import { CommonImage } from '@/shared/components/ui/common-image/common-image';
 
 interface PostDetailProfileHeaderProps {
+  postId: number;
   nickname: string;
   country: string;
   profileDescription: string;
@@ -21,6 +26,7 @@ interface PostDetailProfileHeaderProps {
 }
 
 export const PostDetailProfileHeader = ({
+  postId,
   nickname,
   country,
   profileDescription,
@@ -28,12 +34,37 @@ export const PostDetailProfileHeader = ({
   recruitmentStatus = 'RECRUITING',
   isMine,
 }: PostDetailProfileHeaderProps) => {
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
   const profileImageSrc = profileImageUrl ?? defaultProfileImage;
-  // TODO: API 연동 시 React Query 낙관적 업데이트로 전환하고 로컬 상태 제거
   const [selectedRecruitmentStatus, setSelectedRecruitmentStatus] =
     useState(recruitmentStatus);
   const [isStatusBottomSheetOpen, setIsStatusBottomSheetOpen] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const updateStatusMutation = useMutation({
+    ...POST_MUTATION_OPTIONS.UPDATE_STATUS(),
+    onSuccess: ({ status }) => {
+      setSelectedRecruitmentStatus(status);
+      showToast('모집 상태가 변경되었어요', {
+        bottomOffsetClassName: 'bottom-26.5',
+      });
+
+      void Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: POST_QUERY_KEY.DETAIL(postId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: RECOMMENDATION_QUERY_KEY.POSTS_ALL(),
+        }),
+      ]);
+    },
+    onError: () => {
+      showToast('모집 상태를 변경하지 못했어요. 다시 시도해 주세요.', {
+        bottomOffsetClassName: 'bottom-26.5',
+        variant: 'gray',
+      });
+    },
+  });
 
   const handleStatusButtonClick = () => {
     setIsStatusBottomSheetOpen(true);
@@ -41,6 +72,22 @@ export const PostDetailProfileHeader = ({
 
   const handleStatusBottomSheetClose = () => {
     setIsStatusBottomSheetOpen(false);
+  };
+
+  const handleRecruitmentStatusSelect = (
+    status: PostRecruitmentStatusTypes,
+  ) => {
+    if (
+      status === selectedRecruitmentStatus ||
+      updateStatusMutation.isPending
+    ) {
+      return;
+    }
+
+    updateStatusMutation.mutate({
+      postId,
+      body: { status },
+    });
   };
 
   const handleBookmarkClick = () => {
@@ -75,9 +122,11 @@ export const PostDetailProfileHeader = ({
       {isMine ? (
         <>
           <PostRecruitmentStatusButton
+            aria-busy={updateStatusMutation.isPending}
             aria-expanded={isStatusBottomSheetOpen}
             aria-haspopup="dialog"
             className="shrink-0"
+            disabled={updateStatusMutation.isPending}
             status={selectedRecruitmentStatus}
             onClick={handleStatusButtonClick}
           />
@@ -85,7 +134,7 @@ export const PostDetailProfileHeader = ({
             open={isStatusBottomSheetOpen}
             value={selectedRecruitmentStatus}
             onClose={handleStatusBottomSheetClose}
-            onSelect={setSelectedRecruitmentStatus}
+            onSelect={handleRecruitmentStatusSelect}
           />
         </>
       ) : (
