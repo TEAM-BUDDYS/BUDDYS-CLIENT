@@ -3,6 +3,7 @@ import Link from 'next/link';
 import type { PostSummary } from '@/domains/posts/api/type';
 import { CardDate } from '@/shared/components/ui/card/card-date';
 import { CommonImage } from '@/shared/components/ui/common-image/common-image';
+import { ROUTES } from '@/shared/config';
 
 interface SummaryCardProps {
   post: PostSummary;
@@ -30,7 +31,7 @@ export const SummaryCard = ({ post }: SummaryCardProps) => {
   return (
     <article>
       <Link
-        href={`/posts/${post.postId}`}
+        href={ROUTES.POST.DETAIL(post.postId)}
         className="flex h-20 justify-between"
       >
         <section className="flex flex-col gap-2">
