@@ -534,13 +534,13 @@ export interface components {
        */
       ageConditions: ('EARLY_20S' | 'MID_20S' | 'LATE_20S' | 'OVER_30S')[];
       /**
-       * @description 성별 조건. ANY(상관없음), MALE(남성), FEMALE(여성). 중복 선택 가능
+       * @description 성별 조건. MALE(남성), FEMALE(여성). 성별 무관은 모두 선택
        * @example [
        *       "MALE",
        *       "FEMALE"
        *     ]
        */
-      genderConditions: ('ANY' | 'MALE' | 'FEMALE')[];
+      genderConditions: ('MALE' | 'FEMALE')[];
       /**
        * @description 동행 유형. FULL_TRIP(여행 전체 동행), PARTIAL_TRIP(여행 부분 동행), ACCOMMODATION_SHARE(숙박 공유), TOUR(투어 동행), MEAL(식사 동행), DAILY_LIFE(생활 동행), GROUP_PURCHASE(공동 구매)
        * @example FULL_TRIP
@@ -792,7 +792,7 @@ export interface components {
        * @example FEMALE
        * @enum {string}
        */
-      gender: 'MALE' | 'FEMALE' | 'OTHER';
+      gender: 'MALE' | 'FEMALE';
       /**
        * Format: date
        * @description 생년월일
@@ -1312,7 +1312,7 @@ export interface components {
        * @example FEMALE
        * @enum {string}
        */
-      gender?: 'MALE' | 'FEMALE' | 'OTHER';
+      gender?: 'MALE' | 'FEMALE';
     };
     BaseResponsePostDetailResponse: {
       success?: boolean;
@@ -1344,10 +1344,11 @@ export interface components {
       /**
        * @description 성별 조건
        * @example [
-       *       "ANY"
+       *       "MALE",
+       *       "FEMALE"
        *     ]
        */
-      genderConditions?: ('ANY' | 'MALE' | 'FEMALE')[];
+      genderConditions?: ('MALE' | 'FEMALE')[];
       /**
        * @description 동행 유형
        * @example MEAL
@@ -1362,11 +1363,11 @@ export interface components {
         | 'DAILY_LIFE'
         | 'GROUP_PURCHASE';
       /** @description 활동 태그 목록 */
-      activityTags?: components['schemas']['TagResponse'][];
+      activityTags?: components['schemas']['PostTagResponse'][];
       /** @description 관심사 태그 목록 */
-      interestTags?: components['schemas']['TagResponse'][];
+      interestTags?: components['schemas']['PostTagResponse'][];
       /** @description 여행 스타일 태그 목록 */
-      travelStyleTags?: components['schemas']['TagResponse'][];
+      travelStyleTags?: components['schemas']['PostTagResponse'][];
     };
     PostDetailResponse: {
       /**
@@ -1447,6 +1448,19 @@ export interface components {
        * @example 2027-02-20T14:30:00
        */
       createdAt?: string;
+    };
+    PostTagResponse: {
+      /**
+       * Format: int64
+       * @description 태그 ID
+       * @example 1
+       */
+      tagId?: number;
+      /**
+       * @description 태그 이름
+       * @example 맛집
+       */
+      name?: string;
     };
     BaseResponseCommentListResponse: {
       success?: boolean;
@@ -1724,7 +1738,7 @@ export interface operations {
         /** @description 나이 조건 목록 */
         ageConditions?: ('EARLY_20S' | 'MID_20S' | 'LATE_20S' | 'OVER_30S')[];
         /** @description 성별 조건 목록 */
-        genderConditions?: ('ANY' | 'MALE' | 'FEMALE')[];
+        genderConditions?: ('MALE' | 'FEMALE')[];
         /** @description 동행 유형 목록 */
         companionTypes?: (
           | 'FULL_TRIP'

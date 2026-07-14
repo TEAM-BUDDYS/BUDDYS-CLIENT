@@ -5,7 +5,13 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { TAG_QUERY_OPTIONS } from '@/shared/api';
-import { AsyncBoundary, Button, ProgressBar } from '@/shared/components/ui';
+import { useImageUpload } from '@/shared/api/image/use-image-upload';
+import {
+  AsyncBoundary,
+  Button,
+  ProgressBar,
+  useToast,
+} from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
 import type { OnboardProgressStep, OnboardStep } from '../../model/onboard';
@@ -42,6 +48,8 @@ const ONBOARD_TAG_TYPES = ['ACTIVITY', 'INTEREST', 'TRAVEL_STYLE'] as const;
 
 export const OnboardFlow = () => {
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
+  const { isUploading, uploadImage } = useImageUpload();
   const [currentStep, setCurrentStep] =
     useState<OnboardStep>('interest-location');
   const onboardForm = useOnboardForm();
@@ -57,14 +65,36 @@ export const OnboardFlow = () => {
     });
   }, [queryClient]);
 
+  const handleProfileImageUpload = async () => {
+    try {
+      if (onboardForm.profileImageFile) {
+        await uploadImage({
+          file: onboardForm.profileImageFile,
+          imageDomain: 'PROFILE',
+        });
+      }
+
+      setCurrentStep('complete');
+    } catch (error) {
+      showToast(
+        error instanceof Error
+          ? error.message
+          : '프로필 이미지를 업로드하지 못했습니다.',
+        {
+          bottomOffsetClassName: 'bottom-26.5',
+          variant: 'gray',
+        },
+      );
+    }
+  };
+
   const handleNextClick = () => {
-    if (!canGoNext) {
+    if (!canGoNext || isUploading) {
       return;
     }
 
     if (currentStep === 'profile') {
-      // TODO: 이미지 업로드 및 온보딩 등록 API 성공 시 complete 단계로 이동
-      setCurrentStep('complete');
+      void handleProfileImageUpload();
       return;
     }
 
@@ -160,6 +190,7 @@ export const OnboardFlow = () => {
               gender={onboardForm.gender}
               birthDate={onboardForm.birthDate}
               bio={onboardForm.bio}
+              isUploading={isUploading}
               profileImageFile={onboardForm.profileImageFile}
               onNicknameChange={onboardForm.handleNicknameChange}
               onGenderChange={onboardForm.handleGenderChange}
@@ -192,8 +223,11 @@ export const OnboardFlow = () => {
 
         {currentStep !== 'complete' && (
           <div className="flex flex-col gap-4">
-            <Button disabled={!canGoNext} onClick={handleNextClick}>
-              다음
+            <Button
+              disabled={!canGoNext || isUploading}
+              onClick={handleNextClick}
+            >
+              {isUploading ? '업로드 중...' : '다음'}
             </Button>
             {currentStep === 'exchange-info' && (
               <button

@@ -16,6 +16,7 @@ interface OnboardProfileStepProps {
   gender: GenderType | null;
   birthDate: string;
   bio: string;
+  isUploading: boolean;
   profileImageFile: File | null;
   onNicknameChange: (value: string) => void;
   onGenderChange: (value: GenderType) => void;
@@ -29,6 +30,7 @@ export const OnboardProfileStep = ({
   gender,
   birthDate,
   bio,
+  isUploading,
   profileImageFile,
   onNicknameChange,
   onGenderChange,
@@ -82,7 +84,9 @@ export const OnboardProfileStep = ({
         <h1 className="text-title-b-22 text-gray-800">프로필 등록</h1>
         <div className="flex flex-col items-center gap-3">
           <ProfileImageInput
+            accept="image/jpeg,image/png,image/webp"
             alt="프로필 이미지"
+            disabled={isUploading}
             label="프로필 이미지 등록"
             src={profileImageSrc}
             onChange={handleProfileImageChange}
