@@ -11,7 +11,7 @@ import { useCarouselIndex } from '@/shared/hooks/use-carousel-index';
 import { CarouselIndicator } from './carousel-indicator';
 import { CarouselInfo } from './carousel-info';
 
-type RenderableRecommendedPost = RecommendedPost & {
+export type RenderableRecommendedPost = RecommendedPost & {
   postId: number;
   title: string;
   thumbnailUrl: string;
@@ -25,7 +25,7 @@ interface CarouselProps {
   posts: RecommendedPost[];
 }
 
-const isRenderableRecommendedPost = (
+export const isRenderableRecommendedPost = (
   post: RecommendedPost,
 ): post is RenderableRecommendedPost => {
   return Boolean(

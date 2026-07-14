@@ -1,26 +1,46 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
 import { RECOMMENDATION_QUERY_OPTIONS } from '@/shared/api';
-import { CommonImage } from '@/shared/components/ui';
+import { AsyncBoundary, CommonImage, EmptyState } from '@/shared/components/ui';
 
-import { Carousel } from '../components/carousel/carousel';
+import {
+  Carousel,
+  isRenderableRecommendedPost,
+} from '../components/carousel/carousel';
 
 const temporaryHeaderImage =
   "data:image/svg+xml,%3Csvg width='84' height='84' viewBox='0 0 84 84' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='84' height='84' rx='16' fill='%23F1F4F9'/%3E%3Ccircle cx='42' cy='34' r='14' fill='%23CDD3DE'/%3E%3Cpath d='M20 70C23.7 56.3 31.9 48 42 48C52.1 48 60.3 56.3 64 70H20Z' fill='%23CDD3DE'/%3E%3C/svg%3E";
 
 const TODAY_BUDDY_SIZE = 3;
 
-export const TodayBuddySection = () => {
-  const { data } = useQuery(
+const TodayBuddyPostList = () => {
+  const { data } = useSuspenseQuery(
     RECOMMENDATION_QUERY_OPTIONS.RECOMMENDED_POSTS({
       size: TODAY_BUDDY_SIZE,
       requireImage: true,
     }),
   );
 
+  const posts = (data?.data?.posts ?? []).filter(isRenderableRecommendedPost);
+  const isEmpty = posts.length === 0;
+
+  if (isEmpty) {
+    return (
+      <EmptyState
+        title="아직 추천할 동행 게시물이 없어요"
+        description="관심 정보가 쌓이면 더 잘 맞는 동행을 보여드릴게요"
+        className="py-8"
+      />
+    );
+  }
+
+  return <Carousel posts={posts} />;
+};
+
+export const TodayBuddySection = () => {
   return (
     <section className="flex flex-col gap-5 pt-5">
       <SectionHeader
@@ -38,7 +58,9 @@ export const TodayBuddySection = () => {
           />
         }
       />
-      <Carousel posts={data?.data?.posts ?? []} />
+      <AsyncBoundary className="py-8">
+        <TodayBuddyPostList />
+      </AsyncBoundary>
     </section>
   );
 };
