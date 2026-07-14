@@ -128,6 +128,13 @@ export const CHAT_QUERY_OPTIONS = {
           return undefined;
         }
 
+        if (
+          lastPage.nextCursorSentAt === null ||
+          lastPage.nextCursorMessageId === null
+        ) {
+          return undefined;
+        }
+
         return {
           cursorSentAt: lastPage.nextCursorSentAt,
           cursorMessageId: lastPage.nextCursorMessageId,

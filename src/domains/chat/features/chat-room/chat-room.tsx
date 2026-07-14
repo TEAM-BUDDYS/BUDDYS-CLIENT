@@ -1,8 +1,12 @@
 'use client';
 
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import {
+  useSuspenseInfiniteQuery,
+  useSuspenseQuery,
+} from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { useAuthSession } from '@/domains/auth/features/auth-session/auth-session-provider';
 import { Header } from '@/shared/components/layout';
 import { BottomActionBar } from '@/shared/components/ui';
 
@@ -17,21 +21,19 @@ const CHAT_MESSAGE_PAGE_SIZE = 10;
 
 interface ChatRoomProps {
   chatRoomId: number;
-  currentUserId: number;
 }
 
-export const ChatRoom = ({ chatRoomId, currentUserId }: ChatRoomProps) => {
+export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
+  const { userId: currentUserId } = useAuthSession();
   const [message, setMessage] = useState('');
   const [realtimeMessages, setRealtimeMessages] = useState<ChatMessageData[]>(
     [],
   );
   const lastPublishedReadMessageIdRef = useRef<number | null>(null);
 
-  const {
-    data: chatRoomData,
-    isPending,
-    isError,
-  } = useQuery(CHAT_QUERY_OPTIONS.DETAIL(chatRoomId));
+  const { data: chatRoomData } = useSuspenseQuery(
+    CHAT_QUERY_OPTIONS.DETAIL(chatRoomId),
+  );
 
   const {
     data: messagePages,
@@ -39,9 +41,7 @@ export const ChatRoom = ({ chatRoomId, currentUserId }: ChatRoomProps) => {
     hasNextPage,
     isFetchingNextPage,
     isFetchNextPageError,
-    isPending: isMessagesPending,
-    isError: isMessagesError,
-  } = useInfiniteQuery(
+  } = useSuspenseInfiniteQuery(
     CHAT_QUERY_OPTIONS.MESSAGES(chatRoomId, {
       size: CHAT_MESSAGE_PAGE_SIZE,
     }),
@@ -124,11 +124,8 @@ export const ChatRoom = ({ chatRoomId, currentUserId }: ChatRoomProps) => {
     }
   };
 
-  if (isPending || isMessagesPending) {
-    return <div>채팅방을 불러오는 중...</div>;
-  }
-  if (isError || isMessagesError || !chatRoomData) {
-    return <div>채팅방을 불러오지 못했습니다.</div>;
+  if (currentUserId === null) {
+    return null;
   }
 
   return (

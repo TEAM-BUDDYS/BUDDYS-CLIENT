@@ -16,7 +16,7 @@ export interface ChatMessageData {
 
 export interface ChatMessageList {
   messages: ChatMessageData[];
-  nextCursorSentAt: string;
-  nextCursorMessageId: number;
+  nextCursorSentAt: string | null;
+  nextCursorMessageId: number | null;
   hasNext: boolean;
 }

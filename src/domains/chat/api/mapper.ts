@@ -106,7 +106,7 @@ const convertChatMessage = (
     sender: {
       userId: sender.userId,
       nickname: sender.nickname,
-      profileImageUrl: null,
+      profileImageUrl: sender.profileImageUrl ?? null,
     },
     content,
     sentAt,
@@ -124,8 +124,6 @@ export const convertChatMessageListResponse = (
     response.success !== true ||
     !data ||
     !Array.isArray(data.messages) ||
-    typeof data.nextCursorSentAt !== 'string' ||
-    !isPositiveSafeInteger(data.nextCursorMessageId) ||
     typeof data.hasNext !== 'boolean'
   ) {
     throw new Error(
@@ -133,10 +131,18 @@ export const convertChatMessageListResponse = (
     );
   }
 
+  if (
+    data.hasNext &&
+    (typeof data.nextCursorSentAt !== 'string' ||
+      !isPositiveSafeInteger(data.nextCursorMessageId))
+  ) {
+    throw new Error('다음 메시지 커서가 올바르지 않습니다.');
+  }
+
   return {
     messages: data.messages.map(convertChatMessage),
-    nextCursorSentAt: data.nextCursorSentAt,
-    nextCursorMessageId: data.nextCursorMessageId,
+    nextCursorSentAt: data.nextCursorSentAt ?? null,
+    nextCursorMessageId: data.nextCursorMessageId ?? null,
     hasNext: data.hasNext,
   };
 };
