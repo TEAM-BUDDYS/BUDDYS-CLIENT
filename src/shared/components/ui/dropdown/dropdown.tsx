@@ -9,25 +9,62 @@ import { useClickOutside } from '@/shared/hooks/use-click-outside';
 import { OptionItem } from './option-item';
 import { OptionList } from './option-list';
 
-interface DropdownProps {
-  options: string[];
-  value: string;
+type DropdownOptionKey = string | number;
+
+interface DropdownProps<TOption> {
+  options: TOption[];
+  value: TOption | null;
   disabled?: boolean;
   placeholder?: string;
-  onChange?: (value: string) => void;
+  hasMore?: boolean;
+  isLoadingMore?: boolean;
+  getOptionLabel?: (option: TOption) => string;
+  getOptionKey?: (option: TOption) => DropdownOptionKey;
+  isOptionEqual?: (option: TOption, value: TOption) => boolean;
+  onChange?: (value: TOption) => void;
+  onLoadMore?: () => void;
 }
 
-export const Dropdown = ({
+export const Dropdown = <TOption,>({
   options,
   value,
   disabled = false,
+  hasMore = false,
+  isLoadingMore = false,
+  getOptionLabel,
+  getOptionKey,
+  isOptionEqual,
   onChange,
+  onLoadMore,
   placeholder = '선택해주세요.',
-}: DropdownProps) => {
+}: DropdownProps<TOption>) => {
   const [isOpen, setIsOpen] = useState(false);
   const listboxId = useId();
   const dropdownRef = useClickOutside<HTMLElement>(() => setIsOpen(false));
-  const hasSelectedValue = Boolean(value);
+  const getLabel = (option: TOption) =>
+    getOptionLabel?.(option) ?? String(option);
+  const getKey = (option: TOption) =>
+    getOptionKey?.(option) ?? getLabel(option);
+  const hasSelectedValue = value !== null;
+  const selectedLabel = hasSelectedValue ? getLabel(value) : '';
+
+  const isSelectedOption = (option: TOption) => {
+    if (value === null) return false;
+
+    return isOptionEqual
+      ? isOptionEqual(option, value)
+      : getKey(option) === getKey(value);
+  };
+
+  const handleOptionListScroll = (event: React.UIEvent<HTMLUListElement>) => {
+    const { clientHeight, scrollHeight, scrollTop } = event.currentTarget;
+
+    const isNearBottom = scrollHeight - clientHeight - scrollTop <= 20;
+
+    if (isNearBottom && hasMore && !isLoadingMore) {
+      onLoadMore?.();
+    }
+  };
 
   return (
     <article ref={dropdownRef} className="relative">
@@ -45,7 +82,7 @@ export const Dropdown = ({
         )}
         onClick={() => setIsOpen((prev) => !prev)}
       >
-        {hasSelectedValue ? value : placeholder}
+        {hasSelectedValue ? selectedLabel : placeholder}
         {isOpen ? (
           <ChevronUpIcon width={24} height={24} />
         ) : (
@@ -53,18 +90,26 @@ export const Dropdown = ({
         )}
       </button>
       {isOpen && !disabled && (
-        <OptionList id={listboxId}>
+        <OptionList id={listboxId} onScroll={handleOptionListScroll}>
           {options.map((option) => (
             <OptionItem
-              key={option}
-              option={option}
-              isSelected={value === option}
+              key={getKey(option)}
+              label={getLabel(option)}
+              isSelected={isSelectedOption(option)}
               onSelect={() => {
                 onChange?.(option);
                 setIsOpen(false);
               }}
             />
           ))}
+          {isLoadingMore && (
+            <li
+              role="presentation"
+              className="text-body-m-15 px-4 py-3.5 text-gray-400"
+            >
+              <span role="status">목록을 불러오는 중입니다.</span>
+            </li>
+          )}
         </OptionList>
       )}
     </article>

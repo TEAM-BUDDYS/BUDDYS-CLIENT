@@ -12,7 +12,6 @@ import { isValidYearMonth } from '../../utils/is-valid-year-month';
 import {
   EXCHANGE_SCHOOL_OPTIONS_BY_COUNTRY_ID,
   INTEREST_CITY_OPTIONS_BY_COUNTRY_ID,
-  ONBOARD_COUNTRY_OPTIONS,
 } from './constant';
 
 const getOptionsByCountry = <
@@ -73,8 +72,6 @@ export const useOnboardForm = () => {
   const [birthDate, setBirthDate] = useState('');
   const [bio, setBio] = useState('');
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
-
-  const countryOptions: OnboardLocationOption[] = [...ONBOARD_COUNTRY_OPTIONS];
 
   const interestCityOptions = getOptionsByCountry(
     INTEREST_CITY_OPTIONS_BY_COUNTRY_ID,
@@ -280,7 +277,6 @@ export const useOnboardForm = () => {
   };
 
   return {
-    countryOptions,
     interestCountry,
     interestCity,
     selectedInterestCity,
