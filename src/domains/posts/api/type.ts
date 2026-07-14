@@ -3,6 +3,7 @@ import type { components, operations } from '@/types/schema';
 export type GetPostsParams = operations['getPosts']['parameters']['query'];
 export type GetPostsResponse =
   components['schemas']['BaseResponsePostListResponse'];
+export type PostSummary = components['schemas']['PostSummaryResponse'];
 
 export type CreatePostRequest = components['schemas']['CreatePostRequest'];
 export type CreatePostResponse =

@@ -21,26 +21,16 @@ export const PostCreateCountryStep = ({
   onChange,
   onLoadMore,
 }: PostCreateCountryStepProps) => {
-  const countryNames = options.map((country) => country.name);
-
-  const handleCountryChange = (countryName: string) => {
-    const selectedCountry = options.find(
-      (country) => country.name === countryName,
-    );
-
-    if (selectedCountry) {
-      onChange(selectedCountry);
-    }
-  };
-
   return (
     <Dropdown
-      options={countryNames}
+      options={options}
       placeholder="국가를 선택해주세요"
-      value={value?.name ?? ''}
+      value={value}
       hasMore={hasMore}
       isLoadingMore={isLoadingMore}
-      onChange={handleCountryChange}
+      getOptionLabel={(country) => country.name}
+      getOptionKey={(country) => country.id}
+      onChange={onChange}
       onLoadMore={onLoadMore}
     />
   );

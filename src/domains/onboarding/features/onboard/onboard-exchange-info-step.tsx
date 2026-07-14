@@ -4,7 +4,6 @@ import { Dropdown, FormLabel, TextField } from '@/shared/components/ui';
 
 import { SearchOptionField } from '../../components/search-option-field/search-option-field';
 import type { OnboardLocationOption } from '../../model/onboard';
-import { findCountryByName } from '../../utils/country-options';
 
 interface OnboardExchangeInfoStepProps {
   countryOptions: OnboardLocationOption[];
@@ -41,27 +40,19 @@ export const OnboardExchangeInfoStep = ({
   onStartMonthChange,
   onEndMonthChange,
 }: OnboardExchangeInfoStepProps) => {
-  const countryNames = countryOptions.map((country) => country.name);
-
-  const handleCountryChange = (countryName: string) => {
-    const nextCountry = findCountryByName(countryOptions, countryName);
-
-    if (nextCountry) {
-      onCountryChange(nextCountry);
-    }
-  };
-
   return (
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-2">
         <FormLabel as="h2">파견 국가</FormLabel>
         <Dropdown
-          options={countryNames}
+          options={countryOptions}
           placeholder="국가 선택"
-          value={selectedCountry?.name ?? ''}
+          value={selectedCountry}
           hasMore={hasMoreCountries}
           isLoadingMore={isLoadingMoreCountries}
-          onChange={handleCountryChange}
+          getOptionLabel={(country) => country.name}
+          getOptionKey={(country) => country.id}
+          onChange={onCountryChange}
           onLoadMore={onLoadMoreCountries}
         />
       </div>

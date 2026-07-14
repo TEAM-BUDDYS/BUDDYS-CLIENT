@@ -1,4 +1,8 @@
-import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import {
+  infiniteQueryOptions,
+  mutationOptions,
+  queryOptions,
+} from '@tanstack/react-query';
 
 import {
   apiClient,
@@ -85,6 +89,19 @@ export const POST_QUERY_OPTIONS = {
     queryOptions({
       queryKey: POST_QUERY_KEY.LIST(params),
       queryFn: () => getPosts(params),
+    }),
+  INFINITE_LIST: (params?: GetPostsParams) =>
+    infiniteQueryOptions({
+      queryKey: POST_QUERY_KEY.INFINITE_LIST(params),
+      queryFn: ({ pageParam }) => getPosts({ ...params, page: pageParam }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        if (!lastPage.data?.hasNext) {
+          return undefined;
+        }
+
+        return (lastPage.data.page ?? 0) + 1;
+      },
     }),
   DETAIL: (postId: number) =>
     queryOptions({
