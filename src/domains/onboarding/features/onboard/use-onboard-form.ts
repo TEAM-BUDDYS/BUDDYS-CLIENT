@@ -1,50 +1,18 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
+import { type City, getCityDisplayName } from '@/shared/api';
 import { formatDateInput } from '@/shared/utils/format-date-input';
 import type { GenderType } from '@/types/gender';
 
+import { ONBOARDING_QUERY_OPTIONS } from '../../api/query';
+import { useDebouncedValue } from '../../hooks/use-debounced-value';
 import type { OnboardLocationOption, OnboardStep } from '../../model/onboard';
 import type { OnboardingFormPayload } from '../../model/onboarding-form';
 import { isValidDate } from '../../utils/is-valid-date';
 import { isValidYearMonth } from '../../utils/is-valid-year-month';
-import {
-  EXCHANGE_SCHOOL_OPTIONS_BY_COUNTRY_ID,
-  INTEREST_CITY_OPTIONS_BY_COUNTRY_ID,
-  ONBOARD_COUNTRY_OPTIONS,
-} from './constant';
-
-const getOptionsByCountry = <
-  TOptions extends Record<number, readonly OnboardLocationOption[]>,
->(
-  optionsByCountry: TOptions,
-  countryId?: number,
-) => {
-  if (!countryId) {
-    return [];
-  }
-
-  return [...(optionsByCountry[countryId] ?? [])];
-};
-
-const getSearchResults = (
-  options: OnboardLocationOption[],
-  query: string,
-  selectedOption: OnboardLocationOption | null,
-) => {
-  const trimmedQuery = query.trim();
-
-  if (!trimmedQuery || getOptionDisplayName(selectedOption) === query) {
-    return [];
-  }
-
-  return options.filter((option) => {
-    return [option.name, option.koreanName].some((name) =>
-      name?.toLowerCase().includes(trimmedQuery.toLowerCase()),
-    );
-  });
-};
 
 const getOptionDisplayName = (option: OnboardLocationOption | null) => {
   return option?.koreanName ?? option?.name ?? '';
@@ -54,8 +22,9 @@ export const useOnboardForm = () => {
   const [interestCountry, setInterestCountry] =
     useState<OnboardLocationOption | null>(null);
   const [interestCity, setInterestCity] = useState('');
-  const [selectedInterestCity, setSelectedInterestCity] =
-    useState<OnboardLocationOption | null>(null);
+  const [selectedInterestCity, setSelectedInterestCity] = useState<City | null>(
+    null,
+  );
   const [exchangeCountry, setExchangeCountry] =
     useState<OnboardLocationOption | null>(null);
   const [exchangeSchool, setExchangeSchool] = useState('');
@@ -74,27 +43,32 @@ export const useOnboardForm = () => {
   const [bio, setBio] = useState('');
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
 
-  const countryOptions: OnboardLocationOption[] = [...ONBOARD_COUNTRY_OPTIONS];
+  const debouncedExchangeSchool = useDebouncedValue(exchangeSchool, 300);
+  const trimmedExchangeSchool = exchangeSchool.trim();
+  const shouldSearchExchangeSchool =
+    Boolean(exchangeCountry) &&
+    Boolean(debouncedExchangeSchool.trim()) &&
+    getOptionDisplayName(selectedExchangeSchool) !== trimmedExchangeSchool;
+  const isExchangeSchoolQuerySynced =
+    debouncedExchangeSchool.trim() === trimmedExchangeSchool;
 
-  const interestCityOptions = getOptionsByCountry(
-    INTEREST_CITY_OPTIONS_BY_COUNTRY_ID,
-    interestCountry?.id,
-  );
-  const exchangeSchoolOptions = getOptionsByCountry(
-    EXCHANGE_SCHOOL_OPTIONS_BY_COUNTRY_ID,
-    exchangeCountry?.id,
-  );
+  const { data: universitySearchResponse } = useQuery({
+    ...ONBOARDING_QUERY_OPTIONS.UNIVERSITY_SEARCH(
+      exchangeCountry?.id ?? 0,
+      debouncedExchangeSchool.trim(),
+    ),
+    enabled: shouldSearchExchangeSchool,
+  });
 
-  const interestCityResults = getSearchResults(
-    interestCityOptions,
-    interestCity,
-    selectedInterestCity,
-  );
-  const exchangeSchoolResults = getSearchResults(
-    exchangeSchoolOptions,
-    exchangeSchool,
-    selectedExchangeSchool,
-  );
+  const exchangeSchoolResults: OnboardLocationOption[] =
+    shouldSearchExchangeSchool && isExchangeSchoolQuerySynced
+      ? (universitySearchResponse?.data?.universities ?? []).flatMap(
+          (university) =>
+            university.id !== undefined && university.name !== undefined
+              ? [{ id: university.id, name: university.name }]
+              : [],
+        )
+      : [];
 
   const handleInterestCountrySelect = (value: OnboardLocationOption) => {
     const shouldResetCity = interestCountry?.id !== value.id;
@@ -112,14 +86,14 @@ export const useOnboardForm = () => {
 
     if (
       selectedInterestCity &&
-      getOptionDisplayName(selectedInterestCity) !== value
+      getCityDisplayName(selectedInterestCity, value) !== value
     ) {
       setSelectedInterestCity(null);
     }
   };
 
-  const handleInterestCitySelect = (value: OnboardLocationOption) => {
-    setInterestCity(getOptionDisplayName(value));
+  const handleInterestCitySelect = (value: City) => {
+    setInterestCity(getCityDisplayName(value, interestCity));
     setSelectedInterestCity(value);
   };
 
@@ -246,7 +220,7 @@ export const useOnboardForm = () => {
   };
 
   const getOnboardingFormPayload = (
-    profileImageUrl: string,
+    profileImageUrl: string | null,
   ): OnboardingFormPayload | null => {
     if (
       !interestCountry ||
@@ -261,9 +235,15 @@ export const useOnboardForm = () => {
       return null;
     }
 
+    const interestCityId = selectedInterestCity.id;
+
+    if (interestCityId == null) {
+      return null;
+    }
+
     return {
       interestCountryId: interestCountry.id,
-      interestCityId: selectedInterestCity.id,
+      interestCityId,
       exchangeCountryId: exchangeCountry?.id ?? null,
       exchangeUniversity: selectedExchangeSchool?.name ?? null,
       exchangeStartDate: exchangeMonths.startMonth.trim() || null,
@@ -280,11 +260,9 @@ export const useOnboardForm = () => {
   };
 
   return {
-    countryOptions,
     interestCountry,
     interestCity,
     selectedInterestCity,
-    interestCityResults,
     exchangeCountry,
     exchangeSchool,
     selectedExchangeSchool,

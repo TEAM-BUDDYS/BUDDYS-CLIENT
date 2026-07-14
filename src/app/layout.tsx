@@ -13,8 +13,24 @@ const pretendard = localFont({
 import { Providers } from './providers';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://buddys.co.kr'),
   title: 'BUDDYS',
-  description: 'BUDDYS client application',
+  description: '버디와 함께, 연결부터 기록까지',
+  openGraph: {
+    type: 'website',
+    locale: 'ko_KR',
+    siteName: 'BUDDYS',
+    title: 'BUDDYS',
+    description: '버디와 함께, 연결부터 기록까지',
+    images: [
+      {
+        url: '/images/og_image.png',
+        width: 2400,
+        height: 1260,
+        alt: 'BUDDYS',
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
