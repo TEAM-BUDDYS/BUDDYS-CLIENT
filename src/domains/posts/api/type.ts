@@ -28,4 +28,5 @@ export type CreateCommentResponse =
 
 export type CreatePresignedUrlRequest =
   components['schemas']['PresignedUrlRequest'];
-export type CreatePresignedUrlResponse = components['schemas']['BaseResponse'];
+export type CreatePresignedUrlResponse =
+  components['schemas']['BaseResponsePresignedUrlResponse'];
