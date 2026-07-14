@@ -85,10 +85,13 @@ export const useOnboardForm = () => {
   );
 
   const debouncedExchangeSchool = useDebouncedValue(exchangeSchool, 300);
+  const trimmedExchangeSchool = exchangeSchool.trim();
   const shouldSearchExchangeSchool =
     Boolean(exchangeCountry) &&
     Boolean(debouncedExchangeSchool.trim()) &&
-    getOptionDisplayName(selectedExchangeSchool) !== exchangeSchool;
+    getOptionDisplayName(selectedExchangeSchool) !== trimmedExchangeSchool;
+  const isExchangeSchoolQuerySynced =
+    debouncedExchangeSchool.trim() === trimmedExchangeSchool;
 
   const { data: universitySearchResponse } = useQuery({
     ...ONBOARDING_QUERY_OPTIONS.UNIVERSITY_SEARCH(
@@ -99,7 +102,7 @@ export const useOnboardForm = () => {
   });
 
   const exchangeSchoolResults: OnboardLocationOption[] =
-    shouldSearchExchangeSchool
+    shouldSearchExchangeSchool && isExchangeSchoolQuerySynced
       ? (universitySearchResponse?.data?.universities ?? []).flatMap(
           (university) =>
             university.id !== undefined && university.name !== undefined
