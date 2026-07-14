@@ -4,15 +4,15 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { cn } from '@/lib/cn';
+import { useCountryList } from '@/shared/api';
 import { Header } from '@/shared/components/layout';
 import {
-  AsyncBoundary,
   Button,
   type DateRangeTypes,
   ProgressBar,
 } from '@/shared/components/ui';
 
-import { COUNTRY_OPTIONS, STEP_CONTENTS, TOTAL_STEP } from './constants';
+import { STEP_CONTENTS, TOTAL_STEP } from './constants';
 import type { PostCreateQuestionStep, PostCreateStep } from './model';
 import { PostCreateCityStep } from './post-create-city-step';
 import { PostCreateCountryStep } from './post-create-country-step';
@@ -46,6 +46,12 @@ export const PostCreateFlow = () => {
   const [currentStep, setCurrentStep] = useState<PostCreateStep>(1);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const postCreateForm = usePostCreateForm();
+  const {
+    countryOptions,
+    hasMoreCountries,
+    isLoadingMoreCountries,
+    loadMoreCountries,
+  } = useCountryList();
 
   const canGoNext = postCreateForm.canGoNext(currentStep);
 
@@ -88,83 +94,84 @@ export const PostCreateFlow = () => {
   };
 
   return (
-    <AsyncBoundary>
-      <main className="flex min-h-dvh flex-col bg-white">
-        <div className="sticky top-0 z-10 bg-white">
-          <Header
-            content={
-              <span className="text-title-b-20 text-gray-800">
-                동행 글 작성하기
-              </span>
-            }
-            contentAlign="center"
-            hasBackButton
-            onBackClick={handleBackClick}
-          />
-          <div className="px-4">
-            <ProgressBar currentStep={currentStep} totalStep={TOTAL_STEP} />
-          </div>
+    <main className="flex min-h-dvh flex-col bg-white">
+      <div className="sticky top-0 z-10 bg-white">
+        <Header
+          content={
+            <span className="text-title-b-20 text-gray-800">
+              동행 글 작성하기
+            </span>
+          }
+          contentAlign="center"
+          hasBackButton
+          onBackClick={handleBackClick}
+        />
+        <div className="px-4">
+          <ProgressBar currentStep={currentStep} totalStep={TOTAL_STEP} />
         </div>
+      </div>
 
-        <section className="flex flex-1 flex-col px-4 pt-10">
-          <div className="flex flex-col gap-6">
-            {isQuestionStep(currentStep) && (
-              <PostCreateQuestionHeader
-                title={STEP_CONTENTS[currentStep].title}
-                description={STEP_CONTENTS[currentStep].description}
-              />
-            )}
-
-            {currentStep === 1 && (
-              <PostCreateCountryStep
-                options={COUNTRY_OPTIONS}
-                value={postCreateForm.selectedCountry}
-                onChange={postCreateForm.handleCountrySelect}
-              />
-            )}
-
-            {currentStep === 2 && (
-              <PostCreateCityStep
-                city={postCreateForm.city}
-                selectedCity={postCreateForm.selectedCity}
-                cityResults={postCreateForm.cityResults}
-                onCityChange={postCreateForm.handleCityChange}
-                onCitySelect={postCreateForm.handleCitySelect}
-              />
-            )}
-
-            {currentStep === 3 && (
-              <PostCreateDateStep
-                dateRange={postCreateForm.dateRange}
-                isDatePickerOpen={isDatePickerOpen}
-                onDateClick={handleDateClick}
-                onDatePickerClose={() => setIsDatePickerOpen(false)}
-                onDateConfirm={handleDateConfirm}
-              />
-            )}
-
-            {currentStep === 4 && (
-              <PostCreateDetailStep
-                value={postCreateForm.detail}
-                imageCount={postCreateForm.imageCount}
-                onChange={postCreateForm.updateDetail}
-                onImagesChange={postCreateForm.addImages}
-              />
-            )}
-          </div>
-        </section>
-
-        <div
-          className={cn(
-            'flex flex-col gap-4 px-4 pb-8.5',
-            currentStep === 4 && 'pt-10',
+      <section className="flex flex-1 flex-col px-4 pt-10">
+        <div className="flex flex-col gap-6">
+          {isQuestionStep(currentStep) && (
+            <PostCreateQuestionHeader
+              title={STEP_CONTENTS[currentStep].title}
+              description={STEP_CONTENTS[currentStep].description}
+            />
           )}
-        >
-          <Button disabled={!canGoNext} onClick={handleNextClick}>
-            다음
-          </Button>
+
+          {currentStep === 1 && (
+            <PostCreateCountryStep
+              options={countryOptions}
+              value={postCreateForm.selectedCountry}
+              hasMore={hasMoreCountries}
+              isLoadingMore={isLoadingMoreCountries}
+              onChange={postCreateForm.handleCountrySelect}
+              onLoadMore={loadMoreCountries}
+            />
+          )}
+
+          {currentStep === 2 && (
+            <PostCreateCityStep
+              city={postCreateForm.city}
+              selectedCity={postCreateForm.selectedCity}
+              cityResults={postCreateForm.cityResults}
+              onCityChange={postCreateForm.handleCityChange}
+              onCitySelect={postCreateForm.handleCitySelect}
+            />
+          )}
+
+          {currentStep === 3 && (
+            <PostCreateDateStep
+              dateRange={postCreateForm.dateRange}
+              isDatePickerOpen={isDatePickerOpen}
+              onDateClick={handleDateClick}
+              onDatePickerClose={() => setIsDatePickerOpen(false)}
+              onDateConfirm={handleDateConfirm}
+            />
+          )}
+
+          {currentStep === 4 && (
+            <PostCreateDetailStep
+              value={postCreateForm.detail}
+              imageCount={postCreateForm.imageCount}
+              onChange={postCreateForm.updateDetail}
+              onImagesChange={postCreateForm.addImages}
+            />
+          )}
         </div>
-      </main>
-    </AsyncBoundary>
+      </section>
+
+      <div
+        className={cn(
+          'flex flex-col gap-4 px-4 pb-8.5',
+          currentStep === 4 && 'pt-10',
+        )}
+      >
+        <Button disabled={!canGoNext} onClick={handleNextClick}>
+          다음
+        </Button>
+      </div>
+    </main>
   );
 };
