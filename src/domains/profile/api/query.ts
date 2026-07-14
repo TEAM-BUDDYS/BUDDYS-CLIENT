@@ -1,4 +1,4 @@
-import { queryOptions } from '@tanstack/react-query';
+import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 
 import {
   apiClient,
@@ -62,7 +62,6 @@ const getMyProfile = async (): Promise<MyProfile> => {
       name,
     })),
     bio: bio ?? null,
-    posts: [], // TODO: getMyPosts 연동 후 채우기
   };
 };
 
@@ -98,6 +97,19 @@ export const PROFILE_QUERY_OPTIONS = {
     queryOptions({
       queryKey: USER_QUERY_KEY.ME_POSTS(params),
       queryFn: () => getMyPosts(params),
+    }),
+  ME_POSTS_INFINITE: (params?: GetMyPostsParams) =>
+    infiniteQueryOptions({
+      queryKey: USER_QUERY_KEY.ME_POSTS_INFINITE(params),
+      queryFn: ({ pageParam }) => getMyPosts({ ...params, page: pageParam }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        if (!lastPage.data?.hasNext) {
+          return undefined;
+        }
+
+        return (lastPage.data.page ?? 0) + 1;
+      },
     }),
   USER_PROFILE: (userId: number) =>
     queryOptions({

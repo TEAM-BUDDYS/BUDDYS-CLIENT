@@ -87,6 +87,14 @@ export const USER_QUERY_KEY = {
   ME: () => [...USER_QUERY_KEY.ALL, 'me'] as const,
   ME_POSTS: (params?: GetQueryParams<'/api/v1/users/me/posts'>) =>
     [...USER_QUERY_KEY.ALL, 'me', 'posts', params ?? {}] as const,
+  ME_POSTS_INFINITE: (params?: GetQueryParams<'/api/v1/users/me/posts'>) =>
+    [
+      ...USER_QUERY_KEY.ALL,
+      'me',
+      'posts',
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
   PROFILE: (userId: number) =>
     [...USER_QUERY_KEY.ALL, 'profile', userId] as const,
   POSTS: (
