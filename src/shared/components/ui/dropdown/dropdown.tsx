@@ -81,6 +81,14 @@ export const Dropdown = ({
               }}
             />
           ))}
+          {isLoadingMore && (
+            <li
+              role="presentation"
+              className="text-body-m-15 px-4 py-3.5 text-gray-400"
+            >
+              <span role="status">목록을 불러오는 중입니다.</span>
+            </li>
+          )}
         </OptionList>
       )}
     </article>

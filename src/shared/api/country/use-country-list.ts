@@ -1,9 +1,9 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 
 import { COUNTRY_QUERY_OPTIONS } from './query';
 
 export const useCountryList = () => {
-  const countriesQuery = useInfiniteQuery(COUNTRY_QUERY_OPTIONS.LIST());
+  const countriesQuery = useSuspenseInfiniteQuery(COUNTRY_QUERY_OPTIONS.LIST());
 
   const countryOptions =
     countriesQuery.data?.pages.flatMap((page) => page.countries) ?? [];
