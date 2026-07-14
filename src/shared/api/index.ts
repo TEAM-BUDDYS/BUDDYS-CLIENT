@@ -8,6 +8,7 @@ export {
   useCountryList,
 } from './country';
 export { END_POINT } from './end-point';
+export { POST_MUTATION_KEY } from './mutation-key';
 export {
   CHAT_ROOM_QUERY_KEY,
   COUNTRY_QUERY_KEY,
