@@ -938,10 +938,17 @@ export interface components {
        */
       thumbnailImageUrl?: string;
       /**
-       * @description 게시글 일정 표시 텍스트
-       * @example 26.09.06 ~ 26.09.19 (13일)
+       * Format: date
+       * @description 동행 시작일
+       * @example 2026-07-23
        */
-      dateText?: string;
+      startDate?: string;
+      /**
+       * Format: date
+       * @description 동행 종료일
+       * @example 2026-07-28
+       */
+      endDate?: string;
     };
     UserPostsResponse: {
       /** @description 사용자가 작성한 게시글 목록 */

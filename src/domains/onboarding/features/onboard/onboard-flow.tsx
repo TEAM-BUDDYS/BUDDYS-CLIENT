@@ -11,11 +11,7 @@ import { Button, ProgressBar, useToast } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
 import type { OnboardProgressStep, OnboardStep } from '../../model/onboard';
-import {
-  RECOMMENDED_POSTS,
-  RECOMMENDED_PROFILE,
-  TOTAL_PROGRESS_STEP,
-} from './constant';
+import { RECOMMENDED_PROFILE, TOTAL_PROGRESS_STEP } from './constant';
 import { OnboardComplete } from './onboard-complete';
 import { OnboardExchangeInfoStep } from './onboard-exchange-info-step';
 import { OnboardInterestLocationStep } from './onboard-interest-location-step';
@@ -213,7 +209,6 @@ export const OnboardFlow = () => {
               nickname={onboardForm.nickname}
               otherNickname={RECOMMENDED_PROFILE.nickname}
               similarityScore={RECOMMENDED_PROFILE.similarityScore}
-              recommendedPosts={RECOMMENDED_POSTS}
             />
             <div className="fixed bottom-0 left-1/2 z-10 w-full max-w-100 -translate-x-1/2 px-4 pb-[34px]">
               <div className="absolute right-0 bottom-0 left-0 -z-10 h-[145px] bg-gradient-to-b from-white/0 via-white to-white" />
