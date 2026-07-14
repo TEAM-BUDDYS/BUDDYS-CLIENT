@@ -3,9 +3,10 @@
 import { useState } from 'react';
 
 import type { CreatePostRequest } from '@/domains/posts/api/type';
+import { type City, getCityDisplayName } from '@/shared/api';
 import type { DateRangeTypes } from '@/shared/components/ui';
 
-import { CITY_OPTIONS, MAX_IMAGE_COUNT } from './constants';
+import { MAX_IMAGE_COUNT } from './constants';
 import type {
   LocationOption,
   PostCreateDetailFormState,
@@ -62,7 +63,7 @@ export const usePostCreateForm = () => {
     null,
   );
   const [city, setCity] = useState('');
-  const [selectedCity, setSelectedCity] = useState<LocationOption | null>(null);
+  const [selectedCity, setSelectedCity] = useState<City | null>(null);
   const [dateRange, setDateRange] = useState<DateRangeTypes>({
     startDate: null,
     endDate: null,
@@ -70,12 +71,6 @@ export const usePostCreateForm = () => {
   const [detail, setDetail] =
     useState<PostCreateDetailFormState>(INITIAL_DETAIL_FORM);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
-
-  // TODO: 도시 검색 API 연동 후 서버 응답값으로 변경
-  const cityResults =
-    city.length > 0 && selectedCity?.name !== city
-      ? CITY_OPTIONS.filter((cityOption) => cityOption.name.includes(city))
-      : [];
 
   const updateDetail = (nextDetail: Partial<PostCreateDetailFormState>) => {
     setDetail((prevDetail) => ({ ...prevDetail, ...nextDetail }));
@@ -95,13 +90,13 @@ export const usePostCreateForm = () => {
   const handleCityChange = (value: string) => {
     setCity(value);
 
-    if (selectedCity && value !== selectedCity.name) {
+    if (selectedCity && value !== getCityDisplayName(selectedCity, value)) {
       setSelectedCity(null);
     }
   };
 
-  const handleCitySelect = (value: LocationOption) => {
-    setCity(value.name);
+  const handleCitySelect = (value: City) => {
+    setCity(getCityDisplayName(value, city));
     setSelectedCity(value);
   };
 
@@ -156,6 +151,12 @@ export const usePostCreateForm = () => {
 
     const { detail, endDate, selectedCity, selectedCountry, startDate } =
       completeFormValues;
+    const cityId = selectedCity.id;
+
+    if (cityId == null) {
+      return null;
+    }
+
     const tagIds = [
       ...detail.activityTagIds,
       ...detail.interestTagIds,
@@ -164,7 +165,7 @@ export const usePostCreateForm = () => {
 
     return {
       countryId: selectedCountry.id,
-      cityId: selectedCity.id,
+      cityId,
       title: detail.title.trim(),
       content: detail.content.trim(),
       startDate: formatDateForPayload(startDate),
@@ -181,7 +182,6 @@ export const usePostCreateForm = () => {
     selectedCountry,
     city,
     selectedCity,
-    cityResults,
     dateRange,
     detail,
     imageCount: imageFiles.length,

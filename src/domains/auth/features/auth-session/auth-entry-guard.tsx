@@ -3,6 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { type ReactNode, useEffect } from 'react';
 
+import { ROUTES } from '@/shared/config';
+
 import { useAuthSession } from './auth-session-provider';
 
 interface AuthEntryGuardProps {
@@ -15,7 +17,7 @@ export const AuthEntryGuard = ({ children }: AuthEntryGuardProps) => {
 
   useEffect(() => {
     if (status === 'unauthenticated') {
-      router.replace('/login');
+      router.replace(ROUTES.AUTH.LOGIN);
     }
   }, [router, status]);
 

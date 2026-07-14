@@ -6,15 +6,16 @@ import { useState } from 'react';
 
 import { POST_MUTATION_OPTIONS } from '@/domains/posts/api/query';
 import { cn } from '@/lib/cn';
-import { POST_QUERY_KEY } from '@/shared/api';
+import { POST_QUERY_KEY, useCitySearch, useCountryList } from '@/shared/api';
 import { Header } from '@/shared/components/layout';
 import {
   Button,
   type DateRangeTypes,
   ProgressBar,
 } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
 
-import { COUNTRY_OPTIONS, STEP_CONTENTS, TOTAL_STEP } from './constants';
+import { STEP_CONTENTS, TOTAL_STEP } from './constants';
 import type { PostCreateQuestionStep, PostCreateStep } from './model';
 import { PostCreateCityStep } from './post-create-city-step';
 import { PostCreateCountryStep } from './post-create-country-step';
@@ -50,6 +51,17 @@ export const PostCreateFlow = () => {
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const postCreateForm = usePostCreateForm();
   const createPostMutation = useMutation(POST_MUTATION_OPTIONS.CREATE());
+  const {
+    countryOptions,
+    hasMoreCountries,
+    isLoadingMoreCountries,
+    loadMoreCountries,
+  } = useCountryList();
+  const citySearch = useCitySearch({
+    countryId: postCreateForm.selectedCountry?.id,
+    keyword: postCreateForm.city,
+    selectedCity: postCreateForm.selectedCity,
+  });
 
   const canGoNext = postCreateForm.canGoNext(currentStep);
   const isSubmitStep = currentStep === TOTAL_STEP;
@@ -84,7 +96,7 @@ export const PostCreateFlow = () => {
           void queryClient.invalidateQueries({
             queryKey: POST_QUERY_KEY.ALL,
           });
-          router.replace(`/posts/${postId}`);
+          router.replace(ROUTES.POST.DETAIL(postId));
         },
       });
       return;
@@ -131,9 +143,12 @@ export const PostCreateFlow = () => {
 
           {currentStep === 1 && (
             <PostCreateCountryStep
-              options={COUNTRY_OPTIONS}
+              options={countryOptions}
               value={postCreateForm.selectedCountry}
+              hasMore={hasMoreCountries}
+              isLoadingMore={isLoadingMoreCountries}
               onChange={postCreateForm.handleCountrySelect}
+              onLoadMore={loadMoreCountries}
             />
           )}
 
@@ -141,7 +156,8 @@ export const PostCreateFlow = () => {
             <PostCreateCityStep
               city={postCreateForm.city}
               selectedCity={postCreateForm.selectedCity}
-              cityResults={postCreateForm.cityResults}
+              cityResults={citySearch.cities}
+              isCitySearchError={citySearch.isError}
               onCityChange={postCreateForm.handleCityChange}
               onCitySelect={postCreateForm.handleCitySelect}
             />

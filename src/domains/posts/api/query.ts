@@ -1,4 +1,8 @@
-import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import {
+  infiniteQueryOptions,
+  mutationOptions,
+  queryOptions,
+} from '@tanstack/react-query';
 
 import {
   apiClient,
@@ -12,8 +16,6 @@ import type {
   CreateCommentResponse,
   CreatePostRequest,
   CreatePostResponse,
-  CreatePresignedUrlRequest,
-  CreatePresignedUrlResponse,
   GetCommentsParams,
   GetCommentsResponse,
   GetPostDetailResponse,
@@ -80,19 +82,17 @@ const getComments = async (postId: number, params?: GetCommentsParams) => {
 };
 
 const createComment = async (postId: number, body: CreateCommentRequest) => {
-  return apiClient
+  const response = await apiClient
     .post(END_POINT.POST.COMMENTS(postId), {
       json: body,
     })
     .json<CreateCommentResponse>();
-};
 
-const createPresignedUrl = async (body: CreatePresignedUrlRequest) => {
-  return apiClient
-    .post(END_POINT.IMAGE.PRESIGNED_URL, {
-      json: body,
-    })
-    .json<CreatePresignedUrlResponse>();
+  if (!response.success || typeof response.data?.commentId !== 'number') {
+    throw new Error(response.message || '댓글을 등록하지 못했습니다.');
+  }
+
+  return response.data.commentId;
 };
 
 export const POST_QUERY_OPTIONS = {
@@ -100,6 +100,19 @@ export const POST_QUERY_OPTIONS = {
     queryOptions({
       queryKey: POST_QUERY_KEY.LIST(params),
       queryFn: () => getPosts(params),
+    }),
+  INFINITE_LIST: (params?: GetPostsParams) =>
+    infiniteQueryOptions({
+      queryKey: POST_QUERY_KEY.INFINITE_LIST(params),
+      queryFn: ({ pageParam }) => getPosts({ ...params, page: pageParam }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        if (!lastPage.data?.hasNext) {
+          return undefined;
+        }
+
+        return (lastPage.data.page ?? 0) + 1;
+      },
     }),
   DETAIL: (postId: number) =>
     queryOptions({
@@ -138,9 +151,5 @@ export const POST_MUTATION_OPTIONS = {
         postId: number;
         body: CreateCommentRequest;
       }) => createComment(postId, body),
-    }),
-  CREATE_PRESIGNED_URL: () =>
-    mutationOptions({
-      mutationFn: (body: CreatePresignedUrlRequest) => createPresignedUrl(body),
     }),
 };
