@@ -113,11 +113,13 @@ export const POST_QUERY_OPTIONS = {
       queryFn: ({ pageParam }) => getPosts({ ...params, page: pageParam }),
       initialPageParam: 0,
       getNextPageParam: (lastPage) => {
-        if (!lastPage.data?.hasNext) {
+        const page = lastPage.data?.page;
+
+        if (!lastPage.data?.hasNext || typeof page !== 'number') {
           return undefined;
         }
 
-        return (lastPage.data.page ?? 0) + 1;
+        return page + 1;
       },
     }),
   DETAIL: (postId: number) =>
@@ -132,11 +134,13 @@ export const POST_QUERY_OPTIONS = {
         getComments(postId, { ...params, page: pageParam }),
       initialPageParam: 0,
       getNextPageParam: (lastPage) => {
-        if (!lastPage.data?.hasNext) {
+        const page = lastPage.data?.page;
+
+        if (!lastPage.data?.hasNext || typeof page !== 'number') {
           return undefined;
         }
 
-        return (lastPage.data.page ?? 0) + 1;
+        return page + 1;
       },
     }),
 };
