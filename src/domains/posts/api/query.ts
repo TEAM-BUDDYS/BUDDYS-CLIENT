@@ -12,8 +12,6 @@ import type {
   CreateCommentResponse,
   CreatePostRequest,
   CreatePostResponse,
-  CreatePresignedUrlRequest,
-  CreatePresignedUrlResponse,
   GetCommentsParams,
   GetCommentsResponse,
   GetPostDetailResponse,
@@ -72,14 +70,6 @@ const createComment = async (postId: number, body: CreateCommentRequest) => {
     .json<CreateCommentResponse>();
 };
 
-const createPresignedUrl = async (body: CreatePresignedUrlRequest) => {
-  return apiClient
-    .post(END_POINT.IMAGE.PRESIGNED_URL, {
-      json: body,
-    })
-    .json<CreatePresignedUrlResponse>();
-};
-
 export const POST_QUERY_OPTIONS = {
   LIST: (params?: GetPostsParams) =>
     queryOptions({
@@ -122,9 +112,5 @@ export const POST_MUTATION_OPTIONS = {
         postId: number;
         body: CreateCommentRequest;
       }) => createComment(postId, body),
-    }),
-  CREATE_PRESIGNED_URL: () =>
-    mutationOptions({
-      mutationFn: (body: CreatePresignedUrlRequest) => createPresignedUrl(body),
     }),
 };
