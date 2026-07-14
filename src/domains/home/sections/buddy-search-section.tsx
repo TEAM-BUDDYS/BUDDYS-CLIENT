@@ -21,7 +21,12 @@ import {
 import { POST_QUERY_OPTIONS } from '@/domains/posts/api/query';
 import { cn } from '@/lib/cn';
 import { ChevronRightIcon } from '@/shared/components/icons';
-import { AsyncBoundary, Card, Filter } from '@/shared/components/ui';
+import {
+  AsyncBoundary,
+  Card,
+  EmptyState,
+  Filter,
+} from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
 import type { FilterSheetValue } from '../features/filter-sheet/use-filter-sheet';
@@ -44,6 +49,17 @@ const BuddySearchPostList = ({
   );
 
   const posts = (data?.data?.content ?? []).filter(hasPostCardFields);
+  const isEmpty = posts.length === 0;
+
+  if (isEmpty) {
+    return (
+      <EmptyState
+        title="조건에 맞는 동행 게시물이 없어요"
+        description="필터를 바꿔 다른 동행 게시물을 찾아보세요"
+        className="py-8"
+      />
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6 pt-6">
