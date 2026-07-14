@@ -716,6 +716,12 @@ export interface components {
       data?: components['schemas']['LoginResponse'];
     };
     LoginResponse: {
+      /**
+       * Format: int64
+       * @description 사용자 ID
+       * @example 1
+       */
+      userId?: number;
       /** @description API 인증에 사용하는 Access Token */
       accessToken?: string;
       /** @description 온보딩(성별/생년월일/태그 3개) 완료 여부 */
@@ -938,10 +944,17 @@ export interface components {
        */
       thumbnailImageUrl?: string;
       /**
-       * @description 게시글 일정 표시 텍스트
-       * @example 26.09.06 ~ 26.09.19 (13일)
+       * Format: date
+       * @description 동행 시작일
+       * @example 2026-07-23
        */
-      dateText?: string;
+      startDate?: string;
+      /**
+       * Format: date
+       * @description 동행 종료일
+       * @example 2026-07-28
+       */
+      endDate?: string;
     };
     UserPostsResponse: {
       /** @description 사용자가 작성한 게시글 목록 */
@@ -1326,7 +1339,7 @@ export interface components {
        * @description 도시 ID
        * @example 1
        */
-      cityId?: number;
+      id?: number;
       /**
        * @description 도시 이름
        * @example Tokyo
@@ -1336,7 +1349,7 @@ export interface components {
        * @description 도시 한글 이름
        * @example 도쿄
        */
-      koreanName?: string;
+      koreanName?: string | null;
     };
     ConditionsResponse: {
       /** @description 선호 나이 조건 */

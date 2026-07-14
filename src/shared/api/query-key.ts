@@ -8,6 +8,18 @@ type GetQueryParams<Path extends keyof paths> = paths[Path]['get'] extends {
   ? Query
   : never;
 
+const excludePageParam = <Params extends { page?: unknown }>(
+  params?: Params,
+) => {
+  if (!params) {
+    return {};
+  }
+
+  const { page: _page, ...restParams } = params;
+
+  return restParams;
+};
+
 export const CHAT_ROOM_QUERY_KEY = {
   ALL: ['chat-rooms'] as const,
   LIST: (params?: GetQueryParams<'/api/v1/chat-rooms'>) =>
@@ -38,12 +50,16 @@ export const POST_QUERY_KEY = {
   ALL: ['posts'] as const,
   LIST: (params?: GetQueryParams<'/api/v1/posts'>) =>
     [...POST_QUERY_KEY.ALL, 'list', params ?? {}] as const,
+  INFINITE_LIST: (params?: GetQueryParams<'/api/v1/posts'>) =>
+    [...POST_QUERY_KEY.ALL, 'infinite-list', excludePageParam(params)] as const,
   DETAIL: (postId: number) =>
     [...POST_QUERY_KEY.ALL, 'detail', postId] as const,
+  COMMENTS_ALL: (postId: number) =>
+    [...POST_QUERY_KEY.ALL, postId, 'comments'] as const,
   COMMENTS: (
     postId: number,
     params?: GetQueryParams<'/api/v1/posts/{postId}/comments'>,
-  ) => [...POST_QUERY_KEY.ALL, postId, 'comments', params ?? {}] as const,
+  ) => [...POST_QUERY_KEY.COMMENTS_ALL(postId), params ?? {}] as const,
 };
 
 export const RECOMMENDATION_QUERY_KEY = {
@@ -58,8 +74,9 @@ export const RECOMMENDATION_QUERY_KEY = {
       'exchange-country',
       params ?? {},
     ] as const,
+  POSTS_ALL: () => [...RECOMMENDATION_QUERY_KEY.ALL, 'posts'] as const,
   POSTS: (params?: GetQueryParams<'/api/v1/recommendations/posts'>) =>
-    [...RECOMMENDATION_QUERY_KEY.ALL, 'posts', params ?? {}] as const,
+    [...RECOMMENDATION_QUERY_KEY.POSTS_ALL(), params ?? {}] as const,
 };
 
 export const TAG_QUERY_KEY = {

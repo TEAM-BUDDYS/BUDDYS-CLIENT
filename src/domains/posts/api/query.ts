@@ -1,9 +1,14 @@
-import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import {
+  infiniteQueryOptions,
+  mutationOptions,
+  queryOptions,
+} from '@tanstack/react-query';
 
 import {
   apiClient,
   createSearchParams,
   END_POINT,
+  POST_MUTATION_KEY,
   POST_QUERY_KEY,
 } from '@/shared/api';
 
@@ -13,8 +18,6 @@ import type {
   CreateCommentResponse,
   CreatePostRequest,
   CreatePostResponse,
-  CreatePresignedUrlRequest,
-  CreatePresignedUrlResponse,
   GetCommentsParams,
   GetCommentsResponse,
   GetPostDetailResponse,
@@ -56,11 +59,24 @@ const updatePostStatus = async (
   postId: number,
   body: UpdatePostStatusRequest,
 ) => {
-  return apiClient
+  const response = await apiClient
     .patch(END_POINT.POST.STATUS(postId), {
       json: body,
     })
     .json<UpdatePostStatusResponse>();
+
+  const responsePostId = response.data?.postId;
+  const status = response.data?.status;
+
+  if (
+    !response.success ||
+    responsePostId !== postId ||
+    (status !== 'RECRUITING' && status !== 'COMPLETED')
+  ) {
+    throw new Error(response.message || '모집 상태를 변경하지 못했습니다.');
+  }
+
+  return { postId, status };
 };
 
 const getComments = async (postId: number, params?: GetCommentsParams) => {
@@ -72,19 +88,17 @@ const getComments = async (postId: number, params?: GetCommentsParams) => {
 };
 
 const createComment = async (postId: number, body: CreateCommentRequest) => {
-  return apiClient
+  const response = await apiClient
     .post(END_POINT.POST.COMMENTS(postId), {
       json: body,
     })
     .json<CreateCommentResponse>();
-};
 
-const createPresignedUrl = async (body: CreatePresignedUrlRequest) => {
-  return apiClient
-    .post(END_POINT.IMAGE.PRESIGNED_URL, {
-      json: body,
-    })
-    .json<CreatePresignedUrlResponse>();
+  if (!response.success || typeof response.data?.commentId !== 'number') {
+    throw new Error(response.message || '댓글을 등록하지 못했습니다.');
+  }
+
+  return response.data.commentId;
 };
 
 export const POST_QUERY_OPTIONS = {
@@ -92,6 +106,19 @@ export const POST_QUERY_OPTIONS = {
     queryOptions({
       queryKey: POST_QUERY_KEY.LIST(params),
       queryFn: () => getPosts(params),
+    }),
+  INFINITE_LIST: (params?: GetPostsParams) =>
+    infiniteQueryOptions({
+      queryKey: POST_QUERY_KEY.INFINITE_LIST(params),
+      queryFn: ({ pageParam }) => getPosts({ ...params, page: pageParam }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        if (!lastPage.data?.hasNext) {
+          return undefined;
+        }
+
+        return (lastPage.data.page ?? 0) + 1;
+      },
     }),
   DETAIL: (postId: number) =>
     queryOptions({
@@ -108,10 +135,12 @@ export const POST_QUERY_OPTIONS = {
 export const POST_MUTATION_OPTIONS = {
   CREATE: () =>
     mutationOptions({
+      mutationKey: POST_MUTATION_KEY.CREATE(),
       mutationFn: (body: CreatePostRequest) => createPost(body),
     }),
   UPDATE_STATUS: () =>
     mutationOptions({
+      mutationKey: POST_MUTATION_KEY.UPDATE_STATUS(),
       mutationFn: ({
         postId,
         body,
@@ -122,6 +151,7 @@ export const POST_MUTATION_OPTIONS = {
     }),
   CREATE_COMMENT: () =>
     mutationOptions({
+      mutationKey: POST_MUTATION_KEY.CREATE_COMMENT(),
       mutationFn: ({
         postId,
         body,
@@ -129,9 +159,5 @@ export const POST_MUTATION_OPTIONS = {
         postId: number;
         body: CreateCommentRequest;
       }) => createComment(postId, body),
-    }),
-  CREATE_PRESIGNED_URL: () =>
-    mutationOptions({
-      mutationFn: (body: CreatePresignedUrlRequest) => createPresignedUrl(body),
     }),
 };

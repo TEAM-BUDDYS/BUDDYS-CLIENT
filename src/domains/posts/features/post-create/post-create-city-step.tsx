@@ -1,22 +1,22 @@
 'use client';
 
-// TODO: OptionItem 삭제 후 서버 응답값으로 변경
+import { type City, getCityDisplayName } from '@/shared/api';
 import { OptionItem, OptionList, Searchbar } from '@/shared/components/ui';
-
-import type { LocationOption } from './model';
 
 interface PostCreateCityStepProps {
   city: string;
-  selectedCity: LocationOption | null;
-  cityResults: LocationOption[];
+  selectedCity: City | null;
+  cityResults: City[];
+  isCitySearchError: boolean;
   onCityChange: (value: string) => void;
-  onCitySelect: (value: LocationOption) => void;
+  onCitySelect: (value: City) => void;
 }
 
 export const PostCreateCityStep = ({
   city,
   selectedCity,
   cityResults,
+  isCitySearchError,
   onCityChange,
   onCitySelect,
 }: PostCreateCityStepProps) => {
@@ -42,12 +42,17 @@ export const PostCreateCityStep = ({
           {cityResults.map((cityResult) => (
             <OptionItem
               key={cityResult.id}
-              option={cityResult.name}
+              option={getCityDisplayName(cityResult, city)}
               isSelected={selectedCity?.id === cityResult.id}
               onSelect={() => onCitySelect(cityResult)}
             />
           ))}
         </OptionList>
+      )}
+      {isCitySearchError && (
+        <p className="text-caption-r-12 text-error mt-2">
+          도시 목록을 불러오지 못했습니다. 다시 검색해주세요.
+        </p>
       )}
     </div>
   );
