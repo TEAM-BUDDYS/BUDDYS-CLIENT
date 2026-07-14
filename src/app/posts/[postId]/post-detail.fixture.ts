@@ -1,6 +1,5 @@
 // TODO: API 연동 후 삭제 예정
 
-import type { PostDetailComment } from '@/domains/posts/model/comment';
 import type { PostDetail } from '@/domains/posts/model/post-detail';
 
 export const getSamplePostDetail = (postId: number): PostDetail => ({
@@ -40,18 +39,3 @@ export const getSamplePostDetail = (postId: number): PostDetail => ({
   commentCount: 2,
   createdAt: '2026-07-09T17:57:32.157461',
 });
-
-export const SAMPLE_POST_DETAIL_COMMENTS: PostDetailComment[] = [
-  {
-    commentId: 1,
-    content: '저도 관심 있어요! DM 보낼게요.',
-    author: { userId: 2, nickname: '유저 1' },
-    createdAt: '1시간 전',
-  },
-  {
-    commentId: 2,
-    content: '저도 관심 있어요! DM 보낼게요.',
-    author: { userId: 3, nickname: '유저 1' },
-    createdAt: '1시간 전',
-  },
-];

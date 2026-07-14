@@ -4,6 +4,7 @@ import { CommentItem } from '@/domains/posts/components/comment-item/comment-ite
 import type { PostDetailComment } from '@/domains/posts/model/comment';
 import { cn } from '@/lib/cn';
 import { MessageIcon } from '@/shared/components/icons';
+import { EmptyState } from '@/shared/components/ui';
 
 interface PostDetailCommentSectionProps extends HTMLAttributes<HTMLElement> {
   viewCount: number;
@@ -28,17 +29,28 @@ export const PostDetailCommentSection = ({
         </div>
       </div>
 
-      <ul className="flex flex-col gap-6">
-        {comments.map((comment) => (
-          <li key={comment.commentId}>
-            <CommentItem
-              content={comment.content}
-              author={comment.author}
-              createdAt={comment.createdAt}
-            />
-          </li>
-        ))}
-      </ul>
+      {comments.length === 0 ? (
+        <EmptyState
+          title="아직 작성된 댓글이 없어요"
+          description="첫 댓글을 남겨보세요"
+          imageWidth={120}
+          imageHeight={96}
+          className="py-8"
+        />
+      ) : (
+        <ul className="flex flex-col gap-6">
+          {comments.map((comment) => (
+            <li key={comment.commentId}>
+              <CommentItem
+                content={comment.content}
+                writerName={comment.writerName}
+                createdAt={comment.createdAt}
+                timeAgo={comment.timeAgo}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 };

@@ -1,11 +1,9 @@
 import { notFound } from 'next/navigation';
 
+import { AuthEntryGuard } from '@/domains/auth/features/auth-session/auth-entry-guard';
 import { PostDetailView } from '@/domains/posts/features/post-detail/post-detail-view';
 
-import {
-  getSamplePostDetail,
-  SAMPLE_POST_DETAIL_COMMENTS,
-} from './post-detail.fixture';
+import { getSamplePostDetail } from './post-detail.fixture';
 
 interface PostDetailPageProps {
   params: Promise<{ postId: string }>;
@@ -20,9 +18,8 @@ export default async function PostDetailPage({ params }: PostDetailPageProps) {
   }
 
   return (
-    <PostDetailView
-      post={getSamplePostDetail(parsedPostId)}
-      comments={SAMPLE_POST_DETAIL_COMMENTS}
-    />
+    <AuthEntryGuard>
+      <PostDetailView post={getSamplePostDetail(parsedPostId)} />
+    </AuthEntryGuard>
   );
 }
