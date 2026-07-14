@@ -10,3 +10,12 @@ export interface MyProfile {
   bio?: string | null;
   posts: PostItem[];
 }
+
+export interface OtherProfile {
+  imageUrl?: string | null;
+  nickname: string;
+  isVerified: boolean;
+  tags: Tag[];
+  bio?: string | null;
+  isWithdrawn: boolean;
+}

@@ -7,6 +7,7 @@ import {
   USER_QUERY_KEY,
 } from '@/shared/api';
 
+import type { OtherProfile } from '../model/profile';
 import type {
   GetMyPostsParams,
   GetMyPostsResponse,
@@ -15,6 +16,23 @@ import type {
   GetUserPostsResponse,
   GetUserProfileResponse,
 } from './type';
+
+type UserPublicProfileData = NonNullable<GetUserProfileResponse['data']>;
+type UserPublicProfileDataWithNickname = UserPublicProfileData & {
+  nickname: string;
+};
+
+const hasValidPublicNickname = (
+  data: unknown,
+): data is UserPublicProfileDataWithNickname => {
+  if (typeof data !== 'object' || data === null) {
+    return false;
+  }
+
+  const { nickname } = data as Partial<UserPublicProfileData>;
+
+  return typeof nickname === 'string';
+};
 
 const getMyProfile = async () => {
   return apiClient.get(END_POINT.USER.ME).json<GetMyProfileResponse>();
@@ -28,10 +46,39 @@ const getMyPosts = async (params?: GetMyPostsParams) => {
     .json<GetMyPostsResponse>();
 };
 
-const getUserProfile = async (userId: number) => {
-  return apiClient
+const getUserProfile = async (userId: number): Promise<OtherProfile> => {
+  const response = await apiClient
     .get(END_POINT.USER.PROFILE(userId))
     .json<GetUserProfileResponse>();
+
+  if (response.success === false) {
+    throw new Error(response.message || '프로필을 불러오지 못했습니다.');
+  }
+
+  if (!hasValidPublicNickname(response.data)) {
+    throw new Error('프로필 응답 형식이 올바르지 않습니다.');
+  }
+
+  const {
+    profileImageUrl,
+    nickname,
+    verificationBadge,
+    representativeTags,
+    bio,
+    isDeleted,
+  } = response.data;
+
+  return {
+    imageUrl: profileImageUrl || null,
+    nickname,
+    isVerified: Boolean(verificationBadge),
+    tags: (representativeTags ?? []).map((name, index) => ({
+      id: index,
+      name,
+    })),
+    bio: bio ?? null,
+    isWithdrawn: Boolean(isDeleted),
+  };
 };
 
 const getUserPosts = async (userId: number, params?: GetUserPostsParams) => {
