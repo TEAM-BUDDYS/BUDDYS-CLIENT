@@ -1,33 +1,15 @@
 import Link from 'next/link';
 
-import type { PostSummary } from '@/domains/posts/api/type';
+import type { DisplayablePreferencePost } from '@/domains/home/model/preference-buddy';
 import { CardDate } from '@/shared/components/ui/card/card-date';
 import { CommonImage } from '@/shared/components/ui/common-image/common-image';
 import { ROUTES } from '@/shared/config';
 
 interface SummaryCardProps {
-  post: PostSummary;
+  post: DisplayablePreferencePost;
 }
 
-type DisplayablePostSummary = PostSummary & {
-  postId: number;
-  title: string;
-  content: string;
-  startDate: string;
-  endDate: string;
-};
-
-const isDisplayablePostSummary = (
-  post: PostSummary,
-): post is DisplayablePostSummary => {
-  return Boolean(
-    post.postId && post.title && post.content && post.startDate && post.endDate,
-  );
-};
-
 export const SummaryCard = ({ post }: SummaryCardProps) => {
-  if (!isDisplayablePostSummary(post)) return null;
-
   return (
     <article>
       <Link

@@ -9,7 +9,7 @@ import { SectionHeader } from '@/domains/home/components/section-header/section-
 import { SummaryCard } from '@/domains/home/components/summary-card/summary-card';
 import {
   DEFAULT_PREFERENCE_TAG_NAME,
-  hasPostId,
+  isDisplayablePreferencePost,
   PREFERENCE_BUDDY_SIZE,
   PREFERENCE_TAGS,
 } from '@/domains/home/model/preference-buddy';
@@ -34,7 +34,7 @@ const PreferenceBuddyPostList = ({
     }),
   );
 
-  const posts = (data?.data?.content ?? []).filter(hasPostId);
+  const posts = (data?.data?.content ?? []).filter(isDisplayablePreferencePost);
   const isEmpty = posts.length === 0;
 
   return (

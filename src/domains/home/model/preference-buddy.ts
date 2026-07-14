@@ -13,10 +13,18 @@ export const PREFERENCE_TAGS: Tag[] = [
   { id: 6, name: '투어' },
 ];
 
-export type PostWithId = PostSummary & {
+export type DisplayablePreferencePost = PostSummary & {
   postId: number;
+  title: string;
+  content: string;
+  startDate: string;
+  endDate: string;
 };
 
-export const hasPostId = (post: PostSummary): post is PostWithId => {
-  return Boolean(post.postId);
+export const isDisplayablePreferencePost = (
+  post: PostSummary,
+): post is DisplayablePreferencePost => {
+  return Boolean(
+    post.postId && post.title && post.content && post.startDate && post.endDate,
+  );
 };

@@ -21,8 +21,54 @@ import {
 import { POST_QUERY_OPTIONS } from '@/domains/posts/api/query';
 import { cn } from '@/lib/cn';
 import { ChevronRightIcon } from '@/shared/components/icons';
-import { Card, Filter } from '@/shared/components/ui';
+import { AsyncBoundary, Card, Filter } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
+
+import type { FilterSheetValue } from '../features/filter-sheet/use-filter-sheet';
+
+interface BuddySearchPostListProps {
+  filterValue: FilterSheetValue;
+  bookmarkedItemIds: number[];
+  onBookmarkClick: (itemId: number) => void;
+}
+
+const BuddySearchPostList = ({
+  filterValue,
+  bookmarkedItemIds,
+  onBookmarkClick,
+}: BuddySearchPostListProps) => {
+  const { data } = useSuspenseQuery(
+    POST_QUERY_OPTIONS.LIST(
+      getBuddySearchParams(filterValue, BUDDY_SEARCH_SIZE),
+    ),
+  );
+
+  const posts = (data?.data?.content ?? []).filter(hasPostCardFields);
+
+  return (
+    <div className="flex flex-col gap-6 pt-6">
+      {posts.map((post) => (
+        <BookmarkContainer
+          key={post.postId}
+          isBookmarked={bookmarkedItemIds.includes(post.postId)}
+          variant="card"
+          onBookmarkClick={() => onBookmarkClick(post.postId)}
+        >
+          <Card
+            href={ROUTES.POST.DETAIL(post.postId)}
+            title={post.title}
+            content={post.content}
+            postStatus={post.recruitmentStatus}
+            tagValue={post.country.name}
+            startDate={post.startDate}
+            endDate={post.endDate}
+            image={post.thumbnailImageUrl}
+          />
+        </BookmarkContainer>
+      ))}
+    </div>
+  );
+};
 
 export const BuddySearchSection = () => {
   const router = useRouter();
@@ -31,13 +77,6 @@ export const BuddySearchSection = () => {
   const { filterValue, appliedFilterKeys, handleFilterApply } =
     useFilterSheetValue();
   const { sheetRef, sheetScrollClassName } = useSheetScroll(isFilterSheetOpen);
-  const { data } = useSuspenseQuery(
-    POST_QUERY_OPTIONS.LIST(
-      getBuddySearchParams(filterValue, BUDDY_SEARCH_SIZE),
-    ),
-  );
-
-  const posts = (data?.data?.content ?? []).filter(hasPostCardFields);
 
   const handleMoreClick = () => {
     router.push(ROUTES.CUSTOMIZED_EXPLORE);
@@ -85,27 +124,17 @@ export const BuddySearchSection = () => {
             <div aria-hidden="true" className="w-2 shrink-0" />
           </div>
         </div>
-        <div className="flex flex-col gap-6 pt-6">
-          {posts.map((post) => (
-            <BookmarkContainer
-              key={post.postId}
-              isBookmarked={bookmarkedItemIds.includes(post.postId)}
-              variant="card"
-              onBookmarkClick={() => handleBookmarkClick(post.postId)}
-            >
-              <Card
-                href={ROUTES.POST.DETAIL(post.postId)}
-                title={post.title}
-                content={post.content}
-                postStatus={post.recruitmentStatus}
-                tagValue={post.country.name}
-                startDate={post.startDate}
-                endDate={post.endDate}
-                image={post.thumbnailImageUrl}
-              />
-            </BookmarkContainer>
-          ))}
-        </div>
+        <AsyncBoundary
+          className="py-8"
+          resetKeys={[filterValue]}
+          loadingFallback={<div className="min-h-96 pt-6" aria-busy="true" />}
+        >
+          <BuddySearchPostList
+            filterValue={filterValue}
+            bookmarkedItemIds={bookmarkedItemIds}
+            onBookmarkClick={handleBookmarkClick}
+          />
+        </AsyncBoundary>
       </section>
       {isFilterSheetOpen && (
         <div
