@@ -7,16 +7,13 @@ export type GetExchangeCountryRecommendedUsersParams =
   operations['getExchangeCountryRecommendedUsers']['parameters']['query'];
 export type GetExchangeCountryRecommendedUsersResponse =
   components['schemas']['BaseResponseExchangeCountryRecommendedUserListResponse'];
+export type ExchangeCountryRecommendedUser =
+  components['schemas']['ExchangeCountryRecommendedUserResponse'];
 
 export type GetRecommendedPostsParams =
   operations['getRecommendedPosts']['parameters']['query'];
 export type GetRecommendedPostsResponse =
   components['schemas']['BaseResponseRecommendedPostListResponse'];
-
-export type GetCountriesParams =
-  operations['getCountries']['parameters']['query'];
-export type GetCountriesResponse =
-  components['schemas']['BaseResponseCountryListResponse'];
 
 export type SearchCountriesParams =
   operations['searchCountries']['parameters']['query'];

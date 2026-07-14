@@ -7,14 +7,6 @@ export const GENDER_OPTIONS = [
   { label: '여자', value: 'FEMALE' },
 ] satisfies { label: string; value: GenderType }[];
 
-export const ONBOARD_COUNTRY_OPTIONS = [
-  { id: 1, name: '프랑스' },
-  { id: 2, name: '미국' },
-  { id: 3, name: '영국' },
-  { id: 5, name: '일본' },
-  { id: 6, name: '호주' },
-] as const;
-
 export const INTEREST_CITY_OPTIONS_BY_COUNTRY_ID = {
   2: [{ id: 2001, name: 'New York', koreanName: '뉴욕' }],
 } as const;

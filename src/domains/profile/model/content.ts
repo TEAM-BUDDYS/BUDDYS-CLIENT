@@ -1,5 +1,5 @@
 export interface PostItem {
-  id: string;
+  id: number;
   title: string;
   content: string;
   startDate: string;
