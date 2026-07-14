@@ -108,10 +108,19 @@ export const POST_QUERY_OPTIONS = {
       queryKey: POST_QUERY_KEY.DETAIL(postId),
       queryFn: () => getPostDetail(postId),
     }),
-  COMMENTS: (postId: number, params?: GetCommentsParams) =>
-    queryOptions({
-      queryKey: POST_QUERY_KEY.COMMENTS(postId, params),
-      queryFn: () => getComments(postId, params),
+  INFINITE_COMMENTS: (postId: number, params?: GetCommentsParams) =>
+    infiniteQueryOptions({
+      queryKey: POST_QUERY_KEY.INFINITE_COMMENTS(postId, params),
+      queryFn: ({ pageParam }) =>
+        getComments(postId, { ...params, page: pageParam }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        if (!lastPage.data?.hasNext) {
+          return undefined;
+        }
+
+        return (lastPage.data.page ?? 0) + 1;
+      },
     }),
 };
 

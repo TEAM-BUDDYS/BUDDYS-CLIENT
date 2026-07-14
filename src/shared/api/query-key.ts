@@ -54,10 +54,17 @@ export const POST_QUERY_KEY = {
     [...POST_QUERY_KEY.ALL, 'infinite-list', excludePageParam(params)] as const,
   DETAIL: (postId: number) =>
     [...POST_QUERY_KEY.ALL, 'detail', postId] as const,
-  COMMENTS: (
+  COMMENTS: (postId: number) =>
+    [...POST_QUERY_KEY.ALL, postId, 'comments'] as const,
+  INFINITE_COMMENTS: (
     postId: number,
     params?: GetQueryParams<'/api/v1/posts/{postId}/comments'>,
-  ) => [...POST_QUERY_KEY.ALL, postId, 'comments', params ?? {}] as const,
+  ) =>
+    [
+      ...POST_QUERY_KEY.COMMENTS(postId),
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
 };
 
 export const RECOMMENDATION_QUERY_KEY = {
