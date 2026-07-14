@@ -11,16 +11,9 @@ import {
 import type {
   GetExchangeCountryRecommendedUsersParams,
   GetExchangeCountryRecommendedUsersResponse,
-  GetRecommendedUsersResponse,
   SearchCountriesParams,
   SearchCountriesResponse,
 } from './type';
-
-const getRecommendedUsers = async () => {
-  return apiClient
-    .get(END_POINT.RECOMMENDATION.USERS)
-    .json<GetRecommendedUsersResponse>();
-};
 
 const getExchangeCountryRecommendedUsers = async (
   params?: GetExchangeCountryRecommendedUsersParams,
@@ -41,11 +34,6 @@ const searchCountries = async (params: SearchCountriesParams) => {
 };
 
 export const HOME_QUERY_OPTIONS = {
-  RECOMMENDED_USERS: () =>
-    queryOptions({
-      queryKey: RECOMMENDATION_QUERY_KEY.USERS(),
-      queryFn: getRecommendedUsers,
-    }),
   EXCHANGE_COUNTRY_RECOMMENDED_USERS: (
     params?: GetExchangeCountryRecommendedUsersParams,
   ) =>

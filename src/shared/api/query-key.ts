@@ -88,7 +88,8 @@ export const POST_QUERY_KEY = {
 
 export const RECOMMENDATION_QUERY_KEY = {
   ALL: ['recommendations'] as const,
-  USERS: () => [...RECOMMENDATION_QUERY_KEY.ALL, 'users'] as const,
+  USERS: (params?: GetQueryParams<'/api/v1/recommendations/users'>) =>
+    [...RECOMMENDATION_QUERY_KEY.ALL, 'users', params ?? {}] as const,
   USERS_BY_EXCHANGE_COUNTRY: (
     params?: GetQueryParams<'/api/v1/recommendations/users/exchange-country'>,
   ) =>
