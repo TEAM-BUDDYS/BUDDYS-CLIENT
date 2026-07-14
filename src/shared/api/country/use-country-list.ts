@@ -5,8 +5,9 @@ import { COUNTRY_QUERY_OPTIONS } from './query';
 export const useCountryList = () => {
   const countriesQuery = useSuspenseInfiniteQuery(COUNTRY_QUERY_OPTIONS.LIST());
 
-  const countryOptions =
-    countriesQuery.data?.pages.flatMap((page) => page.countries) ?? [];
+  const countryOptions = countriesQuery.data.pages.flatMap(
+    (page) => page.countries,
+  );
 
   const loadMoreCountries = () => {
     if (countriesQuery.hasNextPage && !countriesQuery.isFetchingNextPage) {
