@@ -534,13 +534,13 @@ export interface components {
        */
       ageConditions: ('EARLY_20S' | 'MID_20S' | 'LATE_20S' | 'OVER_30S')[];
       /**
-       * @description 성별 조건. ANY(상관없음), MALE(남성), FEMALE(여성). 중복 선택 가능
+       * @description 성별 조건. MALE(남성), FEMALE(여성). 성별 무관은 모두 선택
        * @example [
        *       "MALE",
        *       "FEMALE"
        *     ]
        */
-      genderConditions: ('ANY' | 'MALE' | 'FEMALE')[];
+      genderConditions: ('MALE' | 'FEMALE')[];
       /**
        * @description 동행 유형. FULL_TRIP(여행 전체 동행), PARTIAL_TRIP(여행 부분 동행), ACCOMMODATION_SHARE(숙박 공유), TOUR(투어 동행), MEAL(식사 동행), DAILY_LIFE(생활 동행), GROUP_PURCHASE(공동 구매)
        * @example FULL_TRIP
@@ -792,7 +792,7 @@ export interface components {
        * @example FEMALE
        * @enum {string}
        */
-      gender: 'MALE' | 'FEMALE' | 'OTHER';
+      gender: 'MALE' | 'FEMALE';
       /**
        * Format: date
        * @description 생년월일
@@ -938,10 +938,17 @@ export interface components {
        */
       thumbnailImageUrl?: string;
       /**
-       * @description 게시글 일정 표시 텍스트
-       * @example 26.09.06 ~ 26.09.19 (13일)
+       * Format: date
+       * @description 동행 시작일
+       * @example 2026-07-23
        */
-      dateText?: string;
+      startDate?: string;
+      /**
+       * Format: date
+       * @description 동행 종료일
+       * @example 2026-07-28
+       */
+      endDate?: string;
     };
     UserPostsResponse: {
       /** @description 사용자가 작성한 게시글 목록 */
@@ -1312,7 +1319,7 @@ export interface components {
        * @example FEMALE
        * @enum {string}
        */
-      gender?: 'MALE' | 'FEMALE' | 'OTHER';
+      gender?: 'MALE' | 'FEMALE';
     };
     BaseResponsePostDetailResponse: {
       success?: boolean;
@@ -1344,10 +1351,11 @@ export interface components {
       /**
        * @description 성별 조건
        * @example [
-       *       "ANY"
+       *       "MALE",
+       *       "FEMALE"
        *     ]
        */
-      genderConditions?: ('ANY' | 'MALE' | 'FEMALE')[];
+      genderConditions?: ('MALE' | 'FEMALE')[];
       /**
        * @description 동행 유형
        * @example MEAL
@@ -1737,7 +1745,7 @@ export interface operations {
         /** @description 나이 조건 목록 */
         ageConditions?: ('EARLY_20S' | 'MID_20S' | 'LATE_20S' | 'OVER_30S')[];
         /** @description 성별 조건 목록 */
-        genderConditions?: ('ANY' | 'MALE' | 'FEMALE')[];
+        genderConditions?: ('MALE' | 'FEMALE')[];
         /** @description 동행 유형 목록 */
         companionTypes?: (
           | 'FULL_TRIP'

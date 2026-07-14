@@ -3,7 +3,9 @@
 import Link from 'next/link';
 
 import type { RecommendedPost } from '@/shared/api/recommended-posts/type';
+import { defaultProfileImage } from '@/shared/assets/illustrations';
 import { CommonImage } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
 import { useCarouselIndex } from '@/shared/hooks/use-carousel-index';
 
 import { CarouselIndicator } from './carousel-indicator';
@@ -13,7 +15,6 @@ type RenderableRecommendedPost = RecommendedPost & {
   postId: number;
   title: string;
   thumbnailUrl: string;
-  authorProfileImageUrl: string;
   country: {
     name: string;
   };
@@ -31,7 +32,6 @@ const isRenderableRecommendedPost = (
     post.postId &&
     post.title &&
     post.thumbnailUrl &&
-    post.authorProfileImageUrl &&
     post.country?.name &&
     post.viewCount !== undefined,
   );
@@ -52,7 +52,7 @@ export const Carousel = ({ posts }: CarouselProps) => {
           {items.map((item) => (
             <Link
               key={item.postId}
-              href={`/posts/${item.postId}`}
+              href={ROUTES.POST.DETAIL(item.postId)}
               className="relative block aspect-[412/264] w-full shrink-0 overflow-hidden rounded-lg"
             >
               <CommonImage
@@ -69,7 +69,9 @@ export const Carousel = ({ posts }: CarouselProps) => {
 
               <div className="absolute bottom-5 left-5">
                 <CarouselInfo
-                  authorProfileImageUrl={item.authorProfileImageUrl}
+                  authorProfileImageUrl={
+                    item.authorProfileImageUrl || defaultProfileImage.src
+                  }
                   title={item.title}
                   country={item.country.name}
                   viewCount={item.viewCount}
