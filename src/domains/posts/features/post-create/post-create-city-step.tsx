@@ -7,6 +7,7 @@ interface PostCreateCityStepProps {
   city: string;
   selectedCity: City | null;
   cityResults: City[];
+  isCitySearchError: boolean;
   onCityChange: (value: string) => void;
   onCitySelect: (value: City) => void;
 }
@@ -15,6 +16,7 @@ export const PostCreateCityStep = ({
   city,
   selectedCity,
   cityResults,
+  isCitySearchError,
   onCityChange,
   onCitySelect,
 }: PostCreateCityStepProps) => {
@@ -46,6 +48,11 @@ export const PostCreateCityStep = ({
             />
           ))}
         </OptionList>
+      )}
+      {isCitySearchError && (
+        <p className="text-caption-r-12 text-error mt-2">
+          도시 목록을 불러오지 못했습니다. 다시 검색해주세요.
+        </p>
       )}
     </div>
   );

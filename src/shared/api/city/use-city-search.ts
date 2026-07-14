@@ -24,10 +24,15 @@ export const useCitySearch = ({
     countryId && trimmedKeyword && selectedCityLabel !== keyword,
   );
 
-  const { data = [] } = useQuery({
+  const citySearchQuery = useQuery({
     ...CITY_QUERY_OPTIONS.SEARCH(countryId ?? 0, trimmedKeyword),
     enabled,
   });
 
-  return data;
+  return {
+    cities: citySearchQuery.data ?? [],
+    error: citySearchQuery.error,
+    isError: citySearchQuery.isError,
+    isFetching: citySearchQuery.isFetching,
+  };
 };

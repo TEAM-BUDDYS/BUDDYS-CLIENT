@@ -14,6 +14,7 @@ interface OnboardInterestLocationStepProps {
   city: string;
   selectedCity: City | null;
   cityResults: City[];
+  isCitySearchError: boolean;
   onCountryChange: (value: OnboardLocationOption) => void;
   onLoadMoreCountries: () => void;
   onCityChange: (value: string) => void;
@@ -28,6 +29,7 @@ export const OnboardInterestLocationStep = ({
   city,
   selectedCity,
   cityResults,
+  isCitySearchError,
   onCountryChange,
   onLoadMoreCountries,
   onCityChange,
@@ -65,8 +67,16 @@ export const OnboardInterestLocationStep = ({
           onChange={onCityChange}
           onSelect={onCitySelect}
         />
-        <span className="text-caption-r-12 text-gray-500">
-          한글로 검색이 안 된다면 영어로 검색해보세요.
+        <span
+          className={
+            isCitySearchError
+              ? 'text-caption-r-12 text-error'
+              : 'text-caption-r-12 text-gray-500'
+          }
+        >
+          {isCitySearchError
+            ? '도시 목록을 불러오지 못했습니다. 다시 검색해주세요.'
+            : '한글로 검색이 안 된다면 영어로 검색해보세요.'}
         </span>
       </div>
     </div>

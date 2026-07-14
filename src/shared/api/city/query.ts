@@ -31,7 +31,7 @@ const searchCities = async (countryId: number, params: SearchCitiesParams) => {
     throw new Error(response.message || '도시 목록을 불러오지 못했습니다.');
   }
 
-  const cities = response.data?.cities ?? [];
+  const cities = response.data?.cities;
 
   if (!Array.isArray(cities) || !cities.every(isCityResponse)) {
     throw new Error('도시 목록 응답 형식이 올바르지 않습니다.');

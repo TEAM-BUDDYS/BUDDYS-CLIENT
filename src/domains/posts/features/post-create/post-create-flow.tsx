@@ -52,7 +52,7 @@ export const PostCreateFlow = () => {
     isLoadingMoreCountries,
     loadMoreCountries,
   } = useCountryList();
-  const cityResults = useCitySearch({
+  const citySearch = useCitySearch({
     countryId: postCreateForm.selectedCountry?.id,
     keyword: postCreateForm.city,
     selectedCity: postCreateForm.selectedCity,
@@ -140,7 +140,8 @@ export const PostCreateFlow = () => {
             <PostCreateCityStep
               city={postCreateForm.city}
               selectedCity={postCreateForm.selectedCity}
-              cityResults={cityResults}
+              cityResults={citySearch.cities}
+              isCitySearchError={citySearch.isError}
               onCityChange={postCreateForm.handleCityChange}
               onCitySelect={postCreateForm.handleCitySelect}
             />

@@ -57,7 +57,7 @@ export const OnboardFlow = () => {
     isLoadingMoreCountries,
     loadMoreCountries,
   } = useCountryList();
-  const interestCityResults = useCitySearch({
+  const interestCitySearch = useCitySearch({
     countryId: onboardForm.interestCountry?.id,
     keyword: onboardForm.interestCity,
     selectedCity: onboardForm.selectedInterestCity,
@@ -110,7 +110,8 @@ export const OnboardFlow = () => {
             isLoadingMoreCountries={isLoadingMoreCountries}
             city={onboardForm.interestCity}
             selectedCity={onboardForm.selectedInterestCity}
-            cityResults={interestCityResults}
+            cityResults={interestCitySearch.cities}
+            isCitySearchError={interestCitySearch.isError}
             onCountryChange={onboardForm.handleInterestCountrySelect}
             onLoadMoreCountries={loadMoreCountries}
             onCityChange={onboardForm.handleInterestCityChange}
