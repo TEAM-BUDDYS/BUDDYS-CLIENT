@@ -243,7 +243,7 @@ export const useOnboardForm = () => {
   };
 
   const getOnboardingFormPayload = (
-    profileImageUrl: string,
+    profileImageUrl: string | null,
   ): OnboardingFormPayload | null => {
     if (
       !interestCountry ||
