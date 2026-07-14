@@ -18,9 +18,11 @@ import type {
 } from './type';
 
 type UserProfileData = NonNullable<GetMyProfileResponse['data']>;
-type ValidatedUserProfileData = UserProfileData & { nickname: string };
+type UserProfileDataWithNickname = UserProfileData & { nickname: string };
 
-const isUserProfileData = (data: unknown): data is ValidatedUserProfileData => {
+const hasValidNickname = (
+  data: unknown,
+): data is UserProfileDataWithNickname => {
   if (typeof data !== 'object' || data === null) {
     return false;
   }
@@ -39,7 +41,7 @@ const getMyProfile = async (): Promise<MyProfile> => {
     throw new Error(response.message || '프로필을 불러오지 못했습니다.');
   }
 
-  if (!isUserProfileData(response.data)) {
+  if (!hasValidNickname(response.data)) {
     throw new Error('프로필 응답 형식이 올바르지 않습니다.');
   }
 
