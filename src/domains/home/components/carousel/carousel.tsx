@@ -53,7 +53,7 @@ export const Carousel = ({ posts }: CarouselProps) => {
             <Link
               key={item.postId}
               href={`/posts/${item.postId}`}
-              className="relative block w-full shrink-0 overflow-hidden rounded-lg"
+              className="relative block aspect-[412/264] w-full shrink-0 overflow-hidden rounded-lg"
             >
               <CommonImage
                 src={item.thumbnailUrl}
@@ -62,7 +62,7 @@ export const Carousel = ({ posts }: CarouselProps) => {
                 height={264}
                 unoptimized
                 radius="rounded-lg"
-                className="block w-full"
+                className="block size-full"
               />
 
               <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/40" />

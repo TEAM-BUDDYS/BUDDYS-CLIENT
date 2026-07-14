@@ -17,6 +17,7 @@ export const TodayBuddySection = () => {
   const { data } = useQuery(
     RECOMMENDATION_QUERY_OPTIONS.RECOMMENDED_POSTS({
       size: TODAY_BUDDY_SIZE,
+      requireImage: true,
     }),
   );
 

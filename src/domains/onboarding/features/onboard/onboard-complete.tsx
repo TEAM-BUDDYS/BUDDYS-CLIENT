@@ -41,6 +41,7 @@ export const OnboardComplete = ({
   const { data } = useQuery(
     RECOMMENDATION_QUERY_OPTIONS.RECOMMENDED_POSTS({
       size: RECOMMENDED_POST_SIZE,
+      requireImage: false,
     }),
   );
 
