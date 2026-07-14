@@ -534,13 +534,13 @@ export interface components {
        */
       ageConditions: ('EARLY_20S' | 'MID_20S' | 'LATE_20S' | 'OVER_30S')[];
       /**
-       * @description 성별 조건. ANY(상관없음), MALE(남성), FEMALE(여성). 중복 선택 가능
+       * @description 성별 조건. MALE(남성), FEMALE(여성). 성별 무관은 모두 선택
        * @example [
        *       "MALE",
        *       "FEMALE"
        *     ]
        */
-      genderConditions: ('ANY' | 'MALE' | 'FEMALE')[];
+      genderConditions: ('MALE' | 'FEMALE')[];
       /**
        * @description 동행 유형. FULL_TRIP(여행 전체 동행), PARTIAL_TRIP(여행 부분 동행), ACCOMMODATION_SHARE(숙박 공유), TOUR(투어 동행), MEAL(식사 동행), DAILY_LIFE(생활 동행), GROUP_PURCHASE(공동 구매)
        * @example FULL_TRIP
@@ -642,6 +642,24 @@ export interface components {
        * @example 204800
        */
       fileSize: number;
+    };
+    BaseResponsePresignedUrlResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['PresignedUrlResponse'];
+    };
+    PresignedUrlResponse: {
+      /**
+       * @description 클라이언트가 파일을 PUT할 presigned URL. 발급 후 5분간만 유효합니다.
+       * @example https://buddys-assets.s3.ap-northeast-2.amazonaws.com/posts/3f1e...jpg?X-Amz-Algorithm=...
+       */
+      uploadUrl?: string;
+      /**
+       * @description 업로드 완료 후 게시글/프로필 등록 시 사용할 최종 이미지 URL
+       * @example https://buddys-assets.s3.ap-northeast-2.amazonaws.com/posts/3f1e....jpg
+       */
+      imageUrl?: string;
     };
     CreateChatRoomRequest: {
       /**
@@ -774,7 +792,7 @@ export interface components {
        * @example FEMALE
        * @enum {string}
        */
-      gender: 'MALE' | 'FEMALE' | 'OTHER';
+      gender: 'MALE' | 'FEMALE';
       /**
        * Format: date
        * @description 생년월일
@@ -1066,19 +1084,6 @@ export interface components {
       message?: string;
       data?: components['schemas']['ExchangeCountryRecommendedUserListResponse'];
     };
-    CountryResponse: {
-      /**
-       * Format: int64
-       * @description 국가 ID
-       * @example 1
-       */
-      countryId?: number;
-      /**
-       * @description 국가 이름
-       * @example France
-       */
-      name?: string;
-    };
     ExchangeCountryRecommendedUserListResponse: {
       /** @description 추천 사용자 목록 */
       users?: components['schemas']['ExchangeCountryRecommendedUserResponse'][];
@@ -1096,7 +1101,7 @@ export interface components {
        */
       nickname?: string;
       /** @description 파견 국가 */
-      exchangeCountry?: components['schemas']['CountryResponse'];
+      exchangeCountry?: components['schemas']['ExchangeCountryResponse'];
       /**
        * @description 연령대
        * @example 20대
@@ -1114,11 +1119,37 @@ export interface components {
        */
       profileImageUrl?: string;
     };
+    ExchangeCountryResponse: {
+      /**
+       * Format: int64
+       * @description 국가 ID
+       * @example 1
+       */
+      countryId?: number;
+      /**
+       * @description 국가 이름
+       * @example France
+       */
+      name?: string;
+    };
     BaseResponseRecommendedPostListResponse: {
       success?: boolean;
       code?: string;
       message?: string;
       data?: components['schemas']['RecommendedPostListResponse'];
+    };
+    CountryResponse: {
+      /**
+       * Format: int64
+       * @description 국가 ID
+       * @example 1
+       */
+      countryId?: number;
+      /**
+       * @description 국가 이름
+       * @example France
+       */
+      name?: string;
     };
     PeriodResponse: {
       /**
@@ -1281,7 +1312,7 @@ export interface components {
        * @example FEMALE
        * @enum {string}
        */
-      gender?: 'MALE' | 'FEMALE' | 'OTHER';
+      gender?: 'MALE' | 'FEMALE';
     };
     BaseResponsePostDetailResponse: {
       success?: boolean;
@@ -1313,10 +1344,11 @@ export interface components {
       /**
        * @description 성별 조건
        * @example [
-       *       "ANY"
+       *       "MALE",
+       *       "FEMALE"
        *     ]
        */
-      genderConditions?: ('ANY' | 'MALE' | 'FEMALE')[];
+      genderConditions?: ('MALE' | 'FEMALE')[];
       /**
        * @description 동행 유형
        * @example MEAL
@@ -1331,11 +1363,11 @@ export interface components {
         | 'DAILY_LIFE'
         | 'GROUP_PURCHASE';
       /** @description 활동 태그 목록 */
-      activityTags?: components['schemas']['TagResponse'][];
+      activityTags?: components['schemas']['PostTagResponse'][];
       /** @description 관심사 태그 목록 */
-      interestTags?: components['schemas']['TagResponse'][];
+      interestTags?: components['schemas']['PostTagResponse'][];
       /** @description 여행 스타일 태그 목록 */
-      travelStyleTags?: components['schemas']['TagResponse'][];
+      travelStyleTags?: components['schemas']['PostTagResponse'][];
     };
     PostDetailResponse: {
       /**
@@ -1417,6 +1449,19 @@ export interface components {
        */
       createdAt?: string;
     };
+    PostTagResponse: {
+      /**
+       * Format: int64
+       * @description 태그 ID
+       * @example 1
+       */
+      tagId?: number;
+      /**
+       * @description 태그 이름
+       * @example 맛집
+       */
+      name?: string;
+    };
     BaseResponseCommentListResponse: {
       success?: boolean;
       code?: string;
@@ -1486,6 +1531,51 @@ export interface components {
       /** Format: int32 */
       size?: number;
       hasNext?: boolean;
+    };
+    BaseResponseUniversityListResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['UniversityListResponse'];
+    };
+    UniversityListResponse: {
+      /** @description 검색된 대학교 목록. keyword가 없으면 항상 빈 리스트입니다. */
+      universities?: components['schemas']['UniversityResponse'][];
+      /**
+       * Format: int32
+       * @description 현재 페이지 번호 (0부터 시작)
+       * @example 0
+       */
+      page?: number;
+      /**
+       * Format: int32
+       * @description 페이지 크기
+       * @example 20
+       */
+      size?: number;
+      /**
+       * @description 다음 페이지 존재 여부
+       * @example false
+       */
+      hasNext?: boolean;
+    };
+    UniversityResponse: {
+      /**
+       * Format: int64
+       * @description 대학교 ID
+       * @example 1
+       */
+      id?: number;
+      /**
+       * @description 대학교 이름
+       * @example Yonsei University
+       */
+      name?: string;
+      /**
+       * @description 대학교 도메인
+       * @example yonsei.ac.kr
+       */
+      domain?: string | null;
     };
     BaseResponseCityListResponse: {
       success?: boolean;
@@ -1648,7 +1738,7 @@ export interface operations {
         /** @description 나이 조건 목록 */
         ageConditions?: ('EARLY_20S' | 'MID_20S' | 'LATE_20S' | 'OVER_30S')[];
         /** @description 성별 조건 목록 */
-        genderConditions?: ('ANY' | 'MALE' | 'FEMALE')[];
+        genderConditions?: ('MALE' | 'FEMALE')[];
         /** @description 동행 유형 목록 */
         companionTypes?: (
           | 'FULL_TRIP'
@@ -2027,6 +2117,15 @@ export interface operations {
       };
     };
     responses: {
+      /** @description 발급 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponsePresignedUrlResponse'];
+        };
+      };
       /** @description 지원하지 않는 이미지 형식 */
       400: {
         headers: {
@@ -3125,6 +3224,11 @@ export interface operations {
          * @example 4
          */
         size?: number;
+        /**
+         * @description 이미지 있는 게시물만 조회할지 여부. true면 이미지 있는 게시물만 조회, false면 이미지 없는 게시물도 포함
+         * @example false
+         */
+        requireImage?: boolean;
       };
       header?: never;
       path?: never;
@@ -3399,26 +3503,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          /**
-           * @example {
-           *       "success": true,
-           *       "code": "GLB-S001",
-           *       "message": "요청이 성공했습니다.",
-           *       "data": {
-           *         "universities": [
-           *           {
-           *             "id": 1,
-           *             "name": "Yonsei University",
-           *             "domain": "yonsei.ac.kr"
-           *           }
-           *         ],
-           *         "page": 0,
-           *         "size": 20,
-           *         "hasNext": false
-           *       }
-           *     }
-           */
-          'application/json': unknown;
+          '*/*': components['schemas']['BaseResponseUniversityListResponse'];
         };
       };
       /** @description 잘못된 요청 */
