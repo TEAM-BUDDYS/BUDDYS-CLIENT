@@ -1,3 +1,10 @@
+import { ChatRoom } from '../model/chat-list';
+
+export interface ChatRoomListUpdatedResponse {
+  type: 'CHAT_ROOM_UPDATED';
+  chatRoom: ChatRoom;
+}
+
 export interface SendChatMessageRequest {
   content: string;
 }

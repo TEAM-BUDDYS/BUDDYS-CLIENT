@@ -1,12 +1,14 @@
 'use client';
 
 import {
+  useQueryClient,
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
 } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAuthSession } from '@/domains/auth/features/auth-session/auth-session-provider';
+import { CHAT_ROOM_QUERY_KEY } from '@/shared/api';
 import { Header } from '@/shared/components/layout';
 import { BottomActionBar } from '@/shared/components/ui';
 
@@ -24,6 +26,7 @@ interface ChatRoomProps {
 }
 
 export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
+  const queryClient = useQueryClient();
   const { userId: currentUserId } = useAuthSession();
   const [message, setMessage] = useState('');
   const [realtimeMessages, setRealtimeMessages] = useState<ChatMessageData[]>(
@@ -121,6 +124,10 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
 
     if (isSent) {
       setMessage('');
+
+      void queryClient.invalidateQueries({
+        queryKey: CHAT_ROOM_QUERY_KEY.ALL,
+      });
     }
   };
 
