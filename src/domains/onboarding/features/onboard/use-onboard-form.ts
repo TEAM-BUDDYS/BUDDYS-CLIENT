@@ -1,18 +1,18 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { formatDateInput } from '@/shared/utils/format-date-input';
 import type { GenderType } from '@/types/gender';
 
+import { ONBOARDING_QUERY_OPTIONS } from '../../api/query';
+import { useDebouncedValue } from '../../hooks/use-debounced-value';
 import type { OnboardLocationOption, OnboardStep } from '../../model/onboard';
 import type { OnboardingFormPayload } from '../../model/onboarding-form';
 import { isValidDate } from '../../utils/is-valid-date';
 import { isValidYearMonth } from '../../utils/is-valid-year-month';
-import {
-  EXCHANGE_SCHOOL_OPTIONS_BY_COUNTRY_ID,
-  INTEREST_CITY_OPTIONS_BY_COUNTRY_ID,
-} from './constant';
+import { INTEREST_CITY_OPTIONS_BY_COUNTRY_ID } from './constant';
 
 const getOptionsByCountry = <
   TOptions extends Record<number, readonly OnboardLocationOption[]>,
@@ -77,21 +77,36 @@ export const useOnboardForm = () => {
     INTEREST_CITY_OPTIONS_BY_COUNTRY_ID,
     interestCountry?.id,
   );
-  const exchangeSchoolOptions = getOptionsByCountry(
-    EXCHANGE_SCHOOL_OPTIONS_BY_COUNTRY_ID,
-    exchangeCountry?.id,
-  );
 
   const interestCityResults = getSearchResults(
     interestCityOptions,
     interestCity,
     selectedInterestCity,
   );
-  const exchangeSchoolResults = getSearchResults(
-    exchangeSchoolOptions,
-    exchangeSchool,
-    selectedExchangeSchool,
-  );
+
+  const debouncedExchangeSchool = useDebouncedValue(exchangeSchool, 300);
+  const shouldSearchExchangeSchool =
+    Boolean(exchangeCountry) &&
+    Boolean(debouncedExchangeSchool.trim()) &&
+    getOptionDisplayName(selectedExchangeSchool) !== exchangeSchool;
+
+  const { data: universitySearchResponse } = useQuery({
+    ...ONBOARDING_QUERY_OPTIONS.UNIVERSITY_SEARCH(
+      exchangeCountry?.id ?? 0,
+      debouncedExchangeSchool.trim(),
+    ),
+    enabled: shouldSearchExchangeSchool,
+  });
+
+  const exchangeSchoolResults: OnboardLocationOption[] =
+    shouldSearchExchangeSchool
+      ? (universitySearchResponse?.data?.universities ?? []).flatMap(
+          (university) =>
+            university.id !== undefined && university.name !== undefined
+              ? [{ id: university.id, name: university.name }]
+              : [],
+        )
+      : [];
 
   const handleInterestCountrySelect = (value: OnboardLocationOption) => {
     const shouldResetCity = interestCountry?.id !== value.id;

@@ -11,10 +11,6 @@ export const INTEREST_CITY_OPTIONS_BY_COUNTRY_ID = {
   2: [{ id: 2001, name: 'New York', koreanName: '뉴욕' }],
 } as const;
 
-export const EXCHANGE_SCHOOL_OPTIONS_BY_COUNTRY_ID = {
-  2: [{ id: 2001, name: '뉴욕 대학교' }],
-} as const;
-
 export const RECOMMENDED_PROFILE = {
   nickname: '버디즈웹화이팅',
   similarityScore: 99,
