@@ -26,10 +26,10 @@ export const PostDetailComments = ({
   const [comment, setComment] = useState('');
   const createCommentMutation = useMutation({
     ...POST_MUTATION_OPTIONS.CREATE_COMMENT(),
-    onSuccess: async () => {
+    onSuccess: () => {
       setComment('');
 
-      await Promise.all([
+      void Promise.all([
         queryClient.invalidateQueries({
           queryKey: POST_QUERY_KEY.COMMENTS_ALL(postId),
         }),
