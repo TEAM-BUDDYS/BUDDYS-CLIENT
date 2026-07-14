@@ -8,6 +8,7 @@ import { CHAT_STOMP_DESTINATION } from '../api/stomp-destination';
 import type {
   ReceiveChatMessageResponse,
   SendChatMessageRequest,
+  SendChatReadRequest,
 } from '../api/stomp-type';
 
 interface UseChatRoomStompParams {
@@ -83,8 +84,32 @@ export const useChatRoomStomp = ({
     [chatRoomId, connectionStatus, publish],
   );
 
+  const markChatRoomAsRead = useCallback(
+    (lastReadMessageId: number) => {
+      if (connectionStatus !== 'connected') {
+        console.error('[CHAT] STOMP is not connected');
+        return false;
+      }
+
+      const body: SendChatReadRequest = {
+        lastReadMessageId,
+      };
+
+      try {
+        publish(CHAT_STOMP_DESTINATION.READ(chatRoomId), JSON.stringify(body));
+
+        return true;
+      } catch (error) {
+        console.error('[CHAT] Failed to mark chat room as read', error);
+        return false;
+      }
+    },
+    [chatRoomId, connectionStatus, publish],
+  );
+
   return {
     sendMessage,
+    markChatRoomAsRead,
     isConnected: connectionStatus === 'connected',
   };
 };

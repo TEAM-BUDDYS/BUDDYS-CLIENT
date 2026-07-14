@@ -16,3 +16,7 @@ export interface ReceiveChatMessageResponse {
     sentAt: string;
   };
 }
+
+export interface SendChatReadRequest {
+  lastReadMessageId: number;
+}
