@@ -1,6 +1,13 @@
 export { apiClient } from './api-client';
 export { setAccessToken, setAccessTokenRefreshHandler } from './auth-token';
 export {
+  type City,
+  CITY_QUERY_OPTIONS,
+  getCityDisplayName,
+  type SearchCitiesParams,
+  useCitySearch,
+} from './city';
+export {
   type Country,
   COUNTRY_QUERY_OPTIONS,
   type CountryPage,
@@ -8,6 +15,7 @@ export {
   useCountryList,
 } from './country';
 export { END_POINT } from './end-point';
+export { POST_MUTATION_KEY } from './mutation-key';
 export {
   CHAT_ROOM_QUERY_KEY,
   COUNTRY_QUERY_KEY,
@@ -16,5 +24,6 @@ export {
   TAG_QUERY_KEY,
   USER_QUERY_KEY,
 } from './query-key';
+export { RECOMMENDATION_QUERY_OPTIONS } from './recommended-posts/query';
 export { createSearchParams } from './search-params';
 export { type PreferenceTag, TAG_QUERY_OPTIONS, type TagType } from './tag';

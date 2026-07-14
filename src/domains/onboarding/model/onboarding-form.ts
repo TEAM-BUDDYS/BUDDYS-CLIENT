@@ -17,5 +17,5 @@ export interface OnboardingFormPayload {
   gender: GenderType;
   birthDate: string;
   bio: string;
-  profileImageUrl: string;
+  profileImageUrl: string | null;
 }

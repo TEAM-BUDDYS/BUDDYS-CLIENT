@@ -7,8 +7,6 @@ import type {
 } from './post-form';
 import type { PostRecruitmentStatusTypes } from './post-recruitment-status';
 
-export type PostAuthorGenderTypes = GenderType;
-
 export interface PostDetailTag {
   tagId: number;
   name: string;
@@ -22,6 +20,7 @@ interface PostDetailCountry {
 interface PostDetailCity {
   cityId: number;
   name: string;
+  koreanName?: string;
 }
 
 interface PostDetailAuthor {
@@ -29,14 +28,13 @@ interface PostDetailAuthor {
   nickname: string;
   profileImageUrl?: string | null;
   country: string;
-  age: number;
   ageRange: string;
-  gender: PostAuthorGenderTypes;
+  gender: GenderType;
 }
 
 interface PostDetailConditions {
   ageConditions: AgeConditionType[];
-  genderCondition: GenderType;
+  genderConditions: GenderType[];
   travelType: CompanionType;
   activityTags: PostDetailTag[];
   interestTags: PostDetailTag[];

@@ -1,11 +1,19 @@
 'use client';
 
-import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseInfiniteQuery,
+} from '@tanstack/react-query';
 import { type SubmitEvent, useCallback, useState } from 'react';
 
-import { POST_QUERY_OPTIONS } from '@/domains/posts/api/query';
+import {
+  POST_MUTATION_OPTIONS,
+  POST_QUERY_OPTIONS,
+} from '@/domains/posts/api/query';
 import { hasPostDetailCommentFields } from '@/domains/posts/model/comment';
 import { PostDetailCommentSection } from '@/domains/posts/sections/post-detail-comment-section';
+import { POST_QUERY_KEY } from '@/shared/api';
 import { AsyncBoundary, BottomActionBar } from '@/shared/components/ui';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 
@@ -71,7 +79,6 @@ const PostDetailCommentList = ({
     </>
   );
 };
-
 interface PostDetailCommentsProps {
   postId: number;
   viewCount: number;
@@ -83,12 +90,45 @@ export const PostDetailComments = ({
   viewCount,
   commentCount,
 }: PostDetailCommentsProps) => {
+  const queryClient = useQueryClient();
   const [comment, setComment] = useState('');
+  const createCommentMutation = useMutation({
+    ...POST_MUTATION_OPTIONS.CREATE_COMMENT(),
+    onSuccess: () => {
+      setComment('');
+
+      void Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: POST_QUERY_KEY.COMMENTS_ALL(postId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: POST_QUERY_KEY.DETAIL(postId),
+        }),
+      ]);
+    },
+  });
 
   const handleCommentSubmit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // TODO: 댓글 작성 API 연동 후 제출 로직 추가
+    const content = comment.trim();
+
+    if (!content || createCommentMutation.isPending) {
+      return;
+    }
+
+    createCommentMutation.mutate({
+      postId,
+      body: { content },
+    });
+  };
+
+  const handleCommentChange = (value: string) => {
+    if (createCommentMutation.isError) {
+      createCommentMutation.reset();
+    }
+
+    setComment(value);
   };
 
   return (
@@ -105,12 +145,32 @@ export const PostDetailComments = ({
           commentCount={commentCount}
         />
       </AsyncBoundary>
-      <BottomActionBar
-        className="fixed bottom-0 left-1/2 z-20 w-full max-w-107.5 -translate-x-1/2 border-t border-gray-100"
-        value={comment}
-        onSubmit={handleCommentSubmit}
-        onValueChange={setComment}
-      />
+      <div className="fixed bottom-0 left-1/2 z-20 w-full max-w-107.5 -translate-x-1/2 border-t border-gray-100 bg-white">
+        {createCommentMutation.isError && (
+          <p
+            className="text-caption-r-12 text-error px-4 pt-2"
+            id="comment-submit-error"
+            role="alert"
+          >
+            댓글을 등록하지 못했습니다. 다시 시도해 주세요.
+          </p>
+        )}
+        <BottomActionBar
+          aria-busy={createCommentMutation.isPending}
+          inputProps={{
+            'aria-describedby': createCommentMutation.isError
+              ? 'comment-submit-error'
+              : undefined,
+            'aria-invalid': createCommentMutation.isError,
+            disabled: createCommentMutation.isPending,
+            maxLength: 100,
+          }}
+          submitDisabled={!comment.trim() || createCommentMutation.isPending}
+          value={comment}
+          onSubmit={handleCommentSubmit}
+          onValueChange={handleCommentChange}
+        />
+      </div>
     </>
   );
 };

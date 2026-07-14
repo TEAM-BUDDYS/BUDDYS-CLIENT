@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 
+import { type City, getCityDisplayName } from '@/shared/api';
 import { formatDateInput } from '@/shared/utils/format-date-input';
 import type { GenderType } from '@/types/gender';
 
@@ -9,10 +10,7 @@ import type { OnboardLocationOption, OnboardStep } from '../../model/onboard';
 import type { OnboardingFormPayload } from '../../model/onboarding-form';
 import { isValidDate } from '../../utils/is-valid-date';
 import { isValidYearMonth } from '../../utils/is-valid-year-month';
-import {
-  EXCHANGE_SCHOOL_OPTIONS_BY_COUNTRY_ID,
-  INTEREST_CITY_OPTIONS_BY_COUNTRY_ID,
-} from './constant';
+import { EXCHANGE_SCHOOL_OPTIONS_BY_COUNTRY_ID } from './constant';
 
 const getOptionsByCountry = <
   TOptions extends Record<number, readonly OnboardLocationOption[]>,
@@ -53,8 +51,9 @@ export const useOnboardForm = () => {
   const [interestCountry, setInterestCountry] =
     useState<OnboardLocationOption | null>(null);
   const [interestCity, setInterestCity] = useState('');
-  const [selectedInterestCity, setSelectedInterestCity] =
-    useState<OnboardLocationOption | null>(null);
+  const [selectedInterestCity, setSelectedInterestCity] = useState<City | null>(
+    null,
+  );
   const [exchangeCountry, setExchangeCountry] =
     useState<OnboardLocationOption | null>(null);
   const [exchangeSchool, setExchangeSchool] = useState('');
@@ -73,20 +72,11 @@ export const useOnboardForm = () => {
   const [bio, setBio] = useState('');
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
 
-  const interestCityOptions = getOptionsByCountry(
-    INTEREST_CITY_OPTIONS_BY_COUNTRY_ID,
-    interestCountry?.id,
-  );
   const exchangeSchoolOptions = getOptionsByCountry(
     EXCHANGE_SCHOOL_OPTIONS_BY_COUNTRY_ID,
     exchangeCountry?.id,
   );
 
-  const interestCityResults = getSearchResults(
-    interestCityOptions,
-    interestCity,
-    selectedInterestCity,
-  );
   const exchangeSchoolResults = getSearchResults(
     exchangeSchoolOptions,
     exchangeSchool,
@@ -109,14 +99,14 @@ export const useOnboardForm = () => {
 
     if (
       selectedInterestCity &&
-      getOptionDisplayName(selectedInterestCity) !== value
+      getCityDisplayName(selectedInterestCity, value) !== value
     ) {
       setSelectedInterestCity(null);
     }
   };
 
-  const handleInterestCitySelect = (value: OnboardLocationOption) => {
-    setInterestCity(getOptionDisplayName(value));
+  const handleInterestCitySelect = (value: City) => {
+    setInterestCity(getCityDisplayName(value, interestCity));
     setSelectedInterestCity(value);
   };
 
@@ -243,7 +233,7 @@ export const useOnboardForm = () => {
   };
 
   const getOnboardingFormPayload = (
-    profileImageUrl: string,
+    profileImageUrl: string | null,
   ): OnboardingFormPayload | null => {
     if (
       !interestCountry ||
@@ -258,9 +248,15 @@ export const useOnboardForm = () => {
       return null;
     }
 
+    const interestCityId = selectedInterestCity.id;
+
+    if (interestCityId == null) {
+      return null;
+    }
+
     return {
       interestCountryId: interestCountry.id,
-      interestCityId: selectedInterestCity.id,
+      interestCityId,
       exchangeCountryId: exchangeCountry?.id ?? null,
       exchangeUniversity: selectedExchangeSchool?.name ?? null,
       exchangeStartDate: exchangeMonths.startMonth.trim() || null,
@@ -280,7 +276,6 @@ export const useOnboardForm = () => {
     interestCountry,
     interestCity,
     selectedInterestCity,
-    interestCityResults,
     exchangeCountry,
     exchangeSchool,
     selectedExchangeSchool,
