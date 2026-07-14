@@ -1333,7 +1333,7 @@ export interface components {
        * @description 도시 ID
        * @example 1
        */
-      cityId?: number;
+      id?: number;
       /**
        * @description 도시 이름
        * @example Tokyo
@@ -1343,7 +1343,7 @@ export interface components {
        * @description 도시 한글 이름
        * @example 도쿄
        */
-      koreanName?: string;
+      koreanName?: string | null;
     };
     ConditionsResponse: {
       /** @description 선호 나이 조건 */

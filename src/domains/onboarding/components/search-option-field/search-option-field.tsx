@@ -2,21 +2,21 @@
 
 import { OptionItem, OptionList, Searchbar } from '@/shared/components/ui';
 
-import type { OnboardLocationOption } from '../../model/onboard';
-
-interface SearchOptionFieldProps {
+interface SearchOptionFieldProps<TOption> {
   id: string;
   label: string;
   placeholder: string;
   value: string;
   disabled?: boolean;
-  selectedOption: OnboardLocationOption | null;
-  results: OnboardLocationOption[];
+  selectedOption: TOption | null;
+  results: TOption[];
+  getOptionKey: (option: TOption) => string | number;
+  getOptionLabel: (option: TOption) => string;
   onChange: (value: string) => void;
-  onSelect: (value: OnboardLocationOption) => void;
+  onSelect: (value: TOption) => void;
 }
 
-export const SearchOptionField = ({
+export const SearchOptionField = <TOption,>({
   id,
   label,
   placeholder,
@@ -24,14 +24,13 @@ export const SearchOptionField = ({
   disabled = false,
   selectedOption,
   results,
+  getOptionKey,
+  getOptionLabel,
   onChange,
   onSelect,
-}: SearchOptionFieldProps) => {
+}: SearchOptionFieldProps<TOption>) => {
   const isResultOpen = results.length > 0;
   const listboxId = `${id}-result-list`;
-  const getOptionLabel = (option: OnboardLocationOption) => {
-    return option.koreanName ?? option.name;
-  };
 
   return (
     <div className="relative w-full">
@@ -52,9 +51,12 @@ export const SearchOptionField = ({
         <OptionList id={listboxId} className="w-full">
           {results.map((result) => (
             <OptionItem
-              key={result.id}
+              key={getOptionKey(result)}
               option={getOptionLabel(result)}
-              isSelected={selectedOption?.id === result.id}
+              isSelected={
+                selectedOption != null &&
+                getOptionKey(selectedOption) === getOptionKey(result)
+              }
               onSelect={() => onSelect(result)}
             />
           ))}

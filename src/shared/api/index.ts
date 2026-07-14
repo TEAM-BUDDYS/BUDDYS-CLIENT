@@ -1,6 +1,13 @@
 export { apiClient } from './api-client';
 export { setAccessToken, setAccessTokenRefreshHandler } from './auth-token';
 export {
+  type City,
+  CITY_QUERY_OPTIONS,
+  getCityDisplayName,
+  type SearchCitiesParams,
+  useCitySearch,
+} from './city';
+export {
   type Country,
   COUNTRY_QUERY_OPTIONS,
   type CountryPage,
