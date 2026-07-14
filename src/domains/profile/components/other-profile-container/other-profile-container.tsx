@@ -17,5 +17,5 @@ export const OtherProfileContainer = ({
     PROFILE_QUERY_OPTIONS.USER_PROFILE(userId),
   );
 
-  return <OtherProfilePageView profile={profile} />;
+  return <OtherProfilePageView userId={userId} profile={profile} />;
 };

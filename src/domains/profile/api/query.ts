@@ -1,4 +1,4 @@
-import { queryOptions } from '@tanstack/react-query';
+import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 
 import {
   apiClient,
@@ -109,5 +109,19 @@ export const PROFILE_QUERY_OPTIONS = {
     queryOptions({
       queryKey: USER_QUERY_KEY.POSTS(userId, params),
       queryFn: () => getUserPosts(userId, params),
+    }),
+  USER_POSTS_INFINITE: (userId: number, params?: GetUserPostsParams) =>
+    infiniteQueryOptions({
+      queryKey: USER_QUERY_KEY.POSTS_INFINITE(userId, params),
+      queryFn: ({ pageParam }) =>
+        getUserPosts(userId, { ...params, page: pageParam }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        if (!lastPage.data?.hasNext) {
+          return undefined;
+        }
+
+        return (lastPage.data.page ?? 0) + 1;
+      },
     }),
 };

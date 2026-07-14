@@ -14,3 +14,5 @@ export type GetUserPostsParams =
   operations['getUserPosts']['parameters']['query'];
 export type GetUserPostsResponse =
   components['schemas']['BaseResponseUserPostsResponse'];
+
+export type UserPost = components['schemas']['PostResponse'];
