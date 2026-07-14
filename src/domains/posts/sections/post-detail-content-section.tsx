@@ -65,6 +65,7 @@ export const PostDetailContentSection = ({
   post,
 }: PostDetailContentSectionProps) => {
   const dateLabel = formatPostDetailDateRange(post.startDate, post.endDate);
+  const cityLabel = post.city.koreanName ?? post.city.name;
 
   return (
     <section className="flex w-full flex-col gap-6">
@@ -89,7 +90,7 @@ export const PostDetailContentSection = ({
           <div className="flex flex-col gap-2">
             <PostDetailMetaItem
               icon={<LocationIcon className="size-4" />}
-              label={post.city.name}
+              label={cityLabel}
             />
             {dateLabel && (
               <PostDetailMetaItem
