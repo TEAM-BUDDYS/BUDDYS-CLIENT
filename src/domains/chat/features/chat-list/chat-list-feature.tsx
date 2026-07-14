@@ -3,6 +3,7 @@
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
+import { EmptyState } from '@/shared/components/ui';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 
 import { CHAT_QUERY_OPTIONS } from '../../api/query';
@@ -24,6 +25,7 @@ export const ChatListFeature = () => {
   );
 
   const chatRooms = data.pages.flatMap((page) => page.chatRooms);
+  const isEmpty = chatRooms.length === 0;
 
   const handleIntersect = useCallback(() => {
     void fetchNextPage();
@@ -35,7 +37,13 @@ export const ChatListFeature = () => {
     onIntersect: handleIntersect,
   });
 
-  return (
+  return isEmpty ? (
+    <EmptyState
+      title="채팅방이 없어요"
+      description="새로운 버디와 대화를 시작해 보세요"
+      className="h-full"
+    />
+  ) : (
     <>
       <ChatList chatRooms={chatRooms} />
       <div ref={loadMoreRef} className="h-1" aria-hidden="true" />
