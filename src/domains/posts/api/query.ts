@@ -8,6 +8,7 @@ import {
   apiClient,
   createSearchParams,
   END_POINT,
+  POST_MUTATION_KEY,
   POST_QUERY_KEY,
 } from '@/shared/api';
 
@@ -51,11 +52,24 @@ const updatePostStatus = async (
   postId: number,
   body: UpdatePostStatusRequest,
 ) => {
-  return apiClient
+  const response = await apiClient
     .patch(END_POINT.POST.STATUS(postId), {
       json: body,
     })
     .json<UpdatePostStatusResponse>();
+
+  const responsePostId = response.data?.postId;
+  const status = response.data?.status;
+
+  if (
+    !response.success ||
+    responsePostId !== postId ||
+    (status !== 'RECRUITING' && status !== 'COMPLETED')
+  ) {
+    throw new Error(response.message || '모집 상태를 변경하지 못했습니다.');
+  }
+
+  return { postId, status };
 };
 
 const getComments = async (postId: number, params?: GetCommentsParams) => {
@@ -114,10 +128,12 @@ export const POST_QUERY_OPTIONS = {
 export const POST_MUTATION_OPTIONS = {
   CREATE: () =>
     mutationOptions({
+      mutationKey: POST_MUTATION_KEY.CREATE(),
       mutationFn: (body: CreatePostRequest) => createPost(body),
     }),
   UPDATE_STATUS: () =>
     mutationOptions({
+      mutationKey: POST_MUTATION_KEY.UPDATE_STATUS(),
       mutationFn: ({
         postId,
         body,
@@ -128,6 +144,7 @@ export const POST_MUTATION_OPTIONS = {
     }),
   CREATE_COMMENT: () =>
     mutationOptions({
+      mutationKey: POST_MUTATION_KEY.CREATE_COMMENT(),
       mutationFn: ({
         postId,
         body,
