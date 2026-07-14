@@ -9,12 +9,15 @@ import { findCountryByName } from '../../utils/country-options';
 interface OnboardExchangeInfoStepProps {
   countryOptions: OnboardLocationOption[];
   selectedCountry: OnboardLocationOption | null;
+  hasMoreCountries: boolean;
+  isLoadingMoreCountries: boolean;
   school: string;
   selectedSchool: OnboardLocationOption | null;
   schoolResults: OnboardLocationOption[];
   startMonth: string;
   endMonth: string;
   onCountryChange: (value: OnboardLocationOption) => void;
+  onLoadMoreCountries: () => void;
   onSchoolChange: (value: string) => void;
   onSchoolSelect: (value: OnboardLocationOption) => void;
   onStartMonthChange: (value: string) => void;
@@ -24,12 +27,15 @@ interface OnboardExchangeInfoStepProps {
 export const OnboardExchangeInfoStep = ({
   countryOptions,
   selectedCountry,
+  hasMoreCountries,
+  isLoadingMoreCountries,
   school,
   selectedSchool,
   schoolResults,
   startMonth,
   endMonth,
   onCountryChange,
+  onLoadMoreCountries,
   onSchoolChange,
   onSchoolSelect,
   onStartMonthChange,
@@ -53,7 +59,10 @@ export const OnboardExchangeInfoStep = ({
           options={countryNames}
           placeholder="국가 선택"
           value={selectedCountry?.name ?? ''}
+          hasMore={hasMoreCountries}
+          isLoadingMore={isLoadingMoreCountries}
           onChange={handleCountryChange}
+          onLoadMore={onLoadMoreCountries}
         />
       </div>
 

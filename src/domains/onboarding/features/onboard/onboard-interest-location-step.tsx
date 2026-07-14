@@ -9,10 +9,13 @@ import { findCountryByName } from '../../utils/country-options';
 interface OnboardInterestLocationStepProps {
   countryOptions: OnboardLocationOption[];
   selectedCountry: OnboardLocationOption | null;
+  hasMoreCountries: boolean;
+  isLoadingMoreCountries: boolean;
   city: string;
   selectedCity: OnboardLocationOption | null;
   cityResults: OnboardLocationOption[];
   onCountryChange: (value: OnboardLocationOption) => void;
+  onLoadMoreCountries: () => void;
   onCityChange: (value: string) => void;
   onCitySelect: (value: OnboardLocationOption) => void;
 }
@@ -20,10 +23,13 @@ interface OnboardInterestLocationStepProps {
 export const OnboardInterestLocationStep = ({
   countryOptions,
   selectedCountry,
+  hasMoreCountries,
+  isLoadingMoreCountries,
   city,
   selectedCity,
   cityResults,
   onCountryChange,
+  onLoadMoreCountries,
   onCityChange,
   onCitySelect,
 }: OnboardInterestLocationStepProps) => {
@@ -45,7 +51,10 @@ export const OnboardInterestLocationStep = ({
           options={countryNames}
           placeholder="국가 선택"
           value={selectedCountry?.name ?? ''}
+          hasMore={hasMoreCountries}
+          isLoadingMore={isLoadingMoreCountries}
           onChange={handleCountryChange}
+          onLoadMore={onLoadMoreCountries}
         />
       </div>
 
