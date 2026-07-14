@@ -18,6 +18,10 @@ const getOptionDisplayName = (option: OnboardLocationOption | null) => {
   return option?.koreanName ?? option?.name ?? '';
 };
 
+const convertBirthDateForPayload = (date: string) => {
+  return date.replaceAll('.', '-');
+};
+
 export const useOnboardForm = () => {
   const [interestCountry, setInterestCountry] =
     useState<OnboardLocationOption | null>(null);
@@ -253,7 +257,7 @@ export const useOnboardForm = () => {
       travelStyleTagIds: companionTagIds,
       nickname: nickname.trim(),
       gender,
-      birthDate: birthDate.trim(),
+      birthDate: convertBirthDateForPayload(birthDate.trim()),
       bio: bio.trim(),
       profileImageUrl,
     };

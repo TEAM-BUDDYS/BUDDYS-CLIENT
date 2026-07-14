@@ -1,6 +1,6 @@
 'use client';
 
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -10,6 +10,7 @@ import { useImageUpload } from '@/shared/api/image';
 import { Button, ProgressBar, useToast } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
+import { ONBOARDING_MUTATION_OPTIONS } from '../../api/query';
 import type { OnboardProgressStep, OnboardStep } from '../../model/onboard';
 import { RECOMMENDED_PROFILE, TOTAL_PROGRESS_STEP } from './constant';
 import { OnboardComplete } from './onboard-complete';
@@ -45,9 +46,13 @@ export const OnboardFlow = () => {
   const [currentStep, setCurrentStep] =
     useState<OnboardStep>('interest-location');
   const onboardForm = useOnboardForm();
+  const onboardingMutation = useMutation(
+    ONBOARDING_MUTATION_OPTIONS.COMPLETE(),
+  );
   const progressStep =
     PROGRESS_STEP_BY_STEP[currentStep as keyof typeof PROGRESS_STEP_BY_STEP];
   const canGoNext = onboardForm.canGoNext(currentStep);
+  const isSubmitting = isUploading || onboardingMutation.isPending;
 
   const router = useRouter();
   const {
@@ -68,36 +73,37 @@ export const OnboardFlow = () => {
     });
   }, [queryClient]);
 
-  const handleProfileImageUpload = async () => {
+  const handleOnboardingSubmit = async () => {
     try {
-      if (onboardForm.profileImageFile) {
-        await uploadImage({
-          file: onboardForm.profileImageFile,
-          imageDomain: 'PROFILE',
-        });
+      const profileImageUrl = onboardForm.profileImageFile
+        ? await uploadImage({
+            file: onboardForm.profileImageFile,
+            imageDomain: 'PROFILE',
+          })
+        : null;
+      const payload = onboardForm.getOnboardingFormPayload(profileImageUrl);
+
+      if (!payload) {
+        throw new Error('입력 정보를 다시 확인해 주세요.');
       }
 
+      await onboardingMutation.mutateAsync(payload);
       setCurrentStep('complete');
-    } catch (error) {
-      showToast(
-        error instanceof Error
-          ? error.message
-          : '프로필 이미지를 업로드하지 못했습니다.',
-        {
-          bottomOffsetClassName: 'bottom-26.5',
-          variant: 'gray',
-        },
-      );
+    } catch {
+      showToast('정보를 저장하지 못했어요. 잠시 후 다시 시도해주세요.', {
+        bottomOffsetClassName: 'bottom-26.5',
+        variant: 'gray',
+      });
     }
   };
 
   const handleNextClick = () => {
-    if (!canGoNext || isUploading) {
+    if (!canGoNext || isSubmitting) {
       return;
     }
 
     if (currentStep === 'profile') {
-      void handleProfileImageUpload();
+      void handleOnboardingSubmit();
       return;
     }
 
@@ -199,7 +205,7 @@ export const OnboardFlow = () => {
             gender={onboardForm.gender}
             birthDate={onboardForm.birthDate}
             bio={onboardForm.bio}
-            isUploading={isUploading}
+            isUploading={isSubmitting}
             profileImageFile={onboardForm.profileImageFile}
             onNicknameChange={onboardForm.handleNicknameChange}
             onGenderChange={onboardForm.handleGenderChange}
@@ -232,10 +238,10 @@ export const OnboardFlow = () => {
       {currentStep !== 'complete' && (
         <div className="flex flex-col gap-4">
           <Button
-            disabled={!canGoNext || isUploading}
+            disabled={!canGoNext || isSubmitting}
             onClick={handleNextClick}
           >
-            {isUploading ? '업로드 중...' : '다음'}
+            {isSubmitting ? '저장 중...' : '다음'}
           </Button>
           {currentStep === 'exchange-info' && (
             <button
