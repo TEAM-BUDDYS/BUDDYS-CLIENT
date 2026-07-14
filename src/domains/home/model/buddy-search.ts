@@ -70,9 +70,13 @@ export const getMappedValues = <Value extends string>(
 export const getBuddySearchParams = (
   filterValue: FilterSheetValue,
   size: number,
+  keyword?: string,
 ): GetPostsParams => {
+  const trimmedKeyword = keyword?.trim();
+
   return {
     size,
+    keyword: trimmedKeyword || undefined,
     countryId: filterValue.country?.id,
     startDate: filterValue.startDate || undefined,
     endDate: filterValue.endDate || undefined,

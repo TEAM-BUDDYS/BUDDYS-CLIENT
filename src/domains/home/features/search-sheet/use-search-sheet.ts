@@ -1,87 +1,127 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 import type { SearchHistoryItem } from '@/domains/home/components/search-history/search-history';
+import { ROUTES } from '@/shared/config';
 
-const initialSearchHistoryItems: SearchHistoryItem[] = [
-  { id: '1', keyword: '파리 동행' },
-  { id: '2', keyword: '베를린 맛집' },
-  { id: '3', keyword: '루브르 박물관' },
-];
-
-const relatedSearchItems: SearchHistoryItem[] = [
-  { id: '1', keyword: '파리 동행 구해요' },
-  { id: '2', keyword: '파리 맛집 동행' },
-  { id: '3', keyword: '파리 여행 동행' },
-  { id: '4', keyword: '파리 박물관 동행' },
-  { id: '5', keyword: '베를린 맛집 추천' },
-  { id: '6', keyword: '루브르 박물관 동행' },
-];
+const SEARCH_HISTORY_STORAGE_KEY = 'buddys-search-history';
+const SEARCH_HISTORY_LIMIT = 10;
 
 const createSearchHistoryItem = (keyword: string): SearchHistoryItem => {
   return {
-    id: `${Date.now()}`,
+    id: keyword,
     keyword,
   };
 };
 
-export const useSearchSheet = () => {
-  const [searchKeyword, setSearchKeyword] = useState('');
-  const [searchHistoryItems, setSearchHistoryItems] = useState(
-    initialSearchHistoryItems,
+const parseSearchHistoryItems = (value: string | null) => {
+  if (!value) {
+    return [];
+  }
+
+  try {
+    const parsedValue = JSON.parse(value);
+
+    if (!Array.isArray(parsedValue)) {
+      return [];
+    }
+
+    return parsedValue
+      .filter((keyword): keyword is string => typeof keyword === 'string')
+      .map((keyword) => keyword.trim())
+      .filter(Boolean)
+      .slice(0, SEARCH_HISTORY_LIMIT)
+      .map(createSearchHistoryItem);
+  } catch {
+    return [];
+  }
+};
+
+const saveSearchHistoryItems = (items: SearchHistoryItem[]) => {
+  localStorage.setItem(
+    SEARCH_HISTORY_STORAGE_KEY,
+    JSON.stringify(items.map((item) => item.keyword)),
   );
-  const [suggestionItems, setSuggestionItems] = useState<SearchHistoryItem[]>(
-    [],
+};
+
+const getInitialSearchHistoryItems = () => {
+  if (typeof window === 'undefined') {
+    return [];
+  }
+
+  return parseSearchHistoryItems(
+    localStorage.getItem(SEARCH_HISTORY_STORAGE_KEY),
   );
+};
 
-  const hasSearchKeyword = searchKeyword.trim().length > 0;
-  const searchHistoryTitle = hasSearchKeyword ? '연관 검색어' : '최근 검색';
-  const searchHistoryType = hasSearchKeyword ? 'suggestion' : 'history';
+export const useSearchSheet = (onClose?: () => void, initialKeyword = '') => {
+  const router = useRouter();
+  const [searchKeyword, setSearchKeyword] = useState(initialKeyword);
+  const [searchHistoryItems, setSearchHistoryItems] = useState<
+    SearchHistoryItem[]
+  >(getInitialSearchHistoryItems);
 
-  useEffect(() => {
-    const trimmedSearchKeyword = searchKeyword.trim();
+  const saveSearchKeyword = (keyword: string) => {
+    const trimmedKeyword = keyword.trim();
 
-    const timer = setTimeout(() => {
-      if (!trimmedSearchKeyword) {
-        setSuggestionItems([]);
-        return;
-      }
+    if (!trimmedKeyword) {
+      return null;
+    }
 
-      setSuggestionItems(
-        relatedSearchItems.filter((item) =>
-          item.keyword.includes(trimmedSearchKeyword),
-        ),
-      );
-    }, 300);
+    const nextSearchHistoryItems = [
+      createSearchHistoryItem(trimmedKeyword),
+      ...searchHistoryItems.filter((item) => item.keyword !== trimmedKeyword),
+    ].slice(0, SEARCH_HISTORY_LIMIT);
 
-    return () => clearTimeout(timer);
-  }, [searchKeyword]);
+    setSearchHistoryItems(nextSearchHistoryItems);
+    saveSearchHistoryItems(nextSearchHistoryItems);
+
+    return trimmedKeyword;
+  };
+
+  const routeToCustomizedExplore = (keyword: string) => {
+    const searchParams = new URLSearchParams({ keyword });
+
+    onClose?.();
+    router.replace(`${ROUTES.CUSTOMIZED_EXPLORE}?${searchParams.toString()}`);
+  };
+
+  const handleSearchSubmit = () => {
+    const savedKeyword = saveSearchKeyword(searchKeyword);
+
+    if (!savedKeyword) {
+      return;
+    }
+
+    routeToCustomizedExplore(savedKeyword);
+  };
 
   const handleSearchHistorySelect = (item: SearchHistoryItem) => {
-    setSearchKeyword(item.keyword);
-    setSearchHistoryItems((prevSearchHistoryItems) => {
-      const nextSearchHistoryItems = prevSearchHistoryItems.filter(
-        (searchHistoryItem) => searchHistoryItem.keyword !== item.keyword,
-      );
+    const savedKeyword = saveSearchKeyword(item.keyword);
 
-      return [createSearchHistoryItem(item.keyword), ...nextSearchHistoryItems];
-    });
+    if (!savedKeyword) {
+      return;
+    }
+
+    routeToCustomizedExplore(savedKeyword);
   };
 
   const handleSearchHistoryDelete = (id: string) => {
-    setSearchHistoryItems((prevSearchHistoryItems) =>
-      prevSearchHistoryItems.filter((item) => item.id !== id),
+    const nextSearchHistoryItems = searchHistoryItems.filter(
+      (item) => item.id !== id,
     );
+
+    setSearchHistoryItems(nextSearchHistoryItems);
+    saveSearchHistoryItems(nextSearchHistoryItems);
   };
 
   return {
     searchKeyword,
     searchHistoryItems,
-    suggestionItems,
-    searchHistoryTitle,
-    searchHistoryType,
     handleSearchKeywordChange: setSearchKeyword,
+    handleSearchSubmit,
     handleSearchHistorySelect,
     handleSearchHistoryDelete,
   };
