@@ -1,10 +1,8 @@
 import type { components } from '@/types/schema';
 
 import type { ChatRoom, ChatRoomList } from '../model/chat-list';
-import type { GetChatRoomsResponse } from './type';
-
-type ChatRoomListItemResponse =
-  components['schemas']['ChatRoomListItemResponse'];
+import type { ChatMessageData, ChatMessageList } from '../model/chat-room';
+import type { GetChatRoomsResponse, GetMessagesResponse } from './type';
 
 const isPositiveSafeInteger = (value: unknown): value is number =>
   typeof value === 'number' && Number.isSafeInteger(value) && value > 0;
@@ -14,6 +12,9 @@ const isNonNegativeSafeInteger = (value: unknown): value is number =>
 
 const isNullableString = (value: unknown): value is string | null =>
   typeof value === 'string' || value === null;
+
+type ChatRoomListItemResponse =
+  components['schemas']['ChatRoomListItemResponse'];
 
 const convertChatRoom = (
   chatRoom: ChatRoomListItemResponse,
@@ -75,6 +76,67 @@ export const convertChatRoomListResponse = (
     chatRooms: data.chatRooms.map(convertChatRoom),
     page: data.page,
     size: data.size,
+    hasNext: data.hasNext,
+  };
+};
+
+type ChatMessageResponse = components['schemas']['ChatMessageResponse'];
+
+const convertChatMessage = (
+  message: ChatMessageResponse,
+  index: number,
+): ChatMessageData => {
+  const { messageId, sender, content, sentAt, mine, isRead } = message;
+
+  if (
+    !isPositiveSafeInteger(messageId) ||
+    !sender ||
+    !isPositiveSafeInteger(sender.userId) ||
+    typeof sender.nickname !== 'string' ||
+    typeof content !== 'string' ||
+    typeof sentAt !== 'string' ||
+    typeof mine !== 'boolean' ||
+    typeof isRead !== 'boolean'
+  ) {
+    throw new Error(`${index + 1}번째 메시지 응답이 올바르지 않습니다.`);
+  }
+
+  return {
+    messageId,
+    sender: {
+      userId: sender.userId,
+      nickname: sender.nickname,
+      profileImageUrl: null,
+    },
+    content,
+    sentAt,
+    mine,
+    isRead,
+  };
+};
+
+export const convertChatMessageListResponse = (
+  response: GetMessagesResponse,
+): ChatMessageList => {
+  const data = response.data;
+
+  if (
+    response.success !== true ||
+    !data ||
+    !Array.isArray(data.messages) ||
+    typeof data.nextCursorSentAt !== 'string' ||
+    !isPositiveSafeInteger(data.nextCursorMessageId) ||
+    typeof data.hasNext !== 'boolean'
+  ) {
+    throw new Error(
+      response.message || '메시지 목록 응답이 올바르지 않습니다.',
+    );
+  }
+
+  return {
+    messages: data.messages.map(convertChatMessage),
+    nextCursorSentAt: data.nextCursorSentAt,
+    nextCursorMessageId: data.nextCursorMessageId,
     hasNext: data.hasNext,
   };
 };

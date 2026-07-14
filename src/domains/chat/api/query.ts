@@ -11,7 +11,11 @@ import {
   END_POINT,
 } from '@/shared/api';
 
-import { convertChatRoomListResponse } from './mapper';
+import type { ChatMessageList, ChatRoomDetail } from '../model/chat-room';
+import {
+  convertChatMessageListResponse,
+  convertChatRoomListResponse,
+} from './mapper';
 import type {
   CreateChatRoomRequest,
   CreateChatRoomResponse,
@@ -40,18 +44,37 @@ const createChatRoom = async (body: CreateChatRoomRequest) => {
     .json<CreateChatRoomResponse>();
 };
 
-const getChatRoom = async (chatRoomId: number) => {
-  return apiClient
+const getChatRoom = async (chatRoomId: number): Promise<ChatRoomDetail> => {
+  const response = await apiClient
     .get(END_POINT.CHAT_ROOM.DETAIL(chatRoomId))
     .json<GetChatRoomResponse>();
+
+  const createdAt = response.data?.createdAt;
+  const participantNickname = response.data?.participant?.nickname;
+
+  if (response.success !== true || !createdAt || !participantNickname) {
+    throw new Error(
+      response.message || '채팅방 상세 응답이 올바르지 않습니다.',
+    );
+  }
+
+  return {
+    createdAt,
+    participantNickname,
+  };
 };
 
-const getMessages = async (chatRoomId: number, params?: GetMessagesParams) => {
-  return apiClient
+const getMessages = async (
+  chatRoomId: number,
+  params?: GetMessagesParams,
+): Promise<ChatMessageList> => {
+  const response = await apiClient
     .get(END_POINT.CHAT_ROOM.MESSAGES(chatRoomId), {
       searchParams: createSearchParams(params),
     })
     .json<GetMessagesResponse>();
+
+  return convertChatMessageListResponse(response);
 };
 
 export const CHAT_QUERY_OPTIONS = {

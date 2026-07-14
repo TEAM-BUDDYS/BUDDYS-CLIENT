@@ -1,14 +1,57 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { useStomp } from '@/shared/api/stomp';
 
 import { CHAT_STOMP_DESTINATION } from '../api/stomp-destination';
-import type { SendChatMessageRequest } from '../api/stomp-type';
+import type {
+  ReceiveChatMessageResponse,
+  SendChatMessageRequest,
+} from '../api/stomp-type';
 
-export const useChatRoomStomp = (chatRoomId: number) => {
-  const { connectionStatus, publish } = useStomp();
+interface UseChatRoomStompParams {
+  chatRoomId: number;
+  onMessage: (response: ReceiveChatMessageResponse) => void;
+}
+
+export const useChatRoomStomp = ({
+  chatRoomId,
+  onMessage,
+}: UseChatRoomStompParams) => {
+  const { connectionStatus, publish, subscribe } = useStomp();
+
+  useEffect(() => {
+    if (connectionStatus !== 'connected') {
+      return;
+    }
+
+    const unsubscribe = subscribe(
+      CHAT_STOMP_DESTINATION.SUBSCRIBE(chatRoomId),
+      (body) => {
+        try {
+          const response = JSON.parse(body) as ReceiveChatMessageResponse;
+
+          if (response.type !== 'MESSAGE') {
+            return;
+          }
+
+          if (response.chatRoomId !== chatRoomId) {
+            return;
+          }
+
+          onMessage(response);
+        } catch (error) {
+          console.error('[CHAT] Failed to parse received message', {
+            error,
+            body,
+          });
+        }
+      },
+    );
+
+    return unsubscribe;
+  }, [chatRoomId, connectionStatus, subscribe, onMessage]);
 
   const sendMessage = useCallback(
     (content: string) => {
