@@ -39,7 +39,7 @@ export const OnboardProfileStep = ({
   onProfileImageChange,
 }: OnboardProfileStepProps) => {
   const selectedGenderLabel =
-    GENDER_OPTIONS.find((option) => option.value === gender)?.label ?? '';
+    GENDER_OPTIONS.find((option) => option.value === gender)?.label ?? null;
   const genderLabels = GENDER_OPTIONS.map((option) => option.label);
   const [isBlur, setIsBlur] = useState(false);
   const [currentNickname, setCurrentNickname] = useState('');
