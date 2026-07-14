@@ -65,11 +65,17 @@ const getComments = async (postId: number, params?: GetCommentsParams) => {
 };
 
 const createComment = async (postId: number, body: CreateCommentRequest) => {
-  return apiClient
+  const response = await apiClient
     .post(END_POINT.POST.COMMENTS(postId), {
       json: body,
     })
     .json<CreateCommentResponse>();
+
+  if (!response.success || typeof response.data?.commentId !== 'number') {
+    throw new Error(response.message || '댓글을 등록하지 못했습니다.');
+  }
+
+  return response.data.commentId;
 };
 
 const createPresignedUrl = async (body: CreatePresignedUrlRequest) => {

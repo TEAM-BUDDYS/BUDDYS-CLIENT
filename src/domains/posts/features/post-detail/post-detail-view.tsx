@@ -39,6 +39,7 @@ export const PostDetailView = ({ post, comments }: PostDetailViewProps) => {
 
         <div className="border-t border-gray-100 pt-4">
           <PostDetailComments
+            postId={post.postId}
             viewCount={post.viewCount}
             commentCount={post.commentCount}
             comments={comments}
