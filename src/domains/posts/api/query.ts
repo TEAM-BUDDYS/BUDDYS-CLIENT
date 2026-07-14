@@ -7,6 +7,7 @@ import {
   POST_QUERY_KEY,
 } from '@/shared/api';
 
+import type { PostDetail } from '../model/post-detail';
 import type {
   CreateCommentRequest,
   CreateCommentResponse,
@@ -39,10 +40,16 @@ const createPost = async (body: CreatePostRequest) => {
     .json<CreatePostResponse>();
 };
 
-const getPostDetail = async (postId: number) => {
-  return apiClient
+const getPostDetail = async (postId: number): Promise<PostDetail> => {
+  const response = await apiClient
     .get(END_POINT.POST.DETAIL(postId))
     .json<GetPostDetailResponse>();
+
+  if (!response.success || !response.data) {
+    throw new Error(response.message || '게시글을 불러오지 못했습니다.');
+  }
+
+  return response.data as PostDetail;
 };
 
 const updatePostStatus = async (
