@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import type { CreatePostRequest } from '@/domains/posts/api/type';
 import { type City, getCityDisplayName } from '@/shared/api';
@@ -11,6 +11,7 @@ import type {
   LocationOption,
   PostCreateDetailFormState,
   PostCreateGenderConditionType,
+  PostCreateImage,
   PostCreateStep,
 } from './model';
 
@@ -70,7 +71,17 @@ export const usePostCreateForm = () => {
   });
   const [detail, setDetail] =
     useState<PostCreateDetailFormState>(INITIAL_DETAIL_FORM);
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [images, setImages] = useState<PostCreateImage[]>([]);
+  const previewUrlsRef = useRef(new Set<string>());
+
+  useEffect(() => {
+    const previewUrls = previewUrlsRef.current;
+
+    return () => {
+      previewUrls.forEach((previewUrl) => URL.revokeObjectURL(previewUrl));
+      previewUrls.clear();
+    };
+  }, []);
 
   const updateDetail = (nextDetail: Partial<PostCreateDetailFormState>) => {
     setDetail((prevDetail) => ({ ...prevDetail, ...nextDetail }));
@@ -101,8 +112,25 @@ export const usePostCreateForm = () => {
   };
 
   const addImages = (files: File[]) => {
-    setImageFiles((prevFiles) =>
-      [...prevFiles, ...files].slice(0, MAX_IMAGE_COUNT),
+    const remainingImageCount = Math.max(0, MAX_IMAGE_COUNT - images.length);
+    const nextImages = files.slice(0, remainingImageCount).map((file) => {
+      const previewUrl = URL.createObjectURL(file);
+
+      previewUrlsRef.current.add(previewUrl);
+
+      return { file, previewUrl };
+    });
+
+    if (nextImages.length > 0) {
+      setImages((prevImages) => [...prevImages, ...nextImages]);
+    }
+  };
+
+  const removeImage = (previewUrl: string) => {
+    URL.revokeObjectURL(previewUrl);
+    previewUrlsRef.current.delete(previewUrl);
+    setImages((prevImages) =>
+      prevImages.filter((image) => image.previewUrl !== previewUrl),
     );
   };
 
@@ -184,13 +212,14 @@ export const usePostCreateForm = () => {
     selectedCity,
     dateRange,
     detail,
-    imageCount: imageFiles.length,
+    images,
     handleCountrySelect,
     setDateRange,
     updateDetail,
     handleCityChange,
     handleCitySelect,
     addImages,
+    removeImage,
     canGoNext,
     getPostFormPayload,
   };

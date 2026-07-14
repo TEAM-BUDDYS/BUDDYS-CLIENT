@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { POST_MUTATION_OPTIONS } from '@/domains/posts/api/query';
 import { cn } from '@/lib/cn';
 import { POST_QUERY_KEY, useCitySearch, useCountryList } from '@/shared/api';
+import { useImageUpload, validateImageFile } from '@/shared/api/image';
 import { Header } from '@/shared/components/layout';
 import {
   Button,
@@ -49,8 +50,13 @@ export const PostCreateFlow = () => {
   const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState<PostCreateStep>(1);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitErrorMessage, setSubmitErrorMessage] = useState<string | null>(
+    null,
+  );
   const postCreateForm = usePostCreateForm();
   const createPostMutation = useMutation(POST_MUTATION_OPTIONS.CREATE());
+  const { uploadImage } = useImageUpload();
   const {
     countryOptions,
     hasMoreCountries,
@@ -67,9 +73,11 @@ export const PostCreateFlow = () => {
   const isSubmitStep = currentStep === TOTAL_STEP;
 
   const handleBackClick = () => {
-    if (createPostMutation.isPending) {
+    if (isSubmitting) {
       return;
     }
+
+    setSubmitErrorMessage(null);
 
     if (currentStep === 1) {
       router.back();
@@ -79,26 +87,62 @@ export const PostCreateFlow = () => {
     setCurrentStep(PREVIOUS_STEP_BY_STEP[currentStep]);
   };
 
+  const handleCreatePost = async () => {
+    const payload = postCreateForm.getPostFormPayload();
+
+    if (!payload) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitErrorMessage(null);
+
+    try {
+      postCreateForm.images.forEach(({ file }) => validateImageFile(file));
+
+      const uploadResults = await Promise.allSettled(
+        postCreateForm.images.map(({ file }) =>
+          uploadImage({ file, imageDomain: 'POST' }),
+        ),
+      );
+      const failedUploadResult = uploadResults.find(
+        (result): result is PromiseRejectedResult =>
+          result.status === 'rejected',
+      );
+
+      if (failedUploadResult) {
+        throw failedUploadResult.reason;
+      }
+
+      const imageUrls = uploadResults.flatMap((result) =>
+        result.status === 'fulfilled' ? [result.value] : [],
+      );
+      const createPostPayload =
+        imageUrls.length > 0 ? { ...payload, imageUrls } : payload;
+      const postId = await createPostMutation.mutateAsync(createPostPayload);
+
+      void queryClient.invalidateQueries({
+        queryKey: POST_QUERY_KEY.ALL,
+      });
+      router.replace(ROUTES.POST.DETAIL(postId));
+    } catch (error) {
+      setSubmitErrorMessage(
+        error instanceof Error
+          ? error.message
+          : '게시글을 작성하지 못했습니다.',
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleNextClick = () => {
-    if (!canGoNext || createPostMutation.isPending) {
+    if (!canGoNext || isSubmitting) {
       return;
     }
 
     if (currentStep === TOTAL_STEP) {
-      const payload = postCreateForm.getPostFormPayload();
-
-      if (!payload) {
-        return;
-      }
-
-      createPostMutation.mutate(payload, {
-        onSuccess: (postId) => {
-          void queryClient.invalidateQueries({
-            queryKey: POST_QUERY_KEY.ALL,
-          });
-          router.replace(ROUTES.POST.DETAIL(postId));
-        },
-      });
+      void handleCreatePost();
       return;
     }
 
@@ -176,9 +220,11 @@ export const PostCreateFlow = () => {
           {currentStep === 4 && (
             <PostCreateDetailStep
               value={postCreateForm.detail}
-              imageCount={postCreateForm.imageCount}
+              images={postCreateForm.images}
+              isSubmitting={isSubmitting}
               onChange={postCreateForm.updateDetail}
-              onImagesChange={postCreateForm.addImages}
+              onImagesAdd={postCreateForm.addImages}
+              onImageRemove={postCreateForm.removeImage}
             />
           )}
         </div>
@@ -190,16 +236,17 @@ export const PostCreateFlow = () => {
           currentStep === 4 && 'pt-10',
         )}
       >
+        {isSubmitStep && submitErrorMessage && (
+          <p className="text-caption-r-12 text-error text-center" role="alert">
+            {submitErrorMessage}
+          </p>
+        )}
         <Button
-          aria-busy={createPostMutation.isPending}
-          disabled={!canGoNext || createPostMutation.isPending}
+          aria-busy={isSubmitting}
+          disabled={!canGoNext || isSubmitting}
           onClick={handleNextClick}
         >
-          {isSubmitStep
-            ? createPostMutation.isPending
-              ? '작성 중...'
-              : '작성하기'
-            : '다음'}
+          {isSubmitStep ? (isSubmitting ? '작성 중...' : '작성하기') : '다음'}
         </Button>
       </div>
     </main>

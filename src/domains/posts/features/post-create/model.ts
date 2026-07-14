@@ -20,6 +20,11 @@ export interface PostCreateOption<TValue extends string = string> {
   value: TValue;
 }
 
+export interface PostCreateImage {
+  file: File;
+  previewUrl: string;
+}
+
 export interface PostCreateDetailFormState {
   title: string;
   content: string;

@@ -1,19 +1,16 @@
 'use client';
 
-import type { ChangeEvent } from 'react';
-
 import { ChipOptionGroup } from '@/domains/posts/components/chip-option-group/chip-option-group';
-import { ImageInput } from '@/domains/posts/components/image-input/image-input';
 import { FormLabel, TextArea, TextField } from '@/shared/components/ui';
 
 import {
   AGE_CONDITION_OPTIONS,
   COMPANION_TYPE_OPTIONS,
   GENDER_OPTIONS,
-  MAX_IMAGE_COUNT,
   RECRUITMENT_COUNT_OPTIONS,
 } from './constants';
-import type { PostCreateDetailFormState } from './model';
+import type { PostCreateDetailFormState, PostCreateImage } from './model';
+import { PostCreateImageField } from './post-create-image-field';
 import { PostCreatePreferenceTagFields } from './post-create-preference-tag-fields';
 
 const MAX_POST_CONTENT_LENGTH = 120;
@@ -21,9 +18,11 @@ const MAX_POST_TITLE_LENGTH = 14;
 
 interface PostCreateDetailStepProps {
   value: PostCreateDetailFormState;
-  imageCount: number;
+  images: PostCreateImage[];
+  isSubmitting: boolean;
   onChange: (value: Partial<PostCreateDetailFormState>) => void;
-  onImagesChange: (files: File[]) => void;
+  onImagesAdd: (files: File[]) => void;
+  onImageRemove: (previewUrl: string) => void;
 }
 
 const Divider = () => {
@@ -32,28 +31,18 @@ const Divider = () => {
 
 export const PostCreateDetailStep = ({
   value,
-  imageCount,
+  images,
+  isSubmitting,
   onChange,
-  onImagesChange,
+  onImagesAdd,
+  onImageRemove,
 }: PostCreateDetailStepProps) => {
-  const handleImageInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const remainingImageCount = Math.max(0, MAX_IMAGE_COUNT - imageCount);
-    const files = Array.from(event.target.files ?? []).slice(
-      0,
-      remainingImageCount,
-    );
-
-    if (files.length === 0) {
-      event.target.value = '';
-      return;
-    }
-
-    onImagesChange(files);
-    event.target.value = '';
-  };
-
   return (
-    <div className="flex flex-col gap-6">
+    <fieldset
+      aria-busy={isSubmitting}
+      className="flex min-w-0 flex-col gap-6"
+      disabled={isSubmitting}
+    >
       <div className="flex flex-col gap-6">
         <TextField
           required
@@ -134,19 +123,11 @@ export const PostCreateDetailStep = ({
 
       <Divider />
 
-      <section className="flex flex-col gap-2">
-        <div className="flex items-center gap-2">
-          <h2 className="text-body-sb-15 text-gray-800">사진</h2>
-          <p className="text-caption-r-12 text-gray-500">
-            최대 10개 선택 ({imageCount}/{MAX_IMAGE_COUNT})
-          </p>
-        </div>
-        <ImageInput
-          multiple
-          disabled={imageCount >= MAX_IMAGE_COUNT}
-          onChange={handleImageInputChange}
-        />
-      </section>
-    </div>
+      <PostCreateImageField
+        images={images}
+        onImagesAdd={onImagesAdd}
+        onImageRemove={onImageRemove}
+      />
+    </fieldset>
   );
 };
