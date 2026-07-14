@@ -13,6 +13,11 @@ export type GetCountriesParams =
 export type GetCountriesResponse =
   components['schemas']['BaseResponseCountryListResponse'];
 
+export type GetRecommendedPostsParams =
+  operations['getRecommendedPosts']['parameters']['query'];
+export type GetRecommendedPostsResponse =
+  components['schemas']['BaseResponseRecommendedPostListResponse'];
+
 export type SearchCountriesParams =
   operations['searchCountries']['parameters']['query'];
 export type SearchCountriesResponse =

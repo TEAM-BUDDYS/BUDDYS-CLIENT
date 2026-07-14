@@ -2,12 +2,28 @@ import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 
 import { RECOMMENDATION_QUERY_OPTIONS } from '@/shared/api';
+import type { RecommendedPost } from '@/shared/api/recommended-posts/type';
 import { defaultProfileImage } from '@/shared/assets/illustrations';
 import { ArchivePostCard } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
 
 import { RecommendedProfile } from '../../components/recommended-profile/recommended-profile';
 
 const RECOMMENDED_POST_SIZE = 4;
+
+type DisplayableRecommendedPost = RecommendedPost & {
+  postId: number;
+  period: {
+    startDate: string;
+    endDate: string;
+  };
+};
+
+const isDisplayableRecommendedPost = (
+  post: RecommendedPost,
+): post is DisplayableRecommendedPost => {
+  return Boolean(post.postId && post.period?.startDate && post.period.endDate);
+};
 
 interface OnboardCompleteProps {
   nickname: string;
@@ -29,7 +45,7 @@ export const OnboardComplete = ({
   );
 
   const recommendedPosts = (data?.data?.posts ?? []).filter(
-    (post) => post.postId && post.period?.startDate && post.period.endDate,
+    isDisplayableRecommendedPost,
   );
   const recommendedProfileImage = otherProfileImageUrl ?? defaultProfileImage;
 
@@ -55,7 +71,7 @@ export const OnboardComplete = ({
         {recommendedPosts.map((post) => (
           <Link
             key={post.postId}
-            href={`/posts/${post.postId}`}
+            href={ROUTES.POST.DETAIL(post.postId)}
             className="w-full"
           >
             <ArchivePostCard

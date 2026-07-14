@@ -44,6 +44,18 @@ src/
 - route group은 URL을 바꾸지 않고 레이아웃을 나눌 때만 사용합니다.
 - route handler는 서버 경계가 필요할 때만 `app/api`에 둡니다.
 
+## Route Path Configuration
+
+- 앱 내부 화면 경로는 `src/shared/config/routes.ts`의 `ROUTES`에서 관리합니다.
+- 정적 경로는 상수로 사용하고 식별자가 필요한 동적 경로는 팩토리 함수로 생성합니다.
+- `Link`, `router.push`, `router.replace` 등에서 같은 경로 문자열을 직접 반복하지 않습니다.
+- API 요청 주소는 `src/shared/api/end-point.ts`의 `END_POINT`가 담당하며 화면 경로와 섞지 않습니다.
+
+```tsx
+router.push(ROUTES.POST.ROOT);
+router.replace(ROUTES.POST.DETAIL(postId));
+```
+
 ## Confirmed Routes And Domains
 
 | Screen | URL           | Route entry                   | Owner domain | Notes                                   |
@@ -145,6 +157,42 @@ domains/{domain}/
 - 기본 page와 layout은 Server Component로 둡니다.
 - `useState`, event handler, `useEffect`, browser API가 필요한 파일만 Client Component로 둡니다.
 - `"use client"`는 가능한 leaf component나 `providers.tsx` 같은 경계에만 둡니다.
+
+## Loading And Error Boundary
+
+- `src/app/loading.tsx`와 `src/app/error.tsx`는 route 전체의 최종 loading/error fallback으로 사용합니다.
+- `src/app/global-error.tsx`는 root layout까지 렌더링하지 못하는 치명적 오류의 최후 안전망으로만 사용합니다.
+- 화면 일부의 독립적인 조회 상태는 `src/shared/components/ui/async-boundary`로 감싸 나머지 화면을 유지합니다.
+- Suspense를 사용하는 TanStack Query는 `QueryErrorResetBoundary`와 함께 구성해 재시도 시 query 오류 상태도 초기화합니다.
+- `DelayedFallback`은 loading fallback을 기본 200ms 뒤에 표시해 짧은 요청의 깜빡임을 줄이고, 지연 중에도 fallback 영역 크기를 유지합니다.
+- `AsyncBoundary`에서 잡은 오류는 Sentry에 기록하고, `onError`가 있으면 추가 오류 처리도 실행합니다.
+- `redirect()`, `notFound()` 같은 Next.js 라우팅 제어 오류는 잡지 않고 App Router 경계로 다시 전달합니다.
+- 조건부 조회처럼 `enabled`가 필요한 query, background polling과 mutation은 Suspense로 일괄 전환하지 않고 사용처에서 pending/error 상태를 처리합니다.
+- 정상 응답의 빈 데이터는 Error Boundary가 아니라 `EmptyState` 같은 명시적인 empty UI로 처리합니다.
+
+Suspense query를 호출하는 컴포넌트보다 상위에서 `AsyncBoundary`를 사용합니다.
+
+```tsx
+<AsyncBoundary
+  className="min-h-60"
+  loadingDelayMs={200}
+  loadingState={{ title: '목록을 불러오고 있어요' }}
+  errorState={{ title: '목록을 불러오지 못했어요' }}
+>
+  <FeatureContent />
+</AsyncBoundary>
+```
+
+기능 전용 fallback이 필요하면 기본 상태 대신 UI를 전달합니다. custom fallback은 자체 layout을 소유하며, error fallback은 전달받은 `reset`으로 재시도 동작을 연결합니다.
+
+```tsx
+<AsyncBoundary
+  loadingFallback={<FeatureSkeleton />}
+  errorFallback={({ reset }) => <FeatureError onRetry={reset} />}
+>
+  <FeatureContent />
+</AsyncBoundary>
+```
 
 ## Dependency Direction
 

@@ -13,6 +13,8 @@ import type {
   GetCountriesResponse,
   GetExchangeCountryRecommendedUsersParams,
   GetExchangeCountryRecommendedUsersResponse,
+  GetRecommendedPostsParams,
+  GetRecommendedPostsResponse,
   GetRecommendedUsersResponse,
   SearchCitiesParams,
   SearchCitiesResponse,
@@ -42,6 +44,14 @@ const getCountries = async (params?: GetCountriesParams) => {
       searchParams: createSearchParams(params),
     })
     .json<GetCountriesResponse>();
+};
+
+const getRecommendedPosts = async (params?: GetRecommendedPostsParams) => {
+  return apiClient
+    .get(END_POINT.RECOMMENDATION.POSTS, {
+      searchParams: createSearchParams(params),
+    })
+    .json<GetRecommendedPostsResponse>();
 };
 
 const searchCountries = async (params: SearchCountriesParams) => {
@@ -77,6 +87,11 @@ export const HOME_QUERY_OPTIONS = {
     queryOptions({
       queryKey: COUNTRY_QUERY_KEY.LIST(params),
       queryFn: () => getCountries(params),
+    }),
+  RECOMMENDED_POSTS: (params?: GetRecommendedPostsParams) =>
+    queryOptions({
+      queryKey: RECOMMENDATION_QUERY_KEY.POSTS(params),
+      queryFn: () => getRecommendedPosts(params),
     }),
   SEARCH_COUNTRIES: (params: SearchCountriesParams) =>
     queryOptions({

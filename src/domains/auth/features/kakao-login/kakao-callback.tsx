@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
 
 import { useAuthSession } from '../auth-session/auth-session-provider';
 import { validateKakaoOAuthState } from './kakao-oauth';
@@ -50,7 +51,7 @@ export const KakaoCallback = () => {
 
     authenticateWithKakao(code)
       .then(({ onboardingCompleted }) => {
-        router.replace(onboardingCompleted ? '/' : '/onboarding');
+        router.replace(onboardingCompleted ? ROUTES.HOME : ROUTES.ONBOARDING);
       })
       .catch((error: unknown) => {
         setErrorMessage(
@@ -68,7 +69,10 @@ export const KakaoCallback = () => {
           <h1 className="text-title-b-22 text-gray-800">로그인 실패</h1>
           <p className="text-body-m-15 text-gray-500">{errorMessage}</p>
         </div>
-        <Button className="max-w-100" onClick={() => router.replace('/login')}>
+        <Button
+          className="max-w-100"
+          onClick={() => router.replace(ROUTES.AUTH.LOGIN)}
+        >
           로그인 화면으로 돌아가기
         </Button>
       </main>

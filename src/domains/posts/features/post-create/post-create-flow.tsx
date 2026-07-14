@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { cn } from '@/lib/cn';
+import { useCountryList } from '@/shared/api';
 import { Header } from '@/shared/components/layout';
 import {
   Button,
@@ -11,7 +12,7 @@ import {
   ProgressBar,
 } from '@/shared/components/ui';
 
-import { COUNTRY_OPTIONS, STEP_CONTENTS, TOTAL_STEP } from './constants';
+import { STEP_CONTENTS, TOTAL_STEP } from './constants';
 import type { PostCreateQuestionStep, PostCreateStep } from './model';
 import { PostCreateCityStep } from './post-create-city-step';
 import { PostCreateCountryStep } from './post-create-country-step';
@@ -45,6 +46,12 @@ export const PostCreateFlow = () => {
   const [currentStep, setCurrentStep] = useState<PostCreateStep>(1);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const postCreateForm = usePostCreateForm();
+  const {
+    countryOptions,
+    hasMoreCountries,
+    isLoadingMoreCountries,
+    loadMoreCountries,
+  } = useCountryList();
 
   const canGoNext = postCreateForm.canGoNext(currentStep);
 
@@ -115,9 +122,12 @@ export const PostCreateFlow = () => {
 
           {currentStep === 1 && (
             <PostCreateCountryStep
-              options={COUNTRY_OPTIONS}
+              options={countryOptions}
               value={postCreateForm.selectedCountry}
+              hasMore={hasMoreCountries}
+              isLoadingMore={isLoadingMoreCountries}
               onChange={postCreateForm.handleCountrySelect}
+              onLoadMore={loadMoreCountries}
             />
           )}
 

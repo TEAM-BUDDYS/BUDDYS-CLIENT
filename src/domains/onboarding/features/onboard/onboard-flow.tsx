@@ -1,14 +1,13 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import { useCountryList } from '@/shared/api';
+import { TAG_QUERY_OPTIONS } from '@/shared/api';
 import { Button, ProgressBar } from '@/shared/components/ui';
-import {
-  ACTIVITY_TAGS,
-  COMPANION_STYLE_TAGS,
-  INTEREST_TAGS,
-} from '@/shared/constants/preference-tags';
+import { ROUTES } from '@/shared/config';
 
 import type { OnboardProgressStep, OnboardStep } from '../../model/onboard';
 import { RECOMMENDED_PROFILE, TOTAL_PROGRESS_STEP } from './constant';
@@ -36,7 +35,10 @@ const NEXT_STEP_BY_STEP = {
   profile: 'complete',
 } satisfies Partial<Record<OnboardStep, OnboardStep>>;
 
+const ONBOARD_TAG_TYPES = ['ACTIVITY', 'INTEREST', 'TRAVEL_STYLE'] as const;
+
 export const OnboardFlow = () => {
+  const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] =
     useState<OnboardStep>('interest-location');
   const onboardForm = useOnboardForm();
@@ -45,6 +47,18 @@ export const OnboardFlow = () => {
   const canGoNext = onboardForm.canGoNext(currentStep);
 
   const router = useRouter();
+  const {
+    countryOptions,
+    hasMoreCountries,
+    isLoadingMoreCountries,
+    loadMoreCountries,
+  } = useCountryList();
+
+  useEffect(() => {
+    ONBOARD_TAG_TYPES.forEach((tagType) => {
+      void queryClient.prefetchQuery(TAG_QUERY_OPTIONS.LIST(tagType));
+    });
+  }, [queryClient]);
 
   const handleNextClick = () => {
     if (!canGoNext) {
@@ -81,12 +95,15 @@ export const OnboardFlow = () => {
       <section className="flex flex-1 flex-col pt-10">
         {currentStep === 'interest-location' && (
           <OnboardInterestLocationStep
-            countryOptions={onboardForm.countryOptions}
+            countryOptions={countryOptions}
             selectedCountry={onboardForm.interestCountry}
+            hasMoreCountries={hasMoreCountries}
+            isLoadingMoreCountries={isLoadingMoreCountries}
             city={onboardForm.interestCity}
             selectedCity={onboardForm.selectedInterestCity}
             cityResults={onboardForm.interestCityResults}
             onCountryChange={onboardForm.handleInterestCountrySelect}
+            onLoadMoreCountries={loadMoreCountries}
             onCityChange={onboardForm.handleInterestCityChange}
             onCitySelect={onboardForm.handleInterestCitySelect}
           />
@@ -94,14 +111,17 @@ export const OnboardFlow = () => {
 
         {currentStep === 'exchange-info' && (
           <OnboardExchangeInfoStep
-            countryOptions={onboardForm.countryOptions}
+            countryOptions={countryOptions}
             selectedCountry={onboardForm.exchangeCountry}
+            hasMoreCountries={hasMoreCountries}
+            isLoadingMoreCountries={isLoadingMoreCountries}
             school={onboardForm.exchangeSchool}
             selectedSchool={onboardForm.selectedExchangeSchool}
             schoolResults={onboardForm.exchangeSchoolResults}
             startMonth={onboardForm.startMonth}
             endMonth={onboardForm.endMonth}
             onCountryChange={onboardForm.handleExchangeCountrySelect}
+            onLoadMoreCountries={loadMoreCountries}
             onSchoolChange={onboardForm.handleExchangeSchoolChange}
             onSchoolSelect={onboardForm.handleExchangeSchoolSelect}
             onStartMonthChange={onboardForm.handleStartMonthChange}
@@ -113,7 +133,7 @@ export const OnboardFlow = () => {
           <OnboardTagSelectStep
             title="어떤 활동을 함께하고 싶나요?"
             description="원하는 동행 유형을 추천해드릴게요"
-            tags={ACTIVITY_TAGS}
+            tagType="ACTIVITY"
             selectedTagIds={onboardForm.activityTagIds}
             maxSelectionCount={3}
             onChange={onboardForm.handleActivityTagIdsChange}
@@ -124,7 +144,7 @@ export const OnboardFlow = () => {
           <OnboardTagSelectStep
             title="관심사를 선택해주세요"
             description="취향이 비슷한 사람을 연결해드릴게요"
-            tags={INTEREST_TAGS}
+            tagType="INTEREST"
             selectedTagIds={onboardForm.interestTagIds}
             maxSelectionCount={3}
             onChange={onboardForm.handleInterestTagIdsChange}
@@ -135,7 +155,7 @@ export const OnboardFlow = () => {
           <OnboardTagSelectStep
             title="동행 스타일은요?"
             description="함께할 사람의 성향을 맞춰볼게요 "
-            tags={COMPANION_STYLE_TAGS}
+            tagType="TRAVEL_STYLE"
             selectedTagIds={onboardForm.companionTagIds}
             maxSelectionCount={5}
             onChange={onboardForm.handleCompanionTagIdsChange}
@@ -166,7 +186,10 @@ export const OnboardFlow = () => {
             />
             <div className="fixed bottom-0 left-1/2 z-10 w-full max-w-100 -translate-x-1/2 px-4 pb-[34px]">
               <div className="absolute right-0 bottom-0 left-0 -z-10 h-[145px] bg-gradient-to-b from-white/0 via-white to-white" />
-              <Button onClick={() => router.push('/')} className="w-full">
+              <Button
+                onClick={() => router.push(ROUTES.HOME)}
+                className="w-full"
+              >
                 시작하기
               </Button>
             </div>
