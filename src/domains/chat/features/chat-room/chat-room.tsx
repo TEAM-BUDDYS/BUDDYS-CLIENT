@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Header } from '@/shared/components/layout';
@@ -12,6 +12,8 @@ import { useChatRoomStomp } from '../../hooks/use-chat-room-stomp';
 import { ChatMessageData } from '../../model/chat-room';
 import { ChatRoomMenu } from '../chat-room-menu/chat-room-menu';
 import { ChatMessageList } from './chat-message-list';
+
+const CHAT_MESSAGE_PAGE_SIZE = 10;
 
 interface ChatRoomProps {
   chatRoomId: number;
@@ -31,8 +33,18 @@ export const ChatRoom = ({ chatRoomId, currentUserId }: ChatRoomProps) => {
     isError,
   } = useQuery(CHAT_QUERY_OPTIONS.DETAIL(chatRoomId));
 
-  const { data: initialMessages } = useQuery(
-    CHAT_QUERY_OPTIONS.MESSAGES(chatRoomId),
+  const {
+    data: messagePages,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isFetchNextPageError,
+    isPending: isMessagesPending,
+    isError: isMessagesError,
+  } = useInfiniteQuery(
+    CHAT_QUERY_OPTIONS.MESSAGES(chatRoomId, {
+      size: CHAT_MESSAGE_PAGE_SIZE,
+    }),
   );
 
   const handleReceiveMessage = useCallback(
@@ -71,7 +83,9 @@ export const ChatRoom = ({ chatRoomId, currentUserId }: ChatRoomProps) => {
   });
 
   const messages = useMemo<ChatMessageData[]>(() => {
-    const fetchedMessages = [...(initialMessages?.messages ?? [])].reverse();
+    const fetchedMessages = [
+      ...(messagePages?.pages.flatMap((page) => page.messages) ?? []),
+    ].reverse();
 
     const combinedMessages = [...fetchedMessages, ...realtimeMessages];
 
@@ -80,7 +94,7 @@ export const ChatRoom = ({ chatRoomId, currentUserId }: ChatRoomProps) => {
         array.findIndex((item) => item.messageId === message.messageId) ===
         index,
     );
-  }, [initialMessages?.messages, realtimeMessages]);
+  }, [messagePages?.pages, realtimeMessages]);
 
   useEffect(() => {
     const latestMessage = messages.at(-1);
@@ -110,11 +124,10 @@ export const ChatRoom = ({ chatRoomId, currentUserId }: ChatRoomProps) => {
     }
   };
 
-  if (isPending) {
+  if (isPending || isMessagesPending) {
     return <div>채팅방을 불러오는 중...</div>;
   }
-
-  if (isError || !chatRoomData) {
+  if (isError || isMessagesError || !chatRoomData) {
     return <div>채팅방을 불러오지 못했습니다.</div>;
   }
 
@@ -130,6 +143,10 @@ export const ChatRoom = ({ chatRoomId, currentUserId }: ChatRoomProps) => {
         <ChatMessageList
           createdAt={chatRoomData.createdAt}
           messages={messages}
+          hasPreviousMessages={Boolean(hasNextPage)}
+          isFetchingPreviousMessages={isFetchingNextPage}
+          isFetchPreviousMessagesError={isFetchNextPageError}
+          onLoadPreviousMessages={fetchNextPage}
         />
 
         <BottomActionBar

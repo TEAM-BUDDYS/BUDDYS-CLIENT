@@ -64,6 +64,17 @@ const getChatRoom = async (chatRoomId: number): Promise<ChatRoomDetail> => {
   };
 };
 
+type MessageQueryParams = NonNullable<GetMessagesParams>;
+
+type GetInfiniteMessagesParams = Pick<MessageQueryParams, 'size'>;
+
+type MessagePageParam = Pick<
+  MessageQueryParams,
+  'cursorSentAt' | 'cursorMessageId'
+>;
+
+const INITIAL_MESSAGE_PAGE_PARAM: MessagePageParam = {};
+
 const getMessages = async (
   chatRoomId: number,
   params?: GetMessagesParams,
@@ -100,10 +111,28 @@ export const CHAT_QUERY_OPTIONS = {
       queryKey: CHAT_ROOM_QUERY_KEY.DETAIL(chatRoomId),
       queryFn: () => getChatRoom(chatRoomId),
     }),
-  MESSAGES: (chatRoomId: number, params?: GetMessagesParams) =>
-    queryOptions({
+  MESSAGES: (chatRoomId: number, params?: GetInfiniteMessagesParams) =>
+    infiniteQueryOptions({
       queryKey: CHAT_ROOM_QUERY_KEY.MESSAGES(chatRoomId, params),
-      queryFn: () => getMessages(chatRoomId, params),
+
+      queryFn: ({ pageParam }) =>
+        getMessages(chatRoomId, {
+          ...params,
+          ...pageParam,
+        }),
+
+      initialPageParam: INITIAL_MESSAGE_PAGE_PARAM,
+
+      getNextPageParam: (lastPage): MessagePageParam | undefined => {
+        if (!lastPage.hasNext) {
+          return undefined;
+        }
+
+        return {
+          cursorSentAt: lastPage.nextCursorSentAt,
+          cursorMessageId: lastPage.nextCursorMessageId,
+        };
+      },
     }),
 };
 
