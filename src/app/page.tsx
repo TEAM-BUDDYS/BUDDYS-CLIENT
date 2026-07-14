@@ -8,44 +8,6 @@ import { TodayBuddySection } from '@/domains/home/sections/today-buddy-section';
 import { BellIcon } from '@/shared/components/icons';
 import { BuddysLogo } from '@/shared/components/icons/buddys-logo';
 import { BottomNavigation, Header } from '@/shared/components/layout';
-import { ROUTES } from '@/shared/config';
-
-const temporaryImage = 'https://loremflickr.com/412/264/travel?random=1';
-
-const temporaryProfileImage = 'https://loremflickr.com/48/48/person?random=1';
-
-const todayBuddyItems = [
-  {
-    href: ROUTES.POST.DETAIL(1),
-    imageUrl: temporaryImage,
-    carouselInfo: {
-      profileImageUrl: temporaryProfileImage,
-      title: '최대 17자 제목이에요',
-      country: '일본',
-      viewCount: 1234,
-    },
-  },
-  {
-    href: ROUTES.POST.DETAIL(2),
-    imageUrl: temporaryImage,
-    carouselInfo: {
-      profileImageUrl: temporaryProfileImage,
-      title: '도쿄 같이 걸을 버디',
-      country: '일본',
-      viewCount: 856,
-    },
-  },
-  {
-    href: ROUTES.POST.DETAIL(3),
-    imageUrl: temporaryImage,
-    carouselInfo: {
-      profileImageUrl: temporaryProfileImage,
-      title: '주말 여행 동행 구해요',
-      country: '대만',
-      viewCount: 432,
-    },
-  },
-];
 
 export default function Home() {
   return (
@@ -62,7 +24,7 @@ export default function Home() {
         }
       />
       <main className="px-4 pb-33">
-        <TodayBuddySection items={todayBuddyItems} />
+        <TodayBuddySection />
         <hr
           className="-mx-4 my-6 h-2 border-0 bg-gray-50 opacity-50"
           aria-hidden="true"

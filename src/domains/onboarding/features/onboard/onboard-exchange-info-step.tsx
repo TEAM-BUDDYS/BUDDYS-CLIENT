@@ -67,6 +67,8 @@ export const OnboardExchangeInfoStep = ({
           value={school}
           selectedOption={selectedSchool}
           results={schoolResults}
+          getOptionKey={(school) => school.id}
+          getOptionLabel={(school) => school.koreanName ?? school.name}
           onChange={onSchoolChange}
           onSelect={onSchoolSelect}
         />

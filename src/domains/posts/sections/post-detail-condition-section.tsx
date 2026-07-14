@@ -44,7 +44,11 @@ export const PostDetailConditionSection = ({
             {POST_AGE_CONDITION_LABELS[ageCondition]}
           </Chip>
         ))}
-        <Chip>{POST_GENDER_CONDITION_LABELS[conditions.genderCondition]}</Chip>
+        {conditions.genderConditions.map((genderCondition) => (
+          <Chip key={genderCondition}>
+            {POST_GENDER_CONDITION_LABELS[genderCondition]}
+          </Chip>
+        ))}
       </ConditionGroup>
 
       <ConditionGroup title="동행 유형">
