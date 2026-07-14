@@ -1,5 +1,6 @@
 'use client';
 
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -12,29 +13,80 @@ import {
   buddyFilterItems,
   type BuddyFilterKey,
 } from '@/domains/home/model/buddy-filter';
+import {
+  BUDDY_SEARCH_SIZE,
+  getBuddySearchParams,
+  hasPostCardFields,
+} from '@/domains/home/model/buddy-search';
+import { POST_QUERY_OPTIONS } from '@/domains/posts/api/query';
 import { cn } from '@/lib/cn';
 import { ChevronRightIcon } from '@/shared/components/icons';
-import { Card, Filter } from '@/shared/components/ui';
-import type { RecruitmentStatus } from '@/shared/components/ui/card/card-tag';
+import {
+  AsyncBoundary,
+  Card,
+  EmptyState,
+  Filter,
+} from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
-export interface BuddySearchItem {
-  id: number;
-  href: string;
-  title: string;
-  content: string;
-  postStatus: RecruitmentStatus;
-  tagValue: string;
-  startDate: string;
-  endDate: string;
-  image?: string;
+import type { FilterSheetValue } from '../features/filter-sheet/use-filter-sheet';
+
+interface BuddySearchPostListProps {
+  filterValue: FilterSheetValue;
+  bookmarkedItemIds: number[];
+  onBookmarkClick: (itemId: number) => void;
 }
 
-interface BuddySearchSectionProps {
-  items: BuddySearchItem[];
-}
+const BuddySearchPostList = ({
+  filterValue,
+  bookmarkedItemIds,
+  onBookmarkClick,
+}: BuddySearchPostListProps) => {
+  const { data } = useSuspenseQuery(
+    POST_QUERY_OPTIONS.LIST(
+      getBuddySearchParams(filterValue, BUDDY_SEARCH_SIZE),
+    ),
+  );
 
-export const BuddySearchSection = ({ items }: BuddySearchSectionProps) => {
+  const posts = (data?.data?.content ?? []).filter(hasPostCardFields);
+  const isEmpty = posts.length === 0;
+
+  if (isEmpty) {
+    return (
+      <EmptyState
+        title="조건에 맞는 동행 게시물이 없어요"
+        description="필터를 바꿔 다른 동행 게시물을 찾아보세요"
+        className="py-8"
+      />
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-6 pt-6">
+      {posts.map((post) => (
+        <BookmarkContainer
+          key={post.postId}
+          isBookmarked={bookmarkedItemIds.includes(post.postId)}
+          variant="card"
+          onBookmarkClick={() => onBookmarkClick(post.postId)}
+        >
+          <Card
+            href={ROUTES.POST.DETAIL(post.postId)}
+            title={post.title}
+            content={post.content}
+            postStatus={post.recruitmentStatus}
+            tagValue={post.country.name}
+            startDate={post.startDate}
+            endDate={post.endDate}
+            image={post.thumbnailImageUrl}
+          />
+        </BookmarkContainer>
+      ))}
+    </div>
+  );
+};
+
+export const BuddySearchSection = () => {
   const router = useRouter();
   const [bookmarkedItemIds, setBookmarkedItemIds] = useState<number[]>([]);
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
@@ -88,27 +140,17 @@ export const BuddySearchSection = ({ items }: BuddySearchSectionProps) => {
             <div aria-hidden="true" className="w-2 shrink-0" />
           </div>
         </div>
-        <div className="flex flex-col gap-6 pt-6">
-          {items.map((item) => (
-            <BookmarkContainer
-              key={item.id}
-              isBookmarked={bookmarkedItemIds.includes(item.id)}
-              variant="card"
-              onBookmarkClick={() => handleBookmarkClick(item.id)}
-            >
-              <Card
-                href={item.href}
-                title={item.title}
-                content={item.content}
-                postStatus={item.postStatus}
-                tagValue={item.tagValue}
-                startDate={item.startDate}
-                endDate={item.endDate}
-                image={item.image}
-              />
-            </BookmarkContainer>
-          ))}
-        </div>
+        <AsyncBoundary
+          className="py-8"
+          resetKeys={[filterValue]}
+          loadingFallback={<div className="min-h-96 pt-6" aria-busy="true" />}
+        >
+          <BuddySearchPostList
+            filterValue={filterValue}
+            bookmarkedItemIds={bookmarkedItemIds}
+            onBookmarkClick={handleBookmarkClick}
+          />
+        </AsyncBoundary>
       </section>
       {isFilterSheetOpen && (
         <div

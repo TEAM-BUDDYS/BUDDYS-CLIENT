@@ -1,11 +1,11 @@
 'use client';
 
-import { useCountryList } from '@/shared/api';
+import { type Country, useCountryList } from '@/shared/api';
 import { Dropdown } from '@/shared/components/ui';
 
 interface CountryFilterFieldProps {
-  value: string;
-  onChange: (value: string) => void;
+  value: Country | null;
+  onChange: (value: Country) => void;
 }
 
 export const CountryFilterField = ({
@@ -18,15 +18,16 @@ export const CountryFilterField = ({
     isLoadingMoreCountries,
     loadMoreCountries,
   } = useCountryList();
-  const countryNames = countryOptions.map((country) => country.name);
 
   return (
     <Dropdown
-      options={countryNames}
+      options={countryOptions}
       value={value}
       placeholder="선택해주세요."
       hasMore={hasMoreCountries}
       isLoadingMore={isLoadingMoreCountries}
+      getOptionLabel={(country) => country.name}
+      getOptionKey={(country) => country.id}
       onChange={onChange}
       onLoadMore={loadMoreCountries}
     />

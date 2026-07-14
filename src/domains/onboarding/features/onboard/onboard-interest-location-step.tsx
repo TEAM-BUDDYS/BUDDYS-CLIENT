@@ -4,7 +4,6 @@ import { Dropdown, FormLabel } from '@/shared/components/ui';
 
 import { SearchOptionField } from '../../components/search-option-field/search-option-field';
 import type { OnboardLocationOption } from '../../model/onboard';
-import { findCountryByName } from '../../utils/country-options';
 
 interface OnboardInterestLocationStepProps {
   countryOptions: OnboardLocationOption[];
@@ -33,27 +32,19 @@ export const OnboardInterestLocationStep = ({
   onCityChange,
   onCitySelect,
 }: OnboardInterestLocationStepProps) => {
-  const countryNames = countryOptions.map((country) => country.name);
-
-  const handleCountryChange = (countryName: string) => {
-    const selectedCountry = findCountryByName(countryOptions, countryName);
-
-    if (selectedCountry) {
-      onCountryChange(selectedCountry);
-    }
-  };
-
   return (
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-2">
         <FormLabel as="h2">관심 국가</FormLabel>
         <Dropdown
-          options={countryNames}
+          options={countryOptions}
           placeholder="국가 선택"
-          value={selectedCountry?.name ?? ''}
+          value={selectedCountry}
           hasMore={hasMoreCountries}
           isLoadingMore={isLoadingMoreCountries}
-          onChange={handleCountryChange}
+          getOptionLabel={(country) => country.name}
+          getOptionKey={(country) => country.id}
+          onChange={onCountryChange}
           onLoadMore={onLoadMoreCountries}
         />
       </div>
