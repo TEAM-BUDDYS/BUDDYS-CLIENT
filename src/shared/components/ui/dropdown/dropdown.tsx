@@ -45,11 +45,11 @@ export const Dropdown = <TOption,>({
     getOptionLabel?.(option) ?? String(option);
   const getKey = (option: TOption) =>
     getOptionKey?.(option) ?? getLabel(option);
-  const selectedLabel = value ? getLabel(value) : '';
-  const hasSelectedValue = Boolean(selectedLabel);
+  const hasSelectedValue = value !== null;
+  const selectedLabel = hasSelectedValue ? getLabel(value) : '';
 
   const isSelectedOption = (option: TOption) => {
-    if (!value) return false;
+    if (value === null) return false;
 
     return isOptionEqual
       ? isOptionEqual(option, value)
