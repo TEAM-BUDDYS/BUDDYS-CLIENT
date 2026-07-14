@@ -69,11 +69,16 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
 
   const authenticateWithKakao = useCallback(
     async (code: string) => {
-      const loginResponse = await loginWithKakao({ code });
-      setAuthenticatedSession(loginResponse);
-      return loginResponse;
+      try {
+        const loginResponse = await loginWithKakao({ code });
+        setAuthenticatedSession(loginResponse);
+        return loginResponse;
+      } catch (error) {
+        clearSession();
+        throw error;
+      }
     },
-    [setAuthenticatedSession],
+    [clearSession, setAuthenticatedSession],
   );
 
   useEffect(() => {
