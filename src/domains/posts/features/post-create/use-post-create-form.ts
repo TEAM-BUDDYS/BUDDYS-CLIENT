@@ -96,13 +96,13 @@ export const usePostCreateForm = () => {
   const handleCityChange = (value: string) => {
     setCity(value);
 
-    if (selectedCity && value !== getCityDisplayName(selectedCity)) {
+    if (selectedCity && value !== getCityDisplayName(selectedCity, value)) {
       setSelectedCity(null);
     }
   };
 
   const handleCitySelect = (value: City) => {
-    setCity(getCityDisplayName(value));
+    setCity(getCityDisplayName(value, city));
     setSelectedCity(value);
   };
 

@@ -42,7 +42,7 @@ export const PostCreateCityStep = ({
           {cityResults.map((cityResult) => (
             <OptionItem
               key={cityResult.id}
-              option={getCityDisplayName(cityResult)}
+              option={getCityDisplayName(cityResult, city)}
               isSelected={selectedCity?.id === cityResult.id}
               onSelect={() => onCitySelect(cityResult)}
             />

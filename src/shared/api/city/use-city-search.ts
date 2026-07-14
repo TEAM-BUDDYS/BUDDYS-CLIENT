@@ -16,7 +16,7 @@ export const useCitySearch = ({
   selectedCity,
 }: UseCitySearchParams) => {
   const trimmedKeyword = keyword.trim();
-  const selectedCityLabel = getCityDisplayName(selectedCity);
+  const selectedCityLabel = getCityDisplayName(selectedCity, trimmedKeyword);
   const enabled = Boolean(
     countryId && trimmedKeyword && selectedCityLabel !== trimmedKeyword,
   );

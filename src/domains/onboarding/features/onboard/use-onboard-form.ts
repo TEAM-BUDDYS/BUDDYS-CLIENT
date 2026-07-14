@@ -99,14 +99,14 @@ export const useOnboardForm = () => {
 
     if (
       selectedInterestCity &&
-      getCityDisplayName(selectedInterestCity) !== value
+      getCityDisplayName(selectedInterestCity, value) !== value
     ) {
       setSelectedInterestCity(null);
     }
   };
 
   const handleInterestCitySelect = (value: City) => {
-    setInterestCity(getCityDisplayName(value));
+    setInterestCity(getCityDisplayName(value, interestCity));
     setSelectedInterestCity(value);
   };
 

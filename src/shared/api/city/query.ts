@@ -16,7 +16,9 @@ const isCityResponse = (city: unknown): city is City => {
   return (
     typeof id === 'number' &&
     typeof name === 'string' &&
-    (koreanName === undefined || typeof koreanName === 'string')
+    (koreanName === null ||
+      koreanName === undefined ||
+      typeof koreanName === 'string')
   );
 };
 
