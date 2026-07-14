@@ -1,6 +1,6 @@
 'use client';
 
-import type { City } from '@/shared/api';
+import { type City, getCityDisplayName } from '@/shared/api';
 import { Dropdown, FormLabel } from '@/shared/components/ui';
 
 import { SearchOptionField } from '../../components/search-option-field/search-option-field';
@@ -63,7 +63,7 @@ export const OnboardInterestLocationStep = ({
           selectedOption={selectedCity}
           results={cityResults}
           getOptionKey={(city) => city.id ?? ''}
-          getOptionLabel={(city) => city.koreanName ?? city.name ?? ''}
+          getOptionLabel={getCityDisplayName}
           onChange={onCityChange}
           onSelect={onCitySelect}
         />

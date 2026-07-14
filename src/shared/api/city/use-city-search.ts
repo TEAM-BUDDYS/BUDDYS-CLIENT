@@ -2,16 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 
 import { CITY_QUERY_OPTIONS } from './query';
 import type { City } from './type';
+import { getCityDisplayName } from './utils';
 
 interface UseCitySearchParams {
   countryId?: number;
   keyword: string;
   selectedCity?: City | null;
 }
-
-const getCityDisplayName = (city?: City | null) => {
-  return city?.koreanName ?? city?.name ?? '';
-};
 
 export const useCitySearch = ({
   countryId,
@@ -21,7 +18,7 @@ export const useCitySearch = ({
   const trimmedKeyword = keyword.trim();
   const selectedCityLabel = getCityDisplayName(selectedCity);
   const enabled = Boolean(
-    countryId && trimmedKeyword && selectedCityLabel !== keyword,
+    countryId && trimmedKeyword && selectedCityLabel !== trimmedKeyword,
   );
 
   const citySearchQuery = useQuery({

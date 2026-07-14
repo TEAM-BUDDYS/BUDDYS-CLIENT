@@ -1,6 +1,6 @@
 'use client';
 
-import type { City } from '@/shared/api';
+import { type City, getCityDisplayName } from '@/shared/api';
 import { OptionItem, OptionList, Searchbar } from '@/shared/components/ui';
 
 interface PostCreateCityStepProps {
@@ -42,7 +42,7 @@ export const PostCreateCityStep = ({
           {cityResults.map((cityResult) => (
             <OptionItem
               key={cityResult.id}
-              option={cityResult.koreanName ?? cityResult.name ?? ''}
+              option={getCityDisplayName(cityResult)}
               isSelected={selectedCity?.id === cityResult.id}
               onSelect={() => onCitySelect(cityResult)}
             />

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import type { PostFormPayload } from '@/domains/posts/model/post-form';
-import type { City } from '@/shared/api';
+import { type City, getCityDisplayName } from '@/shared/api';
 import type { DateRangeTypes } from '@/shared/components/ui';
 
 import { MAX_IMAGE_COUNT } from './constants';
@@ -38,10 +38,6 @@ const getGenderForPayload = (
   genderConditions: PostCreateGenderConditionType[],
 ) => {
   return genderConditions[0];
-};
-
-const getCityDisplayName = (city: City | null) => {
-  return city?.koreanName ?? city?.name ?? '';
 };
 
 const isRequiredDetailComplete = (
@@ -119,7 +115,7 @@ export const usePostCreateForm = () => {
   const getCompleteFormValues = () => {
     if (
       !selectedCountry ||
-      !selectedCity?.id ||
+      !selectedCity ||
       !dateRange.startDate ||
       !dateRange.endDate ||
       !isRequiredDetailComplete(detail)
@@ -142,7 +138,7 @@ export const usePostCreateForm = () => {
     }
 
     if (currentStep === 2) {
-      return Boolean(selectedCity?.id);
+      return Boolean(selectedCity);
     }
 
     if (currentStep === 3) {
@@ -163,7 +159,7 @@ export const usePostCreateForm = () => {
       completeFormValues;
     const cityId = selectedCity.id;
 
-    if (!cityId) {
+    if (cityId == null) {
       return null;
     }
 

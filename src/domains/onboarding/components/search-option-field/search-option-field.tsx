@@ -54,7 +54,7 @@ export const SearchOptionField = <TOption,>({
               key={getOptionKey(result)}
               option={getOptionLabel(result)}
               isSelected={
-                selectedOption !== null &&
+                selectedOption != null &&
                 getOptionKey(selectedOption) === getOptionKey(result)
               }
               onSelect={() => onSelect(result)}

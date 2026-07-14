@@ -3,6 +3,7 @@ export { setAccessToken, setAccessTokenRefreshHandler } from './auth-token';
 export {
   type City,
   CITY_QUERY_OPTIONS,
+  getCityDisplayName,
   type SearchCitiesParams,
   useCitySearch,
 } from './city';

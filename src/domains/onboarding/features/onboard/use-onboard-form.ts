@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import type { City } from '@/shared/api';
+import { type City, getCityDisplayName } from '@/shared/api';
 import { formatDateInput } from '@/shared/utils/format-date-input';
 import type { GenderType } from '@/types/gender';
 
@@ -45,10 +45,6 @@ const getSearchResults = (
 
 const getOptionDisplayName = (option: OnboardLocationOption | null) => {
   return option?.koreanName ?? option?.name ?? '';
-};
-
-const getCityDisplayName = (city: City | null) => {
-  return city?.koreanName ?? city?.name ?? '';
 };
 
 export const useOnboardForm = () => {
@@ -204,7 +200,7 @@ export const useOnboardForm = () => {
 
   const canGoNext = (step: OnboardStep) => {
     if (step === 'interest-location') {
-      return Boolean(interestCountry && selectedInterestCity?.id);
+      return Boolean(interestCountry && selectedInterestCity);
     }
 
     if (step === 'exchange-info') {
@@ -241,7 +237,7 @@ export const useOnboardForm = () => {
   ): OnboardingFormPayload | null => {
     if (
       !interestCountry ||
-      !selectedInterestCity?.id ||
+      !selectedInterestCity ||
       activityTagIds.length === 0 ||
       interestTagIds.length === 0 ||
       companionTagIds.length === 0 ||
@@ -252,9 +248,15 @@ export const useOnboardForm = () => {
       return null;
     }
 
+    const interestCityId = selectedInterestCity.id;
+
+    if (interestCityId == null) {
+      return null;
+    }
+
     return {
       interestCountryId: interestCountry.id,
-      interestCityId: selectedInterestCity.id,
+      interestCityId,
       exchangeCountryId: exchangeCountry?.id ?? null,
       exchangeUniversity: selectedExchangeSchool?.name ?? null,
       exchangeStartDate: exchangeMonths.startMonth.trim() || null,
