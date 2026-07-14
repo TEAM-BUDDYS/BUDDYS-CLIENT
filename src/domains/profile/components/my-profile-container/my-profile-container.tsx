@@ -3,7 +3,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 import { PROFILE_QUERY_OPTIONS } from '@/domains/profile/api/query';
-import { AsyncBoundary, AsyncErrorState } from '@/shared/components/ui';
+import { AsyncBoundary } from '@/shared/components/ui';
 
 import { ProfilePageView } from '../profile-page-view/profile-page-view';
 
@@ -17,13 +17,7 @@ export function MyProfileContainer() {
   return (
     <AsyncBoundary
       loadingState={{ title: '프로필을 불러오고 있어요' }}
-      errorFallback={({ error, reset }) => (
-        <AsyncErrorState
-          title="프로필을 불러오지 못했어요"
-          description={error instanceof Error ? error.message : undefined}
-          onRetry={reset}
-        />
-      )}
+      errorState={{ title: '프로필을 불러오지 못했어요' }}
     >
       <ProfileQuery />
     </AsyncBoundary>
