@@ -1,17 +1,11 @@
-import { ChatRoom } from '@/domains/chat/features/chat-room/chat-room';
-import { ChatRoomMenu } from '@/domains/chat/features/chat-room-menu/chat-room-menu';
-import { ChatMessageData } from '@/domains/chat/model/chat-room';
-import { Header } from '@/shared/components/layout';
+import { notFound } from 'next/navigation';
 
-const MOCK_CHAT_ROOM_DETAIL = {
-  chatRoomId: 1,
-  createdDate: '2026-07-10',
-  participant: {
-    userId: 2,
-    nickname: '민지',
-    profileImageUrl: null,
-  },
-};
+import { ChatRoom } from '@/domains/chat/features/chat-room/chat-room';
+import { ChatMessageData } from '@/domains/chat/model/chat-room';
+
+interface ChatRoomPageProps {
+  params: Promise<{ id: string }>;
+}
 
 const MOCK_MESSAGES: ChatMessageData[] = [
   {
@@ -101,19 +95,13 @@ const MOCK_MESSAGES: ChatMessageData[] = [
   },
 ];
 
-export default function ChatRoomPage() {
-  return (
-    <div className="flex h-dvh flex-col">
-      <Header
-        content={MOCK_CHAT_ROOM_DETAIL.participant.nickname}
-        hasBackButton
-        contentAlign="center"
-        right={<ChatRoomMenu />}
-      />
-      <ChatRoom
-        createdAt={MOCK_CHAT_ROOM_DETAIL.createdDate}
-        initialMessages={MOCK_MESSAGES}
-      />
-    </div>
-  );
+export default async function ChatRoomPage({ params }: ChatRoomPageProps) {
+  const { id } = await params;
+  const chatRoomId = Number(id);
+
+  if (!Number.isInteger(chatRoomId) || chatRoomId <= 0) {
+    notFound();
+  }
+
+  return <ChatRoom chatRoomId={chatRoomId} initialMessages={MOCK_MESSAGES} />;
 }
