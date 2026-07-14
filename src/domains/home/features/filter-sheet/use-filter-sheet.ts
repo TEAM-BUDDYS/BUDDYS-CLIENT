@@ -1,9 +1,10 @@
 import { useState } from 'react';
 
+import type { Country } from '@/shared/api';
 import { formatDateInput } from '@/shared/utils/format-date-input';
 
 export interface FilterSheetValue {
-  country: string;
+  country: Country | null;
   startDate: string;
   endDate: string;
   ageTagIds: number[];
@@ -19,7 +20,7 @@ interface UseFilterSheetParams {
 }
 
 export const initialFilterValue: FilterSheetValue = {
-  country: '',
+  country: null,
   startDate: '',
   endDate: '',
   ageTagIds: [],
