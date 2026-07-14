@@ -67,7 +67,7 @@ const updatePostStatus = async (
     throw new Error(response.message || '모집 상태를 변경하지 못했습니다.');
   }
 
-  return { postId: responsePostId, status };
+  return { postId, status };
 };
 
 const getComments = async (postId: number, params?: GetCommentsParams) => {
