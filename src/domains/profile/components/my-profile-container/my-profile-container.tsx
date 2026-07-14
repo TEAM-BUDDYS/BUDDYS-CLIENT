@@ -7,7 +7,7 @@ import { PROFILE_QUERY_OPTIONS } from '@/domains/profile/api/query';
 import { ProfilePageView } from '../profile-page-view/profile-page-view';
 
 export function MyProfileContainer() {
-  const { data } = useSuspenseQuery(PROFILE_QUERY_OPTIONS.ME());
+  const { data: profile } = useSuspenseQuery(PROFILE_QUERY_OPTIONS.ME());
 
-  return <ProfilePageView profile={data} />;
+  return <ProfilePageView profile={profile} />;
 }
