@@ -14,6 +14,7 @@ import { TodayBuddySection } from '@/domains/home/sections/today-buddy-section';
 import { BellIcon } from '@/shared/components/icons';
 import { BuddysLogo } from '@/shared/components/icons/buddys-logo';
 import { BottomNavigation, Header } from '@/shared/components/layout';
+import { ROUTES } from '@/shared/config';
 import type { Tag } from '@/types/tag';
 
 const temporaryImage = 'https://loremflickr.com/412/264/travel?random=1';
@@ -22,7 +23,7 @@ const temporaryProfileImage = 'https://loremflickr.com/48/48/person?random=1';
 
 const todayBuddyItems = [
   {
-    href: '/posts/1',
+    href: ROUTES.POST.DETAIL(1),
     imageUrl: temporaryImage,
     carouselInfo: {
       profileImageUrl: temporaryProfileImage,
@@ -32,7 +33,7 @@ const todayBuddyItems = [
     },
   },
   {
-    href: '/posts/2',
+    href: ROUTES.POST.DETAIL(2),
     imageUrl: temporaryImage,
     carouselInfo: {
       profileImageUrl: temporaryProfileImage,
@@ -42,7 +43,7 @@ const todayBuddyItems = [
     },
   },
   {
-    href: '/posts/3',
+    href: ROUTES.POST.DETAIL(3),
     imageUrl: temporaryImage,
     carouselInfo: {
       profileImageUrl: temporaryProfileImage,
@@ -57,7 +58,7 @@ const buddySearchItems: BuddySearchItem[] = Array.from(
   { length: 4 },
   (_, index) => ({
     id: index + 1,
-    href: `/posts/${index + 1}`,
+    href: ROUTES.POST.DETAIL(index + 1),
     title: '최대 17자 제목이 들어가는 자리입니다',
     content: '최대 21자 본문이 들어가는 자리입니다.',
     postStatus: 'RECRUITING',
@@ -84,7 +85,7 @@ const preferenceBuddyItems: PreferenceBuddyItem[] = Array.from(
   { length: 4 },
   (_, index) => ({
     id: index + 1,
-    href: `/posts/${index + 1}`,
+    href: ROUTES.POST.DETAIL(index + 1),
     title: '최대 17자 제목이 들어가는 자리입니다',
     content: '최대 18자 본문이 들어가는 자리입니다.',
     startDate: '2026-07-10',

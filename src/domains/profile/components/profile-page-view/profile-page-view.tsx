@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { ProfileBadgeIcon, SettingIcon } from '@/shared/components/icons';
 import { BottomNavigation, Header } from '@/shared/components/layout';
 import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
+import { ROUTES } from '@/shared/config';
 
 import type { MyProfile } from '../../model/profile';
 import { ContentSection } from '../../sections/content-section';
@@ -29,7 +30,7 @@ export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
           <button
             aria-label="설정"
             type="button"
-            onClick={() => router.push('/profile/settings')}
+            onClick={() => router.push(ROUTES.PROFILE.SETTINGS)}
             className="flex size-11 shrink-0 items-center justify-center"
           >
             <SettingIcon className="size-6 text-gray-500" />
@@ -59,7 +60,7 @@ export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
         <ProfileIntroSection
           viewerType="me"
           bio={profile.bio}
-          onEditClick={() => router.push('/profile/edit')}
+          onEditClick={() => router.push(ROUTES.PROFILE.EDIT)}
           className="mt-5.25 px-4"
         />
 

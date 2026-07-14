@@ -13,6 +13,7 @@ import {
 } from 'react';
 
 import { setAccessToken, setAccessTokenRefreshHandler } from '@/shared/api';
+import { ROUTES } from '@/shared/config';
 
 import { loginWithKakao, reissueAccessToken } from '../../api/query';
 import type { AuthSession, AuthStatusTypes } from '../../model/auth';
@@ -28,11 +29,10 @@ interface AuthSessionProviderProps {
 }
 
 const AuthSessionContext = createContext<AuthSessionContextValue | null>(null);
-const KAKAO_CALLBACK_PATH = '/auth/kakao/callback';
 
 export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
   const pathname = usePathname();
-  const shouldSkipSessionBootstrap = pathname === KAKAO_CALLBACK_PATH;
+  const shouldSkipSessionBootstrap = pathname === ROUTES.AUTH.KAKAO_CALLBACK;
   const hasBootstrappedRef = useRef(false);
   const [status, setStatus] = useState<AuthStatusTypes>('initializing');
   const [onboardingCompleted, setOnboardingCompleted] = useState<
