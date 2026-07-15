@@ -7,14 +7,15 @@ import {
 import { XIcon } from '@/shared/components/icons';
 import { Header } from '@/shared/components/layout';
 import {
+  AsyncBoundary,
   Button,
   ChipGroup,
-  Dropdown,
   FormLabel,
   TextField,
 } from '@/shared/components/ui';
 
-const countryOptions = ['일본', '중국', '미국', '프랑스', '영국'];
+import { CountryFilterField } from './country-filter-field';
+
 const ageFilterTags = [
   { id: 1, name: '20대 초반' },
   { id: 2, name: '20대 중반' },
@@ -41,18 +42,19 @@ const verificationFilterTags = [
 ];
 
 interface FilterSheetProps {
+  value: FilterSheetValue;
   onClose: () => void;
   onApply?: (value: FilterSheetValue) => void;
 }
 
-export const FilterSheet = ({ onClose, onApply }: FilterSheetProps) => {
+export const FilterSheet = ({ value, onClose, onApply }: FilterSheetProps) => {
   const {
     filterValue,
     updateFilterValue,
     updateDateFilterValue,
     handleResetClick,
     handleApplyClick,
-  } = useFilterSheet({ onClose, onApply });
+  } = useFilterSheet({ initialValue: value, onClose, onApply });
 
   return (
     <>
@@ -74,12 +76,30 @@ export const FilterSheet = ({ onClose, onApply }: FilterSheetProps) => {
           <FormLabel as="p" className="text-body-sb-16">
             국가
           </FormLabel>
-          <Dropdown
-            options={countryOptions}
-            value={filterValue.country}
-            placeholder="선택해주세요."
-            onChange={(value) => updateFilterValue('country', value)}
-          />
+          <AsyncBoundary
+            loadingFallback={
+              <p
+                role="status"
+                className="text-body-m-15 rounded-xl bg-gray-50 px-4 py-3.5 text-gray-500"
+              >
+                국가 목록을 불러오는 중입니다.
+              </p>
+            }
+            errorFallback={({ reset }) => (
+              <button
+                type="button"
+                className="text-body-m-15 w-full rounded-xl bg-gray-50 px-4 py-3.5 text-left text-red-500"
+                onClick={reset}
+              >
+                국가 목록을 불러오지 못했습니다. 다시 시도
+              </button>
+            )}
+          >
+            <CountryFilterField
+              value={filterValue.country}
+              onChange={(country) => updateFilterValue('country', country)}
+            />
+          </AsyncBoundary>
         </div>
         <div className="flex flex-col gap-3">
           <FormLabel as="p" className="text-body-sb-16">

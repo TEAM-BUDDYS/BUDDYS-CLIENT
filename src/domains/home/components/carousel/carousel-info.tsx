@@ -1,14 +1,14 @@
 import { CommonImage } from '@/shared/components/ui';
 
 export interface CarouselInfoProps {
-  profileImageUrl: string;
+  authorProfileImageUrl: string;
   title: string;
   country: string;
   viewCount: number;
 }
 
 export const CarouselInfo = ({
-  profileImageUrl,
+  authorProfileImageUrl,
   title,
   country,
   viewCount,
@@ -16,7 +16,7 @@ export const CarouselInfo = ({
   return (
     <div className="flex items-center gap-2 bg-transparent">
       <CommonImage
-        src={profileImageUrl}
+        src={authorProfileImageUrl}
         alt={`${title} 작성자 프로필 이미지`}
         width={48}
         height={48}

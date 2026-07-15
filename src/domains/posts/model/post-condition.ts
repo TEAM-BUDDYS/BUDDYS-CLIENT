@@ -1,7 +1,8 @@
+import type { GenderType } from '@/types/gender';
+
 import type {
   AgeConditionType,
   CompanionType,
-  GenderType,
   RecruitmentCountType,
 } from './post-form';
 
@@ -13,7 +14,6 @@ export const POST_AGE_CONDITION_LABELS = {
 } satisfies Record<AgeConditionType, string>;
 
 export const POST_GENDER_CONDITION_LABELS = {
-  ANY: '성별 무관',
   FEMALE: '여자',
   MALE: '남자',
 } satisfies Record<GenderType, string>;

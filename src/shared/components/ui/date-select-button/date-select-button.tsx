@@ -24,17 +24,21 @@ export const DateSelectButton = ({
 }: DateSelectButtonProps) => {
   const startDate = dateRange?.startDate;
   const endDate = dateRange?.endDate;
-  const hasSelectedDateRange = Boolean(startDate && endDate);
-  const displayText =
-    startDate && endDate
+  const hasSelectedDate = Boolean(startDate);
+  const hasSelectedDateRange = Boolean(
+    startDate && endDate && startDate.getTime() !== endDate.getTime(),
+  );
+  const displayText = startDate
+    ? hasSelectedDateRange && endDate
       ? `${formatDateWithWeekday(startDate)} ~ ${formatDateWithWeekday(endDate)}`
-      : label;
+      : formatDateWithWeekday(startDate)
+    : label;
 
   return (
     <button
       className={cn(
         'text-body-sb-15 focus-visible:outline-mint-300 group border-mint-300 active:bg-mint-300 inline-flex h-13 items-center justify-center gap-3 rounded-[10px] border bg-white px-4 text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid active:text-white',
-        hasSelectedDateRange && 'text-gray-800',
+        hasSelectedDate && 'text-gray-800',
         className,
       )}
       type={type}

@@ -7,6 +7,8 @@ export type GetMyPostsParams = operations['getMyPosts']['parameters']['query'];
 export type GetMyPostsResponse =
   components['schemas']['BaseResponseUserPostsResponse'];
 
+export type MyPost = components['schemas']['PostResponse'];
+
 export type GetUserProfileResponse =
   components['schemas']['BaseResponseUserPublicProfileResponse'];
 
@@ -14,3 +16,5 @@ export type GetUserPostsParams =
   operations['getUserPosts']['parameters']['query'];
 export type GetUserPostsResponse =
   components['schemas']['BaseResponseUserPostsResponse'];
+
+export type UserPost = components['schemas']['PostResponse'];

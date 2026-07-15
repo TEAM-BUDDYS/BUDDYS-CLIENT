@@ -1,9 +1,10 @@
 import { useState } from 'react';
 
-import { formatDateInput } from '@/domains/home/utils/format-date-input';
+import type { Country } from '@/shared/api';
+import { formatDateInput } from '@/shared/utils/format-date-input';
 
 export interface FilterSheetValue {
-  country: string;
+  country: Country | null;
   startDate: string;
   endDate: string;
   ageTagIds: number[];
@@ -13,12 +14,13 @@ export interface FilterSheetValue {
 }
 
 interface UseFilterSheetParams {
+  initialValue?: FilterSheetValue;
   onClose: () => void;
   onApply?: (value: FilterSheetValue) => void;
 }
 
-const initialFilterValue: FilterSheetValue = {
-  country: '',
+export const initialFilterValue: FilterSheetValue = {
+  country: null,
   startDate: '',
   endDate: '',
   ageTagIds: [],
@@ -27,9 +29,13 @@ const initialFilterValue: FilterSheetValue = {
   verificationTagIds: [],
 };
 
-export const useFilterSheet = ({ onClose, onApply }: UseFilterSheetParams) => {
+export const useFilterSheet = ({
+  initialValue = initialFilterValue,
+  onClose,
+  onApply,
+}: UseFilterSheetParams) => {
   const [filterValue, setFilterValue] =
-    useState<FilterSheetValue>(initialFilterValue);
+    useState<FilterSheetValue>(initialValue);
 
   const updateFilterValue = <Key extends keyof FilterSheetValue>(
     key: Key,

@@ -19,8 +19,8 @@ interface SearchbarProps extends Omit<
 }
 
 const searchbarStyle = {
-  small: 'h-11 w-76.75',
-  medium: 'h-13 w-85.75',
+  small: 'h-11',
+  medium: 'h-13',
 } as const;
 
 export const Searchbar = ({
@@ -37,7 +37,7 @@ export const Searchbar = ({
 
   return (
     <div
-      className={`flex ${searchbarStyle[size]} items-center justify-between rounded-xl bg-gray-50 py-2.5 pr-3 pl-4`}
+      className={`flex ${searchbarStyle[size]} w-full items-center justify-between rounded-xl bg-gray-50 py-2.5 pr-3 pl-4`}
     >
       <input
         {...restInputProps}
@@ -45,7 +45,7 @@ export const Searchbar = ({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className={cn(
-          'text-body-m-15 flex-1 bg-transparent text-gray-800 outline-none placeholder:text-gray-500',
+          'text-body-m-16 flex-1 bg-transparent text-gray-800 outline-none placeholder:text-gray-500',
           inputClassName,
         )}
       />

@@ -4,8 +4,6 @@ export type AgeConditionType =
   | 'LATE_20S'
   | 'OVER_30S';
 
-export type GenderType = 'MALE' | 'FEMALE' | 'ANY';
-
 export type CompanionType =
   | 'FULL_TRIP'
   | 'PARTIAL_TRIP'
@@ -21,18 +19,3 @@ export type RecruitmentCountType =
   | 'TWO'
   | 'THREE'
   | 'FOUR_OR_MORE';
-
-export interface PostFormPayload {
-  countryId: number;
-  cityId: number;
-  title: string;
-  content: string;
-  startDate: string;
-  endDate: string;
-  ageConditions: AgeConditionType[];
-  gender: GenderType;
-  companionType: CompanionType;
-  recruitmentCountType: RecruitmentCountType;
-  tagIds: number[];
-  imageUrls: string[];
-}

@@ -4,16 +4,18 @@ import { useRouter } from 'next/navigation';
 
 import { PlusIcon } from '@/shared/components/icons';
 import { IconButton } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
 
 export const WriteFloatingButton = () => {
   const router = useRouter();
 
   return (
-    <div className="fixed right-3.75 bottom-22 z-20">
+    <div className="pointer-events-none fixed bottom-22 left-1/2 z-20 flex w-full max-w-107.5 -translate-x-1/2 justify-end px-4">
       <IconButton
         variant="primary"
         icon={<PlusIcon />}
-        onClick={() => router.push('/posts')}
+        className="pointer-events-auto"
+        onClick={() => router.push(ROUTES.POST.ROOT)}
       >
         글쓰기
       </IconButton>

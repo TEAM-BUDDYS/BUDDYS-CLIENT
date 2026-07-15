@@ -1,12 +1,11 @@
+import type { GenderType } from '@/types/gender';
+
 import type {
   AgeConditionType,
   CompanionType,
-  GenderType,
   RecruitmentCountType,
 } from './post-form';
 import type { PostRecruitmentStatusTypes } from './post-recruitment-status';
-
-export type PostAuthorGenderTypes = Exclude<GenderType, 'ANY'>;
 
 export interface PostDetailTag {
   tagId: number;
@@ -21,6 +20,7 @@ interface PostDetailCountry {
 interface PostDetailCity {
   cityId: number;
   name: string;
+  koreanName?: string;
 }
 
 interface PostDetailAuthor {
@@ -28,14 +28,13 @@ interface PostDetailAuthor {
   nickname: string;
   profileImageUrl?: string | null;
   country: string;
-  age: number;
   ageRange: string;
-  gender: PostAuthorGenderTypes;
+  gender: GenderType;
 }
 
 interface PostDetailConditions {
   ageConditions: AgeConditionType[];
-  genderCondition: GenderType;
+  genderConditions: GenderType[];
   travelType: CompanionType;
   activityTags: PostDetailTag[];
   interestTags: PostDetailTag[];

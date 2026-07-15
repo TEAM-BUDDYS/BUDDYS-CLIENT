@@ -7,8 +7,10 @@ BUDDYS-CLIENT는 Next.js App Router를 라우팅 경계로 사용하고, 제품 
 ```txt
 src/
   app/
+    (private)/
+      layout.tsx
+      page.tsx
     layout.tsx
-    page.tsx
     providers.tsx
     globals.css
 
@@ -44,32 +46,58 @@ src/
 - route group은 URL을 바꾸지 않고 레이아웃을 나눌 때만 사용합니다.
 - route handler는 서버 경계가 필요할 때만 `app/api`에 둡니다.
 
+## Protected Routes
+
+- 인증이 필요한 route는 `src/app/(private)` route group 아래에 둡니다.
+- `(private)`는 URL에 포함되지 않으므로 기존 화면 경로는 유지됩니다.
+- `src/app/(private)/layout.tsx`에서 `AuthEntryGuard`를 한 번만 적용하며, 각 `page.tsx`에서 guard를 중복해서 감싸지 않습니다.
+- 공통 layout은 Server Component로 유지하고, 인증 상태와 redirect가 필요한 `AuthEntryGuard`만 Client Component 경계로 사용합니다.
+- 미인증 사용자가 `(private)` route에 접근하면 `/landing`으로 이동하고, 랜딩 화면에서 사용자가 로그인 진입을 선택하도록 합니다.
+- `/landing`, `/login`, `/auth/kakao/callback`처럼 인증 전 접근이 필요한 route는 `(private)` 밖에 둡니다.
+
+## Route Path Configuration
+
+- 앱 내부 화면 경로는 `src/shared/config/routes.ts`의 `ROUTES`에서 관리합니다.
+- 정적 경로는 상수로 사용하고 식별자가 필요한 동적 경로는 팩토리 함수로 생성합니다.
+- `Link`, `router.push`, `router.replace` 등에서 같은 경로 문자열을 직접 반복하지 않습니다.
+- API 요청 주소는 `src/shared/api/end-point.ts`의 `END_POINT`가 담당하며 화면 경로와 섞지 않습니다.
+
+```tsx
+router.push(ROUTES.POST.ROOT);
+router.replace(ROUTES.POST.DETAIL(postId));
+```
+
 ## Confirmed Routes And Domains
 
-| Screen | URL           | Route entry                   | Owner domain | Notes                                   |
-| ------ | ------------- | ----------------------------- | ------------ | --------------------------------------- |
-| 홈     | `/`           | `src/app/page.tsx`            | 없음         | 여러 도메인의 기능을 조합하는 진입 화면 |
-| 로그인 | `/login`      | `src/app/login/page.tsx`      | `auth`       | 인증과 로그인 흐름                      |
-| 온보딩 | `/onboarding` | `src/app/onboarding/page.tsx` | `onboarding` | 초기 사용자 정보와 가입 완료 흐름       |
-| 게시물 | `/posts`      | `src/app/posts/page.tsx`      | `posts`      | 게시물 목록과 게시물 관련 기능          |
-| 프로필 | `/profile`    | `src/app/profile/page.tsx`    | `profile`    | 프로필 조회와 수정 기능                 |
-| 채팅   | `/chat`       | `src/app/chat/page.tsx`       | `chat`       | 채팅 목록과 채팅 관련 기능              |
+| Screen | URL           | Route entry                             | Owner domain | Notes                                   |
+| ------ | ------------- | --------------------------------------- | ------------ | --------------------------------------- |
+| 홈     | `/`           | `src/app/(private)/page.tsx`            | 없음         | 여러 도메인의 기능을 조합하는 인증 화면 |
+| 랜딩   | `/landing`    | `src/app/landing/page.tsx`              | 없음         | 인증 전 서비스 진입 화면                |
+| 로그인 | `/login`      | `src/app/login/page.tsx`                | `auth`       | 인증과 로그인 흐름                      |
+| 온보딩 | `/onboarding` | `src/app/(private)/onboarding/page.tsx` | `onboarding` | 인증 후 초기 사용자 정보 입력 흐름      |
+| 게시물 | `/posts`      | `src/app/(private)/posts/page.tsx`      | `posts`      | 게시물 목록과 게시물 관련 기능          |
+| 프로필 | `/profile`    | `src/app/(private)/profile/page.tsx`    | `profile`    | 프로필 조회와 수정 기능                 |
+| 채팅   | `/chat`       | `src/app/(private)/chat/page.tsx`       | `chat`       | 채팅 목록과 채팅 관련 기능              |
 
 확정된 화면을 기준으로 route와 domain의 최상위 폴더를 아래와 같이 구성합니다.
 
 ```txt
 src/
   app/
-    page.tsx
+    (private)/
+      layout.tsx
+      page.tsx
+      onboarding/
+        page.tsx
+      posts/
+        page.tsx
+      profile/
+        page.tsx
+      chat/
+        page.tsx
+    landing/
+      page.tsx
     login/
-      page.tsx
-    onboarding/
-      page.tsx
-    posts/
-      page.tsx
-    profile/
-      page.tsx
-    chat/
       page.tsx
 
   domains/
@@ -107,7 +135,7 @@ src/
 
 - 홈은 여러 도메인을 조합하는 route로 시작하며, 홈에만 속한 기능과 상태가 확인될 때 `home` domain 추가를 검토합니다.
 - 게시물 상세나 채팅방처럼 식별자가 필요한 화면은 요구사항이 확정된 뒤 `[postId]`, `[roomId]` 같은 dynamic route를 추가합니다.
-- 인증 전후 화면에서 서로 다른 layout이 실제로 필요해질 때 route group을 추가합니다.
+- 인증이 필요한 화면은 `(private)` layout에서 공통으로 보호하고, 인증 전 화면은 route group 밖에 유지합니다.
 - 각 `page.tsx`는 현재 routing 확인을 위한 최소 화면이며, 실제 기능 구현 시 owner domain의 컴포넌트를 조합하는 route entry로 사용합니다.
 - 각 domain은 `components`, `features`, `hooks`, `api`, `model`을 기본 하위 폴더로 사용합니다.
 - `assets`와 추가 flow 폴더는 실제 구현에 필요한 시점에 추가합니다.
@@ -145,6 +173,42 @@ domains/{domain}/
 - 기본 page와 layout은 Server Component로 둡니다.
 - `useState`, event handler, `useEffect`, browser API가 필요한 파일만 Client Component로 둡니다.
 - `"use client"`는 가능한 leaf component나 `providers.tsx` 같은 경계에만 둡니다.
+
+## Loading And Error Boundary
+
+- `src/app/loading.tsx`와 `src/app/error.tsx`는 route 전체의 최종 loading/error fallback으로 사용합니다.
+- `src/app/global-error.tsx`는 root layout까지 렌더링하지 못하는 치명적 오류의 최후 안전망으로만 사용합니다.
+- 화면 일부의 독립적인 조회 상태는 `src/shared/components/ui/async-boundary`로 감싸 나머지 화면을 유지합니다.
+- Suspense를 사용하는 TanStack Query는 `QueryErrorResetBoundary`와 함께 구성해 재시도 시 query 오류 상태도 초기화합니다.
+- `DelayedFallback`은 loading fallback을 기본 200ms 뒤에 표시해 짧은 요청의 깜빡임을 줄이고, 지연 중에도 fallback 영역 크기를 유지합니다.
+- `AsyncBoundary`에서 잡은 오류는 Sentry에 기록하고, `onError`가 있으면 추가 오류 처리도 실행합니다.
+- `redirect()`, `notFound()` 같은 Next.js 라우팅 제어 오류는 잡지 않고 App Router 경계로 다시 전달합니다.
+- 조건부 조회처럼 `enabled`가 필요한 query, background polling과 mutation은 Suspense로 일괄 전환하지 않고 사용처에서 pending/error 상태를 처리합니다.
+- 정상 응답의 빈 데이터는 Error Boundary가 아니라 `EmptyState` 같은 명시적인 empty UI로 처리합니다.
+
+Suspense query를 호출하는 컴포넌트보다 상위에서 `AsyncBoundary`를 사용합니다.
+
+```tsx
+<AsyncBoundary
+  className="min-h-60"
+  loadingDelayMs={200}
+  loadingState={{ title: '목록을 불러오고 있어요' }}
+  errorState={{ title: '목록을 불러오지 못했어요' }}
+>
+  <FeatureContent />
+</AsyncBoundary>
+```
+
+기능 전용 fallback이 필요하면 기본 상태 대신 UI를 전달합니다. custom fallback은 자체 layout을 소유하며, error fallback은 전달받은 `reset`으로 재시도 동작을 연결합니다.
+
+```tsx
+<AsyncBoundary
+  loadingFallback={<FeatureSkeleton />}
+  errorFallback={({ reset }) => <FeatureError onRetry={reset} />}
+>
+  <FeatureContent />
+</AsyncBoundary>
+```
 
 ## Dependency Direction
 

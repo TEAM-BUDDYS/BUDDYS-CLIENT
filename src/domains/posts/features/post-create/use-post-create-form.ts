@@ -1,15 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import type { PostFormPayload } from '@/domains/posts/model/post-form';
+import type { CreatePostRequest } from '@/domains/posts/api/type';
+import { type City, getCityDisplayName } from '@/shared/api';
 import type { DateRangeTypes } from '@/shared/components/ui';
 
-import { CITY_OPTIONS, MAX_IMAGE_COUNT } from './constants';
+import { MAX_IMAGE_COUNT } from './constants';
 import type {
   LocationOption,
   PostCreateDetailFormState,
   PostCreateGenderConditionType,
+  PostCreateImage,
   PostCreateStep,
 } from './model';
 
@@ -31,12 +33,6 @@ const formatDateForPayload = (date: Date) => {
   const day = `${date.getDate()}`.padStart(2, '0');
 
   return `${year}-${month}-${day}`;
-};
-
-const getGenderForPayload = (
-  genderConditions: PostCreateGenderConditionType[],
-) => {
-  return genderConditions.length === 2 ? 'ANY' : genderConditions[0];
 };
 
 const isRequiredDetailComplete = (
@@ -68,20 +64,24 @@ export const usePostCreateForm = () => {
     null,
   );
   const [city, setCity] = useState('');
-  const [selectedCity, setSelectedCity] = useState<LocationOption | null>(null);
+  const [selectedCity, setSelectedCity] = useState<City | null>(null);
   const [dateRange, setDateRange] = useState<DateRangeTypes>({
     startDate: null,
     endDate: null,
   });
   const [detail, setDetail] =
     useState<PostCreateDetailFormState>(INITIAL_DETAIL_FORM);
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [images, setImages] = useState<PostCreateImage[]>([]);
+  const previewUrlsRef = useRef(new Set<string>());
 
-  // TODO: 도시 검색 API 연동 후 서버 응답값으로 변경
-  const cityResults =
-    city.length > 0 && selectedCity?.name !== city
-      ? CITY_OPTIONS.filter((cityOption) => cityOption.name.includes(city))
-      : [];
+  useEffect(() => {
+    const previewUrls = previewUrlsRef.current;
+
+    return () => {
+      previewUrls.forEach((previewUrl) => URL.revokeObjectURL(previewUrl));
+      previewUrls.clear();
+    };
+  }, []);
 
   const updateDetail = (nextDetail: Partial<PostCreateDetailFormState>) => {
     setDetail((prevDetail) => ({ ...prevDetail, ...nextDetail }));
@@ -101,19 +101,36 @@ export const usePostCreateForm = () => {
   const handleCityChange = (value: string) => {
     setCity(value);
 
-    if (selectedCity && value !== selectedCity.name) {
+    if (selectedCity && value !== getCityDisplayName(selectedCity, value)) {
       setSelectedCity(null);
     }
   };
 
-  const handleCitySelect = (value: LocationOption) => {
-    setCity(value.name);
+  const handleCitySelect = (value: City) => {
+    setCity(getCityDisplayName(value, city));
     setSelectedCity(value);
   };
 
   const addImages = (files: File[]) => {
-    setImageFiles((prevFiles) =>
-      [...prevFiles, ...files].slice(0, MAX_IMAGE_COUNT),
+    const remainingImageCount = Math.max(0, MAX_IMAGE_COUNT - images.length);
+    const nextImages = files.slice(0, remainingImageCount).map((file) => {
+      const previewUrl = URL.createObjectURL(file);
+
+      previewUrlsRef.current.add(previewUrl);
+
+      return { file, previewUrl };
+    });
+
+    if (nextImages.length > 0) {
+      setImages((prevImages) => [...prevImages, ...nextImages]);
+    }
+  };
+
+  const removeImage = (previewUrl: string) => {
+    URL.revokeObjectURL(previewUrl);
+    previewUrlsRef.current.delete(previewUrl);
+    setImages((prevImages) =>
+      prevImages.filter((image) => image.previewUrl !== previewUrl),
     );
   };
 
@@ -122,7 +139,6 @@ export const usePostCreateForm = () => {
       !selectedCountry ||
       !selectedCity ||
       !dateRange.startDate ||
-      !dateRange.endDate ||
       !isRequiredDetailComplete(detail)
     ) {
       return null;
@@ -132,7 +148,7 @@ export const usePostCreateForm = () => {
       selectedCountry,
       selectedCity,
       startDate: dateRange.startDate,
-      endDate: dateRange.endDate,
+      endDate: dateRange.endDate ?? dateRange.startDate,
       detail,
     };
   };
@@ -147,13 +163,13 @@ export const usePostCreateForm = () => {
     }
 
     if (currentStep === 3) {
-      return Boolean(dateRange.startDate && dateRange.endDate);
+      return Boolean(dateRange.startDate);
     }
 
     return Boolean(getCompleteFormValues());
   };
 
-  const getPostFormPayload = (): PostFormPayload | null => {
+  const getPostFormPayload = (): CreatePostRequest | null => {
     const completeFormValues = getCompleteFormValues();
 
     if (!completeFormValues) {
@@ -162,6 +178,12 @@ export const usePostCreateForm = () => {
 
     const { detail, endDate, selectedCity, selectedCountry, startDate } =
       completeFormValues;
+    const cityId = selectedCity.id;
+
+    if (cityId == null) {
+      return null;
+    }
+
     const tagIds = [
       ...detail.activityTagIds,
       ...detail.interestTagIds,
@@ -170,18 +192,16 @@ export const usePostCreateForm = () => {
 
     return {
       countryId: selectedCountry.id,
-      cityId: selectedCity.id,
+      cityId,
       title: detail.title.trim(),
       content: detail.content.trim(),
       startDate: formatDateForPayload(startDate),
       endDate: formatDateForPayload(endDate),
       ageConditions: detail.ageConditions,
-      gender: getGenderForPayload(detail.genderConditions),
+      genderConditions: detail.genderConditions,
       companionType: detail.companionType,
       recruitmentCountType: detail.recruitmentCountType,
       tagIds,
-      // TODO: 이미지 업로드 API 연동 후 업로드 결과 URL로 변경
-      imageUrls: [],
     };
   };
 
@@ -189,16 +209,16 @@ export const usePostCreateForm = () => {
     selectedCountry,
     city,
     selectedCity,
-    cityResults,
     dateRange,
     detail,
-    imageCount: imageFiles.length,
+    images,
     handleCountrySelect,
     setDateRange,
     updateDetail,
     handleCityChange,
     handleCitySelect,
     addImages,
+    removeImage,
     canGoNext,
     getPostFormPayload,
   };

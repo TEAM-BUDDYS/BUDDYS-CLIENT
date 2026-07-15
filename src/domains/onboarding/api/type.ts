@@ -5,6 +5,13 @@ export type CompleteOnboardingRequest =
 export type CompleteOnboardingResponse =
   components['schemas']['BaseResponseOnboardingResponse'];
 
-export type GetTagsParams = operations['getTags']['parameters']['path'];
-export type GetTagsResponse =
-  components['schemas']['BaseResponseListTagResponse'];
+export type GetRecommendedUsersParams =
+  operations['getRecommendedUsers']['parameters']['query'];
+export type GetRecommendedUsersResponse =
+  components['schemas']['BaseResponseRecommendedUserListResponse'];
+export type RecommendedUser = components['schemas']['RecommendedUserResponse'];
+
+export type SearchUniversitiesParams =
+  operations['searchUniversities']['parameters']['query'];
+export type SearchUniversitiesResponse =
+  components['schemas']['BaseResponseUniversityListResponse'];

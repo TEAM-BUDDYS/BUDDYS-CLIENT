@@ -7,8 +7,8 @@ export interface ChatRoomParticipant {
 export interface ChatRoom {
   chatRoomId: number;
   participant: ChatRoomParticipant;
-  lastMessage: string;
-  lastMessageSentAt: string;
+  lastMessage: string | null;
+  lastMessageSentAt: string | null;
   unreadMessageCount: number;
 }
 

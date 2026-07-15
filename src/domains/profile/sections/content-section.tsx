@@ -1,28 +1,75 @@
 'use client';
 
+import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { cn } from '@/lib/cn';
-import { ArchivePostCard, Tab } from '@/shared/components/ui';
+import { ArchivePostCard, AsyncBoundary, Tab } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
+import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 
+import { PROFILE_QUERY_OPTIONS } from '../api/query';
+import type { MyPost } from '../api/type';
 import { ContentEmptyState } from '../components/content-empty-state/content-empty-state';
 import type { ContentTabValue, PostItem } from '../model/content';
 
 interface ContentSectionProps {
-  posts: PostItem[];
   onCreateCourseClick: () => void;
   className?: string;
 }
+
+const MY_POSTS_PAGE_SIZE = 10;
 
 const TAB_ITEMS: { label: string; value: ContentTabValue }[] = [
   { label: '게시물', value: 'post' },
   { label: '코스', value: 'course' },
 ];
 
-const PostTabPanel = ({ posts }: { posts: PostItem[] }) => {
+const toPostItem = (post: MyPost): PostItem | null => {
+  const { postId, title, content, startDate, endDate, thumbnailImageUrl } =
+    post;
+
+  if (!postId || !title || !content || !startDate || !endDate) {
+    return null;
+  }
+
+  return {
+    id: postId,
+    title,
+    content,
+    startDate,
+    endDate,
+    image: thumbnailImageUrl,
+  };
+};
+
+const PostTabPanel = () => {
   const router = useRouter();
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchNextPageError,
+    isFetchingNextPage,
+  } = useSuspenseInfiniteQuery(
+    PROFILE_QUERY_OPTIONS.ME_POSTS_INFINITE({ size: MY_POSTS_PAGE_SIZE }),
+  );
+
+  const posts = data.pages
+    .flatMap((page) => page.data?.posts ?? [])
+    .map(toPostItem)
+    .filter((post): post is PostItem => post !== null);
+
+  const handleIntersect = useCallback(() => {
+    fetchNextPage();
+  }, [fetchNextPage]);
+  const loadMoreRef = useInfiniteScroll<HTMLDivElement>({
+    enabled:
+      Boolean(hasNextPage) && !isFetchingNextPage && !isFetchNextPageError,
+    onIntersect: handleIntersect,
+  });
 
   if (posts.length === 0) {
     return (
@@ -31,7 +78,7 @@ const PostTabPanel = ({ posts }: { posts: PostItem[] }) => {
           title="아직 기록된 게시물이 없어요"
           description="첫 번째 게시물을 공유해보세요"
           buttonLabel="게시물 작성하러 가기"
-          onButtonClick={() => router.push('/posts')}
+          onButtonClick={() => router.push(ROUTES.POST.ROOT)}
         />
       </div>
     );
@@ -40,7 +87,7 @@ const PostTabPanel = ({ posts }: { posts: PostItem[] }) => {
   return (
     <div className="flex flex-col gap-2 px-4 py-3">
       {posts.map((post) => (
-        <Link key={post.id} href={`/posts/${post.id}`}>
+        <Link key={post.id} href={ROUTES.POST.DETAIL(post.id)}>
           <ArchivePostCard
             title={post.title}
             content={post.content}
@@ -50,6 +97,21 @@ const PostTabPanel = ({ posts }: { posts: PostItem[] }) => {
           />
         </Link>
       ))}
+      <div ref={loadMoreRef} className="h-1" aria-hidden="true" />
+      {isFetchingNextPage && (
+        <p className="text-caption-m-12 py-4 text-center text-gray-500">
+          게시물을 불러오는 중이에요
+        </p>
+      )}
+      {isFetchNextPageError && (
+        <button
+          type="button"
+          className="text-caption-sb-12 text-mint-400 mx-auto py-4"
+          onClick={() => fetchNextPage()}
+        >
+          다시 불러오기
+        </button>
+      )}
     </div>
   );
 };
@@ -70,7 +132,6 @@ const CourseTabPanel = ({
 );
 
 export const ContentSection = ({
-  posts,
   onCreateCourseClick,
   className,
 }: ContentSectionProps) => {
@@ -85,7 +146,12 @@ export const ContentSection = ({
       />
 
       {tab === 'post' ? (
-        <PostTabPanel posts={posts} />
+        <AsyncBoundary
+          className="py-20"
+          loadingFallback={<div className="min-h-72" aria-busy="true" />}
+        >
+          <PostTabPanel />
+        </AsyncBoundary>
       ) : (
         <CourseTabPanel onCreateCourseClick={onCreateCourseClick} />
       )}
