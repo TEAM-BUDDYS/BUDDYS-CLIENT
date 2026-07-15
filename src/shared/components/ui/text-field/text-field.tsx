@@ -73,6 +73,9 @@ export const TextField = ({
             'placeholder:text-gray-500 focus:bg-white',
             'focus-visible:border-mint-200 focus-visible:ring-mint-200 focus-visible:ring-1',
             'disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400',
+            status === 'default' &&
+              !disabled &&
+              'not-placeholder-shown:border-gray-200',
             (StatusIcon || hasClearButton) && 'pr-12',
             status === 'error' &&
               'border-error-50 focus-visible:border-error-50 focus-visible:ring-error-50',
