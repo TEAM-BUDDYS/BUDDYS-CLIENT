@@ -46,7 +46,7 @@ export const PostDetailView = ({ post }: PostDetailViewProps) => {
 
       {!post.isMine && (
         <div className="pointer-events-none fixed bottom-28.5 left-1/2 z-20 flex w-full max-w-107.5 -translate-x-1/2 justify-end px-4">
-          <StartChatButton participantUserId={6} />
+          <StartChatButton participantUserId={post.author.userId} />
         </div>
       )}
     </div>

@@ -30,7 +30,7 @@ export const StompProvider = ({ children, enabled }: StompProviderProps) => {
     const client = clientRef.current;
 
     if (!client?.connected) {
-      throw new Error('STOMP client is not connected');
+      throw new Error('STOMP 클라이언트가 연결되지 않았습니다.');
     }
 
     client.publish({
@@ -44,7 +44,7 @@ export const StompProvider = ({ children, enabled }: StompProviderProps) => {
       const client = clientRef.current;
 
       if (!client?.connected) {
-        throw new Error('STOMP client is not connected');
+        throw new Error('STOMP 클라이언트가 연결되지 않았습니다.');
       }
 
       const subscription = client.subscribe(destination, (message) => {
@@ -79,38 +79,24 @@ export const StompProvider = ({ children, enabled }: StompProviderProps) => {
       if (clientRef.current === client) {
         setConnectionStatus('connected');
       }
-
-      console.info('[STOMP] Connected');
     };
 
-    client.onStompError = (frame) => {
+    client.onStompError = () => {
       if (clientRef.current === client) {
         setConnectionStatus('error');
       }
-
-      console.error('[STOMP] Broker error', {
-        message: frame.headers.message,
-        body: frame.body,
-      });
     };
 
     client.onWebSocketError = () => {
       if (clientRef.current === client) {
         setConnectionStatus('error');
       }
-
-      console.error('[STOMP] WebSocket error');
     };
 
-    client.onWebSocketClose = (event) => {
+    client.onWebSocketClose = () => {
       if (clientRef.current === client) {
         setConnectionStatus(client.active ? 'connecting' : 'disconnected');
       }
-
-      console.info('[STOMP] WebSocket closed', {
-        code: event.code,
-        reason: event.reason,
-      });
     };
 
     client.activate();

@@ -1,5 +1,6 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import { useCallback, useEffect } from 'react';
 
 import { useStomp } from '@/shared/api/stomp';
@@ -50,10 +51,7 @@ export const useChatRoomStomp = ({
             onRead(response);
           }
         } catch (error) {
-          console.error('[CHAT] Failed to parse received message', {
-            error,
-            body,
-          });
+          Sentry.captureException(error);
         }
       },
     );
@@ -70,7 +68,6 @@ export const useChatRoomStomp = ({
       }
 
       if (connectionStatus !== 'connected') {
-        console.error('[CHAT] STOMP is not connected');
         return false;
       }
 
@@ -81,10 +78,9 @@ export const useChatRoomStomp = ({
       try {
         publish(CHAT_STOMP_DESTINATION.SEND(chatRoomId), JSON.stringify(body));
 
-        console.info('[CHAT] Message sent', body);
         return true;
       } catch (error) {
-        console.error('[CHAT] Failed to send message', error);
+        Sentry.captureException(error);
         return false;
       }
     },
@@ -94,7 +90,6 @@ export const useChatRoomStomp = ({
   const markChatRoomAsRead = useCallback(
     (lastReadMessageId: number) => {
       if (connectionStatus !== 'connected') {
-        console.error('[CHAT] STOMP is not connected');
         return false;
       }
 
@@ -107,7 +102,7 @@ export const useChatRoomStomp = ({
 
         return true;
       } catch (error) {
-        console.error('[CHAT] Failed to mark chat room as read', error);
+        Sentry.captureException(error);
         return false;
       }
     },

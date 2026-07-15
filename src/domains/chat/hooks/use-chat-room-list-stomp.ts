@@ -1,5 +1,6 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import { useEffect } from 'react';
 
 import { useStomp } from '@/shared/api/stomp';
@@ -32,10 +33,7 @@ export const useChatRoomListStomp = ({
 
         onChatRoomUpdated(response.chatRoom);
       } catch (error) {
-        console.error('[CHAT] Failed to parse chat room list update', {
-          error,
-          body,
-        });
+        Sentry.captureException(error);
       }
     });
 
