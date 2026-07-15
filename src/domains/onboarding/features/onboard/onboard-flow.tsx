@@ -282,6 +282,7 @@ export const OnboardFlow = () => {
                 <EmptyState
                   title="아직 추천할 버디가 없어요"
                   description="관심 정보가 쌓이면 더 잘 맞는 버디를 보여드릴게요"
+                  className="flex-1 pb-[111px]"
                 />
               )}
             {hasRecommendedUser && recommendedUser && (
