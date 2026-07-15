@@ -81,7 +81,7 @@ export const PostCreateFlow = () => {
         return;
       }
 
-      // TODO: 게시물 생성 API 연동 시 payload를 mutation에 전달
+      // TODO: 이미지 업로드 및 게시물 생성 API 연동 시 payload를 mutation에 전달
       void payload;
       return;
     }

@@ -1,5 +1,3 @@
-import type { GenderType } from '@/types/gender';
-
 export type AgeConditionType =
   | 'EARLY_20S'
   | 'MID_20S'
@@ -21,18 +19,3 @@ export type RecruitmentCountType =
   | 'TWO'
   | 'THREE'
   | 'FOUR_OR_MORE';
-
-export interface PostFormPayload {
-  countryId: number;
-  cityId: number;
-  title: string;
-  content: string;
-  startDate: string;
-  endDate: string;
-  ageConditions: AgeConditionType[];
-  gender: GenderType;
-  companionType: CompanionType;
-  recruitmentCountType: RecruitmentCountType;
-  tagIds: number[];
-  imageUrls: string[];
-}

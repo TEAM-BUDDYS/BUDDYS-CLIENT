@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import type { PostFormPayload } from '@/domains/posts/model/post-form';
+import type { CreatePostRequest } from '@/domains/posts/api/type';
 import { type City, getCityDisplayName } from '@/shared/api';
 import type { DateRangeTypes } from '@/shared/components/ui';
 
@@ -32,12 +32,6 @@ const formatDateForPayload = (date: Date) => {
   const day = `${date.getDate()}`.padStart(2, '0');
 
   return `${year}-${month}-${day}`;
-};
-
-const getGenderForPayload = (
-  genderConditions: PostCreateGenderConditionType[],
-) => {
-  return genderConditions[0];
 };
 
 const isRequiredDetailComplete = (
@@ -117,7 +111,6 @@ export const usePostCreateForm = () => {
       !selectedCountry ||
       !selectedCity ||
       !dateRange.startDate ||
-      !dateRange.endDate ||
       !isRequiredDetailComplete(detail)
     ) {
       return null;
@@ -127,7 +120,7 @@ export const usePostCreateForm = () => {
       selectedCountry,
       selectedCity,
       startDate: dateRange.startDate,
-      endDate: dateRange.endDate,
+      endDate: dateRange.endDate ?? dateRange.startDate,
       detail,
     };
   };
@@ -142,13 +135,13 @@ export const usePostCreateForm = () => {
     }
 
     if (currentStep === 3) {
-      return Boolean(dateRange.startDate && dateRange.endDate);
+      return Boolean(dateRange.startDate);
     }
 
     return Boolean(getCompleteFormValues());
   };
 
-  const getPostFormPayload = (): PostFormPayload | null => {
+  const getPostFormPayload = (): CreatePostRequest | null => {
     const completeFormValues = getCompleteFormValues();
 
     if (!completeFormValues) {
@@ -177,7 +170,7 @@ export const usePostCreateForm = () => {
       startDate: formatDateForPayload(startDate),
       endDate: formatDateForPayload(endDate),
       ageConditions: detail.ageConditions,
-      gender: getGenderForPayload(detail.genderConditions),
+      genderConditions: detail.genderConditions,
       companionType: detail.companionType,
       recruitmentCountType: detail.recruitmentCountType,
       tagIds,
