@@ -18,12 +18,12 @@ import { ChatRoom, ChatRoomList } from '../../model/chat-list';
 
 const CHAT_LIST_PAGE_SIZE = 20;
 
+const CHAT_LIST_PARAMS = {
+  size: CHAT_LIST_PAGE_SIZE,
+};
+
 export const ChatListFeature = () => {
   const queryClient = useQueryClient();
-
-  const chatListParams = {
-    size: CHAT_LIST_PAGE_SIZE,
-  };
 
   const {
     data,
@@ -32,13 +32,13 @@ export const ChatListFeature = () => {
     isFetchingNextPage,
     isFetchNextPageError,
   } = useSuspenseInfiniteQuery(
-    CHAT_QUERY_OPTIONS.INFINITE_LIST(chatListParams),
+    CHAT_QUERY_OPTIONS.INFINITE_LIST(CHAT_LIST_PARAMS),
   );
 
   const handleChatRoomUpdated = useCallback(
     (updatedChatRoom: ChatRoom) => {
       queryClient.setQueryData<InfiniteData<ChatRoomList>>(
-        CHAT_ROOM_QUERY_KEY.INFINITE_LIST(chatListParams),
+        CHAT_ROOM_QUERY_KEY.INFINITE_LIST(CHAT_LIST_PARAMS),
         (oldData) => {
           if (!oldData || oldData.pages.length === 0) {
             return oldData;

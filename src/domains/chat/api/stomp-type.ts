@@ -8,6 +8,9 @@ export interface ChatRoomListUpdatedResponse {
 export interface SendChatMessageRequest {
   content: string;
 }
+export interface SendChatReadRequest {
+  lastReadMessageId: number;
+}
 
 export interface ReceiveChatMessageResponse {
   type: 'MESSAGE';
@@ -24,6 +27,13 @@ export interface ReceiveChatMessageResponse {
   };
 }
 
-export interface SendChatReadRequest {
+export interface ReceiveChatReadResponse {
+  type: 'READ';
+  chatRoomId: number;
+  readerId: number;
   lastReadMessageId: number;
 }
+
+export type ReceiveChatRoomResponse =
+  | ReceiveChatMessageResponse
+  | ReceiveChatReadResponse;

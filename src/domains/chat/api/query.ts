@@ -97,6 +97,12 @@ export const CHAT_QUERY_OPTIONS = {
           ...params,
           page: pageParam,
         }),
+
+      staleTime: 0,
+      refetchOnMount: 'always',
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
+
       initialPageParam: 0,
       getNextPageParam: (lastPage) => {
         if (!lastPage.hasNext) {
@@ -120,6 +126,11 @@ export const CHAT_QUERY_OPTIONS = {
           ...params,
           ...pageParam,
         }),
+
+      staleTime: 0,
+      refetchOnMount: 'always',
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
 
       initialPageParam: INITIAL_MESSAGE_PAGE_PARAM,
 

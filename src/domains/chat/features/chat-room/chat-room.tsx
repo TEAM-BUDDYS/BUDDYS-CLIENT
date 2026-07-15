@@ -1,19 +1,20 @@
 'use client';
 
 import {
-  useQueryClient,
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
 } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAuthSession } from '@/domains/auth/features/auth-session/auth-session-provider';
-import { CHAT_ROOM_QUERY_KEY } from '@/shared/api';
 import { Header } from '@/shared/components/layout';
 import { BottomActionBar } from '@/shared/components/ui';
 
 import { CHAT_QUERY_OPTIONS } from '../../api/query';
-import { ReceiveChatMessageResponse } from '../../api/stomp-type';
+import {
+  ReceiveChatMessageResponse,
+  ReceiveChatReadResponse,
+} from '../../api/stomp-type';
 import { useChatRoomStomp } from '../../hooks/use-chat-room-stomp';
 import { ChatMessageData } from '../../model/chat-room';
 import { ChatRoomMenu } from '../chat-room-menu/chat-room-menu';
@@ -26,12 +27,14 @@ interface ChatRoomProps {
 }
 
 export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
-  const queryClient = useQueryClient();
   const { userId: currentUserId } = useAuthSession();
   const [message, setMessage] = useState('');
   const [realtimeMessages, setRealtimeMessages] = useState<ChatMessageData[]>(
     [],
   );
+  const [lastReadByParticipantMessageId, setLastReadByParticipantMessageId] =
+    useState<number | null>(null);
+
   const lastPublishedReadMessageIdRef = useRef<number | null>(null);
 
   const { data: chatRoomData } = useSuspenseQuery(
@@ -80,9 +83,23 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
     [currentUserId],
   );
 
+  const handleReceiveRead = useCallback(
+    (response: ReceiveChatReadResponse) => {
+      if (currentUserId === null || response.readerId === currentUserId) {
+        return;
+      }
+
+      setLastReadByParticipantMessageId((previousMessageId) =>
+        Math.max(previousMessageId ?? 0, response.lastReadMessageId),
+      );
+    },
+    [currentUserId],
+  );
+
   const { sendMessage, markChatRoomAsRead, isConnected } = useChatRoomStomp({
     chatRoomId,
     onMessage: handleReceiveMessage,
+    onRead: handleReceiveRead,
   });
 
   const messages = useMemo<ChatMessageData[]>(() => {
@@ -92,12 +109,31 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
 
     const combinedMessages = [...fetchedMessages, ...realtimeMessages];
 
-    return combinedMessages.filter(
+    const uniqueMessages = combinedMessages.filter(
       (message, index, array) =>
         array.findIndex((item) => item.messageId === message.messageId) ===
         index,
     );
-  }, [messagePages?.pages, realtimeMessages]);
+
+    if (lastReadByParticipantMessageId === null) {
+      return uniqueMessages;
+    }
+
+    return uniqueMessages.map((message) => {
+      if (
+        !message.mine ||
+        message.isRead ||
+        message.messageId > lastReadByParticipantMessageId
+      ) {
+        return message;
+      }
+
+      return {
+        ...message,
+        isRead: true,
+      };
+    });
+  }, [lastReadByParticipantMessageId, messagePages?.pages, realtimeMessages]);
 
   useEffect(() => {
     const latestMessage = messages.at(-1);
@@ -124,10 +160,6 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
 
     if (isSent) {
       setMessage('');
-
-      void queryClient.invalidateQueries({
-        queryKey: CHAT_ROOM_QUERY_KEY.ALL,
-      });
     }
   };
 
