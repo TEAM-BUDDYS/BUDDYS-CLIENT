@@ -1,119 +1,33 @@
+import { notFound } from 'next/navigation';
+
+import { AuthEntryGuard } from '@/domains/auth/features/auth-session/auth-entry-guard';
 import { ChatRoom } from '@/domains/chat/features/chat-room/chat-room';
-import { ChatRoomMenu } from '@/domains/chat/features/chat-room-menu/chat-room-menu';
-import { ChatMessageData } from '@/domains/chat/model/chat-room';
-import { Header } from '@/shared/components/layout';
+import { AsyncBoundary } from '@/shared/components/ui';
 
-const MOCK_CHAT_ROOM_DETAIL = {
-  chatRoomId: 1,
-  createdDate: '2026-07-10',
-  participant: {
-    userId: 2,
-    nickname: '민지',
-    profileImageUrl: null,
-  },
-};
+interface ChatRoomPageProps {
+  params: Promise<{ id: string }>;
+}
 
-const MOCK_MESSAGES: ChatMessageData[] = [
-  {
-    messageId: 1,
-    sender: {
-      userId: 2,
-      nickname: '유저 1',
-      profileImageUrl: null,
-    },
-    content: '안녕하세요!',
-    sentAt: '2026-07-10T21:30:00',
-    mine: false,
-    readByParticipant: true,
-  },
-  {
-    messageId: 2,
-    sender: {
-      userId: 1,
-      nickname: '나',
-      profileImageUrl: null,
-    },
-    content: '안녕하세요~',
-    sentAt: '2026-07-10T21:31:00',
-    mine: true,
-    readByParticipant: true,
-  },
-  {
-    messageId: 3,
-    sender: {
-      userId: 2,
-      nickname: '유저 1',
-      profileImageUrl: null,
-    },
-    content: '혹시 이번 주말에 같이 한강 가실 분 구하신 거 맞나요?',
-    sentAt: '2026-07-10T21:32:00',
-    mine: false,
-    readByParticipant: true,
-  },
-  {
-    messageId: 4,
-    sender: {
-      userId: 1,
-      nickname: '나',
-      profileImageUrl: null,
-    },
-    content: '네 맞아요! 아직 한 자리 남아있어요.',
-    sentAt: '2026-07-10T21:33:00',
-    mine: true,
-    readByParticipant: true,
-  },
-  {
-    messageId: 5,
-    sender: {
-      userId: 2,
-      nickname: '유저 1',
-      profileImageUrl: null,
-    },
-    content: '오 다행이다 ㅎㅎ 몇 시쯤 만나기로 하셨어요?',
-    sentAt: '2026-07-10T21:34:00',
-    mine: false,
-    readByParticipant: true,
-  },
-  {
-    messageId: 6,
-    sender: {
-      userId: 1,
-      nickname: '나',
-      profileImageUrl: null,
-    },
-    content: '일단 오후 4시쯤 여의나루역에서 만나려고 해요!',
-    sentAt: '2026-07-10T21:35:00',
-    mine: true,
-    readByParticipant: true,
-  },
-  {
-    messageId: 7,
-    sender: {
-      userId: 2,
-      nickname: '유저 1',
-      profileImageUrl: null,
-    },
-    content:
-      '좋아요! 저는 수업이 2시쯤 끝나서 아마 시간 맞춰서 갈 수 있을 것 같아요.',
-    sentAt: '2026-07-10T21:36:00',
-    mine: false,
-    readByParticipant: true,
-  },
-];
+export default async function ChatRoomPage({ params }: ChatRoomPageProps) {
+  const { id } = await params;
+  const chatRoomId = Number(id);
 
-export default function ChatRoomPage() {
+  if (!Number.isInteger(chatRoomId) || chatRoomId <= 0) {
+    notFound();
+  }
+
   return (
-    <div className="flex h-dvh flex-col">
-      <Header
-        content={MOCK_CHAT_ROOM_DETAIL.participant.nickname}
-        hasBackButton
-        contentAlign="center"
-        right={<ChatRoomMenu />}
-      />
-      <ChatRoom
-        createdAt={MOCK_CHAT_ROOM_DETAIL.createdDate}
-        initialMessages={MOCK_MESSAGES}
-      />
-    </div>
+    <AuthEntryGuard>
+      <AsyncBoundary
+        key={chatRoomId}
+        loadingState={{ title: '채팅방을 불러오고 있어요' }}
+        errorState={{
+          title: '채팅방을 불러오지 못했어요',
+          description: '잠시 후 다시 시도해 주세요',
+        }}
+      >
+        <ChatRoom chatRoomId={chatRoomId} />
+      </AsyncBoundary>
+    </AuthEntryGuard>
   );
 }

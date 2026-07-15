@@ -11,7 +11,11 @@ import {
   END_POINT,
 } from '@/shared/api';
 
-import { convertChatRoomListResponse } from './mapper';
+import type { ChatMessageList, ChatRoomDetail } from '../model/chat-room';
+import {
+  convertChatMessageListResponse,
+  convertChatRoomListResponse,
+} from './mapper';
 import type {
   CreateChatRoomRequest,
   CreateChatRoomResponse,
@@ -40,18 +44,54 @@ const createChatRoom = async (body: CreateChatRoomRequest) => {
     .json<CreateChatRoomResponse>();
 };
 
-const getChatRoom = async (chatRoomId: number) => {
-  return apiClient
+const getChatRoom = async (chatRoomId: number): Promise<ChatRoomDetail> => {
+  const response = await apiClient
     .get(END_POINT.CHAT_ROOM.DETAIL(chatRoomId))
     .json<GetChatRoomResponse>();
+
+  const createdAt = response.data?.createdAt;
+  const participantNickname = response.data?.participant?.nickname;
+
+  if (
+    response.success !== true ||
+    typeof createdAt !== 'string' ||
+    createdAt.length === 0 ||
+    typeof participantNickname !== 'string' ||
+    participantNickname.length === 0
+  ) {
+    throw new Error(
+      response.message || '채팅방 상세 응답이 올바르지 않습니다.',
+    );
+  }
+
+  return {
+    createdAt,
+    participantNickname,
+  };
 };
 
-const getMessages = async (chatRoomId: number, params?: GetMessagesParams) => {
-  return apiClient
+type MessageQueryParams = NonNullable<GetMessagesParams>;
+
+type GetInfiniteMessagesParams = Pick<MessageQueryParams, 'size'>;
+
+type MessagePageParam = Pick<
+  MessageQueryParams,
+  'cursorSentAt' | 'cursorMessageId'
+>;
+
+const INITIAL_MESSAGE_PAGE_PARAM: MessagePageParam = {};
+
+const getMessages = async (
+  chatRoomId: number,
+  params?: GetMessagesParams,
+): Promise<ChatMessageList> => {
+  const response = await apiClient
     .get(END_POINT.CHAT_ROOM.MESSAGES(chatRoomId), {
       searchParams: createSearchParams(params),
     })
     .json<GetMessagesResponse>();
+
+  return convertChatMessageListResponse(response);
 };
 
 export const CHAT_QUERY_OPTIONS = {
@@ -63,6 +103,12 @@ export const CHAT_QUERY_OPTIONS = {
           ...params,
           page: pageParam,
         }),
+
+      staleTime: 0,
+      refetchOnMount: 'always',
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
+
       initialPageParam: 0,
       getNextPageParam: (lastPage) => {
         if (!lastPage.hasNext) {
@@ -77,10 +123,40 @@ export const CHAT_QUERY_OPTIONS = {
       queryKey: CHAT_ROOM_QUERY_KEY.DETAIL(chatRoomId),
       queryFn: () => getChatRoom(chatRoomId),
     }),
-  MESSAGES: (chatRoomId: number, params?: GetMessagesParams) =>
-    queryOptions({
+  MESSAGES: (chatRoomId: number, params?: GetInfiniteMessagesParams) =>
+    infiniteQueryOptions({
       queryKey: CHAT_ROOM_QUERY_KEY.MESSAGES(chatRoomId, params),
-      queryFn: () => getMessages(chatRoomId, params),
+
+      queryFn: ({ pageParam }) =>
+        getMessages(chatRoomId, {
+          ...params,
+          ...pageParam,
+        }),
+
+      staleTime: 0,
+      refetchOnMount: 'always',
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
+
+      initialPageParam: INITIAL_MESSAGE_PAGE_PARAM,
+
+      getNextPageParam: (lastPage): MessagePageParam | undefined => {
+        if (!lastPage.hasNext) {
+          return undefined;
+        }
+
+        if (
+          lastPage.nextCursorSentAt === null ||
+          lastPage.nextCursorMessageId === null
+        ) {
+          return undefined;
+        }
+
+        return {
+          cursorSentAt: lastPage.nextCursorSentAt,
+          cursorMessageId: lastPage.nextCursorMessageId,
+        };
+      },
     }),
 };
 
