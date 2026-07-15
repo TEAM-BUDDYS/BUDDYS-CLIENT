@@ -17,7 +17,7 @@ export const AuthEntryGuard = ({ children }: AuthEntryGuardProps) => {
 
   useEffect(() => {
     if (status === 'unauthenticated') {
-      router.replace(ROUTES.AUTH.LOGIN);
+      router.replace(ROUTES.LANDING);
     }
   }, [router, status]);
 

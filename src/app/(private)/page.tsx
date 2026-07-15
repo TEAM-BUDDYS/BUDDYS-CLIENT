@@ -1,4 +1,3 @@
-import { AuthEntryGuard } from '@/domains/auth/features/auth-session/auth-entry-guard';
 import { SearchSheetButton } from '@/domains/home/components/search-sheet-button/search-sheet-button';
 import { WriteFloatingButton } from '@/domains/home/components/write-floating-button/write-floating-button';
 import { BuddySearchSection } from '@/domains/home/sections/buddy-search-section';
@@ -11,7 +10,7 @@ import { BottomNavigation, Header } from '@/shared/components/layout';
 
 export default function Home() {
   return (
-    <AuthEntryGuard>
+    <>
       <Header
         content={<BuddysLogo width={90} height={24} />}
         right={
@@ -43,6 +42,6 @@ export default function Home() {
       </main>
       <WriteFloatingButton />
       <BottomNavigation className="fixed right-0 bottom-0 left-0 z-20 mx-auto max-w-107.5" />
-    </AuthEntryGuard>
+    </>
   );
 }

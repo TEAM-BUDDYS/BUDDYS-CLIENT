@@ -7,8 +7,10 @@ BUDDYS-CLIENT는 Next.js App Router를 라우팅 경계로 사용하고, 제품 
 ```txt
 src/
   app/
+    (private)/
+      layout.tsx
+      page.tsx
     layout.tsx
-    page.tsx
     providers.tsx
     globals.css
 
@@ -44,6 +46,15 @@ src/
 - route group은 URL을 바꾸지 않고 레이아웃을 나눌 때만 사용합니다.
 - route handler는 서버 경계가 필요할 때만 `app/api`에 둡니다.
 
+## Protected Routes
+
+- 인증이 필요한 route는 `src/app/(private)` route group 아래에 둡니다.
+- `(private)`는 URL에 포함되지 않으므로 기존 화면 경로는 유지됩니다.
+- `src/app/(private)/layout.tsx`에서 `AuthEntryGuard`를 한 번만 적용하며, 각 `page.tsx`에서 guard를 중복해서 감싸지 않습니다.
+- 공통 layout은 Server Component로 유지하고, 인증 상태와 redirect가 필요한 `AuthEntryGuard`만 Client Component 경계로 사용합니다.
+- 미인증 사용자가 `(private)` route에 접근하면 `/landing`으로 이동하고, 랜딩 화면에서 사용자가 로그인 진입을 선택하도록 합니다.
+- `/landing`, `/login`, `/auth/kakao/callback`처럼 인증 전 접근이 필요한 route는 `(private)` 밖에 둡니다.
+
 ## Route Path Configuration
 
 - 앱 내부 화면 경로는 `src/shared/config/routes.ts`의 `ROUTES`에서 관리합니다.
@@ -58,30 +69,35 @@ router.replace(ROUTES.POST.DETAIL(postId));
 
 ## Confirmed Routes And Domains
 
-| Screen | URL           | Route entry                   | Owner domain | Notes                                   |
-| ------ | ------------- | ----------------------------- | ------------ | --------------------------------------- |
-| 홈     | `/`           | `src/app/page.tsx`            | 없음         | 여러 도메인의 기능을 조합하는 진입 화면 |
-| 로그인 | `/login`      | `src/app/login/page.tsx`      | `auth`       | 인증과 로그인 흐름                      |
-| 온보딩 | `/onboarding` | `src/app/onboarding/page.tsx` | `onboarding` | 초기 사용자 정보와 가입 완료 흐름       |
-| 게시물 | `/posts`      | `src/app/posts/page.tsx`      | `posts`      | 게시물 목록과 게시물 관련 기능          |
-| 프로필 | `/profile`    | `src/app/profile/page.tsx`    | `profile`    | 프로필 조회와 수정 기능                 |
-| 채팅   | `/chat`       | `src/app/chat/page.tsx`       | `chat`       | 채팅 목록과 채팅 관련 기능              |
+| Screen | URL           | Route entry                             | Owner domain | Notes                                   |
+| ------ | ------------- | --------------------------------------- | ------------ | --------------------------------------- |
+| 홈     | `/`           | `src/app/(private)/page.tsx`            | 없음         | 여러 도메인의 기능을 조합하는 인증 화면 |
+| 랜딩   | `/landing`    | `src/app/landing/page.tsx`              | 없음         | 인증 전 서비스 진입 화면                |
+| 로그인 | `/login`      | `src/app/login/page.tsx`                | `auth`       | 인증과 로그인 흐름                      |
+| 온보딩 | `/onboarding` | `src/app/(private)/onboarding/page.tsx` | `onboarding` | 인증 후 초기 사용자 정보 입력 흐름      |
+| 게시물 | `/posts`      | `src/app/(private)/posts/page.tsx`      | `posts`      | 게시물 목록과 게시물 관련 기능          |
+| 프로필 | `/profile`    | `src/app/(private)/profile/page.tsx`    | `profile`    | 프로필 조회와 수정 기능                 |
+| 채팅   | `/chat`       | `src/app/(private)/chat/page.tsx`       | `chat`       | 채팅 목록과 채팅 관련 기능              |
 
 확정된 화면을 기준으로 route와 domain의 최상위 폴더를 아래와 같이 구성합니다.
 
 ```txt
 src/
   app/
-    page.tsx
+    (private)/
+      layout.tsx
+      page.tsx
+      onboarding/
+        page.tsx
+      posts/
+        page.tsx
+      profile/
+        page.tsx
+      chat/
+        page.tsx
+    landing/
+      page.tsx
     login/
-      page.tsx
-    onboarding/
-      page.tsx
-    posts/
-      page.tsx
-    profile/
-      page.tsx
-    chat/
       page.tsx
 
   domains/
@@ -119,7 +135,7 @@ src/
 
 - 홈은 여러 도메인을 조합하는 route로 시작하며, 홈에만 속한 기능과 상태가 확인될 때 `home` domain 추가를 검토합니다.
 - 게시물 상세나 채팅방처럼 식별자가 필요한 화면은 요구사항이 확정된 뒤 `[postId]`, `[roomId]` 같은 dynamic route를 추가합니다.
-- 인증 전후 화면에서 서로 다른 layout이 실제로 필요해질 때 route group을 추가합니다.
+- 인증이 필요한 화면은 `(private)` layout에서 공통으로 보호하고, 인증 전 화면은 route group 밖에 유지합니다.
 - 각 `page.tsx`는 현재 routing 확인을 위한 최소 화면이며, 실제 기능 구현 시 owner domain의 컴포넌트를 조합하는 route entry로 사용합니다.
 - 각 domain은 `components`, `features`, `hooks`, `api`, `model`을 기본 하위 폴더로 사용합니다.
 - `assets`와 추가 flow 폴더는 실제 구현에 필요한 시점에 추가합니다.
