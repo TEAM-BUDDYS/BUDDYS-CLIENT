@@ -65,12 +65,20 @@ const getMyProfile = async (): Promise<MyProfile> => {
   };
 };
 
-const getMyPosts = async (params?: GetMyPostsParams) => {
-  return apiClient
+const getMyPosts = async (
+  params?: GetMyPostsParams,
+): Promise<GetMyPostsResponse> => {
+  const response = await apiClient
     .get(END_POINT.USER.ME_POSTS, {
       searchParams: createSearchParams(params),
     })
     .json<GetMyPostsResponse>();
+
+  if (response.success === false) {
+    throw new Error(response.message || '게시글을 불러오지 못했습니다.');
+  }
+
+  return response;
 };
 
 const getUserProfile = async (userId: number) => {
