@@ -84,12 +84,11 @@ const PostTabPanel = ({ userId }: { userId: number }) => {
 
   if (posts.length === 0) {
     return (
-      <div className="mt-25">
-        <EmptyState
-          title="아직 기록된 게시물이 없어요"
-          description="게시물이 등록되면 이곳에서 볼 수 있어요"
-        />
-      </div>
+      <EmptyState
+        title="아직 기록된 게시물이 없어요"
+        description="게시물이 등록되면 이곳에서 볼 수 있어요"
+        className="mt-25"
+      />
     );
   }
 
