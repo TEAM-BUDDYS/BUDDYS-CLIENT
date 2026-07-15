@@ -139,7 +139,6 @@ export const usePostCreateForm = () => {
       !selectedCountry ||
       !selectedCity ||
       !dateRange.startDate ||
-      !dateRange.endDate ||
       !isRequiredDetailComplete(detail)
     ) {
       return null;
@@ -149,7 +148,7 @@ export const usePostCreateForm = () => {
       selectedCountry,
       selectedCity,
       startDate: dateRange.startDate,
-      endDate: dateRange.endDate,
+      endDate: dateRange.endDate ?? dateRange.startDate,
       detail,
     };
   };
@@ -164,7 +163,7 @@ export const usePostCreateForm = () => {
     }
 
     if (currentStep === 3) {
-      return Boolean(dateRange.startDate && dateRange.endDate);
+      return Boolean(dateRange.startDate);
     }
 
     return Boolean(getCompleteFormValues());
