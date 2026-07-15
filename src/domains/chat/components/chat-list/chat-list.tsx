@@ -16,7 +16,7 @@ export const ChatList = ({ chatRooms }: ChatListProps) => {
           chatRoomId={chatRoom.chatRoomId}
           imgUrl={chatRoom.participant.profileImageUrl ?? defaultProfileImage}
           nickname={chatRoom.participant.nickname}
-          lastMessage={chatRoom.lastMessage}
+          lastMessage={chatRoom.lastMessage ?? ''}
           sentAt={chatRoom.lastMessageSentAt}
           unreadCount={chatRoom.unreadMessageCount}
         />

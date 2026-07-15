@@ -5,6 +5,12 @@ export type CompleteOnboardingRequest =
 export type CompleteOnboardingResponse =
   components['schemas']['BaseResponseOnboardingResponse'];
 
+export type GetRecommendedUsersParams =
+  operations['getRecommendedUsers']['parameters']['query'];
+export type GetRecommendedUsersResponse =
+  components['schemas']['BaseResponseRecommendedUserListResponse'];
+export type RecommendedUser = components['schemas']['RecommendedUserResponse'];
+
 export type SearchUniversitiesParams =
   operations['searchUniversities']['parameters']['query'];
 export type SearchUniversitiesResponse =

@@ -22,8 +22,12 @@ const excludePageParam = <Params extends { page?: unknown }>(
 
 export const CHAT_ROOM_QUERY_KEY = {
   ALL: ['chat-rooms'] as const,
-  LIST: (params?: GetQueryParams<'/api/v1/chat-rooms'>) =>
-    [...CHAT_ROOM_QUERY_KEY.ALL, 'list', params ?? {}] as const,
+  INFINITE_LIST: (params?: GetQueryParams<'/api/v1/chat-rooms'>) =>
+    [
+      ...CHAT_ROOM_QUERY_KEY.ALL,
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
   DETAIL: (chatRoomId: number) =>
     [...CHAT_ROOM_QUERY_KEY.ALL, 'detail', chatRoomId] as const,
   MESSAGES: (
@@ -84,7 +88,8 @@ export const POST_QUERY_KEY = {
 
 export const RECOMMENDATION_QUERY_KEY = {
   ALL: ['recommendations'] as const,
-  USERS: () => [...RECOMMENDATION_QUERY_KEY.ALL, 'users'] as const,
+  USERS: (params?: GetQueryParams<'/api/v1/recommendations/users'>) =>
+    [...RECOMMENDATION_QUERY_KEY.ALL, 'users', params ?? {}] as const,
   USERS_BY_EXCHANGE_COUNTRY: (
     params?: GetQueryParams<'/api/v1/recommendations/users/exchange-country'>,
   ) =>
