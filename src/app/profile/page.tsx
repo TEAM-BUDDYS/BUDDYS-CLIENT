@@ -1,19 +1,19 @@
-import { ProfilePageView } from '@/domains/profile/components/profile-page-view/profile-page-view';
-import type { MyProfile } from '@/domains/profile/model/profile';
-
-const MOCK_PROFILE: MyProfile = {
-  nickname: '테스트유저',
-  isVerified: true,
-  tags: [
-    { id: 1, name: '여행' },
-    { id: 2, name: '맛집' },
-    { id: 3, name: '사진' },
-    { id: 4, name: '같이가용' },
-  ],
-  bio: '안녕하세요, 테스트용 자기소개입니다.',
-  posts: [],
-};
+import { AuthEntryGuard } from '@/domains/auth/features/auth-session/auth-entry-guard';
+import { MyProfileContainer } from '@/domains/profile/components/my-profile-container/my-profile-container';
+import { AsyncBoundary } from '@/shared/components/ui';
 
 export default function ProfilePage() {
-  return <ProfilePageView profile={MOCK_PROFILE} />;
+  return (
+    <AuthEntryGuard>
+      <AsyncBoundary
+        loadingState={{ title: '프로필을 불러오고 있어요' }}
+        errorState={{
+          title: '프로필을 불러오지 못했어요',
+          description: '잠시 후 다시 시도해 주세요.',
+        }}
+      >
+        <MyProfileContainer />
+      </AsyncBoundary>
+    </AuthEntryGuard>
+  );
 }

@@ -8,9 +8,11 @@ import {
   apiClient,
   createSearchParams,
   END_POINT,
+  POST_MUTATION_KEY,
   POST_QUERY_KEY,
 } from '@/shared/api';
 
+import type { PostDetail } from '../model/post-detail';
 import type {
   CreateCommentRequest,
   CreateCommentResponse,
@@ -56,21 +58,40 @@ const createPost = async (body: CreatePostRequest) => {
   return postId;
 };
 
-const getPostDetail = async (postId: number) => {
-  return apiClient
+const getPostDetail = async (postId: number): Promise<PostDetail> => {
+  const response = await apiClient
     .get(END_POINT.POST.DETAIL(postId))
     .json<GetPostDetailResponse>();
+
+  if (!response.success || !response.data) {
+    throw new Error(response.message || '게시글을 불러오지 못했습니다.');
+  }
+
+  return response.data as PostDetail;
 };
 
 const updatePostStatus = async (
   postId: number,
   body: UpdatePostStatusRequest,
 ) => {
-  return apiClient
+  const response = await apiClient
     .patch(END_POINT.POST.STATUS(postId), {
       json: body,
     })
     .json<UpdatePostStatusResponse>();
+
+  const responsePostId = response.data?.postId;
+  const status = response.data?.status;
+
+  if (
+    !response.success ||
+    responsePostId !== postId ||
+    (status !== 'RECRUITING' && status !== 'COMPLETED')
+  ) {
+    throw new Error(response.message || '모집 상태를 변경하지 못했습니다.');
+  }
+
+  return { postId, status };
 };
 
 const getComments = async (postId: number, params?: GetCommentsParams) => {
@@ -107,11 +128,13 @@ export const POST_QUERY_OPTIONS = {
       queryFn: ({ pageParam }) => getPosts({ ...params, page: pageParam }),
       initialPageParam: 0,
       getNextPageParam: (lastPage) => {
-        if (!lastPage.data?.hasNext) {
+        const page = lastPage.data?.page;
+
+        if (!lastPage.data?.hasNext || typeof page !== 'number') {
           return undefined;
         }
 
-        return (lastPage.data.page ?? 0) + 1;
+        return page + 1;
       },
     }),
   DETAIL: (postId: number) =>
@@ -119,21 +142,33 @@ export const POST_QUERY_OPTIONS = {
       queryKey: POST_QUERY_KEY.DETAIL(postId),
       queryFn: () => getPostDetail(postId),
     }),
-  COMMENTS: (postId: number, params?: GetCommentsParams) =>
-    queryOptions({
-      queryKey: POST_QUERY_KEY.COMMENTS(postId, params),
-      queryFn: () => getComments(postId, params),
+  INFINITE_COMMENTS: (postId: number, params?: GetCommentsParams) =>
+    infiniteQueryOptions({
+      queryKey: POST_QUERY_KEY.INFINITE_COMMENTS(postId, params),
+      queryFn: ({ pageParam }) =>
+        getComments(postId, { ...params, page: pageParam }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        const page = lastPage.data?.page;
+
+        if (!lastPage.data?.hasNext || typeof page !== 'number') {
+          return undefined;
+        }
+
+        return page + 1;
+      },
     }),
 };
 
 export const POST_MUTATION_OPTIONS = {
   CREATE: () =>
     mutationOptions({
-      mutationKey: [...POST_QUERY_KEY.ALL, 'create'],
+      mutationKey: POST_MUTATION_KEY.CREATE(),
       mutationFn: (body: CreatePostRequest) => createPost(body),
     }),
   UPDATE_STATUS: () =>
     mutationOptions({
+      mutationKey: POST_MUTATION_KEY.UPDATE_STATUS(),
       mutationFn: ({
         postId,
         body,
@@ -144,6 +179,7 @@ export const POST_MUTATION_OPTIONS = {
     }),
   CREATE_COMMENT: () =>
     mutationOptions({
+      mutationKey: POST_MUTATION_KEY.CREATE_COMMENT(),
       mutationFn: ({
         postId,
         body,
