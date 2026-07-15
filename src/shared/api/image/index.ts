@@ -1,4 +1,4 @@
-export { IMAGE_MUTATION_OPTIONS } from './query';
+export { IMAGE_MUTATION_OPTIONS, validateImageFile } from './query';
 export type {
   CreatePresignedUrlRequest,
   CreatePresignedUrlResponse,

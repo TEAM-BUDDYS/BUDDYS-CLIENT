@@ -48,7 +48,7 @@ export const BottomActionBar = ({
       <input
         {...inputProps}
         aria-label="내용 입력"
-        className="text-body-m-15 h-12 min-w-0 flex-1 rounded-full bg-gray-50 px-[20.5px] text-gray-800 outline-none placeholder:text-gray-500"
+        className="text-body-m-16 h-12 min-w-0 flex-1 rounded-full bg-gray-50 px-[20.5px] text-gray-800 outline-none placeholder:text-gray-500"
         onChange={(event) => onValueChange(event.target.value)}
         placeholder={placeholder}
         type="text"
