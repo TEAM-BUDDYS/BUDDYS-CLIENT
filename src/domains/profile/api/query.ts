@@ -201,4 +201,20 @@ export const PROFILE_QUERY_OPTIONS = {
       queryKey: USER_QUERY_KEY.POSTS(userId, params),
       queryFn: () => getUserPosts(userId, params),
     }),
+  USER_POSTS_INFINITE: (userId: number, params?: GetUserPostsParams) =>
+    infiniteQueryOptions({
+      queryKey: USER_QUERY_KEY.POSTS_INFINITE(userId, params),
+      queryFn: ({ pageParam }) =>
+        getUserPosts(userId, { ...params, page: pageParam }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        const page = lastPage.data?.page;
+
+        if (!lastPage.data?.hasNext || typeof page !== 'number') {
+          return undefined;
+        }
+
+        return page + 1;
+      },
+    }),
 };

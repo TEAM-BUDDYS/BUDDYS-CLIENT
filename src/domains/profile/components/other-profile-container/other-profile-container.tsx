@@ -32,5 +32,5 @@ export const OtherProfileContainer = ({
     );
   }
 
-  return <OtherProfilePageView profile={profile} />;
+  return <OtherProfilePageView userId={userId} profile={profile} />;
 };
