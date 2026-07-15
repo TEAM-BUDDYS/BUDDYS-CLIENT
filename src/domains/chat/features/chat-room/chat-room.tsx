@@ -14,7 +14,7 @@ import { CHAT_QUERY_OPTIONS } from '../../api/query';
 import {
   ReceiveChatMessageResponse,
   ReceiveChatReadResponse,
-} from '../../api/stomp-type';
+} from '../../api/stomp/stomp-type';
 import { useChatRoomStomp } from '../../hooks/use-chat-room-stomp';
 import { ChatMessageData } from '../../model/chat-room';
 import { ChatRoomMenu } from '../chat-room-menu/chat-room-menu';
@@ -47,6 +47,7 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
     hasNextPage,
     isFetchingNextPage,
     isFetchNextPageError,
+    refetch: refetchMessages,
   } = useSuspenseInfiniteQuery(
     CHAT_QUERY_OPTIONS.MESSAGES(chatRoomId, {
       size: CHAT_MESSAGE_PAGE_SIZE,
@@ -96,10 +97,15 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
     [currentUserId],
   );
 
+  const handleSubscribed = useCallback(() => {
+    void refetchMessages();
+  }, [refetchMessages]);
+
   const { sendMessage, markChatRoomAsRead, isConnected } = useChatRoomStomp({
     chatRoomId,
     onMessage: handleReceiveMessage,
     onRead: handleReceiveRead,
+    onSubscribed: handleSubscribed,
   });
 
   const messages = useMemo<ChatMessageData[]>(() => {

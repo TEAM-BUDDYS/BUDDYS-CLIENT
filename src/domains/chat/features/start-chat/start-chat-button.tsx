@@ -1,10 +1,11 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
 import { ChatIcon } from '@/shared/components/icons';
-import { IconButton } from '@/shared/components/ui';
+import { IconButton, useToast } from '@/shared/components/ui';
 
 import { CHAT_MUTATION_OPTIONS } from '../../api/query';
 
@@ -16,6 +17,7 @@ export const StartChatButton = ({
   participantUserId,
 }: StartChatButtonProps) => {
   const router = useRouter();
+  const { showToast } = useToast();
 
   const createChatRoomMutation = useMutation(CHAT_MUTATION_OPTIONS.CREATE());
 
@@ -29,14 +31,25 @@ export const StartChatButton = ({
           const chatRoomId = response.data?.chatRoomId;
 
           if (!chatRoomId) {
-            console.error('채팅방 ID가 응답에 없습니다.');
+            const error = new Error('채팅방 생성 응답이 올바르지 않습니다.');
+
+            Sentry.captureException(error);
+
+            showToast('채팅방을 시작하지 못했어요. 다시 시도해 주세요.', {
+              variant: 'gray',
+            });
+
             return;
           }
 
           router.push(`/chat/${chatRoomId}`);
         },
         onError: (error) => {
-          console.error('채팅방 생성에 실패했습니다.', error);
+          Sentry.captureException(error);
+
+          showToast('채팅방을 시작하지 못했어요. 다시 시도해 주세요.', {
+            variant: 'gray',
+          });
         },
       },
     );

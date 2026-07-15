@@ -74,6 +74,17 @@ export const ChatMessageList = ({
       className="flex min-h-0 flex-1 scrollbar-none flex-col overflow-y-auto border-b border-b-gray-100 px-4 pb-4 [&::-webkit-scrollbar]:hidden"
     >
       <div ref={loadPreviousRef} className="h-1 shrink-0" aria-hidden="true" />
+
+      {isFetchPreviousMessagesError && !isFetchingPreviousMessages && (
+        <button
+          type="button"
+          className="text-caption-sb-12 text-mint-400 mx-auto shrink-0 py-4"
+          onClick={handleLoadPreviousMessages}
+        >
+          이전 메시지 다시 불러오기
+        </button>
+      )}
+
       {!hasPreviousMessages && (
         <div className="mt-2 flex flex-col items-center gap-2">
           <span className="text-body-r-14 text-gray-500">

@@ -15,6 +15,7 @@ import { CHAT_QUERY_OPTIONS } from '../../api/query';
 import { ChatList } from '../../components/chat-list/chat-list';
 import { useChatRoomListStomp } from '../../hooks/use-chat-room-list-stomp';
 import { ChatRoom, ChatRoomList } from '../../model/chat-list';
+import { reorderChatRoomPages } from '../../utils/reorder-chat-room-pages';
 
 const CHAT_LIST_PAGE_SIZE = 20;
 
@@ -35,6 +36,12 @@ export const ChatListFeature = () => {
     CHAT_QUERY_OPTIONS.INFINITE_LIST(CHAT_LIST_PARAMS),
   );
 
+  const handleSubscribed = useCallback(() => {
+    void queryClient.invalidateQueries({
+      queryKey: CHAT_ROOM_QUERY_KEY.INFINITE_LIST_ALL(),
+    });
+  }, [queryClient]);
+
   const handleChatRoomUpdated = useCallback(
     (updatedChatRoom: ChatRoom) => {
       queryClient.setQueryData<InfiniteData<ChatRoomList>>(
@@ -44,26 +51,7 @@ export const ChatListFeature = () => {
             return oldData;
           }
 
-          const pagesWithoutUpdatedRoom = oldData.pages.map((page) => ({
-            ...page,
-            chatRooms: page.chatRooms.filter(
-              (chatRoom) => chatRoom.chatRoomId !== updatedChatRoom.chatRoomId,
-            ),
-          }));
-
-          return {
-            ...oldData,
-            pages: [
-              {
-                ...pagesWithoutUpdatedRoom[0],
-                chatRooms: [
-                  updatedChatRoom,
-                  ...pagesWithoutUpdatedRoom[0].chatRooms,
-                ],
-              },
-              ...pagesWithoutUpdatedRoom.slice(1),
-            ],
-          };
+          return reorderChatRoomPages(oldData, updatedChatRoom);
         },
       );
     },
@@ -72,6 +60,7 @@ export const ChatListFeature = () => {
 
   useChatRoomListStomp({
     onChatRoomUpdated: handleChatRoomUpdated,
+    onSubscribed: handleSubscribed,
   });
 
   const chatRooms = data.pages.flatMap((page) => page.chatRooms);

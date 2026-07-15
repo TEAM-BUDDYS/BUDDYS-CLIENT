@@ -19,6 +19,7 @@ export default async function ChatRoomPage({ params }: ChatRoomPageProps) {
   return (
     <AuthEntryGuard>
       <AsyncBoundary
+        key={chatRoomId}
         loadingState={{ title: '채팅방을 불러오고 있어요' }}
         errorState={{
           title: '채팅방을 불러오지 못했어요',

@@ -5,25 +5,27 @@ import { useCallback, useEffect } from 'react';
 
 import { useStomp } from '@/shared/api/stomp';
 
-import { CHAT_STOMP_DESTINATION } from '../api/stomp-destination';
+import { CHAT_STOMP_DESTINATION } from '../api/stomp/stomp-destination';
 import type {
   ReceiveChatMessageResponse,
   ReceiveChatReadResponse,
   ReceiveChatRoomResponse,
   SendChatMessageRequest,
   SendChatReadRequest,
-} from '../api/stomp-type';
+} from '../api/stomp/stomp-type';
 
 interface UseChatRoomStompParams {
   chatRoomId: number;
   onMessage: (response: ReceiveChatMessageResponse) => void;
   onRead: (response: ReceiveChatReadResponse) => void;
+  onSubscribed?: () => void;
 }
 
 export const useChatRoomStomp = ({
   chatRoomId,
   onMessage,
   onRead,
+  onSubscribed,
 }: UseChatRoomStompParams) => {
   const { connectionStatus, publish, subscribe } = useStomp();
 
@@ -56,8 +58,17 @@ export const useChatRoomStomp = ({
       },
     );
 
+    onSubscribed?.();
+
     return unsubscribe;
-  }, [chatRoomId, connectionStatus, subscribe, onMessage, onRead]);
+  }, [
+    chatRoomId,
+    connectionStatus,
+    subscribe,
+    onMessage,
+    onRead,
+    onSubscribed,
+  ]);
 
   const sendMessage = useCallback(
     (content: string) => {

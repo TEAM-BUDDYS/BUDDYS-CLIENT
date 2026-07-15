@@ -1,5 +1,6 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import {
   createContext,
   type ReactNode,
@@ -65,7 +66,12 @@ export const StompProvider = ({ children, enabled }: StompProviderProps) => {
       return;
     }
 
-    const client = createStompClient();
+    const client = createStompClient({
+      onMissingAccessToken: (error) => {
+        Sentry.captureException(error);
+        setConnectionStatus('error');
+      },
+    });
 
     clientRef.current = client;
 
@@ -104,6 +110,7 @@ export const StompProvider = ({ children, enabled }: StompProviderProps) => {
     return () => {
       if (clientRef.current === client) {
         clientRef.current = null;
+        setConnectionStatus('disconnected');
       }
 
       void client.deactivate();

@@ -93,6 +93,8 @@ const convertChatMessage = (
     !sender ||
     !isPositiveSafeInteger(sender.userId) ||
     typeof sender.nickname !== 'string' ||
+    (sender.profileImageUrl != null &&
+      typeof sender.profileImageUrl !== 'string') ||
     typeof content !== 'string' ||
     typeof sentAt !== 'string' ||
     typeof mine !== 'boolean' ||

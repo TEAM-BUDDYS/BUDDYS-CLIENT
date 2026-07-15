@@ -1,4 +1,4 @@
-import { ChatRoom } from '../model/chat-list';
+import { ChatRoom } from '../../model/chat-list';
 
 export interface ChatRoomListUpdatedResponse {
   type: 'CHAT_ROOM_UPDATED';

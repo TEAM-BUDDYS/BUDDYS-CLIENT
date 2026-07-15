@@ -52,7 +52,13 @@ const getChatRoom = async (chatRoomId: number): Promise<ChatRoomDetail> => {
   const createdAt = response.data?.createdAt;
   const participantNickname = response.data?.participant?.nickname;
 
-  if (response.success !== true || !createdAt || !participantNickname) {
+  if (
+    response.success !== true ||
+    typeof createdAt !== 'string' ||
+    createdAt.length === 0 ||
+    typeof participantNickname !== 'string' ||
+    participantNickname.length === 0
+  ) {
     throw new Error(
       response.message || '채팅방 상세 응답이 올바르지 않습니다.',
     );
