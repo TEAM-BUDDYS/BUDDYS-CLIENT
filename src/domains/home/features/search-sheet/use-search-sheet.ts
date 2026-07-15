@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import type { SearchHistoryItem } from '@/domains/home/components/search-history/search-history';
@@ -58,6 +58,7 @@ const getInitialSearchHistoryItems = () => {
 
 export const useSearchSheet = (onClose?: () => void, initialKeyword = '') => {
   const router = useRouter();
+  const pathname = usePathname();
   const [searchKeyword, setSearchKeyword] = useState(initialKeyword);
   const [searchHistoryItems, setSearchHistoryItems] = useState<
     SearchHistoryItem[]
@@ -83,9 +84,16 @@ export const useSearchSheet = (onClose?: () => void, initialKeyword = '') => {
 
   const routeToCustomizedExplore = (keyword: string) => {
     const searchParams = new URLSearchParams({ keyword });
+    const href = `${ROUTES.CUSTOMIZED_EXPLORE}?${searchParams.toString()}`;
 
     onClose?.();
-    router.replace(`${ROUTES.CUSTOMIZED_EXPLORE}?${searchParams.toString()}`);
+
+    if (pathname === ROUTES.CUSTOMIZED_EXPLORE) {
+      router.replace(href);
+      return;
+    }
+
+    router.push(href);
   };
 
   const handleSearchSubmit = () => {
