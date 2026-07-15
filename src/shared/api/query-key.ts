@@ -22,10 +22,11 @@ const excludePageParam = <Params extends { page?: unknown }>(
 
 export const CHAT_ROOM_QUERY_KEY = {
   ALL: ['chat-rooms'] as const,
+  INFINITE_LIST_ALL: () =>
+    [...CHAT_ROOM_QUERY_KEY.ALL, 'infinite-list'] as const,
   INFINITE_LIST: (params?: GetQueryParams<'/api/v1/chat-rooms'>) =>
     [
-      ...CHAT_ROOM_QUERY_KEY.ALL,
-      'infinite-list',
+      ...CHAT_ROOM_QUERY_KEY.INFINITE_LIST_ALL(),
       excludePageParam(params),
     ] as const,
   DETAIL: (chatRoomId: number) =>

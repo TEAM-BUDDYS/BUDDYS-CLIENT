@@ -16,6 +16,12 @@ const nextConfig: NextConfig = {
         hostname: 'buddys-assets.s3.ap-northeast-2.amazonaws.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname:
+          'buddys-assets-332486111134-ap-northeast-2-an.s3.ap-northeast-2.amazonaws.com',
+        pathname: '/profiles/**',
+      },
     ],
   },
 };

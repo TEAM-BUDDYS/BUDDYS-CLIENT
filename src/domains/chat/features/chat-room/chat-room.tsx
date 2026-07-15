@@ -1,76 +1,205 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import {
+  useSuspenseInfiniteQuery,
+  useSuspenseQuery,
+} from '@tanstack/react-query';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { useAuthSession } from '@/domains/auth/features/auth-session/auth-session-provider';
+import { Header } from '@/shared/components/layout';
 import { BottomActionBar } from '@/shared/components/ui';
-import { formatMonthDayWithWeekday } from '@/shared/utils/format-date-range';
 
-import { ChatMessage } from '../../components/chat-message/chat-message';
-import { ChatSystemMessage } from '../../components/chat-system-message/chat-system-message';
+import { CHAT_QUERY_OPTIONS } from '../../api/query';
+import {
+  ReceiveChatMessageResponse,
+  ReceiveChatReadResponse,
+} from '../../api/stomp/stomp-type';
+import { useChatRoomStomp } from '../../hooks/use-chat-room-stomp';
 import { ChatMessageData } from '../../model/chat-room';
+import { ChatRoomMenu } from '../chat-room-menu/chat-room-menu';
+import { ChatMessageList } from './chat-message-list';
+
+const CHAT_MESSAGE_PAGE_SIZE = 10;
 
 interface ChatRoomProps {
-  createdAt: string;
-  initialMessages: ChatMessageData[];
+  chatRoomId: number;
 }
 
-export const ChatRoom = ({ createdAt, initialMessages }: ChatRoomProps) => {
+export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
+  const { userId: currentUserId } = useAuthSession();
   const [message, setMessage] = useState('');
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const [realtimeMessages, setRealtimeMessages] = useState<ChatMessageData[]>(
+    [],
+  );
+  const [lastReadByParticipantMessageId, setLastReadByParticipantMessageId] =
+    useState<number | null>(null);
+
+  const lastPublishedReadMessageIdRef = useRef<number | null>(null);
+
+  const { data: chatRoomData } = useSuspenseQuery(
+    CHAT_QUERY_OPTIONS.DETAIL(chatRoomId),
+  );
+
+  const {
+    data: messagePages,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isFetchNextPageError,
+    refetch: refetchMessages,
+  } = useSuspenseInfiniteQuery(
+    CHAT_QUERY_OPTIONS.MESSAGES(chatRoomId, {
+      size: CHAT_MESSAGE_PAGE_SIZE,
+    }),
+  );
+
+  const handleReceiveMessage = useCallback(
+    (response: ReceiveChatMessageResponse) => {
+      if (response.type !== 'MESSAGE') {
+        return;
+      }
+
+      const receivedMessage: ChatMessageData = {
+        messageId: response.message.messageId,
+        sender: response.message.sender,
+        content: response.message.content,
+        sentAt: response.message.sentAt,
+        mine: response.message.sender.userId === currentUserId,
+        isRead: false,
+      };
+
+      setRealtimeMessages((prevMessages) => {
+        const isDuplicated = prevMessages.some(
+          (message) => message.messageId === receivedMessage.messageId,
+        );
+
+        if (isDuplicated) {
+          return prevMessages;
+        }
+
+        return [...prevMessages, receivedMessage];
+      });
+    },
+    [currentUserId],
+  );
+
+  const handleReceiveRead = useCallback(
+    (response: ReceiveChatReadResponse) => {
+      if (currentUserId === null || response.readerId === currentUserId) {
+        return;
+      }
+
+      setLastReadByParticipantMessageId((previousMessageId) =>
+        Math.max(previousMessageId ?? 0, response.lastReadMessageId),
+      );
+    },
+    [currentUserId],
+  );
+
+  const handleSubscribed = useCallback(() => {
+    void refetchMessages();
+  }, [refetchMessages]);
+
+  const { sendMessage, markChatRoomAsRead, isConnected } = useChatRoomStomp({
+    chatRoomId,
+    onMessage: handleReceiveMessage,
+    onRead: handleReceiveRead,
+    onSubscribed: handleSubscribed,
+  });
+
+  const messages = useMemo<ChatMessageData[]>(() => {
+    const fetchedMessages = [
+      ...(messagePages?.pages.flatMap((page) => page.messages) ?? []),
+    ].reverse();
+
+    const combinedMessages = [...fetchedMessages, ...realtimeMessages];
+
+    const uniqueMessages = combinedMessages.filter(
+      (message, index, array) =>
+        array.findIndex((item) => item.messageId === message.messageId) ===
+        index,
+    );
+
+    if (lastReadByParticipantMessageId === null) {
+      return uniqueMessages;
+    }
+
+    return uniqueMessages.map((message) => {
+      if (
+        !message.mine ||
+        message.isRead ||
+        message.messageId > lastReadByParticipantMessageId
+      ) {
+        return message;
+      }
+
+      return {
+        ...message,
+        isRead: true,
+      };
+    });
+  }, [lastReadByParticipantMessageId, messagePages?.pages, realtimeMessages]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView();
-  }, [initialMessages]);
+    const latestMessage = messages.at(-1);
+    const lastPublishedReadMessageId = lastPublishedReadMessageIdRef.current;
+
+    if (
+      !isConnected ||
+      !latestMessage ||
+      (lastPublishedReadMessageId !== null &&
+        latestMessage.messageId <= lastPublishedReadMessageId)
+    ) {
+      return;
+    }
+
+    const isPublished = markChatRoomAsRead(latestMessage.messageId);
+
+    if (isPublished) {
+      lastPublishedReadMessageIdRef.current = latestMessage.messageId;
+    }
+  }, [isConnected, markChatRoomAsRead, messages]);
 
   const handleSubmit = () => {
-    if (!message.trim()) return;
+    const isSent = sendMessage(message);
 
-    // 웹소켓 전송
-    // sendMessage(message);
-    setMessage('');
+    if (isSent) {
+      setMessage('');
+    }
   };
 
-  return (
-    <main className="flex min-h-0 flex-1 flex-col">
-      <div className="flex min-h-0 flex-1 scrollbar-none flex-col overflow-y-auto border-b border-b-gray-100 px-4 [&::-webkit-scrollbar]:hidden">
-        <div className="mt-2 flex flex-col items-center gap-2">
-          <span className="text-body-r-14 text-gray-500">
-            {formatMonthDayWithWeekday(createdAt)}
-          </span>
-          <ChatSystemMessage />
-        </div>
-        <div className="flex flex-col gap-3.5 pt-6">
-          {initialMessages.map((message) =>
-            message.mine ? (
-              <ChatMessage
-                key={message.messageId}
-                type="outgoing"
-                content={message.content}
-                sentAt={message.sentAt}
-                isRead={message.readByParticipant}
-              />
-            ) : (
-              <ChatMessage
-                key={message.messageId}
-                type="incoming"
-                content={message.content}
-                sentAt={message.sentAt}
-                profileImageUrl={message.sender.profileImageUrl}
-              />
-            ),
-          )}
-        </div>
-        <div ref={bottomRef} />
-      </div>
+  if (currentUserId === null) {
+    return null;
+  }
 
-      <BottomActionBar
-        value={message}
-        onValueChange={setMessage}
-        onSubmit={(event) => {
-          event.preventDefault();
-          handleSubmit();
-        }}
+  return (
+    <div className="flex h-dvh flex-col">
+      <Header
+        content={chatRoomData.participantNickname}
+        hasBackButton
+        contentAlign="center"
+        right={<ChatRoomMenu />}
       />
-    </main>
+      <main className="flex min-h-0 flex-1 flex-col">
+        <ChatMessageList
+          createdAt={chatRoomData.createdAt}
+          messages={messages}
+          hasPreviousMessages={Boolean(hasNextPage)}
+          isFetchingPreviousMessages={isFetchingNextPage}
+          isFetchPreviousMessagesError={isFetchNextPageError}
+          onLoadPreviousMessages={fetchNextPage}
+        />
+
+        <BottomActionBar
+          value={message}
+          onValueChange={setMessage}
+          onSubmit={(event) => {
+            event.preventDefault();
+            handleSubmit();
+          }}
+        />
+      </main>
+    </div>
   );
 };
