@@ -68,7 +68,7 @@ export const TextArea = ({
           'flex min-h-30 w-full flex-col rounded-xl border border-transparent bg-gray-50 p-4 outline outline-transparent',
           !disabled &&
             !isError &&
-            'focus-within:border-mint-200 focus-within:outline-mint-200 focus-within:bg-white has-[textarea:not(:placeholder-shown)]:border-gray-200',
+            'focus-within:border-mint-200 focus-within:outline-mint-200 focus-within:bg-white has-[textarea:not(:placeholder-shown)]:not-focus-within:border-gray-200',
           disabled && 'cursor-not-allowed',
           isError &&
             'border-error-50 focus-within:border-error-50 focus-within:outline-error-50 bg-white',
