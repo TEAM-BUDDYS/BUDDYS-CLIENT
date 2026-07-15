@@ -62,7 +62,8 @@ export const OnboardFlow = () => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
   const { isUploading, uploadImage } = useImageUpload();
-  const [currentStep, setCurrentStep] = useState<OnboardStep>('complete');
+  const [currentStep, setCurrentStep] =
+    useState<OnboardStep>('interest-location');
   const onboardForm = useOnboardForm();
   const progressStep =
     PROGRESS_STEP_BY_STEP[currentStep as keyof typeof PROGRESS_STEP_BY_STEP];
