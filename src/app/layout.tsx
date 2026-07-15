@@ -14,13 +14,13 @@ import { Providers } from './providers';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://buddys.co.kr'),
-  title: 'BUDDYS',
+  title: 'buddys | 교환학생 동행 매칭 서비스',
   description: '버디와 함께, 연결부터 기록까지',
   openGraph: {
     type: 'website',
     locale: 'ko_KR',
-    siteName: 'BUDDYS',
-    title: 'BUDDYS',
+    siteName: 'buddys | 교환학생 동행 매칭 서비스',
+    title: 'buddys | 교환학생 동행 매칭 서비스',
     description: '버디와 함께, 연결부터 기록까지',
     images: [
       {
