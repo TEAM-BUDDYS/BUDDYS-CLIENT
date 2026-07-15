@@ -42,7 +42,7 @@ const ONBOARD_TAG_TYPES = ['ACTIVITY', 'INTEREST', 'TRAVEL_STYLE'] as const;
 export const OnboardFlow = () => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
-  const { isUploading, uploadImage } = useImageUpload();
+  const { uploadImage } = useImageUpload();
   const [currentStep, setCurrentStep] =
     useState<OnboardStep>('interest-location');
   const onboardForm = useOnboardForm();
@@ -52,7 +52,7 @@ export const OnboardFlow = () => {
   const progressStep =
     PROGRESS_STEP_BY_STEP[currentStep as keyof typeof PROGRESS_STEP_BY_STEP];
   const canGoNext = onboardForm.canGoNext(currentStep);
-  const isSubmitting = isUploading || onboardingMutation.isPending;
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
   const {
@@ -74,26 +74,36 @@ export const OnboardFlow = () => {
   }, [queryClient]);
 
   const handleOnboardingSubmit = async () => {
+    if (isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
     try {
+      const payload = onboardForm.getOnboardingFormPayload(null);
+
+      if (!payload) {
+        throw new Error('입력 정보를 다시 확인해 주세요.');
+      }
+
       const profileImageUrl = onboardForm.profileImageFile
         ? await uploadImage({
             file: onboardForm.profileImageFile,
             imageDomain: 'PROFILE',
           })
         : null;
-      const payload = onboardForm.getOnboardingFormPayload(profileImageUrl);
 
-      if (!payload) {
-        throw new Error('입력 정보를 다시 확인해 주세요.');
-      }
+      await onboardingMutation.mutateAsync({ ...payload, profileImageUrl });
 
-      await onboardingMutation.mutateAsync(payload);
       setCurrentStep('complete');
     } catch {
       showToast('정보를 저장하지 못했어요. 잠시 후 다시 시도해주세요.', {
         bottomOffsetClassName: 'bottom-26.5',
         variant: 'gray',
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

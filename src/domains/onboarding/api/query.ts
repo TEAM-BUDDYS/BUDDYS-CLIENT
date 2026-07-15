@@ -10,11 +10,21 @@ import type {
 } from './type';
 
 const completeOnboarding = async (body: CompleteOnboardingRequest) => {
-  return apiClient
+  const response = await apiClient
     .patch(END_POINT.USER.ONBOARDING, {
       json: body,
     })
     .json<CompleteOnboardingResponse>();
+
+  if (
+    !response.success ||
+    typeof response.data?.userId !== 'number' ||
+    !response.data.nickname
+  ) {
+    throw new Error(response.message || '온보딩 정보를 저장하지 못했습니다.');
+  }
+
+  return response.data;
 };
 
 const searchUniversities = async (
