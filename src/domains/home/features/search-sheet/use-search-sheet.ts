@@ -40,10 +40,14 @@ const parseSearchHistoryItems = (value: string | null) => {
 };
 
 const saveSearchHistoryItems = (items: SearchHistoryItem[]) => {
-  localStorage.setItem(
-    SEARCH_HISTORY_STORAGE_KEY,
-    JSON.stringify(items.map((item) => item.keyword)),
-  );
+  try {
+    localStorage.setItem(
+      SEARCH_HISTORY_STORAGE_KEY,
+      JSON.stringify(items.map((item) => item.keyword)),
+    );
+  } catch {
+    return;
+  }
 };
 
 const getInitialSearchHistoryItems = () => {
@@ -51,9 +55,13 @@ const getInitialSearchHistoryItems = () => {
     return [];
   }
 
-  return parseSearchHistoryItems(
-    localStorage.getItem(SEARCH_HISTORY_STORAGE_KEY),
-  );
+  try {
+    return parseSearchHistoryItems(
+      localStorage.getItem(SEARCH_HISTORY_STORAGE_KEY),
+    );
+  } catch {
+    return [];
+  }
 };
 
 export const useSearchSheet = (onClose?: () => void, initialKeyword = '') => {
