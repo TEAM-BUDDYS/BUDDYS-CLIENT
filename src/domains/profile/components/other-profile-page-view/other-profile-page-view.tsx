@@ -7,15 +7,18 @@ import { Header } from '@/shared/components/layout';
 import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
 
 import type { OtherProfile } from '../../model/profile';
+import { OtherContentSection } from '../../sections/other-content-section';
 import { ProfileIntroSection } from '../../sections/profile-intro-section';
 import { TagChipGroup } from '../tag-chip-group/tag-chip-group';
 import { UserProfile } from '../user-profile/user-profile';
 
 interface OtherProfilePageViewProps {
+  userId: number;
   profile: OtherProfile;
 }
 
 export const OtherProfilePageView = ({
+  userId,
   profile,
 }: OtherProfilePageViewProps) => {
   const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
@@ -58,6 +61,14 @@ export const OtherProfilePageView = ({
             bio={profile.bio}
             onChatClick={handleChatClick}
             className="mt-5.25 px-4"
+          />
+        )}
+
+        {!profile.isWithdrawn && (
+          <OtherContentSection
+            userId={userId}
+            onCourseTabClick={handleChatClick}
+            className="mt-6"
           />
         )}
       </main>

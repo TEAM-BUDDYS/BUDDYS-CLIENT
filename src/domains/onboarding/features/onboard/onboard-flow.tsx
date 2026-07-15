@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -16,7 +16,10 @@ import {
 } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
-import { ONBOARDING_QUERY_OPTIONS } from '../../api/query';
+import {
+  ONBOARDING_MUTATION_OPTIONS,
+  ONBOARDING_QUERY_OPTIONS,
+} from '../../api/query';
 import type { RecommendedUser } from '../../api/type';
 import type { OnboardProgressStep, OnboardStep } from '../../model/onboard';
 import { TOTAL_PROGRESS_STEP } from './constant';
@@ -61,13 +64,17 @@ const isDisplayableRecommendedUser = (
 export const OnboardFlow = () => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
-  const { isUploading, uploadImage } = useImageUpload();
+  const { uploadImage } = useImageUpload();
   const [currentStep, setCurrentStep] =
     useState<OnboardStep>('interest-location');
   const onboardForm = useOnboardForm();
+  const onboardingMutation = useMutation(
+    ONBOARDING_MUTATION_OPTIONS.COMPLETE(),
+  );
   const progressStep =
     PROGRESS_STEP_BY_STEP[currentStep as keyof typeof PROGRESS_STEP_BY_STEP];
   const canGoNext = onboardForm.canGoNext(currentStep);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
   const {
@@ -101,36 +108,47 @@ export const OnboardFlow = () => {
     });
   }, [queryClient]);
 
-  const handleProfileImageUpload = async () => {
+  const handleOnboardingSubmit = async () => {
+    if (isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
     try {
-      if (onboardForm.profileImageFile) {
-        await uploadImage({
-          file: onboardForm.profileImageFile,
-          imageDomain: 'PROFILE',
-        });
+      const payload = onboardForm.getOnboardingFormPayload(null);
+
+      if (!payload) {
+        throw new Error('입력 정보를 다시 확인해 주세요.');
       }
 
+      const profileImageUrl = onboardForm.profileImageFile
+        ? await uploadImage({
+            file: onboardForm.profileImageFile,
+            imageDomain: 'PROFILE',
+          })
+        : null;
+
+      await onboardingMutation.mutateAsync({ ...payload, profileImageUrl });
+
       setCurrentStep('complete');
-    } catch (error) {
-      showToast(
-        error instanceof Error
-          ? error.message
-          : '프로필 이미지를 업로드하지 못했습니다.',
-        {
-          bottomOffsetClassName: 'bottom-26.5',
-          variant: 'gray',
-        },
-      );
+    } catch {
+      showToast('정보를 저장하지 못했어요. 잠시 후 다시 시도해주세요.', {
+        bottomOffsetClassName: 'bottom-26.5',
+        variant: 'gray',
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleNextClick = () => {
-    if (!canGoNext || isUploading) {
+    if (!canGoNext || isSubmitting) {
       return;
     }
 
     if (currentStep === 'profile') {
-      void handleProfileImageUpload();
+      void handleOnboardingSubmit();
       return;
     }
 
@@ -232,7 +250,7 @@ export const OnboardFlow = () => {
             gender={onboardForm.gender}
             birthDate={onboardForm.birthDate}
             bio={onboardForm.bio}
-            isUploading={isUploading}
+            isUploading={isSubmitting}
             profileImageFile={onboardForm.profileImageFile}
             onNicknameChange={onboardForm.handleNicknameChange}
             onGenderChange={onboardForm.handleGenderChange}
@@ -281,10 +299,10 @@ export const OnboardFlow = () => {
       {currentStep !== 'complete' && (
         <div className="flex flex-col gap-4">
           <Button
-            disabled={!canGoNext || isUploading}
+            disabled={!canGoNext || isSubmitting}
             onClick={handleNextClick}
           >
-            {isUploading ? '업로드 중...' : '다음'}
+            {isSubmitting ? '저장 중...' : '다음'}
           </Button>
           {currentStep === 'exchange-info' && (
             <button
