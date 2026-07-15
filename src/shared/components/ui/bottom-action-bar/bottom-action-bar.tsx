@@ -25,12 +25,14 @@ interface BottomActionBarProps extends Omit<
   value: string;
   onValueChange: (value: string) => void;
   inputProps?: BottomActionBarInputProps;
+  submitDisabled?: boolean;
 }
 
 export const BottomActionBar = ({
   className,
   inputProps,
   placeholder = '내용을 입력해주세요.',
+  submitDisabled,
   value,
   onValueChange,
   ...formProps
@@ -55,6 +57,7 @@ export const BottomActionBar = ({
       <IconButton
         aria-label="전송"
         className="shrink-0"
+        disabled={submitDisabled}
         icon={<SendIcon />}
         type="submit"
         variant="secondary"

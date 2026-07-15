@@ -1,20 +1,25 @@
 'use client';
 
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { useCountryList } from '@/shared/api';
+import { useCitySearch, useCountryList } from '@/shared/api';
 import { TAG_QUERY_OPTIONS } from '@/shared/api';
-import { Button, ProgressBar } from '@/shared/components/ui';
+import { useImageUpload } from '@/shared/api/image';
+import {
+  AsyncErrorState,
+  AsyncLoadingState,
+  Button,
+  ProgressBar,
+  useToast,
+} from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
+import { ONBOARDING_QUERY_OPTIONS } from '../../api/query';
+import type { RecommendedUser } from '../../api/type';
 import type { OnboardProgressStep, OnboardStep } from '../../model/onboard';
-import {
-  RECOMMENDED_POSTS,
-  RECOMMENDED_PROFILE,
-  TOTAL_PROGRESS_STEP,
-} from './constant';
+import { TOTAL_PROGRESS_STEP } from './constant';
 import { OnboardComplete } from './onboard-complete';
 import { OnboardExchangeInfoStep } from './onboard-exchange-info-step';
 import { OnboardInterestLocationStep } from './onboard-interest-location-step';
@@ -40,9 +45,23 @@ const NEXT_STEP_BY_STEP = {
 } satisfies Partial<Record<OnboardStep, OnboardStep>>;
 
 const ONBOARD_TAG_TYPES = ['ACTIVITY', 'INTEREST', 'TRAVEL_STYLE'] as const;
+const RECOMMENDED_USER_SIZE = 1;
+
+type DisplayableRecommendedUser = RecommendedUser & {
+  nickname: string;
+  similarityScore: number;
+};
+
+const isDisplayableRecommendedUser = (
+  user?: RecommendedUser,
+): user is DisplayableRecommendedUser => {
+  return Boolean(user?.nickname && user.similarityScore !== undefined);
+};
 
 export const OnboardFlow = () => {
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
+  const { isUploading, uploadImage } = useImageUpload();
   const [currentStep, setCurrentStep] =
     useState<OnboardStep>('interest-location');
   const onboardForm = useOnboardForm();
@@ -57,6 +76,24 @@ export const OnboardFlow = () => {
     isLoadingMoreCountries,
     loadMoreCountries,
   } = useCountryList();
+  const interestCitySearch = useCitySearch({
+    countryId: onboardForm.interestCountry?.id,
+    keyword: onboardForm.interestCity,
+    selectedCity: onboardForm.selectedInterestCity,
+  });
+  const {
+    data: recommendedUserResponse,
+    isPending: isRecommendedUserPending,
+    isError: isRecommendedUserError,
+    refetch: refetchRecommendedUser,
+  } = useQuery({
+    ...ONBOARDING_QUERY_OPTIONS.RECOMMENDED_USERS({
+      size: RECOMMENDED_USER_SIZE,
+    }),
+    enabled: currentStep === 'complete',
+  });
+  const recommendedUser = recommendedUserResponse?.data?.users?.[0];
+  const hasRecommendedUser = isDisplayableRecommendedUser(recommendedUser);
 
   useEffect(() => {
     ONBOARD_TAG_TYPES.forEach((tagType) => {
@@ -64,14 +101,36 @@ export const OnboardFlow = () => {
     });
   }, [queryClient]);
 
+  const handleProfileImageUpload = async () => {
+    try {
+      if (onboardForm.profileImageFile) {
+        await uploadImage({
+          file: onboardForm.profileImageFile,
+          imageDomain: 'PROFILE',
+        });
+      }
+
+      setCurrentStep('complete');
+    } catch (error) {
+      showToast(
+        error instanceof Error
+          ? error.message
+          : '프로필 이미지를 업로드하지 못했습니다.',
+        {
+          bottomOffsetClassName: 'bottom-26.5',
+          variant: 'gray',
+        },
+      );
+    }
+  };
+
   const handleNextClick = () => {
-    if (!canGoNext) {
+    if (!canGoNext || isUploading) {
       return;
     }
 
     if (currentStep === 'profile') {
-      // TODO: 이미지 업로드 및 온보딩 등록 API 성공 시 complete 단계로 이동
-      setCurrentStep('complete');
+      void handleProfileImageUpload();
       return;
     }
 
@@ -105,7 +164,8 @@ export const OnboardFlow = () => {
             isLoadingMoreCountries={isLoadingMoreCountries}
             city={onboardForm.interestCity}
             selectedCity={onboardForm.selectedInterestCity}
-            cityResults={onboardForm.interestCityResults}
+            cityResults={interestCitySearch.cities}
+            isCitySearchError={interestCitySearch.isError}
             onCountryChange={onboardForm.handleInterestCountrySelect}
             onLoadMoreCountries={loadMoreCountries}
             onCityChange={onboardForm.handleInterestCityChange}
@@ -172,6 +232,7 @@ export const OnboardFlow = () => {
             gender={onboardForm.gender}
             birthDate={onboardForm.birthDate}
             bio={onboardForm.bio}
+            isUploading={isUploading}
             profileImageFile={onboardForm.profileImageFile}
             onNicknameChange={onboardForm.handleNicknameChange}
             onGenderChange={onboardForm.handleGenderChange}
@@ -183,12 +244,27 @@ export const OnboardFlow = () => {
 
         {currentStep === 'complete' && (
           <>
-            <OnboardComplete
-              nickname={onboardForm.nickname}
-              otherNickname={RECOMMENDED_PROFILE.nickname}
-              similarityScore={RECOMMENDED_PROFILE.similarityScore}
-              recommendedPosts={RECOMMENDED_POSTS}
-            />
+            {isRecommendedUserPending && (
+              <AsyncLoadingState
+                title="추천 버디를 찾고 있어요"
+                description="잠시만 기다려주세요"
+              />
+            )}
+            {isRecommendedUserError && (
+              <AsyncErrorState
+                title="추천 버디를 불러오지 못했어요"
+                description="잠시 후 다시 시도해주세요"
+                onRetry={() => void refetchRecommendedUser()}
+              />
+            )}
+            {hasRecommendedUser && recommendedUser && (
+              <OnboardComplete
+                nickname={onboardForm.nickname}
+                otherNickname={recommendedUser.nickname}
+                otherProfileImageUrl={recommendedUser.profileImageUrl}
+                similarityScore={recommendedUser.similarityScore}
+              />
+            )}
             <div className="fixed bottom-0 left-1/2 z-10 w-full max-w-100 -translate-x-1/2 px-4 pb-[34px]">
               <div className="absolute right-0 bottom-0 left-0 -z-10 h-[145px] bg-gradient-to-b from-white/0 via-white to-white" />
               <Button
@@ -204,8 +280,11 @@ export const OnboardFlow = () => {
 
       {currentStep !== 'complete' && (
         <div className="flex flex-col gap-4">
-          <Button disabled={!canGoNext} onClick={handleNextClick}>
-            다음
+          <Button
+            disabled={!canGoNext || isUploading}
+            onClick={handleNextClick}
+          >
+            {isUploading ? '업로드 중...' : '다음'}
           </Button>
           {currentStep === 'exchange-info' && (
             <button

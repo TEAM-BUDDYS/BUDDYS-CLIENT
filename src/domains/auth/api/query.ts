@@ -48,6 +48,7 @@ const requestLoginSession = async (
 
     if (
       !response.success ||
+      typeof response.data?.userId !== 'number' ||
       !response.data?.accessToken ||
       typeof response.data.onboardingCompleted !== 'boolean'
     ) {
@@ -55,6 +56,7 @@ const requestLoginSession = async (
     }
 
     return {
+      userId: response.data.userId,
       accessToken: response.data.accessToken,
       onboardingCompleted: response.data.onboardingCompleted,
     };

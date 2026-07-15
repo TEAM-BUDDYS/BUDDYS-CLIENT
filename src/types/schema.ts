@@ -716,6 +716,12 @@ export interface components {
       data?: components['schemas']['LoginResponse'];
     };
     LoginResponse: {
+      /**
+       * Format: int64
+       * @description 사용자 ID
+       * @example 1
+       */
+      userId?: number;
       /** @description API 인증에 사용하는 Access Token */
       accessToken?: string;
       /** @description 온보딩(성별/생년월일/태그 3개) 완료 여부 */
@@ -1333,7 +1339,7 @@ export interface components {
        * @description 도시 ID
        * @example 1
        */
-      cityId?: number;
+      id?: number;
       /**
        * @description 도시 이름
        * @example Tokyo
@@ -1343,7 +1349,7 @@ export interface components {
        * @description 도시 한글 이름
        * @example 도쿄
        */
-      koreanName?: string;
+      koreanName?: string | null;
     };
     ConditionsResponse: {
       /** @description 선호 나이 조건 */

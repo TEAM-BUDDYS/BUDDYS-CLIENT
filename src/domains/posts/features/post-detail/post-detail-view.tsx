@@ -1,5 +1,4 @@
 import { PostDetailComments } from '@/domains/posts/features/post-detail/post-detail-comments';
-import type { PostDetailComment } from '@/domains/posts/model/comment';
 import type { PostDetail } from '@/domains/posts/model/post-detail';
 import { PostDetailConditionSection } from '@/domains/posts/sections/post-detail-condition-section';
 import { PostDetailContentSection } from '@/domains/posts/sections/post-detail-content-section';
@@ -9,10 +8,9 @@ import { IconButton } from '@/shared/components/ui';
 
 interface PostDetailViewProps {
   post: PostDetail;
-  comments: PostDetailComment[];
 }
 
-export const PostDetailView = ({ post, comments }: PostDetailViewProps) => {
+export const PostDetailView = ({ post }: PostDetailViewProps) => {
   return (
     <div className="min-h-dvh bg-white">
       <div className="sticky top-0 z-20 bg-white">
@@ -39,9 +37,9 @@ export const PostDetailView = ({ post, comments }: PostDetailViewProps) => {
 
         <div className="border-t border-gray-100 pt-4">
           <PostDetailComments
+            postId={post.postId}
             viewCount={post.viewCount}
             commentCount={post.commentCount}
-            comments={comments}
           />
         </div>
       </main>

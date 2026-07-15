@@ -2,6 +2,7 @@ import { PostCarousel } from '@/domains/posts/components/post-carousel/post-caro
 import { PostDetailProfileHeader } from '@/domains/posts/components/post-detail-profile-header/post-detail-profile-header';
 import { POST_RECRUITMENT_COUNT_LABELS } from '@/domains/posts/model/post-condition';
 import type { PostDetail } from '@/domains/posts/model/post-detail';
+import { getCityDisplayName } from '@/shared/api';
 import { CalendarIcon, LocationIcon, MyIcon } from '@/shared/components/icons';
 import { PostStatusTag } from '@/shared/components/ui';
 import { formatMonthDayWithWeekday } from '@/shared/utils/format-date-range';
@@ -65,11 +66,13 @@ export const PostDetailContentSection = ({
   post,
 }: PostDetailContentSectionProps) => {
   const dateLabel = formatPostDetailDateRange(post.startDate, post.endDate);
+  const cityLabel = getCityDisplayName(post.city);
 
   return (
     <section className="flex w-full flex-col gap-6">
       <PostDetailProfileHeader
         key={post.postId}
+        postId={post.postId}
         nickname={post.author.nickname}
         country={post.author.country}
         profileDescription={getAuthorDescription(post)}
@@ -89,7 +92,7 @@ export const PostDetailContentSection = ({
           <div className="flex flex-col gap-2">
             <PostDetailMetaItem
               icon={<LocationIcon className="size-4" />}
-              label={post.city.name}
+              label={cityLabel}
             />
             {dateLabel && (
               <PostDetailMetaItem

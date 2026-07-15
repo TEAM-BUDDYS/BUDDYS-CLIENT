@@ -10,7 +10,7 @@ interface ChatListItemProps {
   imgUrl: string;
   nickname: string;
   lastMessage: string;
-  sentAt: string;
+  sentAt: string | null;
   unreadCount: number;
   isNotificationOn?: boolean;
 }
@@ -71,12 +71,14 @@ export const ChatListItem = ({
           </div>
         </div>
 
-        <time
-          dateTime={sentAt}
-          className="text-caption-m-12 shrink-0 text-gray-500"
-        >
-          {formatRelativeTime(sentAt)}
-        </time>
+        {sentAt && (
+          <time
+            dateTime={sentAt}
+            className="text-caption-m-12 shrink-0 text-gray-500"
+          >
+            {formatRelativeTime(sentAt)}
+          </time>
+        )}
       </Link>
     </li>
   );
