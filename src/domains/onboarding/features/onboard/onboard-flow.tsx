@@ -11,6 +11,7 @@ import {
   AsyncErrorState,
   AsyncLoadingState,
   Button,
+  EmptyState,
   ProgressBar,
   useToast,
 } from '@/shared/components/ui';
@@ -275,6 +276,14 @@ export const OnboardFlow = () => {
                 onRetry={() => void refetchRecommendedUser()}
               />
             )}
+            {!isRecommendedUserPending &&
+              !isRecommendedUserError &&
+              !hasRecommendedUser && (
+                <EmptyState
+                  title="아직 추천할 버디가 없어요"
+                  description="관심 정보가 쌓이면 더 잘 맞는 버디를 보여드릴게요"
+                />
+              )}
             {hasRecommendedUser && recommendedUser && (
               <OnboardComplete
                 nickname={onboardForm.nickname}
