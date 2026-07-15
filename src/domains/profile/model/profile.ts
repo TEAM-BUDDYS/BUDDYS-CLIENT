@@ -7,3 +7,12 @@ export interface MyProfile {
   tags: Tag[];
   bio?: string | null;
 }
+
+export interface OtherProfile {
+  imageUrl?: string | null;
+  nickname: string;
+  isVerified: boolean;
+  tags: Tag[];
+  bio?: string | null;
+  isWithdrawn: boolean;
+}
