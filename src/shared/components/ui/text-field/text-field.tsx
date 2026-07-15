@@ -69,10 +69,13 @@ export const TextField = ({
           aria-describedby={describedBy}
           aria-invalid={status === 'error' ? true : ariaInvalid}
           className={cn(
-            'peer text-body-m-15 h-13 w-full rounded-xl border border-transparent bg-gray-50 px-4 py-3.5 text-gray-800 outline-none',
+            'peer text-body-m-16 h-13 w-full rounded-xl border border-transparent bg-gray-50 px-4 py-3.5 text-gray-800 outline-none',
             'placeholder:text-gray-500 focus:bg-white',
             'focus-visible:border-mint-200 focus-visible:ring-mint-200 focus-visible:ring-1',
             'disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400',
+            status === 'default' &&
+              !disabled &&
+              'not-placeholder-shown:not-focus-visible:border-gray-200',
             (StatusIcon || hasClearButton) && 'pr-12',
             status === 'error' &&
               'border-error-50 focus-visible:border-error-50 focus-visible:ring-error-50',

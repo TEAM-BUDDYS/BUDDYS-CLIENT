@@ -22,8 +22,12 @@ const excludePageParam = <Params extends { page?: unknown }>(
 
 export const CHAT_ROOM_QUERY_KEY = {
   ALL: ['chat-rooms'] as const,
-  LIST: (params?: GetQueryParams<'/api/v1/chat-rooms'>) =>
-    [...CHAT_ROOM_QUERY_KEY.ALL, 'list', params ?? {}] as const,
+  INFINITE_LIST: (params?: GetQueryParams<'/api/v1/chat-rooms'>) =>
+    [
+      ...CHAT_ROOM_QUERY_KEY.ALL,
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
   DETAIL: (chatRoomId: number) =>
     [...CHAT_ROOM_QUERY_KEY.ALL, 'detail', chatRoomId] as const,
   MESSAGES: (
@@ -71,11 +75,21 @@ export const POST_QUERY_KEY = {
     postId: number,
     params?: GetQueryParams<'/api/v1/posts/{postId}/comments'>,
   ) => [...POST_QUERY_KEY.COMMENTS_ALL(postId), params ?? {}] as const,
+  INFINITE_COMMENTS: (
+    postId: number,
+    params?: GetQueryParams<'/api/v1/posts/{postId}/comments'>,
+  ) =>
+    [
+      ...POST_QUERY_KEY.COMMENTS_ALL(postId),
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
 };
 
 export const RECOMMENDATION_QUERY_KEY = {
   ALL: ['recommendations'] as const,
-  USERS: () => [...RECOMMENDATION_QUERY_KEY.ALL, 'users'] as const,
+  USERS: (params?: GetQueryParams<'/api/v1/recommendations/users'>) =>
+    [...RECOMMENDATION_QUERY_KEY.ALL, 'users', params ?? {}] as const,
   USERS_BY_EXCHANGE_COUNTRY: (
     params?: GetQueryParams<'/api/v1/recommendations/users/exchange-country'>,
   ) =>
@@ -101,6 +115,14 @@ export const USER_QUERY_KEY = {
   ME: () => [...USER_QUERY_KEY.ALL, 'me'] as const,
   ME_POSTS: (params?: GetQueryParams<'/api/v1/users/me/posts'>) =>
     [...USER_QUERY_KEY.ALL, 'me', 'posts', params ?? {}] as const,
+  ME_POSTS_INFINITE: (params?: GetQueryParams<'/api/v1/users/me/posts'>) =>
+    [
+      ...USER_QUERY_KEY.ALL,
+      'me',
+      'posts',
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
   PROFILE: (userId: number) =>
     [...USER_QUERY_KEY.ALL, 'profile', userId] as const,
   POSTS: (

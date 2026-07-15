@@ -1,18 +1,28 @@
 'use client';
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { useCitySearch, useCountryList } from '@/shared/api';
 import { TAG_QUERY_OPTIONS } from '@/shared/api';
 import { useImageUpload } from '@/shared/api/image';
-import { Button, ProgressBar, useToast } from '@/shared/components/ui';
+import {
+  AsyncErrorState,
+  AsyncLoadingState,
+  Button,
+  ProgressBar,
+  useToast,
+} from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
-import { ONBOARDING_MUTATION_OPTIONS } from '../../api/query';
+import {
+  ONBOARDING_MUTATION_OPTIONS,
+  ONBOARDING_QUERY_OPTIONS,
+} from '../../api/query';
+import type { RecommendedUser } from '../../api/type';
 import type { OnboardProgressStep, OnboardStep } from '../../model/onboard';
-import { RECOMMENDED_PROFILE, TOTAL_PROGRESS_STEP } from './constant';
+import { TOTAL_PROGRESS_STEP } from './constant';
 import { OnboardComplete } from './onboard-complete';
 import { OnboardExchangeInfoStep } from './onboard-exchange-info-step';
 import { OnboardInterestLocationStep } from './onboard-interest-location-step';
@@ -38,6 +48,18 @@ const NEXT_STEP_BY_STEP = {
 } satisfies Partial<Record<OnboardStep, OnboardStep>>;
 
 const ONBOARD_TAG_TYPES = ['ACTIVITY', 'INTEREST', 'TRAVEL_STYLE'] as const;
+const RECOMMENDED_USER_SIZE = 1;
+
+type DisplayableRecommendedUser = RecommendedUser & {
+  nickname: string;
+  similarityScore: number;
+};
+
+const isDisplayableRecommendedUser = (
+  user?: RecommendedUser,
+): user is DisplayableRecommendedUser => {
+  return Boolean(user?.nickname && user.similarityScore !== undefined);
+};
 
 export const OnboardFlow = () => {
   const queryClient = useQueryClient();
@@ -66,6 +88,19 @@ export const OnboardFlow = () => {
     keyword: onboardForm.interestCity,
     selectedCity: onboardForm.selectedInterestCity,
   });
+  const {
+    data: recommendedUserResponse,
+    isPending: isRecommendedUserPending,
+    isError: isRecommendedUserError,
+    refetch: refetchRecommendedUser,
+  } = useQuery({
+    ...ONBOARDING_QUERY_OPTIONS.RECOMMENDED_USERS({
+      size: RECOMMENDED_USER_SIZE,
+    }),
+    enabled: currentStep === 'complete',
+  });
+  const recommendedUser = recommendedUserResponse?.data?.users?.[0];
+  const hasRecommendedUser = isDisplayableRecommendedUser(recommendedUser);
 
   useEffect(() => {
     ONBOARD_TAG_TYPES.forEach((tagType) => {
@@ -227,11 +262,27 @@ export const OnboardFlow = () => {
 
         {currentStep === 'complete' && (
           <>
-            <OnboardComplete
-              nickname={onboardForm.nickname}
-              otherNickname={RECOMMENDED_PROFILE.nickname}
-              similarityScore={RECOMMENDED_PROFILE.similarityScore}
-            />
+            {isRecommendedUserPending && (
+              <AsyncLoadingState
+                title="추천 버디를 찾고 있어요"
+                description="잠시만 기다려주세요"
+              />
+            )}
+            {isRecommendedUserError && (
+              <AsyncErrorState
+                title="추천 버디를 불러오지 못했어요"
+                description="잠시 후 다시 시도해주세요"
+                onRetry={() => void refetchRecommendedUser()}
+              />
+            )}
+            {hasRecommendedUser && recommendedUser && (
+              <OnboardComplete
+                nickname={onboardForm.nickname}
+                otherNickname={recommendedUser.nickname}
+                otherProfileImageUrl={recommendedUser.profileImageUrl}
+                similarityScore={recommendedUser.similarityScore}
+              />
+            )}
             <div className="fixed bottom-0 left-1/2 z-10 w-full max-w-100 -translate-x-1/2 px-4 pb-[34px]">
               <div className="absolute right-0 bottom-0 left-0 -z-10 h-[145px] bg-gradient-to-b from-white/0 via-white to-white" />
               <Button

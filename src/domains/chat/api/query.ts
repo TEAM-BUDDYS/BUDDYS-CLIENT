@@ -1,4 +1,8 @@
-import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import {
+  infiniteQueryOptions,
+  mutationOptions,
+  queryOptions,
+} from '@tanstack/react-query';
 
 import {
   apiClient,
@@ -7,6 +11,7 @@ import {
   END_POINT,
 } from '@/shared/api';
 
+import { convertChatRoomListResponse } from './mapper';
 import type {
   CreateChatRoomRequest,
   CreateChatRoomResponse,
@@ -18,11 +23,13 @@ import type {
 } from './type';
 
 const getChatRooms = async (params?: GetChatRoomsParams) => {
-  return apiClient
+  const response = await apiClient
     .get(END_POINT.CHAT_ROOM.LIST, {
       searchParams: createSearchParams(params),
     })
     .json<GetChatRoomsResponse>();
+
+  return convertChatRoomListResponse(response);
 };
 
 const createChatRoom = async (body: CreateChatRoomRequest) => {
@@ -48,10 +55,22 @@ const getMessages = async (chatRoomId: number, params?: GetMessagesParams) => {
 };
 
 export const CHAT_QUERY_OPTIONS = {
-  LIST: (params?: GetChatRoomsParams) =>
-    queryOptions({
-      queryKey: CHAT_ROOM_QUERY_KEY.LIST(params),
-      queryFn: () => getChatRooms(params),
+  INFINITE_LIST: (params?: GetChatRoomsParams) =>
+    infiniteQueryOptions({
+      queryKey: CHAT_ROOM_QUERY_KEY.INFINITE_LIST(params),
+      queryFn: ({ pageParam }) =>
+        getChatRooms({
+          ...params,
+          page: pageParam,
+        }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        if (!lastPage.hasNext) {
+          return undefined;
+        }
+
+        return lastPage.page + 1;
+      },
     }),
   DETAIL: (chatRoomId: number) =>
     queryOptions({
