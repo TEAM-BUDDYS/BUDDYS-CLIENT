@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { KakaoIcon } from '@/shared/components/icons';
 import { Button } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
 
 import { useAuthSession } from '../auth-session/auth-session-provider';
 import { createKakaoAuthorizeUrl } from './kakao-oauth';
@@ -17,7 +18,7 @@ export const KakaoLoginButton = () => {
 
   useEffect(() => {
     if (status === 'authenticated') {
-      router.replace(onboardingCompleted ? '/' : '/onboarding');
+      router.replace(onboardingCompleted ? ROUTES.HOME : ROUTES.ONBOARDING);
     }
   }, [onboardingCompleted, router, status]);
 

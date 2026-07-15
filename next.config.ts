@@ -3,12 +3,18 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+
   images: {
     remotePatterns: [
-      // TODO: 백엔드 프로필 이미지 저장소(S3 등) 도메인이 정해지면 추가하고 picsum.photos는 제거
       {
         protocol: 'https',
         hostname: 'picsum.photos',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'buddys-assets.s3.ap-northeast-2.amazonaws.com',
+        pathname: '/**',
       },
     ],
   },

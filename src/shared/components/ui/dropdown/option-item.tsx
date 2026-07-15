@@ -3,16 +3,20 @@
 import { cn } from '@/lib/cn';
 
 interface OptionItemProps {
-  option: string;
+  option?: string;
+  label?: string;
   isSelected: boolean;
   onSelect?: () => void;
 }
 
 export const OptionItem = ({
   option,
+  label,
   isSelected,
   onSelect,
 }: OptionItemProps) => {
+  const optionLabel = label ?? option ?? '';
+
   return (
     <li>
       <button
@@ -26,7 +30,7 @@ export const OptionItem = ({
         role="option"
         type="button"
       >
-        {option}
+        {optionLabel}
       </button>
     </li>
   );

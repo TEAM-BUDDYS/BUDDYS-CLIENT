@@ -4,6 +4,7 @@ import { earthImage } from '@/shared/assets/illustrations';
 import { BuddysLogo } from '@/shared/components/icons/buddys-logo';
 import { CommonImage } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
 
 export default function LandingPage() {
   return (
@@ -27,12 +28,12 @@ export default function LandingPage() {
       </section>
 
       <div className="flex w-full flex-col items-center gap-4 pb-[34px]">
-        <Link href={'/login'} className="w-full">
+        <Link href={ROUTES.AUTH.LOGIN} className="w-full">
           <Button>시작하기</Button>
         </Link>
         <div className="flex items-center justify-center gap-2">
           <p className="text-body-r-14 text-gray-500">이미 계정이 있나요?</p>
-          <Link href={'/login'}>
+          <Link href={ROUTES.AUTH.LOGIN}>
             <button className="text-body-sb-14 text-gray-800">로그인</button>
           </Link>
         </div>

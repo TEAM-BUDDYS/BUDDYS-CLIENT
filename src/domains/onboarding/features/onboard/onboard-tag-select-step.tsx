@@ -1,10 +1,14 @@
+'use client';
+
+import { useSuspenseQuery } from '@tanstack/react-query';
+
+import { TAG_QUERY_OPTIONS, type TagType } from '@/shared/api';
 import { ChipGroup } from '@/shared/components/ui';
-import { PreferenceTag } from '@/shared/constants/preference-tags';
 
 interface OnboardTagSelectStepProps {
   title: string;
   description: string;
-  tags: PreferenceTag[];
+  tagType: TagType;
   selectedTagIds: number[];
   maxSelectionCount: number;
   onChange: (tagIds: number[]) => void;
@@ -13,11 +17,13 @@ interface OnboardTagSelectStepProps {
 export const OnboardTagSelectStep = ({
   title,
   description,
-  tags,
+  tagType,
   selectedTagIds,
   maxSelectionCount,
   onChange,
 }: OnboardTagSelectStepProps) => {
+  const { data: tags } = useSuspenseQuery(TAG_QUERY_OPTIONS.LIST(tagType));
+
   return (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-2">

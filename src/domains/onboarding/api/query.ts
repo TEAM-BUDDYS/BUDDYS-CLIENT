@@ -1,12 +1,12 @@
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 
-import { apiClient, END_POINT, TAG_QUERY_KEY } from '@/shared/api';
+import { apiClient, COUNTRY_QUERY_KEY, END_POINT } from '@/shared/api';
 
 import type {
   CompleteOnboardingRequest,
   CompleteOnboardingResponse,
-  GetTagsParams,
-  GetTagsResponse,
+  SearchUniversitiesParams,
+  SearchUniversitiesResponse,
 } from './type';
 
 const completeOnboarding = async (body: CompleteOnboardingRequest) => {
@@ -17,15 +17,22 @@ const completeOnboarding = async (body: CompleteOnboardingRequest) => {
     .json<CompleteOnboardingResponse>();
 };
 
-const getTags = async (type: GetTagsParams['type']) => {
-  return apiClient.get(END_POINT.TAG.LIST(type)).json<GetTagsResponse>();
+const searchUniversities = async (
+  countryId: number,
+  params: SearchUniversitiesParams,
+) => {
+  return apiClient
+    .get(END_POINT.COUNTRY.UNIVERSITY_SEARCH(countryId), {
+      searchParams: params,
+    })
+    .json<SearchUniversitiesResponse>();
 };
 
 export const ONBOARDING_QUERY_OPTIONS = {
-  TAGS: (type: GetTagsParams['type']) =>
+  UNIVERSITY_SEARCH: (countryId: number, keyword: string) =>
     queryOptions({
-      queryKey: TAG_QUERY_KEY.LIST(type),
-      queryFn: () => getTags(type),
+      queryKey: COUNTRY_QUERY_KEY.UNIVERSITY_SEARCH(countryId, { keyword }),
+      queryFn: () => searchUniversities(countryId, { keyword }),
     }),
 };
 

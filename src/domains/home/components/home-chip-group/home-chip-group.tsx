@@ -5,8 +5,8 @@ import type { Tag } from '@/types/tag';
 
 interface HomeChipGroupProps {
   tags: Tag[];
-  selectedTagId: number | null;
-  onChange: (tagId: number | null) => void;
+  selectedTagId: number;
+  onChange: (tagId: number) => void;
 }
 
 export const HomeChipGroup = ({
@@ -20,7 +20,9 @@ export const HomeChipGroup = ({
   );
 
   const handleTagClick = (tagId: number) => {
-    onChange(selectedTagId === tagId ? null : tagId);
+    if (selectedTagId === tagId) return;
+
+    onChange(tagId);
   };
 
   return (
@@ -32,7 +34,7 @@ export const HomeChipGroup = ({
               key={tag.id}
               size="md"
               active={selectedTagId === tag.id}
-              aria-label={`${tag.name} 태그 ${selectedTagId === tag.id ? '선택 해제' : '선택'}`}
+              aria-label={`${tag.name} 태그 ${selectedTagId === tag.id ? '선택됨' : '선택'}`}
               onClick={() => handleTagClick(tag.id)}
             >
               {tag.name}

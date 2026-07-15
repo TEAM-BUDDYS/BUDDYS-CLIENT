@@ -4,17 +4,19 @@ import { Dropdown, FormLabel, TextField } from '@/shared/components/ui';
 
 import { SearchOptionField } from '../../components/search-option-field/search-option-field';
 import type { OnboardLocationOption } from '../../model/onboard';
-import { findCountryByName } from '../../utils/country-options';
 
 interface OnboardExchangeInfoStepProps {
   countryOptions: OnboardLocationOption[];
   selectedCountry: OnboardLocationOption | null;
+  hasMoreCountries: boolean;
+  isLoadingMoreCountries: boolean;
   school: string;
   selectedSchool: OnboardLocationOption | null;
   schoolResults: OnboardLocationOption[];
   startMonth: string;
   endMonth: string;
   onCountryChange: (value: OnboardLocationOption) => void;
+  onLoadMoreCountries: () => void;
   onSchoolChange: (value: string) => void;
   onSchoolSelect: (value: OnboardLocationOption) => void;
   onStartMonthChange: (value: string) => void;
@@ -24,36 +26,34 @@ interface OnboardExchangeInfoStepProps {
 export const OnboardExchangeInfoStep = ({
   countryOptions,
   selectedCountry,
+  hasMoreCountries,
+  isLoadingMoreCountries,
   school,
   selectedSchool,
   schoolResults,
   startMonth,
   endMonth,
   onCountryChange,
+  onLoadMoreCountries,
   onSchoolChange,
   onSchoolSelect,
   onStartMonthChange,
   onEndMonthChange,
 }: OnboardExchangeInfoStepProps) => {
-  const countryNames = countryOptions.map((country) => country.name);
-
-  const handleCountryChange = (countryName: string) => {
-    const nextCountry = findCountryByName(countryOptions, countryName);
-
-    if (nextCountry) {
-      onCountryChange(nextCountry);
-    }
-  };
-
   return (
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-2">
         <FormLabel as="h2">파견 국가</FormLabel>
         <Dropdown
-          options={countryNames}
+          options={countryOptions}
           placeholder="국가 선택"
-          value={selectedCountry?.name ?? ''}
-          onChange={handleCountryChange}
+          value={selectedCountry}
+          hasMore={hasMoreCountries}
+          isLoadingMore={isLoadingMoreCountries}
+          getOptionLabel={(country) => country.name}
+          getOptionKey={(country) => country.id}
+          onChange={onCountryChange}
+          onLoadMore={onLoadMoreCountries}
         />
       </div>
 
@@ -67,6 +67,8 @@ export const OnboardExchangeInfoStep = ({
           value={school}
           selectedOption={selectedSchool}
           results={schoolResults}
+          getOptionKey={(school) => school.id}
+          getOptionLabel={(school) => school.koreanName ?? school.name}
           onChange={onSchoolChange}
           onSelect={onSchoolSelect}
         />
