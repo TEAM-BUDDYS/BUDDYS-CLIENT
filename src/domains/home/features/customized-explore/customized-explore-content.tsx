@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { type KeyboardEvent, useState } from 'react';
 
-import { SearchSheetButton } from '@/domains/home/components/search-sheet-button/search-sheet-button';
 import { FilterSheet } from '@/domains/home/features/filter-sheet/filter-sheet';
+import { SearchSheet } from '@/domains/home/features/search-sheet/search-sheet';
 import { useFilterSheetValue } from '@/domains/home/hooks/use-filter-sheet-value';
 import { useSheetScroll } from '@/domains/home/hooks/use-sheet-scroll';
 import {
@@ -11,18 +12,34 @@ import {
   type BuddyFilterKey,
 } from '@/domains/home/model/buddy-filter';
 import { cn } from '@/lib/cn';
-import { BellIcon } from '@/shared/components/icons';
 import { BottomNavigation, Header } from '@/shared/components/layout';
-import { AsyncBoundary, Filter } from '@/shared/components/ui';
+import { AsyncBoundary, Filter, Searchbar } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
 
 import { CustomizedExplorePostList } from './customized-explore-post-list';
 
-export const CustomizedExploreContent = () => {
+interface CustomizedExploreContentProps {
+  keyword?: string;
+}
+
+export const CustomizedExploreContent = ({
+  keyword,
+}: CustomizedExploreContentProps) => {
+  const router = useRouter();
   const [bookmarkedItemIds, setBookmarkedItemIds] = useState<number[]>([]);
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
+  const [isSearchSheetOpen, setIsSearchSheetOpen] = useState(false);
   const { filterValue, appliedFilterKeys, handleFilterApply } =
     useFilterSheetValue();
-  const { sheetRef, sheetScrollClassName } = useSheetScroll(isFilterSheetOpen);
+  const {
+    sheetRef: filterSheetRef,
+    sheetScrollClassName: filterSheetScrollClassName,
+  } = useSheetScroll(isFilterSheetOpen);
+  const {
+    sheetRef: searchSheetRef,
+    sheetScrollClassName: searchSheetScrollClassName,
+  } = useSheetScroll(isSearchSheetOpen);
+  const searchKeyword = keyword?.trim() ?? '';
 
   const handleFilterPress = (_filterKey: BuddyFilterKey) => {
     setIsFilterSheetOpen(true);
@@ -30,6 +47,24 @@ export const CustomizedExploreContent = () => {
 
   const handleFilterSheetClose = () => {
     setIsFilterSheetOpen(false);
+  };
+
+  const handleSearchSheetOpen = () => {
+    setIsSearchSheetOpen(true);
+  };
+
+  const handleSearchSheetClose = () => {
+    setIsSearchSheetOpen(false);
+  };
+
+  const handleSearchSheetKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Escape') {
+      handleSearchSheetClose();
+    }
+  };
+
+  const handleSearchKeywordClear = () => {
+    router.replace(ROUTES.CUSTOMIZED_EXPLORE);
   };
 
   const handleBookmarkClick = (itemId: number) => {
@@ -46,13 +81,14 @@ export const CustomizedExploreContent = () => {
     <>
       <Header
         hasBackButton
-        right={
-          <>
-            <SearchSheetButton />
-            <button type="button" aria-label="알림">
-              <BellIcon className="size-6" />
-            </button>
-          </>
+        content={
+          <Searchbar
+            size="small"
+            value={searchKeyword}
+            readOnly
+            onFocus={handleSearchSheetOpen}
+            onChange={handleSearchKeywordClear}
+          />
         }
       />
       <main className="px-4 pb-19">
@@ -75,23 +111,42 @@ export const CustomizedExploreContent = () => {
         </div>
         <AsyncBoundary
           className="py-20"
-          resetKeys={[filterValue]}
+          resetKeys={[filterValue, keyword]}
           loadingFallback={<div className="min-h-96 py-6" aria-busy="true" />}
         >
           <CustomizedExplorePostList
             filterValue={filterValue}
+            keyword={keyword}
             bookmarkedItemIds={bookmarkedItemIds}
             onBookmarkClick={handleBookmarkClick}
           />
         </AsyncBoundary>
       </main>
       <BottomNavigation className="fixed right-0 bottom-0 left-0 z-20 mx-auto max-w-107.5" />
-      {isFilterSheetOpen && (
+      {isSearchSheetOpen && (
         <div
-          ref={sheetRef}
+          ref={searchSheetRef}
+          aria-label="검색"
+          aria-modal="true"
           className={cn(
             'fixed inset-0 z-50 mx-auto h-dvh max-w-107.5 bg-white',
-            sheetScrollClassName,
+            searchSheetScrollClassName,
+          )}
+          onKeyDown={handleSearchSheetKeyDown}
+          role="dialog"
+        >
+          <SearchSheet
+            initialKeyword={searchKeyword}
+            onClose={handleSearchSheetClose}
+          />
+        </div>
+      )}
+      {isFilterSheetOpen && (
+        <div
+          ref={filterSheetRef}
+          className={cn(
+            'fixed inset-0 z-50 mx-auto h-dvh max-w-107.5 bg-white',
+            filterSheetScrollClassName,
           )}
         >
           <FilterSheet

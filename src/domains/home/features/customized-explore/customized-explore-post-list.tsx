@@ -18,12 +18,14 @@ const CUSTOMIZED_EXPLORE_SIZE = 10;
 
 interface CustomizedExplorePostListProps {
   filterValue: FilterSheetValue;
+  keyword?: string;
   bookmarkedItemIds: number[];
   onBookmarkClick: (itemId: number) => void;
 }
 
 export const CustomizedExplorePostList = ({
   filterValue,
+  keyword,
   bookmarkedItemIds,
   onBookmarkClick,
 }: CustomizedExplorePostListProps) => {
@@ -35,7 +37,7 @@ export const CustomizedExplorePostList = ({
     isFetchingNextPage,
   } = useSuspenseInfiniteQuery(
     POST_QUERY_OPTIONS.INFINITE_LIST(
-      getBuddySearchParams(filterValue, CUSTOMIZED_EXPLORE_SIZE),
+      getBuddySearchParams(filterValue, CUSTOMIZED_EXPLORE_SIZE, keyword),
     ),
   );
 
