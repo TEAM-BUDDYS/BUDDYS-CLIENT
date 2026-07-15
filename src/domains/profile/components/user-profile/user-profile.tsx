@@ -27,7 +27,7 @@ export const UserProfile = ({
         width={120}
         height={120}
         radius="rounded-full"
-        className="mb-3"
+        className="mb-3 aspect-square h-auto w-full max-w-30"
       />
       <div className="flex items-center gap-1">
         <span className="text-title-b-18 text-gray-800">{nickname}</span>
