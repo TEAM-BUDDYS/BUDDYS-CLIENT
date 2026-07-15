@@ -48,6 +48,18 @@ const isSupportedImageType = (
   return SUPPORTED_IMAGE_TYPES.some((supportedType) => supportedType === type);
 };
 
+export const validateImageFile = (file: File) => {
+  if (!isSupportedImageType(file.type)) {
+    throw new Error('지원하지 않는 이미지 형식입니다.');
+  }
+
+  if (file.size > MAX_IMAGE_SIZE) {
+    throw new Error('이미지 크기는 10MB 이하여야 합니다.');
+  }
+
+  return file.type;
+};
+
 const createPresignedUrl = async (body: CreatePresignedUrlRequest) => {
   try {
     const response = await apiClient
@@ -101,17 +113,11 @@ const uploadImage = async ({
   file,
   imageDomain,
 }: UploadImageVariables): Promise<string> => {
-  if (!isSupportedImageType(file.type)) {
-    throw new Error('지원하지 않는 이미지 형식입니다.');
-  }
-
-  if (file.size > MAX_IMAGE_SIZE) {
-    throw new Error('이미지 크기는 10MB 이하여야 합니다.');
-  }
+  const contentType = validateImageFile(file);
 
   const { imageUrl, uploadUrl } = await createPresignedUrl({
     imageDomain,
-    contentType: file.type,
+    contentType,
     fileSize: file.size,
   });
 

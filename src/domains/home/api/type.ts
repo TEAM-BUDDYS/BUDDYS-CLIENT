@@ -1,8 +1,5 @@
 import type { components, operations } from '@/types/schema';
 
-export type GetRecommendedUsersResponse =
-  components['schemas']['BaseResponseRecommendedUserListResponse'];
-
 export type GetExchangeCountryRecommendedUsersParams =
   operations['getExchangeCountryRecommendedUsers']['parameters']['query'];
 export type GetExchangeCountryRecommendedUsersResponse =

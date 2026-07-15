@@ -67,7 +67,8 @@ export const TextArea = ({
         className={cn(
           'flex min-h-30 w-full flex-col rounded-xl border border-transparent bg-gray-50 p-4 outline outline-transparent',
           !disabled &&
-            'focus-within:border-mint-200 focus-within:outline-mint-200 border-gray-200 focus-within:bg-white',
+            !isError &&
+            'focus-within:border-mint-200 focus-within:outline-mint-200 focus-within:bg-white has-[textarea:not(:placeholder-shown)]:not-focus-within:border-gray-200',
           disabled && 'cursor-not-allowed',
           isError &&
             'border-error-50 focus-within:border-error-50 focus-within:outline-error-50 bg-white',
@@ -79,13 +80,13 @@ export const TextArea = ({
           aria-describedby={describedBy}
           aria-invalid={isError ? true : ariaInvalid}
           className={cn(
-            'text-body-m-15 min-h-0 w-full flex-1 resize-none bg-transparent text-gray-800 outline-none placeholder:text-gray-500',
+            'text-body-m-16 min-h-0 w-full flex-1 resize-none bg-transparent text-gray-800 outline-none placeholder:text-gray-500',
             'disabled:cursor-not-allowed disabled:text-gray-400',
           )}
           disabled={disabled}
           id={textAreaId}
           maxLength={maxLength}
-          placeholder={placeholder}
+          placeholder={placeholder ?? ' '}
           required={required}
           rows={rows}
           value={value}

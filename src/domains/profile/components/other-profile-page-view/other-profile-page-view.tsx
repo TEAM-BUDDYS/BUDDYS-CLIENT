@@ -23,6 +23,9 @@ export const OtherProfilePageView = ({
 }: OtherProfilePageViewProps) => {
   const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
 
+  const handleChatClick = () => setIsComingSoonOpen(true);
+  const handleModalClose = () => setIsComingSoonOpen(false);
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header hasBackButton content={profile.nickname} />
@@ -56,7 +59,7 @@ export const OtherProfilePageView = ({
           <ProfileIntroSection
             viewerType="other"
             bio={profile.bio}
-            onChatClick={() => setIsComingSoonOpen(true)}
+            onChatClick={handleChatClick}
             className="mt-5.25 px-4"
           />
         )}
@@ -64,16 +67,13 @@ export const OtherProfilePageView = ({
         {!profile.isWithdrawn && (
           <OtherContentSection
             userId={userId}
-            onCourseTabClick={() => setIsComingSoonOpen(true)}
+            onCourseTabClick={handleChatClick}
             className="mt-6"
           />
         )}
       </main>
 
-      <ComingSoonModal
-        open={isComingSoonOpen}
-        onClose={() => setIsComingSoonOpen(false)}
-      />
+      <ComingSoonModal open={isComingSoonOpen} onClose={handleModalClose} />
     </div>
   );
 };

@@ -62,7 +62,7 @@ const DateRangePickerContent = ({
     () => createMonths(minSelectableDate, renderedMonthCount),
     [minSelectableDate, renderedMonthCount],
   );
-  const canConfirm = Boolean(draftValue.startDate && draftValue.endDate);
+  const canConfirm = Boolean(draftValue.startDate);
 
   const handleDateSelect = (date: Date) => {
     const selectedDate = getStartOfDay(date);
