@@ -65,7 +65,6 @@ export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
         />
 
         <ContentSection
-          posts={profile.posts}
           onCreateCourseClick={() => setIsComingSoonOpen(true)}
           className="mt-6"
         />

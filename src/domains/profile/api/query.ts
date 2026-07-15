@@ -1,4 +1,4 @@
-import { queryOptions } from '@tanstack/react-query';
+import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 
 import {
   apiClient,
@@ -62,16 +62,23 @@ const getMyProfile = async (): Promise<MyProfile> => {
       name,
     })),
     bio: bio ?? null,
-    posts: [], // TODO: getMyPosts 연동 후 채우기
   };
 };
 
-const getMyPosts = async (params?: GetMyPostsParams) => {
-  return apiClient
+const getMyPosts = async (
+  params?: GetMyPostsParams,
+): Promise<GetMyPostsResponse> => {
+  const response = await apiClient
     .get(END_POINT.USER.ME_POSTS, {
       searchParams: createSearchParams(params),
     })
     .json<GetMyPostsResponse>();
+
+  if (response.success === false) {
+    throw new Error(response.message || '게시글을 불러오지 못했습니다.');
+  }
+
+  return response;
 };
 
 const getUserProfile = async (userId: number) => {
@@ -98,6 +105,19 @@ export const PROFILE_QUERY_OPTIONS = {
     queryOptions({
       queryKey: USER_QUERY_KEY.ME_POSTS(params),
       queryFn: () => getMyPosts(params),
+    }),
+  ME_POSTS_INFINITE: (params?: GetMyPostsParams) =>
+    infiniteQueryOptions({
+      queryKey: USER_QUERY_KEY.ME_POSTS_INFINITE(params),
+      queryFn: ({ pageParam }) => getMyPosts({ ...params, page: pageParam }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        if (!lastPage.data?.hasNext) {
+          return undefined;
+        }
+
+        return (lastPage.data.page ?? 0) + 1;
+      },
     }),
   USER_PROFILE: (userId: number) =>
     queryOptions({
