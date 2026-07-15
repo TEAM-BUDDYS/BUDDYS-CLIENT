@@ -75,7 +75,7 @@ export const TextField = ({
             'disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400',
             status === 'default' &&
               !disabled &&
-              'not-placeholder-shown:border-gray-200',
+              'not-placeholder-shown:not-focus-visible:border-gray-200',
             (StatusIcon || hasClearButton) && 'pr-12',
             status === 'error' &&
               'border-error-50 focus-visible:border-error-50 focus-visible:ring-error-50',
