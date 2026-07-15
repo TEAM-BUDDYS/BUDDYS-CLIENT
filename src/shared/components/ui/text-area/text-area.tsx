@@ -80,7 +80,7 @@ export const TextArea = ({
           aria-describedby={describedBy}
           aria-invalid={isError ? true : ariaInvalid}
           className={cn(
-            'text-body-m-15 min-h-0 w-full flex-1 resize-none bg-transparent text-gray-800 outline-none placeholder:text-gray-500',
+            'text-body-m-16 min-h-0 w-full flex-1 resize-none bg-transparent text-gray-800 outline-none placeholder:text-gray-500',
             'disabled:cursor-not-allowed disabled:text-gray-400',
           )}
           disabled={disabled}
