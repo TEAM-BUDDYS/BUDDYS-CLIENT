@@ -75,6 +75,10 @@ export const getNextDateRange = (
     return { startDate: selectedDate, endDate: null };
   }
 
+  if (checkSameDate(selectedDate, currentRange.startDate)) {
+    return { startDate: selectedDate, endDate: null };
+  }
+
   return { startDate: currentRange.startDate, endDate: selectedDate };
 };
 
