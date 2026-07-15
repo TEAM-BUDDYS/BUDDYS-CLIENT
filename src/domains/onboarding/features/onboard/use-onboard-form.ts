@@ -18,6 +18,10 @@ const getOptionDisplayName = (option: OnboardLocationOption | null) => {
   return option?.koreanName ?? option?.name ?? '';
 };
 
+const convertDateForPayload = (date: string) => {
+  return date.replaceAll('.', '-');
+};
+
 export const useOnboardForm = () => {
   const [interestCountry, setInterestCountry] =
     useState<OnboardLocationOption | null>(null);
@@ -246,14 +250,18 @@ export const useOnboardForm = () => {
       interestCityId,
       exchangeCountryId: exchangeCountry?.id ?? null,
       exchangeUniversity: selectedExchangeSchool?.name ?? null,
-      exchangeStartDate: exchangeMonths.startMonth.trim() || null,
-      exchangeEndDate: exchangeMonths.endMonth.trim() || null,
+      exchangeStartDate: exchangeMonths.startMonth
+        ? convertDateForPayload(exchangeMonths.startMonth.trim())
+        : null,
+      exchangeEndDate: exchangeMonths.endMonth
+        ? convertDateForPayload(exchangeMonths.endMonth.trim())
+        : null,
       activityTagIds,
       interestTagIds,
       travelStyleTagIds: companionTagIds,
       nickname: nickname.trim(),
       gender,
-      birthDate: birthDate.trim(),
+      birthDate: convertDateForPayload(birthDate.trim()),
       bio: bio.trim(),
       profileImageUrl,
     };
