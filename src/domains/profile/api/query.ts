@@ -1,4 +1,5 @@
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
+import { isHTTPError } from 'ky';
 
 import {
   apiClient,
@@ -46,10 +47,20 @@ const getMyPosts = async (params?: GetMyPostsParams) => {
     .json<GetMyPostsResponse>();
 };
 
-const getUserProfile = async (userId: number): Promise<OtherProfile> => {
-  const response = await apiClient
-    .get(END_POINT.USER.PROFILE(userId))
-    .json<GetUserProfileResponse>();
+const getUserProfile = async (userId: number): Promise<OtherProfile | null> => {
+  let response: GetUserProfileResponse;
+
+  try {
+    response = await apiClient
+      .get(END_POINT.USER.PROFILE(userId))
+      .json<GetUserProfileResponse>();
+  } catch (error) {
+    if (isHTTPError(error) && error.response.status === 404) {
+      return null;
+    }
+
+    throw error;
+  }
 
   if (response.success === false) {
     throw new Error(response.message || '프로필을 불러오지 못했습니다.');
@@ -117,11 +128,13 @@ export const PROFILE_QUERY_OPTIONS = {
         getUserPosts(userId, { ...params, page: pageParam }),
       initialPageParam: 0,
       getNextPageParam: (lastPage) => {
-        if (!lastPage.data?.hasNext) {
+        const page = lastPage.data?.page;
+
+        if (!lastPage.data?.hasNext || typeof page !== 'number') {
           return undefined;
         }
 
-        return (lastPage.data.page ?? 0) + 1;
+        return page + 1;
       },
     }),
 };

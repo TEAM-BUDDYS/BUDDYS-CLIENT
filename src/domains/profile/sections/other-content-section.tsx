@@ -35,7 +35,13 @@ const toPostItem = (post: UserPost): PostItem | null => {
   const { postId, title, content, startDate, endDate, thumbnailImageUrl } =
     post;
 
-  if (!postId || !title || !content || !startDate || !endDate) {
+  if (
+    typeof postId !== 'number' ||
+    typeof title !== 'string' ||
+    typeof content !== 'string' ||
+    typeof startDate !== 'string' ||
+    typeof endDate !== 'string'
+  ) {
     return null;
   }
 
