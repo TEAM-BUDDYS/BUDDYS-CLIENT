@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
-import { Button } from '@/shared/components/ui';
+import { Button, EmptyState } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
 import { useAuthSession } from '../auth-session/auth-session-provider';
@@ -64,13 +64,15 @@ export const KakaoCallback = () => {
 
   if (errorMessage) {
     return (
-      <main className="flex min-h-dvh flex-col items-center justify-center gap-6 px-4 text-center">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-title-b-22 text-gray-800">로그인 실패</h1>
-          <p className="text-body-m-15 text-gray-500">{errorMessage}</p>
-        </div>
+      <main className="relative flex min-h-dvh flex-col px-4 pb-8.5">
+        <EmptyState
+          className="absolute top-1/2 right-4 left-4 -mt-3 -translate-y-1/2"
+          title="로그인에 실패했어요"
+          description="잠시 후 다시 시도하거나 로그인 정보를 확인해주세요"
+        />
+
         <Button
-          className="max-w-100"
+          className="mt-auto"
           onClick={() => router.replace(ROUTES.AUTH.LOGIN)}
         >
           로그인 화면으로 돌아가기
