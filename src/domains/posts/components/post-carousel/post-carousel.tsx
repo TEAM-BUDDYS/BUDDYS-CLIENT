@@ -50,11 +50,10 @@ export const PostCarousel = ({
               <CommonImage
                 src={imageUrl}
                 alt={`${title} 이미지 ${index + 1}`}
-                width={343}
+                width={398}
                 height={240}
                 radius="rounded-none"
-                sizes="(max-width: 430px) 100vw, 430px"
-                unoptimized
+                sizes="(max-width: 430px) calc(100vw - 32px), 398px"
                 className="h-full w-full"
                 preload={index === 0}
               />

@@ -4,9 +4,13 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { useCallback, useEffect, useState } from 'react';
 
 type CarouselIndexOptions = Parameters<typeof useEmblaCarousel>[0];
+type CarouselIndexPlugins = Parameters<typeof useEmblaCarousel>[1];
 
-export const useCarouselIndex = (options?: CarouselIndexOptions) => {
-  const [emblaRef, emblaApi] = useEmblaCarousel(options);
+export const useCarouselIndex = (
+  options?: CarouselIndexOptions,
+  plugins?: CarouselIndexPlugins,
+) => {
+  const [emblaRef, emblaApi] = useEmblaCarousel(options, plugins);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleSelect = useCallback(() => {

@@ -46,7 +46,6 @@ export const ProfileImageInput = ({
         alt={alt}
         width={120}
         height={120}
-        unoptimized
         radius="rounded-full"
         className="size-30"
       />
