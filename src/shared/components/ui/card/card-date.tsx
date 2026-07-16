@@ -4,8 +4,13 @@ import { formatDateRange } from '@/shared/utils/format-date-range';
 interface CardDateProps {
   startDate: string;
   endDate: string;
+  isArchiveCardDate?: boolean;
 }
-export const CardDate = ({ startDate, endDate }: CardDateProps) => {
+export const CardDate = ({
+  startDate,
+  endDate,
+  isArchiveCardDate,
+}: CardDateProps) => {
   const { durationDays, formattedEndDate, formattedStartDate } =
     formatDateRange({
       endDate,
@@ -19,7 +24,15 @@ export const CardDate = ({ startDate, endDate }: CardDateProps) => {
   return (
     <div className="flex gap-1">
       <CalendarIcon className="text-mint-300 size-4" />
-      <span className="text-caption-r-12 text-gray-500">{dateText}</span>
+      <span
+        className={
+          isArchiveCardDate
+            ? 'text-caption-m-10 text-gray-300'
+            : 'text-caption-r-12 text-gray-500'
+        }
+      >
+        {dateText}
+      </span>
     </div>
   );
 };

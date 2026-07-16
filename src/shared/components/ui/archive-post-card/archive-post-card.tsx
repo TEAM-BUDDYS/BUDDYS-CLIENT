@@ -26,7 +26,7 @@ export const ArchivePostCard = ({
           </p>
         </div>
         <div className="mt-auto">
-          <CardDate startDate={startDate} endDate={endDate} />
+          <CardDate startDate={startDate} endDate={endDate} isArchiveCardDate />
         </div>
       </section>
       {image && (

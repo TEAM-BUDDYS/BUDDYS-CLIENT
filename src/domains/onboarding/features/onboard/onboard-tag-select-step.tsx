@@ -43,7 +43,7 @@ export const OnboardTagSelectStep = ({
           maxSelectionCount={maxSelectionCount}
           hasToggleButton={false}
           rowGap="md"
-          chipClassName="px-4"
+          chipClassName="px-4.5 text-body-m-16"
           onChange={onChange}
         />
       </div>
