@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ReactElement, SVGProps } from 'react';
+import { useState } from 'react';
 
 import { cn } from '@/lib/cn';
 import {
@@ -11,6 +12,7 @@ import {
   MessageIcon,
   MyIcon,
 } from '@/shared/components/icons';
+import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
 import { ROUTES } from '@/shared/config';
 
 interface BottomNavigationProps {
@@ -52,44 +54,55 @@ const BOTTOM_NAVIGATION_ITEMS: BottomNavigationItem[] = [
 
 export const BottomNavigation = ({ className }: BottomNavigationProps) => {
   const pathname = usePathname();
+  const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
 
   return (
-    <nav
-      aria-label="하단 네비게이션"
-      className={cn(
-        'h-18 w-full rounded-t-2xl border border-gray-300/30 bg-white px-6.25 py-1',
-        className,
-      )}
-    >
-      <ul className="flex items-center justify-center gap-5.75">
-        {BOTTOM_NAVIGATION_ITEMS.map(({ key, href, icon: Icon, label }) => {
-          const isActive = href === pathname;
-          const itemClassName = cn(
-            'flex size-16 flex-col items-center justify-center gap-1',
-            isActive ? 'text-gray-800' : 'text-gray-200',
-          );
+    <>
+      <nav
+        aria-label="하단 네비게이션"
+        className={cn(
+          'h-18 w-full rounded-t-2xl border border-gray-300/30 bg-white px-6.25 py-1',
+          className,
+        )}
+      >
+        <ul className="flex items-center justify-center gap-5.75">
+          {BOTTOM_NAVIGATION_ITEMS.map(({ key, href, icon: Icon, label }) => {
+            const isActive = href === pathname;
+            const itemClassName = cn(
+              'flex size-16 flex-col items-center justify-center gap-1',
+              isActive ? 'text-gray-800' : 'text-gray-200',
+            );
 
-          return (
-            <li key={key}>
-              {href ? (
-                <Link
-                  href={href}
-                  aria-current={isActive ? 'page' : undefined}
-                  className={itemClassName}
-                >
-                  <Icon className="size-6" />
-                  <span className="text-caption-r-12">{label}</span>
-                </Link>
-              ) : (
-                <button type="button" disabled className={itemClassName}>
-                  <Icon className="size-6" />
-                  <span className="text-caption-r-12">{label}</span>
-                </button>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
+            return (
+              <li key={key}>
+                {href ? (
+                  <Link
+                    href={href}
+                    aria-current={isActive ? 'page' : undefined}
+                    className={itemClassName}
+                  >
+                    <Icon className="size-6" />
+                    <span className="text-caption-r-12">{label}</span>
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    className={itemClassName}
+                    onClick={() => setIsComingSoonOpen(true)}
+                  >
+                    <Icon className="size-6" />
+                    <span className="text-caption-r-12">{label}</span>
+                  </button>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+      <ComingSoonModal
+        open={isComingSoonOpen}
+        onClose={() => setIsComingSoonOpen(false)}
+      />
+    </>
   );
 };
