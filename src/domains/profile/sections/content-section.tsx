@@ -13,14 +13,16 @@ import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 import { PROFILE_QUERY_OPTIONS } from '../api/query';
 import type { MyPost } from '../api/type';
 import { ContentEmptyState } from '../components/content-empty-state/content-empty-state';
-import type { ContentTabValue, PostItem } from '../model/content';
+import {
+  type ContentTabValue,
+  MY_POSTS_PAGE_SIZE,
+  type PostItem,
+} from '../model/content';
 
 interface ContentSectionProps {
   onCreateCourseClick: () => void;
   className?: string;
 }
-
-const MY_POSTS_PAGE_SIZE = 10;
 
 const TAB_ITEMS: { label: string; value: ContentTabValue }[] = [
   { label: '게시물', value: 'post' },

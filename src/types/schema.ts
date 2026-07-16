@@ -190,7 +190,7 @@ export interface paths {
     };
     /**
      * 타 유저 프로필 조회
-     * @description 특정 사용자의 프로필과 대표 태그를 조회합니다.
+     * @description 특정 사용자의 프로필과 태그를 조회합니다.
      */
     get: operations['getUserProfile'];
     put?: never;
@@ -752,15 +752,13 @@ export interface components {
        */
       exchangeUniversity?: string | null;
       /**
-       * Format: date
-       * @description 교환학생 시작일
-       * @example 2027-03-01
+       * @description 교환학생 시작 연월
+       * @example 2027-03
        */
       exchangeStartDate?: string | null;
       /**
-       * Format: date
-       * @description 교환학생 종료일
-       * @example 2027-08-31
+       * @description 교환학생 종료 연월
+       * @example 2027-08
        */
       exchangeEndDate?: string | null;
       /**
@@ -869,6 +867,22 @@ export interface components {
       message?: string;
       data?: components['schemas']['UserPublicProfileResponse'];
     };
+    TagGroupResponse: {
+      /**
+       * @description 태그 타입
+       * @example ACTIVITY
+       * @enum {string}
+       */
+      tagType?: 'ACTIVITY' | 'INTEREST' | 'TRAVEL_STYLE';
+      /**
+       * @description 해당 타입의 전체 태그 이름 목록
+       * @example [
+       *       "액티비티",
+       *       "맛집탐방"
+       *     ]
+       */
+      tags?: string[];
+    };
     UserPublicProfileResponse: {
       /**
        * Format: int64
@@ -909,6 +923,8 @@ export interface components {
        *     ]
        */
       representativeTags?: string[];
+      /** @description 전체 취향 태그 */
+      allTags?: components['schemas']['TagGroupResponse'][];
       /**
        * @description 삭제된 사용자 여부
        * @example false
@@ -982,22 +998,6 @@ export interface components {
       code?: string;
       message?: string;
       data?: components['schemas']['UserProfileResponse'];
-    };
-    TagGroupResponse: {
-      /**
-       * @description 태그 타입
-       * @example ACTIVITY
-       * @enum {string}
-       */
-      tagType?: 'ACTIVITY' | 'INTEREST' | 'TRAVEL_STYLE';
-      /**
-       * @description 해당 타입의 전체 태그 이름 목록
-       * @example [
-       *       "액티비티",
-       *       "맛집탐방"
-       *     ]
-       */
-      tags?: string[];
     };
     UserProfileResponse: {
       /**
@@ -1151,19 +1151,6 @@ export interface components {
       message?: string;
       data?: components['schemas']['RecommendedPostListResponse'];
     };
-    CountryResponse: {
-      /**
-       * Format: int64
-       * @description 국가 ID
-       * @example 1
-       */
-      countryId?: number;
-      /**
-       * @description 국가 이름
-       * @example France
-       */
-      name?: string;
-    };
     PeriodResponse: {
       /**
        * Format: date
@@ -1177,6 +1164,19 @@ export interface components {
        * @example 2027-08-31
        */
       endDate?: string;
+    };
+    RecommendedPostCountryResponse: {
+      /**
+       * Format: int64
+       * @description 국가 ID
+       * @example 1
+       */
+      countryId?: number;
+      /**
+       * @description 국가 이름
+       * @example France
+       */
+      name?: string;
     };
     RecommendedPostListResponse: {
       /** @description 추천 게시글 리스트 */
@@ -1203,7 +1203,7 @@ export interface components {
       /** @description 작성자 프로필 이미지 URL */
       authorProfileImageUrl?: string | null;
       /** @description 게시글 국가 */
-      country?: components['schemas']['CountryResponse'];
+      country?: components['schemas']['RecommendedPostCountryResponse'];
       /**
        * Format: int64
        * @description 조회수
@@ -1238,6 +1238,19 @@ export interface components {
        */
       hasNext?: boolean;
     };
+    PostSummaryCountryResponse: {
+      /**
+       * Format: int64
+       * @description 국가 ID
+       * @example 1
+       */
+      countryId?: number;
+      /**
+       * @description 국가 이름
+       * @example France
+       */
+      name?: string;
+    };
     PostSummaryResponse: {
       /**
        * Format: int64
@@ -1256,7 +1269,7 @@ export interface components {
        */
       content?: string;
       /** @description 국가 */
-      country?: components['schemas']['CountryResponse'];
+      country?: components['schemas']['PostSummaryCountryResponse'];
       /**
        * Format: date
        * @description 동행 시작일
@@ -1333,24 +1346,6 @@ export interface components {
       message?: string;
       data?: components['schemas']['PostDetailResponse'];
     };
-    CityResponse: {
-      /**
-       * Format: int64
-       * @description 도시 ID
-       * @example 1
-       */
-      id?: number;
-      /**
-       * @description 도시 이름
-       * @example Tokyo
-       */
-      name?: string;
-      /**
-       * @description 도시 한글 이름
-       * @example 도쿄
-       */
-      koreanName?: string | null;
-    };
     ConditionsResponse: {
       /** @description 선호 나이 조건 */
       ageConditions?: ('EARLY_20S' | 'MID_20S' | 'LATE_20S' | 'OVER_30S')[];
@@ -1382,6 +1377,37 @@ export interface components {
       /** @description 여행 스타일 태그 목록 */
       travelStyleTags?: components['schemas']['PostTagResponse'][];
     };
+    PostDetailCityResponse: {
+      /**
+       * Format: int64
+       * @description 도시 ID
+       * @example 1
+       */
+      cityId?: number;
+      /**
+       * @description 도시 이름
+       * @example Tokyo
+       */
+      name?: string;
+      /**
+       * @description 도시 한글 이름
+       * @example 도쿄
+       */
+      koreanName?: string;
+    };
+    PostDetailCountryResponse: {
+      /**
+       * Format: int64
+       * @description 국가 ID
+       * @example 1
+       */
+      countryId?: number;
+      /**
+       * @description 국가 이름
+       * @example France
+       */
+      name?: string;
+    };
     PostDetailResponse: {
       /**
        * Format: int64
@@ -1410,9 +1436,9 @@ export interface components {
       /** @description 첨부 이미지 URL 목록 */
       imageUrls?: string[];
       /** @description 동행 모집 국가 */
-      country?: components['schemas']['CountryResponse'];
+      country?: components['schemas']['PostDetailCountryResponse'];
       /** @description 동행 모집 도시 */
-      city?: components['schemas']['CityResponse'];
+      city?: components['schemas']['PostDetailCityResponse'];
       /**
        * Format: date
        * @description 동행 일정 시작일
@@ -1510,10 +1536,21 @@ export interface components {
        */
       commentId?: number;
       /**
+       * Format: int64
+       * @description 댓글 작성자 사용자 ID
+       * @example 10
+       */
+      writerId?: number;
+      /**
        * @description 댓글 작성자 이름
        * @example 유저 1
        */
       writerName?: string;
+      /**
+       * @description 댓글 작성자 프로필 이미지 URL
+       * @example https://example.com/profile.png
+       */
+      writerProfileImageUrl?: string | null;
       /**
        * @description 댓글 내용
        * @example 저도 관심 있어요! DM 보낼게요.
@@ -1544,6 +1581,24 @@ export interface components {
       /** Format: int32 */
       size?: number;
       hasNext?: boolean;
+    };
+    CountryResponse: {
+      /**
+       * Format: int64
+       * @description 국가 ID
+       * @example 1
+       */
+      id?: number;
+      /**
+       * @description 국가 이름
+       * @example 대한민국
+       */
+      name?: string;
+      /**
+       * @description 국가 코드
+       * @example KR
+       */
+      code?: string;
     };
     BaseResponseUniversityListResponse: {
       success?: boolean;
@@ -1603,6 +1658,24 @@ export interface components {
       /** Format: int32 */
       size?: number;
       hasNext?: boolean;
+    };
+    CityResponse: {
+      /**
+       * Format: int64
+       * @description 도시 ID
+       * @example 1
+       */
+      id?: number;
+      /**
+       * @description 도시 이름(영문)
+       * @example Seoul
+       */
+      name?: string;
+      /**
+       * @description 도시 이름(한글)
+       * @example 서울
+       */
+      koreanName?: string | null;
     };
     BaseResponseChatRoomListResponse: {
       success?: boolean;
@@ -2457,8 +2530,8 @@ export interface operations {
          *       "interestCityId": 20692,
          *       "exchangeCountryId": 71,
          *       "exchangeUniversity": "Harvard University",
-         *       "exchangeStartDate": "2027-03-01",
-         *       "exchangeEndDate": "2027-08-31",
+         *       "exchangeStartDate": "2027-03",
+         *       "exchangeEndDate": "2027-08",
          *       "activityTagIds": [
          *         1,
          *         2,

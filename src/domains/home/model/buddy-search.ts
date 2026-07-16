@@ -67,6 +67,31 @@ export const getMappedValues = <Value extends string>(
     .filter((value): value is Value => value !== undefined);
 };
 
+const FILTER_DATE_PATTERN = /^\d{2}\.\d{2}\.\d{2}$/;
+
+export const formatFilterDateForParams = (date: string) => {
+  if (!FILTER_DATE_PATTERN.test(date)) {
+    return undefined;
+  }
+
+  const [year, month, day] = date.split('.');
+  const fullYear = Number(`20${year}`);
+  const monthNumber = Number(month);
+  const dayNumber = Number(day);
+  const dateValue = new Date(fullYear, monthNumber - 1, dayNumber);
+
+  const isValidDate =
+    dateValue.getFullYear() === fullYear &&
+    dateValue.getMonth() === monthNumber - 1 &&
+    dateValue.getDate() === dayNumber;
+
+  if (!isValidDate) {
+    return undefined;
+  }
+
+  return `${fullYear}-${month}-${day}`;
+};
+
 export const getBuddySearchParams = (
   filterValue: FilterSheetValue,
   size: number,
@@ -78,8 +103,8 @@ export const getBuddySearchParams = (
     size,
     keyword: trimmedKeyword || undefined,
     countryId: filterValue.country?.id,
-    startDate: filterValue.startDate || undefined,
-    endDate: filterValue.endDate || undefined,
+    startDate: formatFilterDateForParams(filterValue.startDate),
+    endDate: formatFilterDateForParams(filterValue.endDate),
     ageConditions: getMappedValues(
       filterValue.ageTagIds,
       AGE_CONDITION_BY_TAG_ID,

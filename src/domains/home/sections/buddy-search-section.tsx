@@ -1,7 +1,6 @@
 'use client';
 
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { BookmarkContainer } from '@/domains/home/components/bookmark-container/bookmark-container';
@@ -87,16 +86,11 @@ const BuddySearchPostList = ({
 };
 
 export const BuddySearchSection = () => {
-  const router = useRouter();
   const [bookmarkedItemIds, setBookmarkedItemIds] = useState<number[]>([]);
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const { filterValue, appliedFilterKeys, handleFilterApply } =
     useFilterSheetValue();
   const { sheetRef, sheetScrollClassName } = useSheetScroll(isFilterSheetOpen);
-
-  const handleMoreClick = () => {
-    router.push(ROUTES.CUSTOMIZED_EXPLORE);
-  };
 
   const handleFilterPress = (_filterKey: BuddyFilterKey) => {
     setIsFilterSheetOpen(true);
@@ -124,7 +118,7 @@ export const BuddySearchSection = () => {
           title="원하는 조건의 동행을 찾아보세요"
           rightSlot={<ChevronRightIcon className="size-6 text-gray-500" />}
           rightSlotLabel="맞춤 탐색 더보기"
-          onClick={handleMoreClick}
+          href={ROUTES.CUSTOMIZED_EXPLORE}
         />
         <div className="-mx-4 scrollbar-none overflow-x-auto border-b border-gray-100 px-4 py-3">
           <div className="flex gap-2">

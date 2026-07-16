@@ -11,4 +11,3 @@ export {
   AsyncLoadingState,
   type AsyncLoadingStateProps,
 } from './async-loading-state';
-export { DelayedFallback, type DelayedFallbackProps } from './delayed-fallback';

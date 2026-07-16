@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { StartChatButton } from '@/domains/chat/features/start-chat/start-chat-button';
 import { PostDetailComments } from '@/domains/posts/features/post-detail/post-detail-comments';
 import type { PostDetail } from '@/domains/posts/model/post-detail';
@@ -5,12 +7,15 @@ import { PostDetailConditionSection } from '@/domains/posts/sections/post-detail
 import { PostDetailContentSection } from '@/domains/posts/sections/post-detail-content-section';
 import { MoreIcon } from '@/shared/components/icons';
 import { Header } from '@/shared/components/layout';
+import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
 
 interface PostDetailViewProps {
   post: PostDetail;
 }
 
 export const PostDetailView = ({ post }: PostDetailViewProps) => {
+  const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
+
   return (
     <div className="min-h-dvh bg-white">
       <div className="sticky top-0 z-20 bg-white">
@@ -21,6 +26,7 @@ export const PostDetailView = ({ post }: PostDetailViewProps) => {
               aria-label="게시물 메뉴"
               className="flex size-11 items-center justify-center text-gray-800"
               type="button"
+              onClick={() => setIsComingSoonOpen(true)}
             >
               <MoreIcon className="size-6" />
             </button>
@@ -49,6 +55,11 @@ export const PostDetailView = ({ post }: PostDetailViewProps) => {
           <StartChatButton participantUserId={post.author.userId} />
         </div>
       )}
+
+      <ComingSoonModal
+        open={isComingSoonOpen}
+        onClose={() => setIsComingSoonOpen(false)}
+      />
     </div>
   );
 };

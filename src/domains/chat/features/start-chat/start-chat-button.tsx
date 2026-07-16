@@ -57,7 +57,7 @@ export const StartChatButton = ({
 
   return (
     <IconButton
-      className="pointer-events-auto px-2.5 py-2"
+      className="pointer-events-auto"
       disabled={createChatRoomMutation.isPending}
       icon={<ChatIcon />}
       variant="primary"

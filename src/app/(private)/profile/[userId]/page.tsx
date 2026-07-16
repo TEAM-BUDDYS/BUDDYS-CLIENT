@@ -19,7 +19,6 @@ export default async function OtherProfilePage({
 
   return (
     <AsyncBoundary
-      loadingDelayMs={200}
       loadingState={{ title: '프로필을 불러오고 있어요' }}
       errorState={{
         title: '프로필을 불러오지 못했어요',

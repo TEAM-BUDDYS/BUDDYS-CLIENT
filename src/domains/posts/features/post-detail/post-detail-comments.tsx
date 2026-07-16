@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-query';
 import { type SubmitEvent, useCallback, useState } from 'react';
 
+import { useAuthSession } from '@/domains/auth/features/auth-session/auth-session-provider';
 import {
   POST_MUTATION_OPTIONS,
   POST_QUERY_OPTIONS,
@@ -30,6 +31,7 @@ const PostDetailCommentList = ({
   viewCount,
   commentCount,
 }: PostDetailCommentListProps) => {
+  const { userId } = useAuthSession();
   const {
     data,
     fetchNextPage,
@@ -60,6 +62,7 @@ const PostDetailCommentList = ({
         viewCount={viewCount}
         commentCount={commentCount}
         comments={comments}
+        viewerUserId={userId}
       />
       <div ref={loadMoreRef} className="h-1" aria-hidden="true" />
       {isFetchingNextPage && (

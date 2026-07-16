@@ -71,7 +71,7 @@ export const FilterSheet = ({ value, onClose, onApply }: FilterSheetProps) => {
           </button>
         }
       />
-      <main className="flex flex-col gap-6 px-4 pb-13">
+      <main className="flex flex-col gap-6 px-4 pb-26">
         <div className="flex flex-col gap-3 py-4">
           <FormLabel as="p" className="text-body-sb-16">
             국가
@@ -182,7 +182,7 @@ export const FilterSheet = ({ value, onClose, onApply }: FilterSheetProps) => {
           />
         </div>
       </main>
-      <div className="flex gap-3 px-4 pb-5">
+      <div className="fixed right-0 bottom-0 left-0 z-10 mx-auto flex max-w-107.5 gap-3 bg-white px-4 pt-3 pb-5">
         <Button
           variant="secondary"
           className="h-13 max-w-21 flex-none rounded-xl"

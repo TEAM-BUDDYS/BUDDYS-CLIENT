@@ -17,6 +17,7 @@ src/
   domains/
 
   shared/
+    analytics/
     assets/
     components/
       ui/
@@ -36,6 +37,7 @@ src/
 - `app`: route, layout, loading, error, not-found, metadata, route handler를 둡니다.
 - `domains`: 제품 도메인 단위 코드를 둡니다. 하위 도메인은 요구사항에 따라 추가합니다.
 - `shared`: 아래 공통화 기준을 충족한 여러 도메인의 공용 코드를 둡니다.
+- `shared/analytics`: 여러 route에 걸친 측정 정책과 Analytics Client 경계를 둡니다.
 - `lib`: 외부 라이브러리 설정이나 작은 헬퍼를 둡니다.
 - `types`: 앱 전체에서 사용하는 공통 타입을 둡니다.
 
@@ -180,7 +182,7 @@ domains/{domain}/
 - `src/app/global-error.tsx`는 root layout까지 렌더링하지 못하는 치명적 오류의 최후 안전망으로만 사용합니다.
 - 화면 일부의 독립적인 조회 상태는 `src/shared/components/ui/async-boundary`로 감싸 나머지 화면을 유지합니다.
 - Suspense를 사용하는 TanStack Query는 `QueryErrorResetBoundary`와 함께 구성해 재시도 시 query 오류 상태도 초기화합니다.
-- `DelayedFallback`은 loading fallback을 기본 200ms 뒤에 표시해 짧은 요청의 깜빡임을 줄이고, 지연 중에도 fallback 영역 크기를 유지합니다.
+- `AsyncBoundary`는 loading fallback을 즉시 표시합니다.
 - `AsyncBoundary`에서 잡은 오류는 Sentry에 기록하고, `onError`가 있으면 추가 오류 처리도 실행합니다.
 - `redirect()`, `notFound()` 같은 Next.js 라우팅 제어 오류는 잡지 않고 App Router 경계로 다시 전달합니다.
 - 조건부 조회처럼 `enabled`가 필요한 query, background polling과 mutation은 Suspense로 일괄 전환하지 않고 사용처에서 pending/error 상태를 처리합니다.
@@ -191,7 +193,6 @@ Suspense query를 호출하는 컴포넌트보다 상위에서 `AsyncBoundary`�
 ```tsx
 <AsyncBoundary
   className="min-h-60"
-  loadingDelayMs={200}
   loadingState={{ title: '목록을 불러오고 있어요' }}
   errorState={{ title: '목록을 불러오지 못했어요' }}
 >

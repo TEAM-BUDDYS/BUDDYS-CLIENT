@@ -35,10 +35,15 @@ const getTags = async (type: TagType): Promise<PreferenceTag[]> => {
   return response.data.map(({ id, name }) => ({ id, name }));
 };
 
+const REFERENCE_DATA_STALE_TIME = 30 * 60 * 1000;
+const REFERENCE_DATA_GC_TIME = 60 * 60 * 1000;
+
 export const TAG_QUERY_OPTIONS = {
   LIST: (type: TagType) =>
     queryOptions({
       queryKey: TAG_QUERY_KEY.LIST(type),
       queryFn: () => getTags(type),
+      staleTime: REFERENCE_DATA_STALE_TIME,
+      gcTime: REFERENCE_DATA_GC_TIME,
     }),
 };
