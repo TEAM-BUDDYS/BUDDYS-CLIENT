@@ -73,6 +73,7 @@ export const PostDetailContentSection = ({
       <PostDetailProfileHeader
         key={post.postId}
         postId={post.postId}
+        userId={post.author.userId}
         nickname={post.author.nickname}
         country={post.author.country}
         profileDescription={getAuthorDescription(post)}
