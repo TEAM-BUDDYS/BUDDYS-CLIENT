@@ -36,7 +36,7 @@ export const SearchSheet = ({
         hasBackButton
         onBackClick={onClose}
         content={
-          <form className="w-full" onSubmit={handleSearchFormSubmit}>
+          <form className="min-w-0 flex-1" onSubmit={handleSearchFormSubmit}>
             <Searchbar
               size="small"
               value={searchKeyword}

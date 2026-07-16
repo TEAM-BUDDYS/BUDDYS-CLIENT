@@ -53,6 +53,7 @@ export const Card = ({
             width={100}
             height={100}
             radius="rounded-xl"
+            className="aspect-square size-25"
           />
         )}
       </Link>

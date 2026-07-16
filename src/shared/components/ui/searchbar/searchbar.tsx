@@ -45,7 +45,7 @@ export const Searchbar = ({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className={cn(
-          'text-body-m-16 flex-1 bg-transparent text-gray-800 outline-none placeholder:text-gray-500',
+          'text-body-m-16 min-w-0 flex-1 bg-transparent text-gray-800 outline-none placeholder:text-gray-500',
           inputClassName,
         )}
       />

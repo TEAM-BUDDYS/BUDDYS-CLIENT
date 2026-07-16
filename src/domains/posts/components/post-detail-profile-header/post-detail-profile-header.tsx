@@ -103,6 +103,7 @@ export const PostDetailProfileHeader = ({
           width={44}
           height={44}
           radius="rounded-full"
+          className="border border-gray-100"
         />
 
         <div className="flex min-w-0 flex-col">

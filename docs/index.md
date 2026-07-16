@@ -25,6 +25,10 @@ BUDDYS-CLIENT의 구조와 개발 규칙을 정리합니다.
 - [Feature Development](./workflows/feature-development.md)
 - [Verification](./workflows/verification.md)
 
+## Analytics
+
+- [Google Analytics](./analytics/google-analytics.md)
+
 ## Maintenance Rule
 
 - 새 규칙은 가장 가까운 세부 문서에 추가합니다.

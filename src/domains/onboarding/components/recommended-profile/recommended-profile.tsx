@@ -19,6 +19,7 @@ export const RecommendedProfile = ({
         width={120}
         height={120}
         radius="rounded-full"
+        className="border border-gray-100"
       />
 
       <p className="text-body-m-16 text-gray-500">

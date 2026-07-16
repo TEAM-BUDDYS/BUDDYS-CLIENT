@@ -3,6 +3,8 @@ import './globals.css';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 
+import { GoogleAnalytics } from '@/shared/analytics/google-analytics';
+
 const pretendard = localFont({
   src: '../../public/fonts/PretendardVariable.woff2',
   variable: '--font-pretendard',
@@ -11,6 +13,14 @@ const pretendard = localFont({
 });
 
 import { Providers } from './providers';
+
+const GOOGLE_ANALYTICS_ID_PATTERN = /^G-[A-Z0-9]+$/;
+const googleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+const isGoogleAnalyticsEnabled =
+  process.env.NODE_ENV === 'production' &&
+  Boolean(
+    googleAnalyticsId && GOOGLE_ANALYTICS_ID_PATTERN.test(googleAnalyticsId),
+  );
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://buddys.co.kr'),
@@ -44,6 +54,9 @@ export default function RootLayout({
         <div className="mx-auto min-h-dvh w-full max-w-[430px] min-w-[375px] bg-white">
           <Providers>{children}</Providers>
         </div>
+        {isGoogleAnalyticsEnabled && googleAnalyticsId && (
+          <GoogleAnalytics measurementId={googleAnalyticsId} />
+        )}
       </body>
     </html>
   );

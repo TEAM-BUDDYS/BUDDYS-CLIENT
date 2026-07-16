@@ -43,7 +43,7 @@ export const PostCreateDetailStep = ({
       className="flex min-w-0 flex-col gap-6"
       disabled={isSubmitting}
     >
-      <div className="flex flex-col gap-6">
+      <div className="[&_label]:text-body-sb-16 flex flex-col gap-6">
         <TextField
           required
           label="제목"
@@ -65,8 +65,8 @@ export const PostCreateDetailStep = ({
 
       <Divider />
 
-      <section className="flex flex-col gap-6">
-        <FormLabel as="h2" required>
+      <section className="flex flex-col gap-4">
+        <FormLabel as="h2" required className="text-body-sb-16">
           동행 조건
         </FormLabel>
         <ChipOptionGroup
@@ -88,8 +88,8 @@ export const PostCreateDetailStep = ({
       <Divider />
 
       <section className="flex flex-col gap-6">
-        <div className="flex flex-col gap-2">
-          <FormLabel as="h2" required>
+        <div className="flex flex-col gap-4">
+          <FormLabel as="h2" required className="text-body-sb-16">
             동행 유형
           </FormLabel>
           <ChipOptionGroup
@@ -98,8 +98,8 @@ export const PostCreateDetailStep = ({
             onChange={(values) => onChange({ companionType: values[0] ?? '' })}
           />
         </div>
-        <div className="flex flex-col gap-2">
-          <FormLabel as="h2" required>
+        <div className="flex flex-col gap-4">
+          <FormLabel as="h2" required className="text-body-sb-16">
             모집 인원
           </FormLabel>
           <ChipOptionGroup
@@ -116,8 +116,10 @@ export const PostCreateDetailStep = ({
 
       <Divider />
 
-      <section className="flex flex-col gap-6">
-        <FormLabel as="h2">취향 태그</FormLabel>
+      <section className="flex flex-col gap-4">
+        <FormLabel as="h2" className="text-body-sb-16">
+          취향 태그
+        </FormLabel>
         <PostCreatePreferenceTagFields value={value} onChange={onChange} />
       </section>
 
