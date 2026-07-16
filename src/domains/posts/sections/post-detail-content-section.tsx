@@ -73,6 +73,7 @@ export const PostDetailContentSection = ({
       <PostDetailProfileHeader
         key={post.postId}
         postId={post.postId}
+        userId={post.author.userId}
         nickname={post.author.nickname}
         profileDescription={getAuthorDescription(post)}
         profileImageUrl={post.author.profileImageUrl ?? undefined}
