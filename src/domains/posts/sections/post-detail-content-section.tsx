@@ -81,12 +81,10 @@ export const PostDetailContentSection = ({
       />
 
       <div className="flex w-full flex-col items-start gap-2">
-        {!post.isMine && (
-          <div className="flex items-center gap-1">
-            <PostStatusTag status={post.recruitmentStatus} />
-            <Tag value={post.country.name} />
-          </div>
-        )}
+        <div className="flex items-center gap-1">
+          {!post.isMine && <PostStatusTag status={post.recruitmentStatus} />}
+          <Tag value={post.country.name} />
+        </div>
 
         <div className="flex w-full flex-col gap-4">
           <h1 className="text-title-b-20 text-gray-800">{post.title}</h1>
