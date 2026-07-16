@@ -113,7 +113,7 @@ export const PostDetailProfileHeader = ({
             height={44}
             unoptimized={Boolean(profileImageUrl)}
             radius="rounded-full"
-            className="border border-gray-100"
+            className="size-11 border border-gray-100"
           />
         </Link>
 
