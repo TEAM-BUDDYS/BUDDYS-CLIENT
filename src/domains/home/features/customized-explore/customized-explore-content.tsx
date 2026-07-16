@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { type KeyboardEvent, useState } from 'react';
 
 import { FilterSheet } from '@/domains/home/features/filter-sheet/filter-sheet';
@@ -18,14 +18,9 @@ import { ROUTES } from '@/shared/config';
 
 import { CustomizedExplorePostList } from './customized-explore-post-list';
 
-interface CustomizedExploreContentProps {
-  keyword?: string;
-}
-
-export const CustomizedExploreContent = ({
-  keyword,
-}: CustomizedExploreContentProps) => {
+export const CustomizedExploreContent = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [bookmarkedItemIds, setBookmarkedItemIds] = useState<number[]>([]);
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const [isSearchSheetOpen, setIsSearchSheetOpen] = useState(false);
@@ -39,6 +34,7 @@ export const CustomizedExploreContent = ({
     sheetRef: searchSheetRef,
     sheetScrollClassName: searchSheetScrollClassName,
   } = useSheetScroll(isSearchSheetOpen);
+  const keyword = searchParams.get('keyword') ?? undefined;
   const searchKeyword = keyword?.trim() ?? '';
 
   const handleFilterPress = (_filterKey: BuddyFilterKey) => {

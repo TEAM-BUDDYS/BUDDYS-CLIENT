@@ -1,4 +1,6 @@
 'use client';
+
+import Link from 'next/link';
 import type { ReactNode } from 'react';
 
 interface SectionHeaderProps {
@@ -6,6 +8,7 @@ interface SectionHeaderProps {
   title: string;
   rightSlot?: ReactNode;
   rightSlotLabel?: string;
+  href?: string;
   onClick?: () => void;
 }
 
@@ -14,6 +17,7 @@ export const SectionHeader = ({
   title,
   rightSlot,
   rightSlotLabel,
+  href,
   onClick,
 }: SectionHeaderProps) => {
   return (
@@ -23,7 +27,15 @@ export const SectionHeader = ({
         <h2 className="text-title-b-18 text-gray-800">{title}</h2>
       </div>
       {rightSlot &&
-        (onClick ? (
+        (href ? (
+          <Link
+            href={href}
+            className="-mr-4 flex size-11 shrink-0 items-center justify-center"
+            aria-label={rightSlotLabel ?? title}
+          >
+            {rightSlot}
+          </Link>
+        ) : onClick ? (
           <button
             type="button"
             className="-mr-4 flex size-11 shrink-0 items-center justify-center"
