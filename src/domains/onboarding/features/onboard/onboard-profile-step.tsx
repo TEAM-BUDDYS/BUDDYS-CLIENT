@@ -79,7 +79,7 @@ export const OnboardProfileStep = ({
   const profileImageSrc = profileImagePreviewUrl ?? firstProfileImage;
 
   return (
-    <div className="mt-[39px] flex flex-col gap-10">
+    <div className="mt-5 flex flex-col gap-10">
       <div className="flex flex-col items-center gap-6">
         <h1 className="text-title-b-22 text-gray-800">프로필 등록</h1>
         <div className="flex flex-col items-center gap-3">
