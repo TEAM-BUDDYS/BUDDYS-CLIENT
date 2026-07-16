@@ -81,6 +81,8 @@ type MessagePageParam = Pick<
 
 const INITIAL_MESSAGE_PAGE_PARAM: MessagePageParam = {};
 
+const CHAT_MESSAGE_STALE_TIME = 5 * 1000;
+
 const getMessages = async (
   chatRoomId: number,
   params?: GetMessagesParams,
@@ -133,8 +135,8 @@ export const CHAT_QUERY_OPTIONS = {
           ...pageParam,
         }),
 
-      staleTime: 0,
-      refetchOnMount: 'always',
+      staleTime: CHAT_MESSAGE_STALE_TIME,
+      refetchOnMount: true,
       refetchOnWindowFocus: true,
       refetchOnReconnect: true,
 
