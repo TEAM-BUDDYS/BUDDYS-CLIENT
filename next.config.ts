@@ -23,11 +23,6 @@ const nextConfig: NextConfig = {
         pathname: '/profiles/**',
       },
       {
-        protocol: 'http',
-        hostname: '*.kakaocdn.net',
-        pathname: '/**',
-      },
-      {
         protocol: 'https',
         hostname: '*.kakaocdn.net',
         pathname: '/**',
