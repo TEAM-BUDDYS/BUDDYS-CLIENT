@@ -12,6 +12,7 @@ interface CommentItemProps extends HTMLAttributes<HTMLElement> {
   writerId: number;
   writerName: string;
   profileImageUrl?: string | null;
+  viewerUserId: number | null;
   createdAt?: string;
   timeAgo?: string;
 }
@@ -21,6 +22,7 @@ export const CommentItem = ({
   writerId,
   writerName,
   profileImageUrl,
+  viewerUserId,
   createdAt,
   timeAgo,
   className,
@@ -28,6 +30,10 @@ export const CommentItem = ({
 }: CommentItemProps) => {
   const timeLabel = timeAgo ?? (createdAt ? formatRelativeTime(createdAt) : '');
   const profileImageSrc = profileImageUrl || defaultProfileImage;
+  const profileHref =
+    writerId === viewerUserId
+      ? ROUTES.PROFILE.ROOT
+      : ROUTES.PROFILE.DETAIL(writerId);
 
   return (
     <article
@@ -35,7 +41,7 @@ export const CommentItem = ({
       {...props}
     >
       <Link
-        href={ROUTES.PROFILE.DETAIL(writerId)}
+        href={profileHref}
         aria-label={`${writerName} 프로필로 이동`}
         className="shrink-0 rounded-full"
       >

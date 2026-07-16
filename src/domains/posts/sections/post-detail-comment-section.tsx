@@ -10,12 +10,14 @@ interface PostDetailCommentSectionProps extends HTMLAttributes<HTMLElement> {
   viewCount: number;
   commentCount: number;
   comments: PostDetailComment[];
+  viewerUserId: number | null;
 }
 
 export const PostDetailCommentSection = ({
   viewCount,
   commentCount,
   comments,
+  viewerUserId,
   className,
   ...props
 }: PostDetailCommentSectionProps) => {
@@ -46,6 +48,7 @@ export const PostDetailCommentSection = ({
                 writerId={comment.writerId}
                 writerName={comment.writerName}
                 profileImageUrl={comment.writerProfileImageUrl}
+                viewerUserId={viewerUserId}
                 createdAt={comment.createdAt}
                 timeAgo={comment.timeAgo}
               />
