@@ -33,13 +33,20 @@ jobs:
           NEXT_PUBLIC_KAKAO_REST_API_KEY: ${{ vars.NEXT_PUBLIC_KAKAO_REST_API_KEY }}
           NEXT_PUBLIC_KAKAO_REDIRECT_URI: ${{ vars.NEXT_PUBLIC_KAKAO_REDIRECT_URI }}
           NEXT_PUBLIC_WEBSOCKET_URL: ${{ vars.NEXT_PUBLIC_WEBSOCKET_URL }}
+          NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: ${{ vars.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID }}
         run: |
+          if [[ ! "$NEXT_PUBLIC_GOOGLE_ANALYTICS_ID" =~ ^G-[A-Z0-9]+$ ]]; then
+            echo "NEXT_PUBLIC_GOOGLE_ANALYTICS_ID is missing or invalid"
+            exit 1
+          fi
+
           docker buildx build \
             --platform linux/amd64 \
             --build-arg NEXT_PUBLIC_API_BASE_URL \
             --build-arg NEXT_PUBLIC_KAKAO_REST_API_KEY \
             --build-arg NEXT_PUBLIC_KAKAO_REDIRECT_URI \
             --build-arg NEXT_PUBLIC_WEBSOCKET_URL \
+            --build-arg NEXT_PUBLIC_GOOGLE_ANALYTICS_ID \
             -t ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:latest \
             -t ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ github.event.workflow_run.head_sha }} \
             --push .

@@ -38,6 +38,7 @@ export const SearchSheet = ({
         content={
           <form className="min-w-0 flex-1" onSubmit={handleSearchFormSubmit}>
             <Searchbar
+              searchIconClassName="text-gray-200"
               size="small"
               value={searchKeyword}
               autoFocus

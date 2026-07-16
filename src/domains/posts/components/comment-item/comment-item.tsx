@@ -11,7 +11,7 @@ interface CommentItemProps extends HTMLAttributes<HTMLElement> {
   content: string;
   writerId: number;
   writerName: string;
-  writerProfileImageUrl?: string | null;
+  profileImageUrl?: string | null;
   createdAt?: string;
   timeAgo?: string;
 }
@@ -20,14 +20,14 @@ export const CommentItem = ({
   content,
   writerId,
   writerName,
-  writerProfileImageUrl,
+  profileImageUrl,
   createdAt,
   timeAgo,
   className,
   ...props
 }: CommentItemProps) => {
   const timeLabel = timeAgo ?? (createdAt ? formatRelativeTime(createdAt) : '');
-  const profileImageSrc = writerProfileImageUrl ?? defaultProfileImage;
+  const profileImageSrc = profileImageUrl || defaultProfileImage;
 
   return (
     <article

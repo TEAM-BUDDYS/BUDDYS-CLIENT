@@ -293,7 +293,7 @@ export const OnboardFlow = () => {
                 similarityScore={recommendedUser.similarityScore}
               />
             )}
-            <div className="fixed bottom-0 left-1/2 z-10 w-full max-w-100 -translate-x-1/2 px-4 pb-[34px]">
+            <div className="fixed bottom-0 left-1/2 z-10 w-full max-w-100 -translate-x-1/2 pb-[34px]">
               <div className="absolute right-0 bottom-0 left-0 -z-10 h-[145px] bg-gradient-to-b from-white/0 via-white to-white" />
               <Button
                 onClick={() => router.push(ROUTES.HOME)}

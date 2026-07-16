@@ -15,6 +15,7 @@ interface SearchbarProps extends Omit<
   size: SearchbarSize;
   value: string;
   isCompleted?: boolean;
+  searchIconClassName?: string;
   onChange: (value: string) => void;
 }
 
@@ -27,6 +28,7 @@ export const Searchbar = ({
   size,
   value,
   isCompleted = false,
+  searchIconClassName,
   onChange,
   placeholder = '검색어를 입력해주세요',
   ...inputProps
@@ -58,7 +60,9 @@ export const Searchbar = ({
           <XCircleIcon className="size-6 shrink-0 text-gray-200" />
         </button>
       ) : (
-        <SearchIcon className="size-6 shrink-0 text-gray-500" />
+        <SearchIcon
+          className={cn('size-6 shrink-0 text-gray-500', searchIconClassName)}
+        />
       )}
     </div>
   );

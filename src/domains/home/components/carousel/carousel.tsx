@@ -49,7 +49,7 @@ export const Carousel = ({ posts }: CarouselProps) => {
     <div className="flex flex-col items-center gap-3">
       <div ref={emblaRef} className="w-full overflow-hidden rounded-lg">
         <div className="-ml-3 flex">
-          {items.map((item) => (
+          {items.map((item, index) => (
             <Link
               key={item.postId}
               href={ROUTES.POST.DETAIL(item.postId)}
@@ -61,7 +61,8 @@ export const Carousel = ({ posts }: CarouselProps) => {
                   alt={item.title}
                   width={412}
                   height={264}
-                  unoptimized
+                  sizes="(max-width: 430px) calc(100vw - 32px), 398px"
+                  preload={index === 0}
                   radius="rounded-lg"
                   className="block size-full"
                 />

@@ -30,7 +30,6 @@ export const ImagePreview = ({
         alt={alt}
         width={80}
         height={80}
-        unoptimized
         radius="rounded-xl"
       />
       <button
