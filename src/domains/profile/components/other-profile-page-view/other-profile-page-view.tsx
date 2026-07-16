@@ -27,10 +27,10 @@ export const OtherProfilePageView = ({
   const handleModalClose = () => setIsComingSoonOpen(false);
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex h-dvh flex-col">
       <Header hasBackButton content={profile.nickname} />
 
-      <main className="flex flex-1 flex-col items-center overflow-y-auto pt-9 pb-9">
+      <main className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto pt-9 pb-9">
         <UserProfile
           imageUrl={profile.imageUrl}
           nickname={profile.nickname}
