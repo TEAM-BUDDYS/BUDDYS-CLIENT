@@ -21,6 +21,7 @@ export const CarouselInfo = ({
         width={48}
         height={48}
         radius="rounded-full"
+        className="size-12"
         unoptimized
       />
       <div className="flex w-37 flex-col gap-1">
