@@ -35,6 +35,7 @@ export const SummaryCard = ({ post }: SummaryCardProps) => {
             height={80}
             unoptimized
             radius="rounded-xl"
+            className="size-20"
           />
         )}
       </Link>

@@ -54,6 +54,7 @@ export const Card = ({
             height={100}
             unoptimized
             radius="rounded-xl"
+            className="size-25"
           />
         )}
       </Link>

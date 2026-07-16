@@ -20,7 +20,7 @@ export const CarouselInfo = ({
         alt={`${title} 작성자 프로필 이미지`}
         width={48}
         height={48}
-        radius="rounded-full"
+        radius="rounded-full size-12"
         unoptimized
       />
       <div className="flex w-37 flex-col gap-1">

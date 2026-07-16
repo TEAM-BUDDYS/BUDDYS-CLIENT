@@ -67,6 +67,16 @@ export const getMappedValues = <Value extends string>(
     .filter((value): value is Value => value !== undefined);
 };
 
+const formatFilterDateForParams = (date: string) => {
+  const [year, month, day] = date.split('.');
+
+  if (!year || !month || !day) {
+    return undefined;
+  }
+
+  return `20${year}-${month}-${day}`;
+};
+
 export const getBuddySearchParams = (
   filterValue: FilterSheetValue,
   size: number,
@@ -78,8 +88,8 @@ export const getBuddySearchParams = (
     size,
     keyword: trimmedKeyword || undefined,
     countryId: filterValue.country?.id,
-    startDate: filterValue.startDate || undefined,
-    endDate: filterValue.endDate || undefined,
+    startDate: formatFilterDateForParams(filterValue.startDate),
+    endDate: formatFilterDateForParams(filterValue.endDate),
     ageConditions: getMappedValues(
       filterValue.ageTagIds,
       AGE_CONDITION_BY_TAG_ID,
