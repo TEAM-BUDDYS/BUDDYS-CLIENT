@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { type KeyboardEvent, useState } from 'react';
 
+import { WriteFloatingButton } from '@/domains/home/components/write-floating-button/write-floating-button';
 import { FilterSheet } from '@/domains/home/features/filter-sheet/filter-sheet';
 import { SearchSheet } from '@/domains/home/features/search-sheet/search-sheet';
 import { useFilterSheetValue } from '@/domains/home/hooks/use-filter-sheet-value';
@@ -152,6 +153,7 @@ export const CustomizedExploreContent = () => {
           />
         </div>
       )}
+      <WriteFloatingButton />
     </>
   );
 };

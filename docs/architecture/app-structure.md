@@ -17,6 +17,7 @@ src/
   domains/
 
   shared/
+    analytics/
     assets/
     components/
       ui/
@@ -36,6 +37,7 @@ src/
 - `app`: route, layout, loading, error, not-found, metadata, route handler를 둡니다.
 - `domains`: 제품 도메인 단위 코드를 둡니다. 하위 도메인은 요구사항에 따라 추가합니다.
 - `shared`: 아래 공통화 기준을 충족한 여러 도메인의 공용 코드를 둡니다.
+- `shared/analytics`: 여러 route에 걸친 측정 정책과 Analytics Client 경계를 둡니다.
 - `lib`: 외부 라이브러리 설정이나 작은 헬퍼를 둡니다.
 - `types`: 앱 전체에서 사용하는 공통 타입을 둡니다.
 

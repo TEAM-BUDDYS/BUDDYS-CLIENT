@@ -1,6 +1,7 @@
 'use client';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import Link from 'next/link';
 import { useState } from 'react';
 
 import { POST_MUTATION_OPTIONS } from '@/domains/posts/api/query';
@@ -12,13 +13,13 @@ import { POST_QUERY_KEY, RECOMMENDATION_QUERY_KEY } from '@/shared/api';
 import { defaultProfileImage } from '@/shared/assets/illustrations';
 import { BookmarkIcon } from '@/shared/components/icons';
 import { useToast } from '@/shared/components/ui';
-import { Tag } from '@/shared/components/ui/card/card-tag';
 import { CommonImage } from '@/shared/components/ui/common-image/common-image';
+import { ROUTES } from '@/shared/config';
 
 interface PostDetailProfileHeaderProps {
   postId: number;
+  userId: number;
   nickname: string;
-  country: string;
   profileDescription: string;
   profileImageUrl?: string;
   recruitmentStatus?: PostRecruitmentStatusTypes;
@@ -27,8 +28,8 @@ interface PostDetailProfileHeaderProps {
 
 export const PostDetailProfileHeader = ({
   postId,
+  userId,
   nickname,
-  country,
   profileDescription,
   profileImageUrl,
   recruitmentStatus = 'RECRUITING',
@@ -36,7 +37,10 @@ export const PostDetailProfileHeader = ({
 }: PostDetailProfileHeaderProps) => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
-  const profileImageSrc = profileImageUrl ?? defaultProfileImage;
+  const profileImageSrc = profileImageUrl || defaultProfileImage;
+  const profileHref = isMine
+    ? ROUTES.PROFILE.ROOT
+    : ROUTES.PROFILE.DETAIL(userId);
   const [selectedRecruitmentStatus, setSelectedRecruitmentStatus] =
     useState(recruitmentStatus);
   const [isStatusBottomSheetOpen, setIsStatusBottomSheetOpen] = useState(false);
@@ -97,22 +101,26 @@ export const PostDetailProfileHeader = ({
   return (
     <header className="flex w-full items-center justify-between">
       <div className="flex min-w-0 items-center gap-2">
-        <CommonImage
-          src={profileImageSrc}
-          alt={`${nickname} 프로필 이미지`}
-          width={44}
-          height={44}
-          unoptimized={Boolean(profileImageUrl)}
-          radius="rounded-full"
-        />
+        <Link
+          href={profileHref}
+          aria-label={`${nickname} 프로필로 이동`}
+          className="shrink-0 rounded-full"
+        >
+          <CommonImage
+            src={profileImageSrc}
+            alt=""
+            width={44}
+            height={44}
+            unoptimized={Boolean(profileImageUrl)}
+            radius="rounded-full"
+            className="size-11 border border-gray-100"
+          />
+        </Link>
 
         <div className="flex min-w-0 flex-col">
-          <div className="flex min-w-0 items-center gap-1">
-            <strong className="text-body-sb-16 truncate text-gray-800">
-              {nickname}
-            </strong>
-            <Tag value={country} />
-          </div>
+          <strong className="text-body-sb-16 truncate text-gray-800">
+            {nickname}
+          </strong>
           <span className="text-body-r-14 truncate text-gray-500">
             {profileDescription}
           </span>
