@@ -68,7 +68,7 @@ export const OtherProfilePageView = ({
           <OtherContentSection
             userId={userId}
             onCourseTabClick={handleChatClick}
-            className="mt-6"
+            className="mt-3"
           />
         )}
       </main>
