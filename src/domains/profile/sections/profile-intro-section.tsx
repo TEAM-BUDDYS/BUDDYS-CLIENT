@@ -17,6 +17,7 @@ type ProfileIntroSectionProps = {
       viewerType: 'other';
       bio?: string | null;
       onChatClick: () => void;
+      isChatPending?: boolean;
     }
   | {
       viewerType: 'withdrawn';
@@ -40,8 +41,13 @@ export const ProfileIntroSection = (props: ProfileIntroSectionProps) => {
           프로필 수정
         </Button>
       ) : (
-        <Button variant="secondary" align="center" onClick={props.onChatClick}>
-          채팅하기
+        <Button
+          variant="secondary"
+          align="center"
+          onClick={props.onChatClick}
+          disabled={props.isChatPending}
+        >
+          {props.isChatPending ? '연결 중...' : '채팅하기'}
         </Button>
       )}
     </div>
