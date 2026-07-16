@@ -44,7 +44,7 @@ export const PostDetailCommentSection = ({
               <CommentItem
                 content={comment.content}
                 writerName={comment.writerName}
-                profileImageUrl={comment.profileImageUrl}
+                profileImageUrl={comment.writerProfileImageUrl}
                 createdAt={comment.createdAt}
                 timeAgo={comment.timeAgo}
               />
