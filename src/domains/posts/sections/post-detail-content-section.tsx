@@ -4,7 +4,7 @@ import { POST_RECRUITMENT_COUNT_LABELS } from '@/domains/posts/model/post-condit
 import type { PostDetail } from '@/domains/posts/model/post-detail';
 import { getCityDisplayName } from '@/shared/api';
 import { CalendarIcon, LocationIcon, MyIcon } from '@/shared/components/icons';
-import { PostStatusTag } from '@/shared/components/ui';
+import { PostStatusTag, Tag } from '@/shared/components/ui';
 import { formatMonthDayWithWeekday } from '@/shared/utils/format-date-range';
 import { formatRelativeTime } from '@/shared/utils/format-relative-time';
 
@@ -74,7 +74,6 @@ export const PostDetailContentSection = ({
         key={post.postId}
         postId={post.postId}
         nickname={post.author.nickname}
-        country={post.author.country}
         profileDescription={getAuthorDescription(post)}
         profileImageUrl={post.author.profileImageUrl ?? undefined}
         recruitmentStatus={post.recruitmentStatus}
@@ -82,7 +81,10 @@ export const PostDetailContentSection = ({
       />
 
       <div className="flex w-full flex-col items-start gap-2">
-        {!post.isMine && <PostStatusTag status={post.recruitmentStatus} />}
+        <div className="flex items-center gap-1">
+          {!post.isMine && <PostStatusTag status={post.recruitmentStatus} />}
+          <Tag value={post.country.name} />
+        </div>
 
         <div className="flex w-full flex-col gap-4">
           <h1 className="text-title-b-20 text-gray-800">{post.title}</h1>

@@ -1,18 +1,12 @@
-interface PostDetailCommentCandidate {
-  commentId?: number;
-  writerName?: string;
-  content?: string;
-  createdAt?: string;
-  timeAgo?: string;
-}
+import type { components } from '@/types/schema';
 
-export interface PostDetailComment {
+type PostDetailCommentCandidate = components['schemas']['CommentResponse'];
+
+export type PostDetailComment = PostDetailCommentCandidate & {
   commentId: number;
   writerName: string;
   content: string;
-  createdAt?: string;
-  timeAgo?: string;
-}
+};
 
 export const hasPostDetailCommentFields = (
   comment: PostDetailCommentCandidate,
@@ -20,6 +14,9 @@ export const hasPostDetailCommentFields = (
   return (
     typeof comment.commentId === 'number' &&
     typeof comment.writerName === 'string' &&
+    (comment.writerProfileImageUrl === undefined ||
+      comment.writerProfileImageUrl === null ||
+      typeof comment.writerProfileImageUrl === 'string') &&
     typeof comment.content === 'string'
   );
 };

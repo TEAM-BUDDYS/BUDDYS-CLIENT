@@ -12,13 +12,11 @@ import { POST_QUERY_KEY, RECOMMENDATION_QUERY_KEY } from '@/shared/api';
 import { defaultProfileImage } from '@/shared/assets/illustrations';
 import { BookmarkIcon } from '@/shared/components/icons';
 import { useToast } from '@/shared/components/ui';
-import { Tag } from '@/shared/components/ui/card/card-tag';
 import { CommonImage } from '@/shared/components/ui/common-image/common-image';
 
 interface PostDetailProfileHeaderProps {
   postId: number;
   nickname: string;
-  country: string;
   profileDescription: string;
   profileImageUrl?: string;
   recruitmentStatus?: PostRecruitmentStatusTypes;
@@ -28,7 +26,6 @@ interface PostDetailProfileHeaderProps {
 export const PostDetailProfileHeader = ({
   postId,
   nickname,
-  country,
   profileDescription,
   profileImageUrl,
   recruitmentStatus = 'RECRUITING',
@@ -107,12 +104,9 @@ export const PostDetailProfileHeader = ({
         />
 
         <div className="flex min-w-0 flex-col">
-          <div className="flex min-w-0 items-center gap-1">
-            <strong className="text-body-sb-16 truncate text-gray-800">
-              {nickname}
-            </strong>
-            <Tag value={country} />
-          </div>
+          <strong className="text-body-sb-16 truncate text-gray-800">
+            {nickname}
+          </strong>
           <span className="text-body-r-14 truncate text-gray-500">
             {profileDescription}
           </span>
