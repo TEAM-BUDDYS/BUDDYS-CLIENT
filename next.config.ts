@@ -22,6 +22,16 @@ const nextConfig: NextConfig = {
           'buddys-assets-332486111134-ap-northeast-2-an.s3.ap-northeast-2.amazonaws.com',
         pathname: '/profiles/**',
       },
+      {
+        protocol: 'http',
+        hostname: '*.kakaocdn.net',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.kakaocdn.net',
+        pathname: '/**',
+      },
     ],
   },
 };
