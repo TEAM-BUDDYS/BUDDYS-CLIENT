@@ -12,6 +12,8 @@ export type MyPost = components['schemas']['PostResponse'];
 export type GetUserProfileResponse =
   components['schemas']['BaseResponseUserPublicProfileResponse'];
 
+export type TagGroup = components['schemas']['TagGroupResponse'];
+
 export type GetUserPostsParams =
   operations['getUserPosts']['parameters']['query'];
 export type GetUserPostsResponse =
