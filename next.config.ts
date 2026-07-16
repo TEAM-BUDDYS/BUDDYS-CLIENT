@@ -6,10 +6,16 @@ const nextConfig: NextConfig = {
 
   images: {
     remotePatterns: [
+      // TODO: example 도메인 및 picsum 도메인 삭제
       {
         protocol: 'https',
         hostname: 'picsum.photos',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'example.com',
+        pathname: '/post-image.png',
       },
       {
         protocol: 'https',
@@ -18,9 +24,31 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'buddys-assets.s3.ap-northeast-2.amazonaws.com',
+        pathname: '/profiles/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'buddys-assets.s3.ap-northeast-2.amazonaws.com',
+        pathname: '/posts/**',
+      },
+      {
+        protocol: 'https',
+        hostname:
+          'buddys-assets-332486111134-ap-northeast-2-an.s3.ap-northeast-2.amazonaws.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
         hostname:
           'buddys-assets-332486111134-ap-northeast-2-an.s3.ap-northeast-2.amazonaws.com',
         pathname: '/profiles/**',
+      },
+      {
+        protocol: 'https',
+        hostname:
+          'buddys-assets-332486111134-ap-northeast-2-an.s3.ap-northeast-2.amazonaws.com',
+        pathname: '/posts/**',
       },
     ],
   },
