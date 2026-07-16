@@ -85,7 +85,7 @@ export const Modal = (props: ModalProps) => {
       >
         <div className="flex flex-col items-center gap-4">
           {visual && (
-            <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-lg">
+            <div className="flex shrink-0 items-center justify-center">
               {visual}
             </div>
           )}
