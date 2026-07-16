@@ -66,6 +66,8 @@ const getCountries = async (
 };
 
 const COUNTRY_PAGE_SIZE = 50;
+const REFERENCE_DATA_STALE_TIME = 30 * 60 * 1000;
+const REFERENCE_DATA_GC_TIME = 60 * 60 * 1000;
 
 export const COUNTRY_QUERY_OPTIONS = {
   LIST: () =>
@@ -79,6 +81,8 @@ export const COUNTRY_QUERY_OPTIONS = {
           size: COUNTRY_PAGE_SIZE,
         }),
       initialPageParam: 0,
+      staleTime: REFERENCE_DATA_STALE_TIME,
+      gcTime: REFERENCE_DATA_GC_TIME,
       getNextPageParam: (lastPage) => {
         if (!lastPage.hasNext) {
           return undefined;
