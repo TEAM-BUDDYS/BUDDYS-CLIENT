@@ -49,10 +49,10 @@ export const SearchHistory = ({
             <button
               type="button"
               onClick={() => onSelect(item)}
-              className="flex h-full min-w-0 flex-1 items-center gap-2 text-left"
+              className="flex h-full min-w-0 flex-1 items-center gap-2.5 text-left"
             >
-              <LeadingIcon className="size-4 shrink-0 text-gray-200" />
-              <span className="text-body-m-15 truncate text-gray-800">
+              <LeadingIcon className="size-5 shrink-0 text-gray-200" />
+              <span className="text-body-m-16 truncate text-gray-800">
                 {item.keyword}
               </span>
             </button>
