@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  usePrefetchInfiniteQuery,
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
 } from '@tanstack/react-query';
@@ -36,6 +37,11 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
     useState<number | null>(null);
 
   const lastPublishedReadMessageIdRef = useRef<number | null>(null);
+  const messageQueryOptions = CHAT_QUERY_OPTIONS.MESSAGES(chatRoomId, {
+    size: CHAT_MESSAGE_PAGE_SIZE,
+  });
+
+  usePrefetchInfiniteQuery(messageQueryOptions);
 
   const { data: chatRoomData } = useSuspenseQuery(
     CHAT_QUERY_OPTIONS.DETAIL(chatRoomId),
@@ -48,11 +54,7 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
     isFetchingNextPage,
     isFetchNextPageError,
     refetch: refetchMessages,
-  } = useSuspenseInfiniteQuery(
-    CHAT_QUERY_OPTIONS.MESSAGES(chatRoomId, {
-      size: CHAT_MESSAGE_PAGE_SIZE,
-    }),
-  );
+  } = useSuspenseInfiniteQuery(messageQueryOptions);
 
   const handleReceiveMessage = useCallback(
     (response: ReceiveChatMessageResponse) => {
@@ -114,12 +116,15 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
     ].reverse();
 
     const combinedMessages = [...fetchedMessages, ...realtimeMessages];
+    const seenMessageIds = new Set<number>();
+    const uniqueMessages = combinedMessages.filter(({ messageId }) => {
+      if (seenMessageIds.has(messageId)) {
+        return false;
+      }
 
-    const uniqueMessages = combinedMessages.filter(
-      (message, index, array) =>
-        array.findIndex((item) => item.messageId === message.messageId) ===
-        index,
-    );
+      seenMessageIds.add(messageId);
+      return true;
+    });
 
     if (lastReadByParticipantMessageId === null) {
       return uniqueMessages;

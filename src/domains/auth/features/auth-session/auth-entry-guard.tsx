@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { type ReactNode, useEffect } from 'react';
 
+import { AsyncLoadingState } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
 import { useAuthSession } from './auth-session-provider';
@@ -21,7 +22,11 @@ export const AuthEntryGuard = ({ children }: AuthEntryGuardProps) => {
     }
   }, [router, status]);
 
-  if (status !== 'authenticated') {
+  if (status === 'initializing') {
+    return <AsyncLoadingState />;
+  }
+
+  if (status === 'unauthenticated') {
     return null;
   }
 
