@@ -15,7 +15,6 @@ import {
   AsyncLoadingState,
   type AsyncLoadingStateProps,
 } from './async-loading-state';
-import { DelayedFallback } from './delayed-fallback';
 
 type ErrorStateOptions = Omit<AsyncErrorStateProps, 'className' | 'onRetry'>;
 type LoadingStateOptions = Omit<AsyncLoadingStateProps, 'className'>;
@@ -29,7 +28,6 @@ export interface AsyncBoundaryProps {
   children: ReactNode;
   loadingFallback?: ReactNode;
   errorFallback?: (props: AsyncBoundaryErrorFallbackProps) => ReactNode;
-  loadingDelayMs?: number;
   loadingState?: LoadingStateOptions;
   errorState?: ErrorStateOptions;
   className?: string;
@@ -41,7 +39,6 @@ export const AsyncBoundary = ({
   children,
   loadingFallback,
   errorFallback,
-  loadingDelayMs,
   loadingState,
   errorState,
   className,
@@ -86,15 +83,7 @@ export const AsyncBoundary = ({
           onReset={reset}
           resetKeys={resetKeys}
         >
-          <Suspense
-            fallback={
-              <DelayedFallback delayMs={loadingDelayMs}>
-                {resolvedLoadingFallback}
-              </DelayedFallback>
-            }
-          >
-            {children}
-          </Suspense>
+          <Suspense fallback={resolvedLoadingFallback}>{children}</Suspense>
         </ErrorBoundary>
       )}
     </QueryErrorResetBoundary>

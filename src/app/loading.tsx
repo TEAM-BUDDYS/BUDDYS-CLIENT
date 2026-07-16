@@ -1,11 +1,9 @@
-import { AsyncLoadingState, DelayedFallback } from '@/shared/components/ui';
+import { AsyncLoadingState } from '@/shared/components/ui';
 
 export default function Loading() {
   return (
     <main>
-      <DelayedFallback>
-        <AsyncLoadingState />
-      </DelayedFallback>
+      <AsyncLoadingState />
     </main>
   );
 }

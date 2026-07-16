@@ -7,8 +7,6 @@ export {
   type AsyncErrorStateProps,
   AsyncLoadingState,
   type AsyncLoadingStateProps,
-  DelayedFallback,
-  type DelayedFallbackProps,
 } from './async-boundary';
 export { BottomActionBar } from './bottom-action-bar/bottom-action-bar';
 export { BottomSheet } from './bottom-sheet/bottom-sheet';
