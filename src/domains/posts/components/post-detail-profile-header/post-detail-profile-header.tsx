@@ -104,6 +104,7 @@ export const PostDetailProfileHeader = ({
           height={44}
           unoptimized={Boolean(profileImageUrl)}
           radius="rounded-full"
+          className="border border-gray-100"
         />
 
         <div className="flex min-w-0 flex-col">

@@ -33,7 +33,7 @@ export const CommentItem = ({
         width={40}
         height={40}
         radius="rounded-full"
-        className="size-10"
+        className="size-10 border border-gray-100"
       />
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <div className="flex items-center gap-2 whitespace-nowrap">
