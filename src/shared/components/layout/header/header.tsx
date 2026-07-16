@@ -14,7 +14,6 @@ interface HeaderProps {
   hasBackButton?: boolean;
   contentAlign?: HeaderContentAlignTypes;
   onBackClick?: () => void;
-  className?: string;
 }
 
 export const Header = ({
@@ -23,7 +22,6 @@ export const Header = ({
   hasBackButton = false,
   contentAlign = 'left',
   onBackClick,
-  className,
 }: HeaderProps) => {
   const router = useRouter();
 
@@ -44,12 +42,7 @@ export const Header = ({
     );
 
   return (
-    <header
-      className={cn(
-        'relative flex h-15 w-full items-center bg-white pr-4 pl-5',
-        className,
-      )}
-    >
+    <header className="relative flex h-15 w-full items-center bg-white pr-4 pl-5">
       {hasBackButton && (
         <button
           aria-label="뒤로가기"

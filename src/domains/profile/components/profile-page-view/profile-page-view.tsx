@@ -23,10 +23,9 @@ export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
   const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex h-dvh flex-col">
       <Header
         content="내 프로필"
-        className="sticky top-0 z-10"
         right={
           <button
             aria-label="설정"
@@ -39,7 +38,7 @@ export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
         }
       />
 
-      <main className="flex flex-1 flex-col items-center overflow-y-auto pt-9 pb-45.75">
+      <main className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto pt-9 pb-9">
         <UserProfile
           imageUrl={profile.imageUrl}
           nickname={profile.nickname}
@@ -71,7 +70,7 @@ export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
         />
       </main>
 
-      <BottomNavigation className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[430px]" />
+      <BottomNavigation />
 
       <ComingSoonModal
         open={isComingSoonOpen}
