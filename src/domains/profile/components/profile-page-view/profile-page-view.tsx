@@ -26,6 +26,7 @@ export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
     <div className="flex min-h-screen flex-col">
       <Header
         content="내 프로필"
+        className="sticky top-0 z-10"
         right={
           <button
             aria-label="설정"
