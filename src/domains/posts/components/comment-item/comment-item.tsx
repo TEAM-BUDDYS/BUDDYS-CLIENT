@@ -8,6 +8,7 @@ import { formatRelativeTime } from '@/shared/utils/format-relative-time';
 interface CommentItemProps extends HTMLAttributes<HTMLElement> {
   content: string;
   writerName: string;
+  profileImageUrl?: string | null;
   createdAt?: string;
   timeAgo?: string;
 }
@@ -15,12 +16,14 @@ interface CommentItemProps extends HTMLAttributes<HTMLElement> {
 export const CommentItem = ({
   content,
   writerName,
+  profileImageUrl,
   createdAt,
   timeAgo,
   className,
   ...props
 }: CommentItemProps) => {
   const timeLabel = timeAgo ?? (createdAt ? formatRelativeTime(createdAt) : '');
+  const profileImageSrc = profileImageUrl || defaultProfileImage;
 
   return (
     <article
@@ -28,7 +31,7 @@ export const CommentItem = ({
       {...props}
     >
       <CommonImage
-        src={defaultProfileImage}
+        src={profileImageSrc}
         alt={`${writerName} 프로필 이미지`}
         width={40}
         height={40}
