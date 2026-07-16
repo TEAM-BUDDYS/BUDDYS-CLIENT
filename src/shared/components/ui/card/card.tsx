@@ -52,7 +52,6 @@ export const Card = ({
             alt={`${title} 썸네일`}
             width={100}
             height={100}
-            unoptimized
             radius="rounded-xl"
             className="aspect-square size-25"
           />
