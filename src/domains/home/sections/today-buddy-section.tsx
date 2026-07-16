@@ -53,7 +53,6 @@ export const TodayBuddySection = () => {
             width={44}
             height={44}
             radius="rounded-lg"
-            unoptimized
             className="size-11"
           />
         }

@@ -33,7 +33,6 @@ export const SummaryCard = ({ post }: SummaryCardProps) => {
             alt={`${post.title} 썸네일`}
             width={80}
             height={80}
-            unoptimized
             radius="rounded-xl"
           />
         )}

@@ -102,7 +102,6 @@ export const PostDetailProfileHeader = ({
           alt={`${nickname} 프로필 이미지`}
           width={44}
           height={44}
-          unoptimized={Boolean(profileImageUrl)}
           radius="rounded-full"
         />
 

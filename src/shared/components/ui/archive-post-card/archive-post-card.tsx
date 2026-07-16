@@ -35,7 +35,6 @@ export const ArchivePostCard = ({
           alt={`${title} 썸네일`}
           width={96}
           height={96}
-          unoptimized
           radius="rounded-lg"
           className="aspect-square"
         />

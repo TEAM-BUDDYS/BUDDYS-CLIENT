@@ -35,9 +35,9 @@ export const CardProfile = ({
           alt={`${nickname} 프로필 이미지`}
           width={60}
           height={60}
-          unoptimized
           radius="rounded-full"
           onError={(event) => {
+            event.currentTarget.srcset = '';
             event.currentTarget.src = defaultProfileImage.src;
           }}
         />
