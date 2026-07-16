@@ -10,6 +10,7 @@ import { ProfileBadgeIcon } from '@/shared/components/icons';
 import { Header } from '@/shared/components/layout';
 import { useToast } from '@/shared/components/ui';
 import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
+import { ROUTES } from '@/shared/config';
 
 import type { OtherProfile } from '../../model/profile';
 import { OtherContentSection } from '../../sections/other-content-section';
@@ -53,7 +54,7 @@ export const OtherProfilePageView = ({
             return;
           }
 
-          router.push(`/chat/${chatRoomId}`);
+          router.push(ROUTES.CHAT.DETAIL(chatRoomId));
         },
         onError: (error) => {
           Sentry.captureException(error);
@@ -64,6 +65,10 @@ export const OtherProfilePageView = ({
         },
       },
     );
+  };
+
+  const handleCourseTabClick = () => {
+    setIsComingSoonOpen(true);
   };
 
   const handleModalClose = () => setIsComingSoonOpen(false);
@@ -110,7 +115,7 @@ export const OtherProfilePageView = ({
         {!profile.isWithdrawn && (
           <OtherContentSection
             userId={userId}
-            onCourseTabClick={handleChatClick}
+            onCourseTabClick={handleCourseTabClick}
             className="mt-3"
           />
         )}
