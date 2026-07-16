@@ -60,7 +60,7 @@ export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
         <ProfileIntroSection
           viewerType="me"
           bio={profile.bio}
-          onEditClick={() => router.push(ROUTES.PROFILE.EDIT)}
+          onEditClick={() => setIsComingSoonOpen(true)}
           className="mt-5.25 px-4"
         />
 
