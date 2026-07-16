@@ -190,7 +190,7 @@ export interface paths {
     };
     /**
      * 타 유저 프로필 조회
-     * @description 특정 사용자의 프로필과 대표 태그를 조회합니다.
+     * @description 특정 사용자의 프로필과 태그를 조회합니다.
      */
     get: operations['getUserProfile'];
     put?: never;
@@ -867,6 +867,22 @@ export interface components {
       message?: string;
       data?: components['schemas']['UserPublicProfileResponse'];
     };
+    TagGroupResponse: {
+      /**
+       * @description 태그 타입
+       * @example ACTIVITY
+       * @enum {string}
+       */
+      tagType?: 'ACTIVITY' | 'INTEREST' | 'TRAVEL_STYLE';
+      /**
+       * @description 해당 타입의 전체 태그 이름 목록
+       * @example [
+       *       "액티비티",
+       *       "맛집탐방"
+       *     ]
+       */
+      tags?: string[];
+    };
     UserPublicProfileResponse: {
       /**
        * Format: int64
@@ -907,6 +923,8 @@ export interface components {
        *     ]
        */
       representativeTags?: string[];
+      /** @description 전체 취향 태그 */
+      allTags?: components['schemas']['TagGroupResponse'][];
       /**
        * @description 삭제된 사용자 여부
        * @example false
@@ -980,22 +998,6 @@ export interface components {
       code?: string;
       message?: string;
       data?: components['schemas']['UserProfileResponse'];
-    };
-    TagGroupResponse: {
-      /**
-       * @description 태그 타입
-       * @example ACTIVITY
-       * @enum {string}
-       */
-      tagType?: 'ACTIVITY' | 'INTEREST' | 'TRAVEL_STYLE';
-      /**
-       * @description 해당 타입의 전체 태그 이름 목록
-       * @example [
-       *       "액티비티",
-       *       "맛집탐방"
-       *     ]
-       */
-      tags?: string[];
     };
     UserProfileResponse: {
       /**
