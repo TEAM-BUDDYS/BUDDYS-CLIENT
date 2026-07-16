@@ -37,7 +37,7 @@ export const PostDetailProfileHeader = ({
 }: PostDetailProfileHeaderProps) => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
-  const profileImageSrc = profileImageUrl ?? defaultProfileImage;
+  const profileImageSrc = profileImageUrl || defaultProfileImage;
   const profileHref = isMine
     ? ROUTES.PROFILE.ROOT
     : ROUTES.PROFILE.DETAIL(userId);
@@ -108,7 +108,7 @@ export const PostDetailProfileHeader = ({
         >
           <CommonImage
             src={profileImageSrc}
-            alt={`${nickname} 프로필 이미지`}
+            alt=""
             width={44}
             height={44}
             unoptimized={Boolean(profileImageUrl)}

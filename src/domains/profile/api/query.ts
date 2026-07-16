@@ -42,6 +42,16 @@ const isNullableString = (value: unknown) => {
   return value === undefined || value === null || typeof value === 'string';
 };
 
+const isValidVerificationBadge = (value: unknown) => {
+  return (
+    value === undefined ||
+    value === null ||
+    value === 'SOCIAL_LOGIN' ||
+    value === 'UNIVERSITY_VERIFIED' ||
+    value === 'EXCHANGE_VERIFIED'
+  );
+};
+
 const isValidUserPublicProfileData = (
   data: unknown,
 ): data is UserPublicProfileDataWithNickname => {
@@ -61,7 +71,7 @@ const isValidUserPublicProfileData = (
   return (
     typeof nickname === 'string' &&
     isNullableString(profileImageUrl) &&
-    isNullableString(verificationBadge) &&
+    isValidVerificationBadge(verificationBadge) &&
     (representativeTags === undefined || Array.isArray(representativeTags)) &&
     isNullableString(bio) &&
     (isDeleted === undefined || typeof isDeleted === 'boolean')

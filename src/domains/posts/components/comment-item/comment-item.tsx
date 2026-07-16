@@ -41,7 +41,7 @@ export const CommentItem = ({
       >
         <CommonImage
           src={profileImageSrc}
-          alt={`${writerName} 프로필 이미지`}
+          alt=""
           width={40}
           height={40}
           radius="rounded-full"
