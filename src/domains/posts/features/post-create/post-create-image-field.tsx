@@ -34,9 +34,9 @@ export const PostCreateImageField = ({
   };
 
   return (
-    <section className="flex flex-col gap-2">
+    <section className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
-        <h2 className="text-body-sb-15 text-gray-800">사진</h2>
+        <h2 className="text-body-sb-16 text-gray-800">사진</h2>
         <p className="text-caption-r-12 text-gray-500">
           최대 10개 선택 ({images.length}/{MAX_IMAGE_COUNT})
         </p>

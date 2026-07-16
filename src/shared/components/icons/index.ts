@@ -33,6 +33,7 @@ export { SandglassIcon } from './sandglass-icon';
 export { SearchIcon } from './search-icon';
 export { SendIcon } from './send-icon';
 export { SettingIcon } from './setting-icon';
+export { SpeechBubbleIcon } from './speech-bubble-icon';
 export { TrashIcon } from './trash-icon';
 export { UploadIcon } from './upload-icon';
 export { WarningIcon } from './warning-icon';

@@ -5,6 +5,7 @@ import {
   initialFilterValue,
 } from '@/domains/home/features/filter-sheet/use-filter-sheet';
 import type { BuddyFilterKey } from '@/domains/home/model/buddy-filter';
+import { formatFilterDateForParams } from '@/domains/home/model/buddy-search';
 
 const getAppliedFilterKeys = (filterValue: FilterSheetValue) => {
   const appliedFilterKeys: BuddyFilterKey[] = [];
@@ -13,7 +14,10 @@ const getAppliedFilterKeys = (filterValue: FilterSheetValue) => {
     appliedFilterKeys.push('country');
   }
 
-  if (filterValue.startDate || filterValue.endDate) {
+  if (
+    formatFilterDateForParams(filterValue.startDate) ||
+    formatFilterDateForParams(filterValue.endDate)
+  ) {
     appliedFilterKeys.push('date');
   }
 
