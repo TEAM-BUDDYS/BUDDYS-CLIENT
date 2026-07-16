@@ -1,10 +1,10 @@
+import { StartChatButton } from '@/domains/chat/features/start-chat/start-chat-button';
 import { PostDetailComments } from '@/domains/posts/features/post-detail/post-detail-comments';
 import type { PostDetail } from '@/domains/posts/model/post-detail';
 import { PostDetailConditionSection } from '@/domains/posts/sections/post-detail-condition-section';
 import { PostDetailContentSection } from '@/domains/posts/sections/post-detail-content-section';
-import { ChatIcon, MoreIcon } from '@/shared/components/icons';
+import { MoreIcon } from '@/shared/components/icons';
 import { Header } from '@/shared/components/layout';
-import { IconButton } from '@/shared/components/ui';
 
 interface PostDetailViewProps {
   post: PostDetail;
@@ -46,13 +46,7 @@ export const PostDetailView = ({ post }: PostDetailViewProps) => {
 
       {!post.isMine && (
         <div className="pointer-events-none fixed bottom-28.5 left-1/2 z-20 flex w-full max-w-107.5 -translate-x-1/2 justify-end px-4">
-          <IconButton
-            className="pointer-events-auto px-2.5 py-2"
-            icon={<ChatIcon />}
-            variant="primary"
-          >
-            채팅하기
-          </IconButton>
+          <StartChatButton participantUserId={post.author.userId} />
         </div>
       )}
     </div>

@@ -1,4 +1,3 @@
-import { AuthEntryGuard } from '@/domains/auth/features/auth-session/auth-entry-guard';
 import { CustomizedExploreContent } from '@/domains/home/features/customized-explore/customized-explore-content';
 
 interface CustomizedExploreProps {
@@ -15,9 +14,5 @@ export default async function CustomizedExplore({
     ? params.keyword[0]
     : params?.keyword;
 
-  return (
-    <AuthEntryGuard>
-      <CustomizedExploreContent keyword={keyword} />
-    </AuthEntryGuard>
-  );
+  return <CustomizedExploreContent keyword={keyword} />;
 }

@@ -37,7 +37,7 @@ export const CardProfile = ({
           height={60}
           unoptimized
           radius="rounded-full"
-          className="size-15"
+          className="size-15 border border-gray-100"
           onError={(event) => {
             event.currentTarget.src = defaultProfileImage.src;
           }}
