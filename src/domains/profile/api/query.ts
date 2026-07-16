@@ -78,22 +78,19 @@ const getMyProfile = async (): Promise<MyProfile> => {
     throw new Error('프로필 응답 형식이 올바르지 않습니다.');
   }
 
-  const {
-    profileImageUrl,
-    nickname,
-    verificationBadge,
-    representativeTags,
-    bio,
-  } = response.data;
+  const { profileImageUrl, nickname, verificationBadge, allTags, bio } =
+    response.data;
 
   return {
     imageUrl: profileImageUrl || null,
     nickname,
     isVerified: Boolean(verificationBadge),
-    tags: (representativeTags ?? []).map((name, index) => ({
-      id: index,
-      name,
-    })),
+    tags: (allTags ?? [])
+      .flatMap((group) => group.tags ?? [])
+      .map((name, index) => ({
+        id: index,
+        name,
+      })),
     bio: bio ?? null,
   };
 };
