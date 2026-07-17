@@ -109,6 +109,7 @@ export const ChatMessageList = ({
               type="incoming"
               content={message.content}
               sentAt={message.sentAt}
+              senderUserId={message.sender.userId}
               profileImageUrl={message.sender.profileImageUrl}
             />
           ),
