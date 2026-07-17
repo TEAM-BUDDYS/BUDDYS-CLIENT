@@ -26,3 +26,17 @@ export const formatFilterDateForParams = (date: string) => {
 export const hasInvalidFilterDate = (...dates: string[]) => {
   return dates.some((date) => date && !formatFilterDateForParams(date));
 };
+
+export const hasInvalidFilterDateOrder = (
+  startDate: string,
+  endDate: string,
+) => {
+  const formattedStartDate = formatFilterDateForParams(startDate);
+  const formattedEndDate = formatFilterDateForParams(endDate);
+
+  if (!formattedStartDate || !formattedEndDate) {
+    return false;
+  }
+
+  return formattedStartDate > formattedEndDate;
+};

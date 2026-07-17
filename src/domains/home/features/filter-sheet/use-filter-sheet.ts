@@ -1,6 +1,9 @@
 import { useState } from 'react';
 
-import { hasInvalidFilterDate } from '@/domains/home/model/filter-date';
+import {
+  hasInvalidFilterDate,
+  hasInvalidFilterDateOrder,
+} from '@/domains/home/model/filter-date';
 import type { Country } from '@/shared/api';
 import { useToast } from '@/shared/components/ui';
 import { formatDateInput } from '@/shared/utils/format-date-input';
@@ -67,6 +70,14 @@ export const useFilterSheet = ({
   const handleApplyClick = () => {
     if (hasInvalidFilterDate(filterValue.startDate, filterValue.endDate)) {
       showToast('날짜를 정확히 입력해 주세요.', {
+        bottomOffsetClassName: 'bottom-24',
+        variant: 'gray',
+      });
+      return;
+    }
+
+    if (hasInvalidFilterDateOrder(filterValue.startDate, filterValue.endDate)) {
+      showToast('종료일은 시작일과 같거나 이후로 입력해 주세요.', {
         bottomOffsetClassName: 'bottom-24',
         variant: 'gray',
       });
