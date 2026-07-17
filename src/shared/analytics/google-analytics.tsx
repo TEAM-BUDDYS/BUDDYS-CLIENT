@@ -52,9 +52,11 @@ export const GoogleAnalytics = ({ measurementId }: GoogleAnalyticsProps) => {
     window.dataLayer = window.dataLayer ?? [];
     window.gtag =
       window.gtag ??
-      ((...args: GoogleTagArguments) => {
-        window.dataLayer.push(args);
-      });
+      function (..._args: GoogleTagArguments) {
+        // Google tag distinguishes the native arguments object from an array.
+        // eslint-disable-next-line prefer-rest-params
+        window.dataLayer.push(arguments);
+      };
 
     const campaignConfig = getGoogleAnalyticsCampaignConfig(
       window.location.search,
