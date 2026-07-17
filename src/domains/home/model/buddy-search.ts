@@ -1,6 +1,8 @@
 import type { FilterSheetValue } from '@/domains/home/features/filter-sheet/use-filter-sheet';
 import type { GetPostsParams, PostSummary } from '@/domains/posts/api/type';
 
+import { formatFilterDateForParams } from './filter-date';
+
 export const BUDDY_SEARCH_SIZE = 3;
 
 type PostSearchParams = NonNullable<GetPostsParams>;
@@ -65,31 +67,6 @@ export const getMappedValues = <Value extends string>(
   return tagIds
     .map((tagId) => valueMap[tagId])
     .filter((value): value is Value => value !== undefined);
-};
-
-const FILTER_DATE_PATTERN = /^\d{2}\.\d{2}\.\d{2}$/;
-
-export const formatFilterDateForParams = (date: string) => {
-  if (!FILTER_DATE_PATTERN.test(date)) {
-    return undefined;
-  }
-
-  const [year, month, day] = date.split('.');
-  const fullYear = Number(`20${year}`);
-  const monthNumber = Number(month);
-  const dayNumber = Number(day);
-  const dateValue = new Date(fullYear, monthNumber - 1, dayNumber);
-
-  const isValidDate =
-    dateValue.getFullYear() === fullYear &&
-    dateValue.getMonth() === monthNumber - 1 &&
-    dateValue.getDate() === dayNumber;
-
-  if (!isValidDate) {
-    return undefined;
-  }
-
-  return `${fullYear}-${month}-${day}`;
 };
 
 export const getBuddySearchParams = (
