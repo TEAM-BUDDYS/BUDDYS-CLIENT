@@ -137,12 +137,14 @@ export const OnboardFlow = () => {
       setCurrentStep('complete');
     } catch (error) {
       if (isHTTPError(error) && error.response.status === 409) {
-        const response = await error.response.json<{
-          code?: string;
-          message?: string;
-        }>();
+        const response = error.data as
+          | {
+              code?: string;
+              message?: string;
+            }
+          | undefined;
 
-        if (response.code === 'AUTH-E003') {
+        if (response?.code === 'AUTH-E003') {
           setNicknameError(response.message ?? '이미 사용 중인 닉네임입니다.');
           return;
         }
