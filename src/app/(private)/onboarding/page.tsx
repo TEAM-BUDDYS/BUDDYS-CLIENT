@@ -1,10 +1,11 @@
-import { OnboardFlow } from '@/domains/onboarding/features/onboard/onboard-flow';
 import { AsyncBoundary } from '@/shared/components/ui';
+
+import { OnboardingClient } from './onboarding-client';
 
 export default function OnboardingPage() {
   return (
     <AsyncBoundary>
-      <OnboardFlow />
+      <OnboardingClient />
     </AsyncBoundary>
   );
 }
