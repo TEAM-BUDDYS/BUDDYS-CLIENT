@@ -18,11 +18,18 @@ import { ROUTES } from '@/shared/config';
 import { loginWithKakao, reissueAccessToken } from '../../api/query';
 import type { AuthSession, AuthStatusTypes } from '../../model/auth';
 
+interface MarkOnboardingCompletedOptions {
+  showCompletion: boolean;
+}
+
 interface AuthSessionContextValue {
   status: AuthStatusTypes;
   userId: number | null;
   onboardingCompleted: boolean | null;
+  isOnboardingCompletionVisible: boolean;
   authenticateWithKakao: (code: string) => Promise<AuthSession>;
+  markOnboardingCompleted: (options: MarkOnboardingCompletedOptions) => void;
+  finishOnboarding: () => void;
 }
 
 interface AuthSessionProviderProps {
@@ -40,11 +47,18 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
   const [onboardingCompleted, setOnboardingCompleted] = useState<
     boolean | null
   >(null);
+  const [isOnboardingCompletionVisible, setIsOnboardingCompletionVisible] =
+    useState(false);
 
   const setAuthenticatedSession = useCallback((loginResponse: AuthSession) => {
     setAccessToken(loginResponse.accessToken);
     setUserId(loginResponse.userId);
     setOnboardingCompleted(loginResponse.onboardingCompleted);
+
+    if (!loginResponse.onboardingCompleted) {
+      setIsOnboardingCompletionVisible(false);
+    }
+
     setStatus('authenticated');
 
     return loginResponse.accessToken;
@@ -54,6 +68,7 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
     setAccessToken(null);
     setUserId(null);
     setOnboardingCompleted(null);
+    setIsOnboardingCompletionVisible(false);
     setStatus('unauthenticated');
   }, []);
 
@@ -80,6 +95,20 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
     },
     [clearSession, setAuthenticatedSession],
   );
+
+  const markOnboardingCompleted = useCallback(
+    ({ showCompletion }: MarkOnboardingCompletedOptions) => {
+      setOnboardingCompleted(true);
+      setIsOnboardingCompletionVisible(
+        (isVisible) => showCompletion || isVisible,
+      );
+    },
+    [],
+  );
+
+  const finishOnboarding = useCallback(() => {
+    setIsOnboardingCompletionVisible(false);
+  }, []);
 
   useEffect(() => {
     setAccessTokenRefreshHandler(refreshSession);
@@ -111,9 +140,20 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
       status,
       userId,
       onboardingCompleted,
+      isOnboardingCompletionVisible,
       authenticateWithKakao,
+      markOnboardingCompleted,
+      finishOnboarding,
     }),
-    [authenticateWithKakao, onboardingCompleted, status, userId],
+    [
+      authenticateWithKakao,
+      finishOnboarding,
+      isOnboardingCompletionVisible,
+      markOnboardingCompleted,
+      onboardingCompleted,
+      status,
+      userId,
+    ],
   );
 
   return (
