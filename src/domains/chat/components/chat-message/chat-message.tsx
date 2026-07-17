@@ -1,7 +1,10 @@
+import Link from 'next/link';
+
 import { formatChatTime } from '@/domains/chat/utils/format-chat-time';
 import { cn } from '@/lib/cn';
 import { defaultProfileImage } from '@/shared/assets/illustrations';
 import { CommonImage } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
 
 interface BaseChatMessageProps {
   content: string;
@@ -11,11 +14,13 @@ interface BaseChatMessageProps {
 type ChatMessageProps =
   | (BaseChatMessageProps & {
       type: 'incoming';
+      senderUserId: number;
       profileImageUrl: string | null;
       isRead?: never;
     })
   | (BaseChatMessageProps & {
       type: 'outgoing';
+      senderUserId?: never;
       profileImageUrl?: never;
       isRead?: boolean;
     });
@@ -28,14 +33,20 @@ export const ChatMessage = (props: ChatMessageProps) => {
       className={cn('flex', isOutgoing ? 'justify-end' : 'justify-start gap-4')}
     >
       {!isOutgoing && (
-        <CommonImage
-          radius="rounded-full"
-          src={props.profileImageUrl ?? defaultProfileImage}
-          alt="프로필 이미지"
-          width={40}
-          height={40}
-          className="size-10 border border-gray-100"
-        />
+        <Link
+          href={ROUTES.PROFILE.DETAIL(props.senderUserId)}
+          aria-label="상대방 프로필로 이동"
+          className="shrink-0 rounded-full"
+        >
+          <CommonImage
+            radius="rounded-full"
+            src={props.profileImageUrl || defaultProfileImage}
+            alt=""
+            width={40}
+            height={40}
+            className="size-10 border border-gray-100"
+          />
+        </Link>
       )}
 
       <div

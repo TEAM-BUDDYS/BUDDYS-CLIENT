@@ -4,7 +4,7 @@ import { AsyncBoundary } from '@/shared/components/ui';
 
 export default function ChatPage() {
   return (
-    <div className="flex h-dvh flex-col">
+    <div className="fixed inset-0 mx-auto flex w-full max-w-[430px] min-w-[375px] flex-col">
       <Header content="채팅" />
 
       <main className="min-h-0 flex-1 scrollbar-none overflow-y-auto [&::-webkit-scrollbar]:hidden">

@@ -2,7 +2,6 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isHTTPError } from 'ky';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { useCitySearch, useCountryList } from '@/shared/api';
@@ -16,7 +15,6 @@ import {
   ProgressBar,
   useToast,
 } from '@/shared/components/ui';
-import { ROUTES } from '@/shared/config';
 
 import {
   ONBOARDING_MUTATION_OPTIONS,
@@ -57,13 +55,18 @@ type DisplayableRecommendedUser = RecommendedUser & {
   similarityScore: number;
 };
 
+interface OnboardFlowProps {
+  onCompleted: () => void;
+  onStart: () => void;
+}
+
 const isDisplayableRecommendedUser = (
   user?: RecommendedUser,
 ): user is DisplayableRecommendedUser => {
   return Boolean(user?.nickname && user.similarityScore !== undefined);
 };
 
-export const OnboardFlow = () => {
+export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
   const { uploadImage } = useImageUpload();
@@ -79,7 +82,6 @@ export const OnboardFlow = () => {
   const [nicknameError, setNicknameError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const router = useRouter();
   const {
     countryOptions,
     hasMoreCountries,
@@ -134,6 +136,7 @@ export const OnboardFlow = () => {
 
       await onboardingMutation.mutateAsync({ ...payload, profileImageUrl });
 
+      onCompleted();
       setCurrentStep('complete');
     } catch (error) {
       if (isHTTPError(error) && error.response.status === 409) {
@@ -314,10 +317,7 @@ export const OnboardFlow = () => {
             )}
             <div className="fixed bottom-0 left-1/2 z-10 w-full max-w-100 -translate-x-1/2 px-4 pb-[34px]">
               <div className="absolute right-0 bottom-0 left-0 -z-10 h-[145px] bg-gradient-to-b from-white/0 via-white to-white" />
-              <Button
-                onClick={() => router.push(ROUTES.HOME)}
-                className="w-full"
-              >
+              <Button onClick={onStart} className="w-full">
                 시작하기
               </Button>
             </div>

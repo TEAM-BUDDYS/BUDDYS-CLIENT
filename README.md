@@ -1,71 +1,72 @@
-<div align="center">
-  <h1>BUDDYS CLIENT</h1>
-  <p>교환학생 매칭 서비스 BUDDYS의 프론트엔드 애플리케이션입니다.</p>
-  <p>낯선 환경에서도 더 쉽게 연결되고, 더 편하게 소통할 수 있는 교환학생 경험을 만드는 것을 목표로 합니다.</p>
-</div>
+<img width="1920" height="1080" alt="thumbnail" src="https://github.com/user-attachments/assets/ceb2a12d-9241-43ef-a420-ef8547181906" />
 
+<br />
 <br />
 
 ## 📌 Service Introduction
 
-BUDDYS는 교환학생들이 새로운 학교와 지역에서 더 빠르게 적응하고, 서로 자연스럽게 연결될 수 있도록 돕는 서비스입니다.
-
-클라이언트 애플리케이션에서는 다음과 같은 사용자 경험을 중심으로 서비스를 구현합니다.
-
-- 교환학생 간 매칭과 탐색 경험
-- 코스 기록 및 공유를 통한 동행 경험 확장
-- 공통 UI 컴포넌트를 통한 일관된 인터페이스 제공
-- 모바일 환경에 최적화된 사용 흐름 구성
+<img width="1920" height="1080" alt="background" src="https://github.com/user-attachments/assets/60bcbb3f-2599-445d-a801-578899406311" />
+<img width="1920" height="1080" alt="painpoint1" src="https://github.com/user-attachments/assets/19b4e453-04db-4368-964e-c1ad3177898f" />
+<img width="1920" height="1080" alt="painpoint2" src="https://github.com/user-attachments/assets/6c33877f-79c2-4d73-b171-ca74a2ccecaa" />
+<img width="1920" height="1080" alt="painpoint3" src="https://github.com/user-attachments/assets/eb582962-bdee-4b2d-9bcc-2e62d51a8572" />
+<img width="1920" height="1080" alt="painpoint4" src="https://github.com/user-attachments/assets/37ad0d15-cf4c-4303-b9ce-91f82422c79a" />
+<img width="1920" height="1080" alt="view1" src="https://github.com/user-attachments/assets/04a1ea89-bb0d-4e57-a406-faf44f656e26" />
+<img width="1920" height="1080" alt="view2" src="https://github.com/user-attachments/assets/bf845fcf-d522-4ae8-9a2a-d640e49eef6a" />
+<img width="1920" height="1080" alt="view3" src="https://github.com/user-attachments/assets/f376510e-3c4a-412a-99e2-2bdec05bb221" />
+<img width="1920" height="1080" alt="view4" src="https://github.com/user-attachments/assets/a12a3c3c-e870-4ba6-80ed-d8e9ff58a719" />
+<img width="1920" height="1080" alt="view5" src="https://github.com/user-attachments/assets/9b48e048-7a68-4eca-9c55-35b6ae168539" />
+<img width="1920" height="1080" alt="view6" src="https://github.com/user-attachments/assets/8093e713-35fb-42f9-b993-240245dab995" />
+<img width="1920" height="1080" alt="ending" src="https://github.com/user-attachments/assets/ef689331-a4db-482f-8af6-bbf3ec5cfad5" />
 
 <br />
+<br />
 
-## 👥 Team
+## 👥 Team BUDDYS
 
-<table align="center">
-  <tr>
-    <td align="center" width="200">
-      <a href="https://github.com/jin-evergreen">
-        <img width="460" height="460" src="https://github.com/jin-evergreen.png" alt="박진석" />
-      </a>
-      <br />
-      <a href="https://github.com/jin-evergreen"><strong>박진석</strong></a>
-      <br />
-    </td>
-    <td align="center" width="200">
-      <a href="https://github.com/winchoose">
-        <img width="460" height="460" src="https://github.com/winchoose.png" alt="오승택" />
-      </a>
-      <br />
-      <a href="https://github.com/winchoose"><strong>오승택</strong></a>
-      <br />
-    </td>
-    <td align="center" width="200">
-      <a href="https://github.com/jinaaaaaaaaaaaaa">
-        <img width="460" height="460" src="https://github.com/jinaaaaaaaaaaaaa.png" alt="김진아" />
-      </a>
-      <br />
-      <a href="https://github.com/jinaaaaaaaaaaaaa"><strong>김진아</strong></a>
-      <br />
-    </td>
-    <td align="center" width="200">
-      <a href="https://github.com/ahyohyo">
-        <img width="460" height="460" src="https://github.com/ahyohyo.png" alt="강효정" />
-      </a>
-      <br />
-      <a href="https://github.com/ahyohyo"><strong>강효정</strong></a>
-      <br />
-    </td>
-    <td align="center" width="200">
-      <a href="https://github.com/seojin15">
-        <img width="460" height="460" src="https://github.com/seojin15.png" alt="황서진" />
-      </a>
-      <br />
-      <a href="https://github.com/seojin15"><strong>황서진</strong></a>
-      <br />
-    </td>
-  </tr>
-</table>
+<div align="center">
+  <table>
+    <thead>
+      <tr>
+        <th>
+          <a href="https://github.com/jin-evergreen" target="_blank">박진석</a>
+        </th>
+        <th>
+          <a href="https://github.com/winchoose" target="_blank">오승택</a>
+        </th>
+        <th>
+          <a href="https://github.com/jinaaaaaaaaaaaaa" target="_blank">김진아</a>
+        </th>
+        <th>
+          <a href="https://github.com/ahyohyo" target="_blank">강효정</a>
+        </th>
+        <th>
+          <a href="https://github.com/seojin15" target="_blank">황서진</a>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+            <img width="200" alt="박진석" src="https://github.com/user-attachments/assets/ca489153-d332-45e1-95bd-77c7d4230d2c" />
+        </td>
+        <td>
+        <img width="200" alt="오승택" src="https://github.com/user-attachments/assets/1955c535-adac-44db-93b8-534f9dab8308" />
+        </td>
+        <td>
+          <img width="200" alt="김진아" src="https://github.com/user-attachments/assets/6a2daa9b-3ebd-4c62-a9f5-9970bebab846" />
+        </td>
+        <td>
+         <img width="200" alt="강효정" src="https://github.com/user-attachments/assets/70d62165-06b5-4acb-88ce-358282e7c2af" />
+        </td>
+        <td>
+         <img width="200" alt="황서진" src="https://github.com/user-attachments/assets/7dedfe7f-f4a7-4884-b698-68433c7f7b3e" />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
+<br />
 <br />
 
 ## 🛠️ Tech Stack
@@ -92,6 +93,7 @@ BUDDYS는 교환학생들이 새로운 학교와 지역에서 더 빠르게 적�
 
 ![Sentry](https://img.shields.io/badge/Sentry-362D59?style=for-the-badge&logo=sentry&logoColor=white)
 
+<br />
 <br />
 
 ## 🗂️ Convention
@@ -327,27 +329,24 @@ export const MonthVoting = ({ date, time }: VoteInfoProps) => {
 
 </details>
 
-## 📚 Documents
+<br/>
+<br/>
+
+## 📚 Documentation
 
 프로젝트의 상세 규칙과 구조 문서는 아래 문서를 기준으로 관리합니다.
 
-| 문서                                                                             | 설명                   |
-| :------------------------------------------------------------------------------- | :--------------------- |
-| [docs/index.md](./docs/index.md)                                                 | 프로젝트 문서 인덱스   |
-| [docs/conventions/conventions.md](./docs/conventions/conventions.md)             | 코딩 컨벤션            |
-| [docs/conventions/git.md](./docs/conventions/git.md)                             | Git / 브랜치 / PR 규칙 |
-| [docs/architecture/repo-structure.md](./docs/architecture/repo-structure.md)     | 저장소 구조            |
-| [docs/architecture/app-structure.md](./docs/architecture/app-structure.md)       | 앱 구조 및 의존 방향   |
-| [docs/architecture/styling.md](./docs/architecture/styling.md)                   | 스타일링 규칙          |
-| [docs/workflows/feature-development.md](./docs/workflows/feature-development.md) | 기능 개발 워크플로우   |
-| [docs/workflows/verification.md](./docs/workflows/verification.md)               | 검증 가이드            |
-
-<details>
-<summary> 📌 문서 사용 원칙 </summary>
-<br/>
-
-- README는 빠르게 프로젝트를 이해하기 위한 요약 문서입니다.
-- 세부 규칙과 최신 기준은 위 문서를 source of truth로 삼습니다.
-- 구조나 컨벤션이 변경되면 관련 문서를 함께 업데이트합니다.
-
-</details>
+| 문서                                                                             | 설명                                 |
+| :------------------------------------------------------------------------------- | :----------------------------------- |
+| [docs/index.md](./docs/index.md)                                                 | 프로젝트 문서 인덱스                 |
+| [docs/agent/index.md](./docs/agent/index.md)                                     | Agent Harness 운영 가이드            |
+| [docs/agent/maintenance.md](./docs/agent/maintenance.md)                         | Agent Harness 유지보수 가이드        |
+| [docs/architecture/repo-structure.md](./docs/architecture/repo-structure.md)     | 저장소 구조                          |
+| [docs/architecture/app-structure.md](./docs/architecture/app-structure.md)       | 앱 구조 및 의존 방향                 |
+| [docs/architecture/styling.md](./docs/architecture/styling.md)                   | 스타일링 규칙                        |
+| [docs/conventions/git.md](./docs/conventions/git.md)                             | Git / 브랜치 / PR 규칙               |
+| [docs/conventions/conventions.md](./docs/conventions/conventions.md)             | 코딩 컨벤션                          |
+| [docs/workflows/local-development.md](./docs/workflows/local-development.md)     | 로컬 개발 환경 및 실행 가이드        |
+| [docs/workflows/feature-development.md](./docs/workflows/feature-development.md) | 기능 개발 워크플로우                 |
+| [docs/workflows/verification.md](./docs/workflows/verification.md)               | 변경 범위별 검증 가이드              |
+| [docs/analytics/google-analytics.md](./docs/analytics/google-analytics.md)       | Google Analytics 설정 및 운영 가이드 |

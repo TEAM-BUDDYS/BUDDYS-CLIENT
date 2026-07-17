@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { type ReactNode, useEffect } from 'react';
 
 import { AsyncLoadingState } from '@/shared/components/ui';
@@ -13,21 +13,41 @@ interface AuthEntryGuardProps {
 }
 
 export const AuthEntryGuard = ({ children }: AuthEntryGuardProps) => {
+  const pathname = usePathname();
   const router = useRouter();
-  const { status } = useAuthSession();
+  const { isOnboardingCompletionVisible, onboardingCompleted, status } =
+    useAuthSession();
+  const isOnboardingRoute = pathname === ROUTES.ONBOARDING;
+  const shouldRedirectToOnboarding =
+    status === 'authenticated' &&
+    onboardingCompleted === false &&
+    !isOnboardingRoute;
+  const shouldRedirectToHome =
+    status === 'authenticated' &&
+    onboardingCompleted === true &&
+    isOnboardingRoute &&
+    !isOnboardingCompletionVisible;
+  const redirectTarget =
+    status === 'unauthenticated'
+      ? ROUTES.LANDING
+      : shouldRedirectToOnboarding
+        ? ROUTES.ONBOARDING
+        : shouldRedirectToHome
+          ? ROUTES.HOME
+          : null;
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.replace(ROUTES.LANDING);
+    if (redirectTarget) {
+      router.replace(redirectTarget);
     }
-  }, [router, status]);
+  }, [redirectTarget, router]);
 
-  if (status === 'initializing') {
+  if (
+    status === 'initializing' ||
+    (status === 'authenticated' && onboardingCompleted === null) ||
+    redirectTarget
+  ) {
     return <AsyncLoadingState />;
-  }
-
-  if (status === 'unauthenticated') {
-    return null;
   }
 
   return <>{children}</>;

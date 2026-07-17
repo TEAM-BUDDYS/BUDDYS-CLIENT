@@ -55,6 +55,9 @@ src/
 - `src/app/(private)/layout.tsx`에서 `AuthEntryGuard`를 한 번만 적용하며, 각 `page.tsx`에서 guard를 중복해서 감싸지 않습니다.
 - 공통 layout은 Server Component로 유지하고, 인증 상태와 redirect가 필요한 `AuthEntryGuard`만 Client Component 경계로 사용합니다.
 - 미인증 사용자가 `(private)` route에 접근하면 `/landing`으로 이동하고, 랜딩 화면에서 사용자가 로그인 진입을 선택하도록 합니다.
+- 인증되었지만 온보딩을 완료하지 않은 사용자가 `/onboarding` 외의 `(private)` route에 접근하면 `/onboarding`으로 이동합니다.
+- 온보딩 최종 저장 직후에는 현재 route에서 완료 화면을 유지하고, 이후 완료 사용자가 `/onboarding`에 다시 접근하면 `/`로 이동합니다.
+- redirect가 결정된 동안에는 route children을 렌더링하지 않아 이동 전 Client Component 하위의 데이터 요청이 실행되지 않도록 합니다.
 - `/landing`, `/login`, `/auth/kakao/callback`처럼 인증 전 접근이 필요한 route는 `(private)` 밖에 둡니다.
 
 ## Route Path Configuration
