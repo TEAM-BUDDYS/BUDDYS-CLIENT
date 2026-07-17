@@ -27,47 +27,39 @@
   <table>
     <thead>
       <tr>
-        <th>박진석</th>
-        <th>오승택</th>
-        <th>김진아</th>
-        <th>강효정</th>
-        <th>황서진</th>
+        <th>
+          <a href="https://github.com/jin-evergreen" target="_blank">박진석</a>
+        </th>
+        <th>
+          <a href="https://github.com/winchoose" target="_blank">오승택</a>
+        </th>
+        <th>
+          <a href="https://github.com/jinaaaaaaaaaaaaa" target="_blank">김진아</a>
+        </th>
+        <th>
+          <a href="https://github.com/ahyohyo" target="_blank">강효정</a>
+        </th>
+        <th>
+          <a href="https://github.com/seojin15" target="_blank">황서진</a>
+        </th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td>
-            <img width="220" alt="박진석" src="https://github.com/user-attachments/assets/ca489153-d332-45e1-95bd-77c7d4230d2c" />
+            <img width="200" alt="박진석" src="https://github.com/user-attachments/assets/ca489153-d332-45e1-95bd-77c7d4230d2c" />
         </td>
         <td>
-        <img width="220" alt="오승택" src="https://github.com/user-attachments/assets/1955c535-adac-44db-93b8-534f9dab8308" />
+        <img width="200" alt="오승택" src="https://github.com/user-attachments/assets/1955c535-adac-44db-93b8-534f9dab8308" />
         </td>
         <td>
-          <img width="220" alt="김진아" src="https://github.com/user-attachments/assets/6a2daa9b-3ebd-4c62-a9f5-9970bebab846" />
+          <img width="200" alt="김진아" src="https://github.com/user-attachments/assets/6a2daa9b-3ebd-4c62-a9f5-9970bebab846" />
         </td>
         <td>
-         <img width="220" alt="강효정" src="https://github.com/user-attachments/assets/70d62165-06b5-4acb-88ce-358282e7c2af" />
+         <img width="200" alt="강효정" src="https://github.com/user-attachments/assets/70d62165-06b5-4acb-88ce-358282e7c2af" />
         </td>
         <td>
-         <img width="220" alt="황서진" src="https://github.com/user-attachments/assets/7dedfe7f-f4a7-4884-b698-68433c7f7b3e" />
-        </td>
-      </tr>
-      <tr align="center">
-        <td>
-          <a href="https://github.com/jin-evergreen" target="_blank">@jin-evergreen</a>
-        </td>
-        <td>
-          <a href="https://github.com/winchoose" target="_blank">@winchoose</a>
-        </td>
-        <td>
-          <a href="https://github.com/jinaaaaaaaaaaaaa" target="_blank">@jinaaaaaaaaaaaaa</a>
-        </td>
-        <td>
-          <a href="https://github.com/ahyohyo" target="_blank">@ahyohyo</a>
-        </td>
-        </td>
-        <td>
-          <a href="https://github.com/seojin15" target="_blank">@seojin15</a>
+         <img width="200" alt="황서진" src="https://github.com/user-attachments/assets/7dedfe7f-f4a7-4884-b698-68433c7f7b3e" />
         </td>
       </tr>
     </tbody>
