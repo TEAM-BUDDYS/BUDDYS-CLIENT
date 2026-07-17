@@ -179,7 +179,7 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
   }
 
   return (
-    <div className="flex h-dvh flex-col">
+    <div className="fixed inset-0 mx-auto flex w-full max-w-[430px] min-w-[375px] flex-col">
       <Header
         content={chatRoomData.participantNickname}
         hasBackButton
