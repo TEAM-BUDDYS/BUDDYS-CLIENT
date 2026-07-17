@@ -31,6 +31,7 @@ export const ImagePreview = ({
         width={80}
         height={80}
         radius="rounded-xl"
+        className="size-20"
       />
       <button
         type="button"
