@@ -58,20 +58,22 @@ export const FilterSheet = ({ value, onClose, onApply }: FilterSheetProps) => {
 
   return (
     <>
-      <Header
-        content="필터"
-        right={
-          <button
-            type="button"
-            aria-label="필터 닫기"
-            className="flex size-11 items-center justify-center"
-            onClick={onClose}
-          >
-            <XIcon className="size-6" />
-          </button>
-        }
-      />
-      <main className="flex flex-col gap-6 px-4 pb-26">
+      <div className="fixed top-0 right-0 left-0 z-10 mx-auto max-w-107.5 bg-white">
+        <Header
+          content="필터"
+          right={
+            <button
+              type="button"
+              aria-label="필터 닫기"
+              className="flex size-11 items-center justify-center"
+              onClick={onClose}
+            >
+              <XIcon className="size-6" />
+            </button>
+          }
+        />
+      </div>
+      <main className="flex flex-col gap-6 px-4 pt-15 pb-26">
         <div className="flex flex-col gap-3 py-4">
           <FormLabel as="p" className="text-body-sb-16">
             국가

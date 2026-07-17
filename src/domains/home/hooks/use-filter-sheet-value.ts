@@ -5,7 +5,7 @@ import {
   initialFilterValue,
 } from '@/domains/home/features/filter-sheet/use-filter-sheet';
 import type { BuddyFilterKey } from '@/domains/home/model/buddy-filter';
-import { formatFilterDateForParams } from '@/domains/home/model/buddy-search';
+import { formatFilterDateForParams } from '@/domains/home/model/filter-date';
 
 const getAppliedFilterKeys = (filterValue: FilterSheetValue) => {
   const appliedFilterKeys: BuddyFilterKey[] = [];

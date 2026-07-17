@@ -1,6 +1,7 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { isHTTPError } from 'ky';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -75,6 +76,7 @@ export const OnboardFlow = () => {
   const progressStep =
     PROGRESS_STEP_BY_STEP[currentStep as keyof typeof PROGRESS_STEP_BY_STEP];
   const canGoNext = onboardForm.canGoNext(currentStep);
+  const [nicknameError, setNicknameError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
@@ -133,7 +135,20 @@ export const OnboardFlow = () => {
       await onboardingMutation.mutateAsync({ ...payload, profileImageUrl });
 
       setCurrentStep('complete');
-    } catch {
+    } catch (error) {
+      if (isHTTPError(error) && error.response.status === 409) {
+        const response = error.data as
+          | {
+              code?: string;
+              message?: string;
+            }
+          | undefined;
+
+        if (response?.code === 'AUTH-E003') {
+          setNicknameError(response.message ?? '이미 사용 중인 닉네임입니다.');
+          return;
+        }
+      }
       showToast('정보를 저장하지 못했어요. 잠시 후 다시 시도해주세요.', {
         bottomOffsetClassName: 'bottom-26.5',
         variant: 'gray',
@@ -248,12 +263,16 @@ export const OnboardFlow = () => {
         {currentStep === 'profile' && (
           <OnboardProfileStep
             nickname={onboardForm.nickname}
+            nicknameError={nicknameError}
             gender={onboardForm.gender}
             birthDate={onboardForm.birthDate}
             bio={onboardForm.bio}
             isUploading={isSubmitting}
             profileImageFile={onboardForm.profileImageFile}
-            onNicknameChange={onboardForm.handleNicknameChange}
+            onNicknameChange={(value) => {
+              setNicknameError(null);
+              onboardForm.handleNicknameChange(value);
+            }}
             onGenderChange={onboardForm.handleGenderChange}
             onBirthDateChange={onboardForm.handleBirthDateChange}
             onBioChange={onboardForm.handleBioChange}
@@ -293,7 +312,7 @@ export const OnboardFlow = () => {
                 similarityScore={recommendedUser.similarityScore}
               />
             )}
-            <div className="fixed bottom-0 left-1/2 z-10 w-full max-w-100 -translate-x-1/2 pb-[34px]">
+            <div className="fixed bottom-0 left-1/2 z-10 w-full max-w-100 -translate-x-1/2 px-4 pb-[34px]">
               <div className="absolute right-0 bottom-0 left-0 -z-10 h-[145px] bg-gradient-to-b from-white/0 via-white to-white" />
               <Button
                 onClick={() => router.push(ROUTES.HOME)}
