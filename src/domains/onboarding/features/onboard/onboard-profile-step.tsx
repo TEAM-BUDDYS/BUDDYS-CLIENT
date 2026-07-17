@@ -13,6 +13,7 @@ import { GENDER_OPTIONS } from './constant';
 
 interface OnboardProfileStepProps {
   nickname: string;
+  nicknameError: string | null;
   gender: GenderType | null;
   birthDate: string;
   bio: string;
@@ -27,6 +28,7 @@ interface OnboardProfileStepProps {
 
 export const OnboardProfileStep = ({
   nickname,
+  nicknameError,
   gender,
   birthDate,
   bio,
@@ -104,6 +106,8 @@ export const OnboardProfileStep = ({
           placeholder="닉네임을 입력하세요"
           required
           value={nickname}
+          status={nicknameError ? 'error' : 'default'}
+          message={nicknameError}
           onChange={(event) => onNicknameChange(event.target.value)}
           onBlur={(event) => {
             setCurrentNickname(event.target.value);
