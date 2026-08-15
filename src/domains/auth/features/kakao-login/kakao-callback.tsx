@@ -7,7 +7,7 @@ import { Button, EmptyState } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
 import { useAuthSession } from '../auth-session/auth-session-provider';
-import { validateKakaoOAuthState } from './kakao-oauth';
+import { getKakaoRedirectUri, validateKakaoOAuthState } from './kakao-oauth';
 
 export const KakaoCallback = () => {
   const router = useRouter();
@@ -49,17 +49,24 @@ export const KakaoCallback = () => {
       return;
     }
 
-    authenticateWithKakao(code)
-      .then(({ onboardingCompleted }) => {
-        router.replace(onboardingCompleted ? ROUTES.HOME : ROUTES.ONBOARDING);
-      })
-      .catch((error: unknown) => {
-        setErrorMessage(
-          error instanceof Error
-            ? error.message
-            : '카카오 로그인에 실패했습니다. 다시 시도해 주세요.',
-        );
+    const completeKakaoLogin = async () => {
+      const loginSession = await authenticateWithKakao({
+        code,
+        redirectUri: getKakaoRedirectUri(),
       });
+
+      router.replace(
+        loginSession.onboardingCompleted ? ROUTES.HOME : ROUTES.ONBOARDING,
+      );
+    };
+
+    void completeKakaoLogin().catch((error: unknown) => {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : '카카오 로그인에 실패했습니다. 다시 시도해 주세요.',
+      );
+    });
   }, [authenticateWithKakao, router, searchParams]);
 
   if (errorMessage) {
