@@ -62,7 +62,7 @@ export const KakaoCallback = () => {
 
     void completeKakaoLogin().catch((error: unknown) => {
       setErrorMessage(
-        error instanceof Error
+        error instanceof Error && error.message.trim()
           ? error.message
           : '카카오 로그인에 실패했습니다. 다시 시도해 주세요.',
       );
