@@ -108,7 +108,7 @@ const PostTabPanel = () => {
       {isFetchNextPageError && (
         <button
           type="button"
-          className="text-caption-sb-12 text-mint-400 mx-auto py-4"
+          className="text-caption-m-12 text-mint-400 mx-auto py-4"
           onClick={() => fetchNextPage()}
         >
           다시 불러오기
