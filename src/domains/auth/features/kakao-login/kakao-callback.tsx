@@ -14,7 +14,7 @@ export const KakaoCallback = () => {
   const searchParams = useSearchParams();
   const { authenticateWithKakao } = useAuthSession();
   const hasStartedRef = useRef(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     if (hasStartedRef.current) {
@@ -35,16 +35,14 @@ export const KakaoCallback = () => {
 
     if (oauthError || !code) {
       queueMicrotask(() => {
-        setErrorMessage('카카오 로그인이 취소되었거나 올바르지 않습니다.');
+        setHasError(true);
       });
       return;
     }
 
     if (!validateKakaoOAuthState(state)) {
       queueMicrotask(() => {
-        setErrorMessage(
-          '로그인 요청을 확인할 수 없습니다. 다시 시도해 주세요.',
-        );
+        setHasError(true);
       });
       return;
     }
@@ -60,16 +58,12 @@ export const KakaoCallback = () => {
       );
     };
 
-    void completeKakaoLogin().catch((error: unknown) => {
-      setErrorMessage(
-        error instanceof Error && error.message.trim()
-          ? error.message
-          : '카카오 로그인에 실패했습니다. 다시 시도해 주세요.',
-      );
+    void completeKakaoLogin().catch(() => {
+      setHasError(true);
     });
   }, [authenticateWithKakao, router, searchParams]);
 
-  if (errorMessage) {
+  if (hasError) {
     return (
       <main className="relative flex min-h-dvh flex-col px-4 pb-8.5">
         <EmptyState
