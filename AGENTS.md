@@ -35,6 +35,7 @@
 - Agent Harness 운영: `docs/agent/*`
 
 문서와 실제 코드가 다르면 현재 코드를 확인하고 관련 문서도 함께 갱신합니다.
+Next.js 기능이나 설정을 다룰 때는 구현 전에 `node_modules/next/dist/docs`의 설치 버전 문서를 확인합니다.
 
 ## Skill Routing
 
