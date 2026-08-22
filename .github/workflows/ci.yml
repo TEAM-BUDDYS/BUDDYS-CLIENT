@@ -43,3 +43,17 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+      - name: Verify standalone server
+        env:
+          HOSTNAME: 127.0.0.1
+          PORT: 3000
+        run: |
+          node .next/standalone/server.js &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+
+          curl --fail --silent --show-error \
+            --connect-timeout 5 --max-time 10 \
+            --retry 10 --retry-delay 1 --retry-max-time 30 --retry-all-errors \
+            http://127.0.0.1:3000/landing > /dev/null
