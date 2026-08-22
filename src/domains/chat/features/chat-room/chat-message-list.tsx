@@ -78,7 +78,7 @@ export const ChatMessageList = ({
       {isFetchPreviousMessagesError && !isFetchingPreviousMessages && (
         <button
           type="button"
-          className="text-caption-sb-12 text-mint-400 mx-auto shrink-0 py-4"
+          className="text-caption-m-12 text-mint-400 mx-auto shrink-0 py-4"
           onClick={handleLoadPreviousMessages}
         >
           이전 메시지 다시 불러오기

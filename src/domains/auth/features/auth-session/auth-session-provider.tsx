@@ -16,6 +16,7 @@ import { setAccessToken, setAccessTokenRefreshHandler } from '@/shared/api';
 import { ROUTES } from '@/shared/config';
 
 import { loginWithKakao, reissueAccessToken } from '../../api/query';
+import type { KakaoLoginParams } from '../../api/type';
 import type { AuthSession, AuthStatusTypes } from '../../model/auth';
 
 interface MarkOnboardingCompletedOptions {
@@ -27,7 +28,7 @@ interface AuthSessionContextValue {
   userId: number | null;
   onboardingCompleted: boolean | null;
   isOnboardingCompletionVisible: boolean;
-  authenticateWithKakao: (code: string) => Promise<AuthSession>;
+  authenticateWithKakao: (params: KakaoLoginParams) => Promise<AuthSession>;
   markOnboardingCompleted: (options: MarkOnboardingCompletedOptions) => void;
   finishOnboarding: () => void;
 }
@@ -83,9 +84,9 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
   }, [clearSession, setAuthenticatedSession]);
 
   const authenticateWithKakao = useCallback(
-    async (code: string) => {
+    async (params: KakaoLoginParams) => {
       try {
-        const loginResponse = await loginWithKakao({ code });
+        const loginResponse = await loginWithKakao(params);
         setAuthenticatedSession(loginResponse);
         return loginResponse;
       } catch (error) {

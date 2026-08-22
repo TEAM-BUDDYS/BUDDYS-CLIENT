@@ -12,15 +12,18 @@ const getRequiredEnvironmentVariable = (
   return value;
 };
 
+export const getKakaoRedirectUri = () =>
+  getRequiredEnvironmentVariable(
+    process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI,
+    'NEXT_PUBLIC_KAKAO_REDIRECT_URI',
+  );
+
 export const createKakaoAuthorizeUrl = () => {
   const clientId = getRequiredEnvironmentVariable(
     process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY,
     'NEXT_PUBLIC_KAKAO_REST_API_KEY',
   );
-  const redirectUri = getRequiredEnvironmentVariable(
-    process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI,
-    'NEXT_PUBLIC_KAKAO_REDIRECT_URI',
-  );
+  const redirectUri = getKakaoRedirectUri();
   const state = crypto.randomUUID();
 
   sessionStorage.setItem(KAKAO_OAUTH_STATE_KEY, state);
