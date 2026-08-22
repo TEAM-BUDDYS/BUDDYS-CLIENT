@@ -721,9 +721,9 @@ export interface components {
        * @description 사용자 ID
        * @example 1
        */
-      userId?: number;
+      userId: number;
       /** @description API 인증에 사용하는 Access Token */
-      accessToken?: string;
+      accessToken: string;
       /** @description 온보딩(성별/생년월일/태그 3개) 완료 여부 */
       onboardingCompleted?: boolean;
     };
@@ -2488,6 +2488,11 @@ export interface operations {
          * @example kaO7zQSSJXT...
          */
         code: string;
+        /**
+         * @description 카카오 인가 요청 시 사용한 redirect_uri
+         * @example http://localhost:3000/auth/kakao/callback
+         */
+        redirectUri: string;
       };
       header?: never;
       path?: never;
@@ -2504,7 +2509,7 @@ export interface operations {
           '*/*': components['schemas']['BaseResponseLoginResponse'];
         };
       };
-      /** @description 잘못된 인가 코드 */
+      /** @description 잘못된 인가 코드 또는 허용되지 않은 redirect_uri */
       400: {
         headers: {
           [name: string]: unknown;
