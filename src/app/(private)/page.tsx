@@ -5,14 +5,16 @@ import { BuddySearchSection } from '@/domains/home/sections/buddy-search-section
 import { PreferenceBuddySection } from '@/domains/home/sections/preference-buddy-section';
 import { SameCountryBuddySection } from '@/domains/home/sections/same-country-buddy-section';
 import { TodayBuddySection } from '@/domains/home/sections/today-buddy-section';
-import { BuddysLogo } from '@/shared/components/icons/buddys-logo';
+import { BuddysLogoIcon } from '@/shared/components/icons';
 import { BottomNavigation, Header } from '@/shared/components/layout';
 
 export default function Home() {
   return (
     <>
       <Header
-        content={<BuddysLogo width={90} height={24} />}
+        content={
+          <BuddysLogoIcon className="text-gray-800" width={90} height={24} />
+        }
         right={
           <>
             <SearchSheetButton />
