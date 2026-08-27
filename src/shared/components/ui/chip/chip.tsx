@@ -10,13 +10,19 @@ type ChipSize = 'sm' | 'md';
 const chipBase =
   'inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-[30px] border border-gray-200 bg-white py-2 text-gray-800';
 
-const chipActive = 'border-mint-300 bg-mint-100 text-mint-300';
+const chipTypeStyles = {
+  line: 'border-mint-300 bg-mint-100 text-mint-300',
+  fill: 'border-gray-800 bg-gray-800 text-white',
+};
+
+type ChipType = 'line' | 'fill';
 
 const chipDisabled = 'border-gray-200 bg-gray-50 text-gray-200';
 
 interface ChipProps extends React.HTMLAttributes<HTMLSpanElement> {
   size?: ChipSize;
   active?: boolean;
+  variant?: ChipType;
 }
 
 interface ChipButtonProps extends Omit<
@@ -25,12 +31,14 @@ interface ChipButtonProps extends Omit<
 > {
   size?: ChipSize;
   active?: boolean;
+  variant?: ChipType;
 }
 
 export const Chip = ({
   size = 'sm',
   className,
   active = false,
+  variant = 'line',
   ...props
 }: ChipProps) => {
   return (
@@ -38,7 +46,7 @@ export const Chip = ({
       className={cn(
         chipBase,
         chipSizeStyles[size],
-        active && chipActive,
+        active && chipTypeStyles[variant],
         className,
       )}
       {...props}
@@ -51,6 +59,7 @@ export const ChipButton = ({
   className,
   active = false,
   disabled,
+  variant = 'line',
   ...props
 }: ChipButtonProps) => {
   return (
@@ -61,7 +70,7 @@ export const ChipButton = ({
       className={cn(
         chipBase,
         chipSizeStyles[size],
-        active && chipActive,
+        active && chipTypeStyles[variant],
         disabled && chipDisabled,
         className,
       )}
