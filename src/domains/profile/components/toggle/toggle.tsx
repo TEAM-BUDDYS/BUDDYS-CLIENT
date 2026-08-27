@@ -1,22 +1,20 @@
-'use client';
-
 import { type ButtonHTMLAttributes } from 'react';
 
 import { cn } from '@/lib/cn';
 
 export interface ToggleProps extends Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
-  'onChange' | 'type'
+  'aria-checked' | 'aria-label' | 'onChange' | 'onClick' | 'role' | 'type'
 > {
   checked: boolean;
   onChange?: (checked: boolean) => void;
-  label?: string;
+  ariaLabel: string;
 }
 
 export const Toggle = ({
   checked,
   onChange,
-  label,
+  ariaLabel,
   className,
   ...props
 }: ToggleProps) => {
@@ -28,7 +26,7 @@ export const Toggle = ({
     <button
       {...props}
       aria-checked={checked}
-      aria-label={label ?? 'Toggle'}
+      aria-label={ariaLabel}
       className={cn(
         'inline-flex h-6 w-10 shrink-0 items-center rounded-full p-0.75 transition-colors duration-200 ease-in-out',
         checked ? 'bg-mint-300' : 'bg-gray-300',
