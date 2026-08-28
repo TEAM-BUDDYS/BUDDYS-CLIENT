@@ -15,6 +15,7 @@ export { IconButton, type IconButtonProps } from './button/icon-button';
 export { Card } from './card/card';
 export { CardDate } from './card/card-date';
 export { PostStatusTag, type RecruitmentStatus, Tag } from './card/card-tag';
+export { CardList, CardListSkeleton } from './card-list';
 export { Chip, ChipButton } from './chip/chip';
 export { ChipGroup, type ChipGroupProps } from './chip-group/chip-group';
 export { CommonImage } from './common-image/common-image';
