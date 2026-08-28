@@ -35,9 +35,9 @@ export const CardList = ({
     >
       <div className="flex w-full items-center gap-8">
         <div className="flex min-w-0 flex-1 flex-col items-start gap-1">
-          <header className="text-body-sb-16 w-full truncate text-gray-800">
+          <h3 className="text-body-sb-16 w-full truncate text-gray-800">
             {title}
-          </header>
+          </h3>
           <p className="text-caption-m-12 w-full truncate text-gray-500">
             {description}
           </p>
@@ -59,7 +59,12 @@ export const CardList = ({
         </button>
       </div>
 
-      <div className="flex w-full scrollbar-none items-center gap-2 overflow-x-auto [&::-webkit-scrollbar]:hidden">
+      <div
+        role="group"
+        aria-label={`${title} 이미지 목록`}
+        tabIndex={0}
+        className="focus-visible:outline-mint-300 flex w-full scrollbar-none items-center gap-2 overflow-x-auto focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid [&::-webkit-scrollbar]:hidden"
+      >
         {images.map(({ src, alt }) => (
           <CommonImage
             key={src}
