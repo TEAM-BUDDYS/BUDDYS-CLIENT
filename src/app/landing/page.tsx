@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import { earthImage } from '@/shared/assets/illustrations';
-import { BuddysLogo } from '@/shared/components/icons/buddys-logo';
+import { BuddysLogoIcon } from '@/shared/components/icons';
 import { CommonImage } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
@@ -20,7 +20,12 @@ export default function LandingPage() {
         />
 
         <div className="flex flex-col items-center gap-2 text-center">
-          <BuddysLogo aria-label="버디즈" />
+          <BuddysLogoIcon
+            className="text-gray-800"
+            width={120}
+            height={32}
+            aria-label="버디즈"
+          />
           <p className="text-body-r-14 text-gray-500">
             취향에 맞는 교환학생 동행을 찾고 <br /> 함께한 코스를 기록하세요
           </p>

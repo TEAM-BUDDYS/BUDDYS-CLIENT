@@ -7,6 +7,7 @@ import { useState } from 'react';
 
 import { cn } from '@/lib/cn';
 import {
+  CourseIcon,
   HomeIcon,
   LocationIcon,
   MessageIcon,
@@ -34,8 +35,13 @@ const BOTTOM_NAVIGATION_ITEMS: BottomNavigationItem[] = [
     label: '홈',
   },
   {
-    key: 'course',
+    key: 'companion',
     icon: LocationIcon,
+    label: '동행',
+  },
+  {
+    key: 'course',
+    icon: CourseIcon,
     label: '코스',
   },
   {
@@ -56,25 +62,28 @@ export const BottomNavigation = ({ className }: BottomNavigationProps) => {
   const pathname = usePathname();
   const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
 
+  const handleComingSoonOpen = () => setIsComingSoonOpen(true);
+  const handleComingSoonClose = () => setIsComingSoonOpen(false);
+
   return (
     <>
       <nav
         aria-label="하단 네비게이션"
         className={cn(
-          'h-18 w-full rounded-t-2xl border border-gray-300/30 bg-white px-6.25 py-1',
+          'h-14.5 w-full shrink-0 rounded-t-2xl border-t border-gray-50 bg-white',
           className,
         )}
       >
-        <ul className="flex items-center justify-center gap-5.75">
+        <ul className="flex h-full w-full">
           {BOTTOM_NAVIGATION_ITEMS.map(({ key, href, icon: Icon, label }) => {
             const isActive = href === pathname;
             const itemClassName = cn(
-              'flex size-16 flex-col items-center justify-center gap-1',
+              'focus-visible:outline-mint-300 flex h-full w-full flex-col items-center justify-center gap-0.5 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2',
               isActive ? 'text-gray-800' : 'text-gray-200',
             );
 
             return (
-              <li key={key}>
+              <li key={key} className="h-full min-w-0 flex-1">
                 {href ? (
                   <Link
                     href={href}
@@ -82,16 +91,16 @@ export const BottomNavigation = ({ className }: BottomNavigationProps) => {
                     className={itemClassName}
                   >
                     <Icon className="size-6" />
-                    <span className="text-caption-r-12">{label}</span>
+                    <span className="text-caption-m-10">{label}</span>
                   </Link>
                 ) : (
                   <button
                     type="button"
                     className={itemClassName}
-                    onClick={() => setIsComingSoonOpen(true)}
+                    onClick={handleComingSoonOpen}
                   >
                     <Icon className="size-6" />
-                    <span className="text-caption-r-12">{label}</span>
+                    <span className="text-caption-m-10">{label}</span>
                   </button>
                 )}
               </li>
@@ -101,7 +110,7 @@ export const BottomNavigation = ({ className }: BottomNavigationProps) => {
       </nav>
       <ComingSoonModal
         open={isComingSoonOpen}
-        onClose={() => setIsComingSoonOpen(false)}
+        onClose={handleComingSoonClose}
       />
     </>
   );
