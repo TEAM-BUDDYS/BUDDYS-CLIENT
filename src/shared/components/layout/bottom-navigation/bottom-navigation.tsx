@@ -70,20 +70,20 @@ export const BottomNavigation = ({ className }: BottomNavigationProps) => {
       <nav
         aria-label="하단 네비게이션"
         className={cn(
-          'h-18 w-full rounded-t-2xl bg-white px-4 pt-1 pb-4 ring-1 ring-gray-100 ring-inset',
+          'h-14.5 w-full shrink-0 rounded-t-2xl border-t border-gray-50 bg-white',
           className,
         )}
       >
-        <ul className="flex w-full items-center justify-between">
+        <ul className="flex h-full w-full">
           {BOTTOM_NAVIGATION_ITEMS.map(({ key, href, icon: Icon, label }) => {
             const isActive = href === pathname;
             const itemClassName = cn(
-              'focus-visible:outline-mint-300 flex size-13 shrink-0 flex-col items-center justify-center gap-1 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2',
+              'focus-visible:outline-mint-300 flex h-full w-full flex-col items-center justify-center gap-0.5 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2',
               isActive ? 'text-gray-800' : 'text-gray-200',
             );
 
             return (
-              <li key={key}>
+              <li key={key} className="h-full min-w-0 flex-1">
                 {href ? (
                   <Link
                     href={href}
