@@ -28,7 +28,7 @@ export const Tab = ({ items, value, onChange }: TabProps) => {
             className={cn(
               'text-body-sb-15 flex-1 border-b-[3px] px-17.5 py-4.5 active:bg-gray-50',
               isSelected
-                ? 'border-b-gray-800 text-gray-800'
+                ? 'border-b-mint-300 text-mint-300'
                 : 'border-transparent text-gray-200',
             )}
             onClick={() => onChange(item.value)}
