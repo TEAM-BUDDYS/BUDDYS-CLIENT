@@ -1,4 +1,5 @@
 import { cn } from '@/lib/cn';
+import { Skeleton } from '@/shared/components/ui/skeleton/skeleton';
 
 const SKELETON_IMAGE_KEYS = [1, 2, 3, 4] as const;
 
@@ -16,20 +17,13 @@ export const CardListSkeleton = ({ className }: CardListSkeletonProps) => {
       )}
     >
       <div className="flex w-52 flex-col items-start gap-1">
-        <div className="flex h-6 w-full items-start py-0.5">
-          <div className="animate-skeleton-wave h-full w-full min-w-0 rounded-[3px] bg-gray-200/20" />
-        </div>
-        <div className="flex h-4.5 w-full items-start py-0.5">
-          <div className="animate-skeleton-wave h-full w-3/4 rounded-[3px] bg-gray-200/30" />
-        </div>
+        <Skeleton className="my-0.5 h-5 w-full rounded-[3px]" />
+        <Skeleton className="my-0.5 h-3.5 w-3/4 rounded-[3px]" />
       </div>
 
       <div className="flex items-start gap-2">
         {SKELETON_IMAGE_KEYS.map((imageKey) => (
-          <div
-            key={imageKey}
-            className="animate-skeleton-wave size-25 shrink-0 rounded-lg bg-gray-200/20"
-          />
+          <Skeleton key={imageKey} className="size-25 shrink-0 rounded-lg" />
         ))}
       </div>
     </div>

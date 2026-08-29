@@ -32,6 +32,7 @@ export { ProfileImageInput } from './profile-image-input/profile-image-input';
 export { ProgressBar } from './progress-bar/progress-bar';
 export { Searchbar, type SearchbarSize } from './searchbar/searchbar';
 export { SearchbarWithDropdown } from './searchbar/searchbar-with-dropdown';
+export { Skeleton } from './skeleton/skeleton';
 export { Tab } from './tab/tab';
 export { TextArea, type TextAreaStatus } from './text-area/text-area';
 export { TextField, type TextFieldStatus } from './text-field/text-field';
