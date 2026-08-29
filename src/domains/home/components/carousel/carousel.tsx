@@ -47,7 +47,7 @@ export const Carousel = ({ posts }: CarouselProps) => {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <div ref={emblaRef} className="w-full overflow-hidden rounded-lg">
+      <div ref={emblaRef} className="w-full overflow-hidden rounded-2xl">
         <div className="-ml-3 flex">
           {items.map((item, index) => (
             <Link
@@ -55,7 +55,7 @@ export const Carousel = ({ posts }: CarouselProps) => {
               href={ROUTES.POST.DETAIL(item.postId)}
               className="min-w-0 shrink-0 grow-0 basis-full pl-3"
             >
-              <div className="relative aspect-[412/264] overflow-hidden rounded-lg">
+              <div className="relative aspect-[327/240] overflow-hidden rounded-lg">
                 <CommonImage
                   src={item.thumbnailUrl}
                   alt={item.title}
@@ -67,16 +67,16 @@ export const Carousel = ({ posts }: CarouselProps) => {
                   className="block size-full"
                 />
 
-                <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/40" />
+                <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/60" />
 
-                <div className="absolute bottom-5 left-5">
+                <div className="absolute inset-5">
                   <CarouselInfo
                     authorProfileImageUrl={
                       item.authorProfileImageUrl || defaultProfileImage.src
                     }
                     title={item.title}
+                    nickName="Taek2"
                     country={item.country.name}
-                    viewCount={item.viewCount}
                   />
                 </div>
               </div>
