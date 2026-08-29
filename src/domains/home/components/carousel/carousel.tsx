@@ -9,6 +9,7 @@ import { ROUTES } from '@/shared/config';
 
 import { CarouselIndicator } from './carousel-indicator';
 import { CarouselInfo } from './carousel-info';
+import { useCarouselScaleTween } from './use-carousel-scale-tween';
 import { useHomeCarousel } from './use-home-carousel';
 
 export type RenderableRecommendedPost = RecommendedPost & {
@@ -39,23 +40,27 @@ export const isRenderableRecommendedPost = (
 
 export const Carousel = ({ posts }: CarouselProps) => {
   const items = posts.filter(isRenderableRecommendedPost);
-  const { currentIndex, emblaRef, handleIndexChange } = useHomeCarousel(
-    items.length,
-  );
+  const { currentIndex, emblaApi, emblaRef, handleIndexChange } =
+    useHomeCarousel(items.length);
+
+  useCarouselScaleTween(emblaApi);
 
   if (items.length === 0) return null;
 
   return (
-    <div className="flex flex-col items-center gap-3">
+    <div className="-mx-4 flex flex-col items-center gap-3">
       <div ref={emblaRef} className="w-full overflow-hidden rounded-2xl">
-        <div className="-ml-3 flex">
+        <div className="flex">
           {items.map((item, index) => (
             <Link
               key={item.postId}
               href={ROUTES.POST.DETAIL(item.postId)}
-              className="min-w-0 shrink-0 grow-0 basis-full pl-3"
+              className="flex min-w-0 shrink-0 grow-0 basis-[339px] justify-center"
             >
-              <div className="relative aspect-[327/240] overflow-hidden rounded-lg">
+              <div
+                data-carousel-slide-inner
+                className="relative h-60 w-81.75 origin-center overflow-hidden rounded-2xl transition-transform duration-100 ease-out"
+              >
                 <CommonImage
                   src={item.thumbnailUrl}
                   alt={item.title}
