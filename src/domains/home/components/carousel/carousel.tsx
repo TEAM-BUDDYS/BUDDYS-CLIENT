@@ -55,7 +55,7 @@ export const Carousel = ({ posts }: CarouselProps) => {
             <Link
               key={item.postId}
               href={ROUTES.POST.DETAIL(item.postId)}
-              className="flex min-w-0 shrink-0 grow-0 basis-[339px] justify-center"
+              className="flex min-w-0 shrink-0 grow-0 basis-84.75 justify-center"
             >
               <div
                 data-carousel-slide-inner
