@@ -1,9 +1,7 @@
 'use client';
 
 import type { Place } from '@/domains/course/api/type';
-import { cn } from '@/lib/cn';
-import { BookmarkIcon } from '@/shared/components/icons';
-import { CommonImage } from '@/shared/components/ui';
+import { BookmarkButton, CommonImage } from '@/shared/components/ui';
 
 interface CourseSaveCardProps {
   place: Place;
@@ -52,23 +50,14 @@ export const CourseSaveCard = ({
           </div>
         </div>
 
-        <button
-          type="button"
+        <BookmarkButton
+          isBookmarked={bookmarked}
           aria-label={
             bookmarked ? `${displayName} 저장 해제` : `${displayName} 저장`
           }
-          aria-pressed={bookmarked}
-          className={cn(
-            'focus-visible:outline-mint-300 flex size-6 shrink-0 items-center justify-center rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid',
-            bookmarked ? 'text-mint-300' : 'text-gray-200',
-          )}
+          className="size-6 rounded-sm"
           onClick={handleBookmarkClick}
-        >
-          <BookmarkIcon
-            aria-hidden
-            className={cn('size-6', bookmarked && 'fill-current')}
-          />
-        </button>
+        />
       </div>
     </article>
   );
