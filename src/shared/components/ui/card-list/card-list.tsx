@@ -1,7 +1,9 @@
 'use client';
 
+import Link from 'next/link';
+
 import { cn } from '@/lib/cn';
-import { BookmarkIcon } from '@/shared/components/icons';
+import { BookmarkButton } from '@/shared/components/ui/bookmark-button/bookmark-button';
 import { CommonImage } from '@/shared/components/ui/common-image/common-image';
 
 interface CardListImage {
@@ -15,6 +17,7 @@ interface CardListProps {
   images: CardListImage[];
   isBookmarked: boolean;
   onBookmarkClick: () => void;
+  href?: string;
   className?: string;
 }
 
@@ -24,8 +27,18 @@ export const CardList = ({
   images,
   isBookmarked,
   onBookmarkClick,
+  href,
   className,
 }: CardListProps) => {
+  const information = (
+    <>
+      <h3 className="text-body-sb-16 w-full truncate text-gray-800">{title}</h3>
+      <p className="text-caption-m-12 w-full truncate text-gray-500">
+        {description}
+      </p>
+    </>
+  );
+
   return (
     <article
       className={cn(
@@ -34,29 +47,24 @@ export const CardList = ({
       )}
     >
       <div className="flex w-full items-center gap-8">
-        <div className="flex min-w-0 flex-1 flex-col items-start gap-1">
-          <h3 className="text-body-sb-16 w-full truncate text-gray-800">
-            {title}
-          </h3>
-          <p className="text-caption-m-12 w-full truncate text-gray-500">
-            {description}
-          </p>
-        </div>
+        {href ? (
+          <Link
+            href={href}
+            className="focus-visible:outline-mint-300 flex min-w-0 flex-1 flex-col items-start gap-1 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid"
+          >
+            {information}
+          </Link>
+        ) : (
+          <div className="flex min-w-0 flex-1 flex-col items-start gap-1">
+            {information}
+          </div>
+        )}
 
-        <button
-          type="button"
-          aria-label={isBookmarked ? '북마크 해제' : '북마크 추가'}
-          aria-pressed={isBookmarked}
-          className={cn(
-            'focus-visible:outline-mint-300 flex h-6 w-6.25 shrink-0 items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid',
-            isBookmarked ? 'text-mint-300' : 'text-gray-200',
-          )}
+        <BookmarkButton
+          isBookmarked={isBookmarked}
+          className="h-6 w-6.25"
           onClick={onBookmarkClick}
-        >
-          <BookmarkIcon
-            className={cn('size-6', isBookmarked && 'fill-current')}
-          />
-        </button>
+        />
       </div>
 
       <div
