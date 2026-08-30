@@ -8,6 +8,7 @@ export {
   AsyncLoadingState,
   type AsyncLoadingStateProps,
 } from './async-boundary';
+export { BookmarkButton } from './bookmark-button/bookmark-button';
 export { BottomActionBar } from './bottom-action-bar/bottom-action-bar';
 export { BottomSheet } from './bottom-sheet/bottom-sheet';
 export { Button, type ButtonProps } from './button/button';
