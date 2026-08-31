@@ -7,7 +7,7 @@ export interface ToggleProps extends Omit<
   'aria-checked' | 'aria-label' | 'onChange' | 'onClick' | 'role' | 'type'
 > {
   checked: boolean;
-  onChange?: (checked: boolean) => void;
+  onChange: (checked: boolean) => void;
   ariaLabel: string;
 }
 
@@ -19,7 +19,7 @@ export const Toggle = ({
   ...props
 }: ToggleProps) => {
   const handleToggle = () => {
-    onChange?.(!checked);
+    onChange(!checked);
   };
 
   return (
