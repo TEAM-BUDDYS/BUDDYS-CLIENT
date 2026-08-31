@@ -20,7 +20,7 @@ export const TodayCard = ({ postImgSrc }: TodayCardProps) => {
   };
 
   return (
-    <article className="w-[343px]">
+    <article className="w-full">
       <BookmarkContainer
         isBookmarked={isBookmarked}
         variant="todayCard"
@@ -40,14 +40,14 @@ export const TodayCard = ({ postImgSrc }: TodayCardProps) => {
           <div className="flex min-w-0 flex-1 flex-col justify-between pr-14">
             <Tag value="오스트레일리아" />
             <div className="flex flex-col gap-1">
-              <p
+              <h3
                 className={cn(
-                  'text-body-sb-15',
+                  'text-body-sb-15 text-gray-800',
                   postImgSrc ? 'line-clamp-2' : 'truncate',
                 )}
               >
                 호주가서 시드니 대학교 탐방하고 같이 산책하실 분~~~~!!!!!!!!!!
-              </p>
+              </h3>
               {!postImgSrc && (
                 <p className="text-caption-m-12 truncate text-gray-500">
                   본문본문본문본문본문본문본문본문본문본문본문본문본문본문
