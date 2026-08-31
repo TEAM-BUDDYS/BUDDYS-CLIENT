@@ -19,7 +19,6 @@ export type RenderableRecommendedPost = RecommendedPost & {
   country: {
     name: string;
   };
-  viewCount: number;
 };
 
 interface CarouselProps {
@@ -30,11 +29,7 @@ export const isRenderableRecommendedPost = (
   post: RecommendedPost,
 ): post is RenderableRecommendedPost => {
   return Boolean(
-    post.postId &&
-    post.title &&
-    post.thumbnailUrl &&
-    post.country?.name &&
-    post.viewCount !== undefined,
+    post.postId && post.title && post.thumbnailUrl && post.country?.name,
   );
 };
 
@@ -66,7 +61,7 @@ export const Carousel = ({ posts }: CarouselProps) => {
                   alt={item.title}
                   width={412}
                   height={264}
-                  sizes="(max-width: 430px) calc(100vw - 32px), 398px"
+                  sizes="327px"
                   preload={index === 0}
                   radius="rounded-lg"
                   className="block size-full"
