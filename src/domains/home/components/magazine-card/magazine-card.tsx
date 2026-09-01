@@ -33,10 +33,10 @@ export const MagazineCard = ({
         src={image.src}
         alt={image.alt}
         width={343}
-        height={192}
+        height={182}
         radius="rounded-lg"
         sizes="(max-width: 430px) calc(100vw - 32px), 398px"
-        className="aspect-343/192 h-auto w-full"
+        className="aspect-343/182 h-auto w-full"
       />
 
       <div className="flex w-full flex-col gap-1">
