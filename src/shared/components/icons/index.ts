@@ -42,6 +42,7 @@ export { SearchIcon } from './search-icon';
 export { SendIcon } from './send-icon';
 export { SettingIcon } from './setting-icon';
 export { SightseeingIcon } from './sightseeing-icon';
+export { SimbolIcon } from './simbol-icon';
 export { SpeechBubbleIcon } from './speech-bubble-icon';
 export { TrashIcon } from './trash-icon';
 export { UploadIcon } from './upload-icon';
