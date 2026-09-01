@@ -127,7 +127,6 @@ export const BuddySearchSection = () => {
                 key={filterItem.key}
                 label={filterItem.label}
                 pressed={appliedFilterKeys.includes(filterItem.key)}
-                icon={filterItem.icon}
                 onPress={() => handleFilterPress(filterItem.key)}
               />
             ))}
