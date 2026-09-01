@@ -7,17 +7,19 @@ interface BookmarkButtonProps {
   isBookmarked: boolean;
   onClick: () => void;
   className?: string;
+  'aria-label'?: string;
 }
 
 export const BookmarkButton = ({
   isBookmarked,
   onClick,
   className,
+  'aria-label': ariaLabel,
 }: BookmarkButtonProps) => {
   return (
     <button
       type="button"
-      aria-label={isBookmarked ? '북마크 해제' : '북마크 추가'}
+      aria-label={ariaLabel ?? (isBookmarked ? '북마크 해제' : '북마크 추가')}
       aria-pressed={isBookmarked}
       className={cn(
         'focus-visible:outline-mint-300 flex shrink-0 items-center justify-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid',
