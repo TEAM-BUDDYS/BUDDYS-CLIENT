@@ -14,15 +14,14 @@ export const CardDate = ({
   isArchiveCardDate,
   className,
 }: CardDateProps) => {
-  const { durationDays, formattedEndDate, formattedStartDate } =
-    formatDateRange({
-      endDate,
-      startDate,
-    });
+  const { formattedEndDate, formattedStartDate } = formatDateRange({
+    endDate,
+    startDate,
+  });
   const dateText =
     startDate === endDate
-      ? `${formattedStartDate} (1일)`
-      : `${formattedStartDate} - ${formattedEndDate} (${durationDays}일)`;
+      ? formattedStartDate
+      : `${formattedStartDate} - ${formattedEndDate}`;
 
   return (
     <div className="flex gap-1">
