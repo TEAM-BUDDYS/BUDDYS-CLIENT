@@ -22,6 +22,7 @@ export { DangerIcon } from './danger-icon';
 export { DateIcon } from './date-icon';
 export { EditIcon } from './edit-icon';
 export { EssentialIcon } from './essential-icon';
+export { FilledLocationIcon } from './filled-location-icon';
 export { FoodIcon } from './food-icon';
 export { ForbidIcon } from './forbid-icon';
 export { GenderIcon } from './gender-icon';

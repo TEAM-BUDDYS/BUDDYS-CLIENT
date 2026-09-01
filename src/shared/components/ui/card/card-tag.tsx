@@ -1,4 +1,5 @@
 import { cn } from '@/lib/cn';
+import { FilledLocationIcon } from '@/shared/components/icons';
 
 export type RecruitmentStatus = 'RECRUITING' | 'COMPLETED';
 
@@ -15,9 +16,9 @@ export const PostStatusTag = ({ status }: PostStatusTagProps) => {
   return (
     <span
       className={cn(
-        'text-caption-m-10 rounded px-2 py-0.5',
-        status === 'RECRUITING' && 'bg-badge text-white',
-        status === 'COMPLETED' && 'bg-gray-50 text-gray-200',
+        'text-caption-m-10 rounded px-2 py-0.75 text-white',
+        status === 'RECRUITING' && 'bg-gray-800',
+        status === 'COMPLETED' && 'bg-gray-300',
       )}
     >
       {POST_STATUS_LABEL[status]}
@@ -31,7 +32,8 @@ interface TagProps {
 
 export const Tag = ({ value }: TagProps) => {
   return (
-    <span className="text-mint-400 bg-mint-100 text-caption-m-10 rounded px-2 py-0.5 whitespace-nowrap">
+    <span className="text-caption-m-10 inline-flex w-fit items-center gap-0.5 rounded bg-gray-50 px-1.5 py-0.75 whitespace-nowrap text-gray-500">
+      <FilledLocationIcon className="size-3 text-gray-500" />
       {value}
     </span>
   );
