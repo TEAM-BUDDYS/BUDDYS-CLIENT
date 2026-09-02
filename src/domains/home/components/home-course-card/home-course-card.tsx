@@ -34,7 +34,7 @@ export const HomeCourseCard = ({
         alt={image.alt}
         width={130}
         height={130}
-        radius="rounded-tl-[65px] rounded-tr-[65px] rounded-br-[65px] rounded-bl-[9.64px]"
+        radius="rounded-tl-[65px] rounded-tr-[65px] rounded-br-[65px] rounded-bl-[9.63px]"
         className="size-32.5"
       />
 
