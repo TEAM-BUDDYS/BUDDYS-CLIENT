@@ -25,7 +25,7 @@ export const HomeCourseCard = ({
     <Link
       href={href}
       className={cn(
-        'focus-visible:outline-mint-300 flex w-32.25 flex-col items-start gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid',
+        'focus-visible:outline-mint-300 flex w-32.5 flex-col items-start gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid',
         className,
       )}
     >
