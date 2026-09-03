@@ -15,7 +15,7 @@ export const NotificationBellButton = () => {
         aria-label="알림"
         onClick={() => setIsComingSoonOpen(true)}
       >
-        <BellIcon className="size-6" />
+        <BellIcon className="size-[22px] text-gray-800" iconOpacity={1} />
       </button>
 
       <ComingSoonModal

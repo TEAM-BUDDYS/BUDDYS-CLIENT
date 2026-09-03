@@ -35,7 +35,7 @@ export const SearchSheetButton = () => {
         aria-label="검색"
         onClick={handleSearchSheetOpen}
       >
-        <SearchIcon className="size-6" />
+        <SearchIcon className="size-[22px] text-gray-800" iconOpacity={1} />
       </button>
       {isSearchSheetOpen && (
         <div
