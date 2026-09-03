@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 
+import { cn } from '@/lib/cn';
 import {
   BookmarkButton,
   CardDate,
@@ -18,7 +19,7 @@ interface PartnerCardProps {
   description: string;
   startDate: string;
   endDate: string;
-  imageUrl: string;
+  imageUrl?: string;
   isBookmarked: boolean;
   onBookmarkClick: () => void;
 }
@@ -38,7 +39,12 @@ export const PartnerCard = ({
   return (
     <article className="relative">
       <Link href={href} className="flex justify-between gap-8">
-        <div className="flex min-w-0 flex-col gap-2">
+        <div
+          className={cn(
+            'flex min-w-0 flex-col gap-2',
+            !imageUrl && 'w-[287px]',
+          )}
+        >
           <div className="flex gap-1.5">
             <PostStatusTag status={isRecruiting ? 'RECRUITING' : 'COMPLETED'} />
             <Tag value={country} />
@@ -57,21 +63,26 @@ export const PartnerCard = ({
             className="text-gray-200"
           />
         </div>
-        <div className="size-25 shrink-0">
-          <CommonImage
-            radius="rounded-xl"
-            src={imageUrl}
-            alt={`${title} 게시물 이미지`}
-            width={100}
-            height={100}
-            className="size-25"
-          />
-        </div>
+        {imageUrl && (
+          <div className="size-25 shrink-0">
+            <CommonImage
+              radius="rounded-xl"
+              src={imageUrl}
+              alt={`${title} 게시물 이미지`}
+              width={100}
+              height={100}
+              className="size-25"
+            />
+          </div>
+        )}
       </Link>
       <BookmarkButton
         isBookmarked={isBookmarked}
         onClick={onBookmarkClick}
-        className="absolute top-2 right-1.5"
+        className={cn(
+          'absolute top-2 right-1.5',
+          !imageUrl && 'top-9.5 right-0',
+        )}
       />
     </article>
   );
