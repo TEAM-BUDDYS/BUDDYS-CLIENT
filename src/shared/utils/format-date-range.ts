@@ -81,3 +81,9 @@ export const formatDateRange = ({
     formattedStartDate: formatDate(startDate),
   };
 };
+
+export const formatFullDate = (date: Date | string) => {
+  const { day, month, year } = getDateParts(date);
+
+  return `${year}.${month}.${day}`;
+};
