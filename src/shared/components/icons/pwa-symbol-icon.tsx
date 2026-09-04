@@ -1,5 +1,5 @@
 import type { SVGProps } from 'react';
-export const SimbolIcon = ({
+export const PwaSymbolIcon = ({
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
   role,
