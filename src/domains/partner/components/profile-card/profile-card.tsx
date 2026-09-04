@@ -28,7 +28,7 @@ export const ProfileCard = ({
     <article>
       <Link
         href={ROUTES.PROFILE.DETAIL(userId)}
-        className="flex w-35 flex-col items-center justify-between gap-2 rounded-2xl border border-gray-200 px-10 py-4"
+        className="flex w-35 flex-col items-center gap-2 rounded-2xl border border-gray-200 px-10 py-4"
       >
         <CommonImage
           src={profileImageUrl || defaultProfileImage.src}
@@ -43,12 +43,12 @@ export const ProfileCard = ({
           }}
         />
         <div className="flex w-full flex-col items-center">
-          <span className="text-body-sb-15 w-30 text-center text-gray-800">
+          <h3 className="text-body-sb-15 w-30 text-center text-gray-800">
             {nickname}
-          </span>
-          <span className="text-caption-m-10 text-gray-500">
+          </h3>
+          <p className="text-caption-m-10 text-gray-500">
             {profileDescription}
-          </span>
+          </p>
         </div>
         <Tag value={`매칭 ${matchingPercentage}%`} />
       </Link>
