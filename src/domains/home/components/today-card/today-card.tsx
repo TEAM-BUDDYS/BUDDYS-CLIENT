@@ -26,11 +26,6 @@ export const TodayCard = ({ post }: TodayCardProps) => {
 
   const [isBookmarked, setIsBookmarked] = useState(false);
 
-  const dateText =
-    startDate === endDate
-      ? formatFullDate(startDate)
-      : `${formatFullDate(startDate)} - ${formatFullDate(endDate)}`;
-
   const handleBookmarkClick = () => {
     setIsBookmarked((currentIsBookmarked) => !currentIsBookmarked);
   };
@@ -71,14 +66,16 @@ export const TodayCard = ({ post }: TodayCardProps) => {
             )}
           </div>
 
-          <time
-            dateTime={
-              startDate === endDate ? startDate : `${startDate}/${endDate}`
-            }
-            className="text-caption-m-12 text-gray-200"
-          >
-            {dateText}
-          </time>
+          <p className="text-caption-m-12 text-gray-200">
+            <time dateTime={startDate}>{formatFullDate(startDate)}</time>
+
+            {startDate !== endDate && (
+              <>
+                {' - '}
+                <time dateTime={endDate}>{formatFullDate(endDate)}</time>
+              </>
+            )}
+          </p>
         </div>
       </Link>
 
