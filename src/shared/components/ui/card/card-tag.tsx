@@ -1,4 +1,5 @@
 import { cn } from '@/lib/cn';
+import { FilledLocationIcon } from '@/shared/components/icons';
 
 import { FilledLocationIcon } from '../../icons';
 
