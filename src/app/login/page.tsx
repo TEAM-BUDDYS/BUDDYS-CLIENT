@@ -1,4 +1,5 @@
 import documentImage from '@/domains/auth/asset/illustrations/document.svg';
+import { GoogleLoginButton } from '@/domains/auth/features/google-login/google-login-button';
 import { KakaoLoginButton } from '@/domains/auth/features/kakao-login/kakao-login-button';
 import { CommonImage } from '@/shared/components/ui';
 
@@ -23,7 +24,8 @@ export default function LoginPage() {
         </div>
       </section>
 
-      <div className="w-full pb-8.5">
+      <div className="flex w-full flex-col gap-3 pb-8.5">
+        <GoogleLoginButton />
         <KakaoLoginButton />
       </div>
     </main>

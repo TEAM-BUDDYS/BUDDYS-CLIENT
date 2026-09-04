@@ -41,7 +41,7 @@ export const KakaoLoginButton = () => {
 
   return (
     <Button
-      variant="kakao"
+      variant="login"
       align="center"
       icon={<KakaoIcon />}
       iconSize="lg"
