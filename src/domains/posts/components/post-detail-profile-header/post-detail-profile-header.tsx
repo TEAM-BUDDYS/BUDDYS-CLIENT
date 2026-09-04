@@ -8,11 +8,9 @@ import { POST_MUTATION_OPTIONS } from '@/domains/posts/api/query';
 import { PostRecruitmentStatusBottomSheet } from '@/domains/posts/components/post-recruitment-status-bottom-sheet/post-recruitment-status-bottom-sheet';
 import { PostRecruitmentStatusButton } from '@/domains/posts/components/post-recruitment-status-button/post-recruitment-status-button';
 import type { PostRecruitmentStatusTypes } from '@/domains/posts/model/post-recruitment-status';
-import { cn } from '@/lib/cn';
 import { POST_QUERY_KEY, RECOMMENDATION_QUERY_KEY } from '@/shared/api';
 import { defaultProfileImage } from '@/shared/assets/illustrations';
-import { BookmarkIcon } from '@/shared/components/icons';
-import { useToast } from '@/shared/components/ui';
+import { BookmarkButton, useToast } from '@/shared/components/ui';
 import { CommonImage } from '@/shared/components/ui/common-image/common-image';
 import { ROUTES } from '@/shared/config';
 
@@ -146,20 +144,11 @@ export const PostDetailProfileHeader = ({
           />
         </>
       ) : (
-        <button
-          aria-label={isBookmarked ? '북마크 해제' : '북마크 추가'}
-          aria-pressed={isBookmarked}
-          className={cn(
-            'flex size-12 shrink-0 items-center justify-center',
-            isBookmarked ? 'text-mint-300' : 'text-gray-500',
-          )}
-          type="button"
+        <BookmarkButton
+          isBookmarked={isBookmarked}
+          className={isBookmarked ? 'size-12' : 'size-12 text-gray-500'}
           onClick={handleBookmarkClick}
-        >
-          <BookmarkIcon
-            className={cn('size-6', isBookmarked && 'fill-current')}
-          />
-        </button>
+        />
       )}
     </header>
   );

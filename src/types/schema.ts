@@ -121,6 +121,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/auth/logout': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 로그아웃
+     * @description 저장된 리프레시 토큰을 폐기하고 리프레시 토큰 쿠키를 삭제합니다.
+     */
+    post: operations['logout'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/auth/kakao': {
     parameters: {
       query?: never;
@@ -135,6 +155,26 @@ export interface paths {
      * @description 카카오 인가 코드를 이용해 로그인하고 JWT를 발급합니다.
      */
     post: operations['kakaoLogin'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auth/google': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 구글 로그인
+     * @description 구글 인가 코드를 이용해 로그인하고 JWT를 발급합니다.
+     */
+    post: operations['googleLogin'];
     delete?: never;
     options?: never;
     head?: never;
@@ -353,6 +393,66 @@ export interface paths {
      * @description 동행 모집 게시글의 상세 정보를 조회합니다.
      */
     get: operations['getPostDetail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/places/{placeId}/photo': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 장소 사진 프록시
+     * @description 장소의 대표 사진 URL로 302 리다이렉트합니다. 구글 API 키를 클라이언트에 노출하지 않기 위한 프록시입니다.
+     */
+    get: operations['getPlacePhoto'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/places/search': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 장소 검색
+     * @description 구글 Places API를 통해 장소를 검색합니다. lat/lng를 함께 주면 해당 좌표 주변 결과를 우선합니다.
+     */
+    get: operations['searchPlaces'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/places/nearby': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 근처 장소 목록 조회
+     * @description 구글 Places Nearby Search API를 통해 좌표 주변 장소를 조회합니다.
+     */
+    get: operations['getNearbyPlaces'];
     put?: never;
     post?: never;
     delete?: never;
@@ -1568,6 +1668,59 @@ export interface components {
        */
       timeAgo?: string;
     };
+    BaseResponsePlaceSearchResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['PlaceSearchResponse'];
+    };
+    PlaceResponse: {
+      /**
+       * @description 구글 place_id. 저장(북마크) 시 이 값을 사용
+       * @example ChIJN1t_tDeuEmsRUsoyG83frY4
+       */
+      placeId: string;
+      /**
+       * @description 장소명. 구글이 이름을 안 줄 경우 null일 수 있음
+       * @example 루브르 박물관
+       */
+      name: string | null;
+      /**
+       * @description 장소 카테고리
+       * @example TOURISM
+       * @enum {string}
+       */
+      category?: 'RESTAURANT' | 'CAFE' | 'TOURISM' | 'ACCOMMODATION' | 'ETC';
+      /**
+       * @description 주소. 구글이 주소를 안 줄 경우 null일 수 있음
+       * @example Rue de Rivoli, 75001 Paris
+       */
+      address: string | null;
+      /**
+       * Format: double
+       * @description 위도. 구글이 좌표를 안 줄 경우 null일 수 있음
+       * @example 48.8606
+       */
+      latitude: number | null;
+      /**
+       * Format: double
+       * @description 경도. 구글이 좌표를 안 줄 경우 null일 수 있음
+       * @example 2.3376
+       */
+      longitude: number | null;
+      /**
+       * @description 로그인 유저의 저장 여부
+       * @example false
+       */
+      bookmarked: boolean;
+      /** @description 대표 사진 URL */
+      photoUrl?: string | null;
+    };
+    PlaceSearchResponse: {
+      places?: components['schemas']['PlaceResponse'][];
+      /** @description 다음 페이지 조회용 토큰. 다음 페이지 없으면 null */
+      nextPageToken?: string | null;
+    };
     BaseResponseCountryListResponse: {
       success?: boolean;
       code?: string;
@@ -2480,6 +2633,35 @@ export interface operations {
       };
     };
   };
+  logout: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 로그아웃 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증되지 않은 사용자 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
   kakaoLogin: {
     parameters: {
       query: {
@@ -2511,6 +2693,55 @@ export interface operations {
       };
       /** @description 잘못된 인가 코드 또는 허용되지 않은 redirect_uri */
       400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseLoginResponse'];
+        };
+      };
+    };
+  };
+  googleLogin: {
+    parameters: {
+      query: {
+        /**
+         * @description 구글 OAuth 인가 코드
+         * @example 4/0AY0e-g7...
+         */
+        code: string;
+        /**
+         * @description 구글 인가 요청 시 사용한 redirect_uri
+         * @example http://localhost:3000/auth/google/callback
+         */
+        redirectUri: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 로그인 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseLoginResponse'];
+        };
+      };
+      /** @description 잘못된 인가 코드 또는 허용되지 않은 redirect_uri */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseLoginResponse'];
+        };
+      };
+      /** @description 신규 가입 사용자의 구글 이메일이 인증되지 않음 */
+      401: {
         headers: {
           [name: string]: unknown;
         };
@@ -3467,6 +3698,294 @@ export interface operations {
            *       "success": false,
            *       "code": "GLB-E005",
            *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  getPlacePhoto: {
+    parameters: {
+      query?: {
+        /**
+         * @description 최대 가로 픽셀. 1 이상 4800 이하입니다.
+         * @example 400
+         */
+        maxWidth?: number;
+      };
+      header?: never;
+      path: {
+        /**
+         * @description 구글 place_id
+         * @example ChIJN1t_tDeuEmsRUsoyG83frY4
+         */
+        placeId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 리다이렉트 성공 */
+      302: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 사진 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "PLACE-E002",
+           *       "message": "장소 사진을 찾을 수 없습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 구글 Places 응답 실패 (업스트림 오류) */
+      502: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "PLACE-E001",
+           *       "message": "지도 서비스 응답에 실패했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  searchPlaces: {
+    parameters: {
+      query?: {
+        /**
+         * @description 검색 키워드
+         * @example 커피
+         */
+        query?: string;
+        /**
+         * @description 장소 카테고리, 없으면 전체 검색
+         * @example CAFE
+         */
+        category?: string;
+        /**
+         * @description 위도. lng와 함께 넘기면 주변 검색으로 편향됩니다.
+         * @example 37.5567
+         */
+        lat?: number;
+        /**
+         * @description 경도. lat와 함께 넘기면 주변 검색으로 편향됩니다.
+         * @example 126.9236
+         */
+        lng?: number;
+        /**
+         * @description 이전 응답의 nextPageToken. 다음 페이지 조회 시 사용
+         * @example AeCrKx...
+         */
+        pageToken?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 검색 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponsePlaceSearchResponse'];
+        };
+      };
+      /** @description 잘못된 요청 — query 파라미터 누락, category 값이 유효하지 않음, lat/lng 중 하나만 전달됨, lat/lng가 유효 범위를 벗어남 중 하나 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 구글 Places 응답 실패 (업스트림 오류) */
+      502: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "PLACE-E001",
+           *       "message": "지도 서비스 응답에 실패했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  getNearbyPlaces: {
+    parameters: {
+      query?: {
+        /**
+         * @description 위도
+         * @example 48.86
+         */
+        lat?: number;
+        /**
+         * @description 경도
+         * @example 2.33
+         */
+        lng?: number;
+        /**
+         * @description 검색 반경(미터). 1 이상 50000 이하이며, 기본값은 1500입니다.
+         * @example 1500
+         */
+        radius?: number;
+        /**
+         * @description 장소 카테고리, 없으면 전체 카테고리에서 조회
+         * @example RESTAURANT
+         */
+        category?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponsePlaceSearchResponse'];
+        };
+      };
+      /** @description 잘못된 요청 — lat/lng 파라미터 누락, lat/lng가 유효 범위를 벗어남, radius가 1~50000 범위를 벗어남, category 값이 유효하지 않음 중 하나 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 구글 Places 응답 실패 (업스트림 오류) */
+      502: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "PLACE-E001",
+           *       "message": "지도 서비스 응답에 실패했습니다.",
            *       "data": null
            *     }
            */
