@@ -43,7 +43,7 @@ export const TagChipGroup = ({
             className="flex items-center justify-center gap-2"
           >
             {rowTags.map((tag) => (
-              <Chip key={tag.id} size="md" active>
+              <Chip key={tag.id} variant="lineMedium" active>
                 {tag.name}
               </Chip>
             ))}
