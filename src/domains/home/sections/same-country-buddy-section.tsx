@@ -4,8 +4,8 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 
 import { HOME_QUERY_OPTIONS } from '@/domains/home/api/query';
 import type { ExchangeCountryRecommendedUser } from '@/domains/home/api/type';
-import { CardProfile } from '@/domains/home/components/card-profile/card-profile';
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
+import { ProfileCard } from '@/domains/partner/components/profile-card/profile-card';
 import { AsyncBoundary, EmptyState } from '@/shared/components/ui';
 
 const SAME_COUNTRY_BUDDY_SIZE = 5;
@@ -56,7 +56,7 @@ const SameCountryBuddyList = () => {
     <div className="-mx-4 scrollbar-none overflow-x-auto px-4">
       <div className="flex gap-3">
         {users.map((user) => (
-          <CardProfile
+          <ProfileCard
             key={user.userId}
             userId={user.userId}
             nickname={user.nickname}
