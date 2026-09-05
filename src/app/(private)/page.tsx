@@ -13,7 +13,11 @@ export default function Home() {
     <>
       <Header
         content={
-          <BuddysLogoIcon className="text-gray-800" width={90} height={24} />
+          <BuddysLogoIcon
+            className="text-gray-800"
+            width={80.043}
+            height={21.12}
+          />
         }
         right={
           <>
