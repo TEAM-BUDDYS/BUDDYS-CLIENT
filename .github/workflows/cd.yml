@@ -1,88 +1,24 @@
-name: Deploy
+name: Sync to personal repo
 
 on:
-  workflow_run:
-    workflows: [CI]
-    types: [completed]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: sync-fork-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  deploy:
-    name: Deploy to EC2
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main' }}
+  mirror:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+          persist-credentials: false
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Build and push Docker image
-        env:
-          NEXT_PUBLIC_API_BASE_URL: ${{ vars.NEXT_PUBLIC_API_BASE_URL }}
-          NEXT_PUBLIC_KAKAO_REST_API_KEY: ${{ vars.NEXT_PUBLIC_KAKAO_REST_API_KEY }}
-          NEXT_PUBLIC_KAKAO_REDIRECT_URI: ${{ vars.NEXT_PUBLIC_KAKAO_REDIRECT_URI }}
-          NEXT_PUBLIC_WEBSOCKET_URL: ${{ vars.NEXT_PUBLIC_WEBSOCKET_URL }}
-          NEXT_PUBLIC_GOOGLE_ANALYTICS_ID: ${{ vars.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID }}
+      - name: Push to personal repo
         run: |
-          if [[ ! "$NEXT_PUBLIC_GOOGLE_ANALYTICS_ID" =~ ^G-[A-Z0-9]+$ ]]; then
-            echo "NEXT_PUBLIC_GOOGLE_ANALYTICS_ID is missing or invalid"
-            exit 1
-          fi
-
-          docker buildx build \
-            --platform linux/amd64 \
-            --build-arg NEXT_PUBLIC_API_BASE_URL \
-            --build-arg NEXT_PUBLIC_KAKAO_REST_API_KEY \
-            --build-arg NEXT_PUBLIC_KAKAO_REDIRECT_URI \
-            --build-arg NEXT_PUBLIC_WEBSOCKET_URL \
-            --build-arg NEXT_PUBLIC_GOOGLE_ANALYTICS_ID \
-            -t ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:latest \
-            -t ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ github.event.workflow_run.head_sha }} \
-            --push .
-
-      - name: Deploy on EC2
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            set -e
-            cd ~/buddys-client
-            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
-
-            if docker compose version > /dev/null 2>&1; then
-              COMPOSE="docker compose"
-            else
-              COMPOSE="docker-compose"
-            fi
-
-            $COMPOSE pull
-            $COMPOSE down --remove-orphans
-            $COMPOSE up -d
-
-            for i in {1..10}; do
-              if curl -fsS http://localhost:3000 > /dev/null; then
-                echo "Health check passed"
-                docker image prune -f
-                exit 0
-              fi
-
-              echo "Waiting for app to be ready..."
-              sleep 3
-            done
-
-            echo "Health check failed"
-            $COMPOSE logs --tail=100
-            exit 1
+          git push https://x-access-token:${{ secrets.PERSONAL_REPO_PAT }}@github.com/winchoose/BUDDYS-CLIENT.git ${{ github.ref_name }} --force
