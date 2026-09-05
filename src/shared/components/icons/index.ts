@@ -38,6 +38,7 @@ export { PenIcon } from './pen-icon';
 export { PlusIcon } from './plus-icon';
 export { ProfileBadgeIcon } from './profile-badge-icon';
 export { ProfileIcon } from './profile-icon';
+export { PwaSymbolIcon } from './pwa-symbol-icon';
 export { SandglassIcon } from './sandglass-icon';
 export { SearchIcon } from './search-icon';
 export { SendIcon } from './send-icon';
