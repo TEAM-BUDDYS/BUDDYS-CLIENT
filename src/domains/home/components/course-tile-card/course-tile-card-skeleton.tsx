@@ -1,13 +1,13 @@
 import { cn } from '@/lib/cn';
 import { Skeleton } from '@/shared/components/ui/skeleton/skeleton';
 
-interface HomeCourseCardSkeletonProps {
+interface CourseTileCardSkeletonProps {
   className?: string;
 }
 
-export const HomeCourseCardSkeleton = ({
+export const CourseTileCardSkeleton = ({
   className,
-}: HomeCourseCardSkeletonProps) => {
+}: CourseTileCardSkeletonProps) => {
   return (
     <div
       aria-hidden

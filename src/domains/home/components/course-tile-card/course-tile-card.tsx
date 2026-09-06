@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/cn';
 import { CommonImage } from '@/shared/components/ui/common-image/common-image';
 
-interface HomeCourseCardProps {
+interface CourseTileCardProps {
   title: string;
   description: string;
   image: {
@@ -14,13 +14,13 @@ interface HomeCourseCardProps {
   className?: string;
 }
 
-export const HomeCourseCard = ({
+export const CourseTileCard = ({
   title,
   description,
   image,
   href,
   className,
-}: HomeCourseCardProps) => {
+}: CourseTileCardProps) => {
   return (
     <Link
       href={href}
