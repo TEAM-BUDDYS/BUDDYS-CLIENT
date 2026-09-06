@@ -12,6 +12,7 @@ export default function Home() {
   return (
     <>
       <Header
+        className="h-auto items-start pt-5 pb-4"
         content={
           <BuddysLogoIcon
             className="text-gray-800"
