@@ -33,6 +33,7 @@ export const SearchSheetButton = () => {
         ref={searchButtonRef}
         type="button"
         aria-label="검색"
+        className="-m-[11px] flex size-11 items-center justify-center"
         onClick={handleSearchSheetOpen}
       >
         <SearchIcon className="size-[22px] text-gray-800" />

@@ -13,6 +13,7 @@ export const NotificationBellButton = () => {
       <button
         type="button"
         aria-label="알림"
+        className="-m-[11px] flex size-11 items-center justify-center"
         onClick={() => setIsComingSoonOpen(true)}
       >
         <BellIcon className="size-[22px] text-gray-800" />
