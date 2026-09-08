@@ -1,6 +1,7 @@
 export const END_POINT = {
   AUTH: {
     KAKAO: 'api/v1/auth/kakao',
+    GOOGLE: 'api/v1/auth/google',
     REISSUE: 'api/v1/auth/reissue',
   },
   CHAT_ROOM: {
