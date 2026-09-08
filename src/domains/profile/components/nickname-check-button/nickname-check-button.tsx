@@ -4,7 +4,7 @@ import { cn } from '@/lib/cn';
 
 interface NicknameCheckButtonProps extends Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
-  'type'
+  'children' | 'type'
 > {
   className?: string;
 }
