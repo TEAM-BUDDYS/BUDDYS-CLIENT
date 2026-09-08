@@ -1,12 +1,12 @@
 import { NotificationBellButton } from '@/domains/home/components/notification-bell-button/notification-bell-button';
 import { SearchSheetButton } from '@/domains/home/components/search-sheet-button/search-sheet-button';
-import { WriteFloatingButton } from '@/domains/home/components/write-floating-button/write-floating-button';
 import { BuddySearchSection } from '@/domains/home/sections/buddy-search-section';
 import { PreferenceBuddySection } from '@/domains/home/sections/preference-buddy-section';
 import { SameCountryBuddySection } from '@/domains/home/sections/same-country-buddy-section';
 import { TodayBuddySection } from '@/domains/home/sections/today-buddy-section';
 import { BuddysLogoIcon } from '@/shared/components/icons';
 import { BottomNavigation, Header } from '@/shared/components/layout';
+import { WriteFloatingButton } from '@/shared/components/ui';
 
 export default function Home() {
   return (
