@@ -45,8 +45,6 @@ reviews:
     - 'eslint.config.mjs'
     - 'pnpm-workspace.*'
     - 'sentry.*.config.ts'
-    - 'Dockerfile'
-    - '.dockerignore'
     - 'README.md'
     - '.gitignore'
     # 제외(deny-list)

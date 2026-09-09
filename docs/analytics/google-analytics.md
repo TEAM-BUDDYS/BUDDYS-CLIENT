@@ -5,17 +5,15 @@ BUDDYS는 GA4를 운영 환경의 기본 페이지 조회와 유입 경로 분�
 ## Runtime Configuration
 
 - 측정 ID는 `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID`로 전달합니다.
-- 측정 ID는 공개 식별자이지만 소스 코드에 직접 작성하지 않고 GitHub Repository Variable로 관리합니다.
+- 측정 ID는 공개 식별자이지만 소스 코드에 직접 작성하지 않고 배포 환경 변수로 관리합니다.
 - 개발 환경에서는 Analytics를 로드하지 않습니다.
 - CI는 측정 ID 없이도 빌드되어야 합니다.
-- 운영 CD는 `G-` 형식의 유효한 측정 ID가 없으면 Docker image 생성을 중단합니다.
+- Vercel 운영 환경에는 `G-` 형식의 유효한 측정 ID를 설정합니다.
 
 배포 전달 경로는 다음과 같습니다.
 
 ```txt
-GitHub Repository Variable
-  -> GitHub Actions CD
-  -> Docker build argument
+Vercel Environment Variable
   -> Next.js production build
 ```
 
