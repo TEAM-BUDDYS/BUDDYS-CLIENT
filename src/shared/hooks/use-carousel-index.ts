@@ -44,6 +44,7 @@ export const useCarouselIndex = (
 
   return {
     currentIndex,
+    emblaApi,
     emblaRef,
     handleIndexChange,
   };
