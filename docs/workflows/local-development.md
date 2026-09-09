@@ -43,6 +43,8 @@ pnpm build
 | `NEXT_PUBLIC_API_BASE_URL`        | HTTP API 기본 주소           |
 | `NEXT_PUBLIC_KAKAO_REST_API_KEY`  | 카카오 OAuth REST API 식별자 |
 | `NEXT_PUBLIC_KAKAO_REDIRECT_URI`  | 카카오 OAuth callback 주소   |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID`    | 구글 OAuth Client ID         |
+| `NEXT_PUBLIC_GOOGLE_REDIRECT_URI` | 구글 OAuth callback 주소     |
 | `NEXT_PUBLIC_WEBSOCKET_URL`       | STOMP WebSocket 연결 주소    |
 | `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID` | 운영 웹 스트림의 GA4 측정 ID |
 
