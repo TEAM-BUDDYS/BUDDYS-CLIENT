@@ -94,7 +94,11 @@ export const BottomSheetChat = ({
     },
     {
       label: isNotificationOn ? '알림 끄기' : '알림 켜기',
-      icon: isNotificationOn ? <NoticeIcon /> : <BellIcon />,
+      icon: isNotificationOn ? (
+        <NoticeIcon />
+      ) : (
+        <BellIcon className="opacity-60" />
+      ),
       onClick: () => handleAction('toggleNotification'),
     },
   ];

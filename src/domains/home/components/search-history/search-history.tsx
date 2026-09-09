@@ -51,7 +51,12 @@ export const SearchHistory = ({
               onClick={() => onSelect(item)}
               className="flex h-full min-w-0 flex-1 items-center gap-2.5 text-left"
             >
-              <LeadingIcon className="size-5 shrink-0 text-gray-200" />
+              <LeadingIcon
+                className={cn(
+                  'size-5 shrink-0 text-gray-200',
+                  type === 'suggestion' && 'opacity-60',
+                )}
+              />
               <span className="text-body-m-16 truncate text-gray-800">
                 {item.keyword}
               </span>

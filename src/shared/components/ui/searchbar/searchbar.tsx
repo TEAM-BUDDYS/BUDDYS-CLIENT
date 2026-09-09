@@ -61,7 +61,10 @@ export const Searchbar = ({
         </button>
       ) : (
         <SearchIcon
-          className={cn('size-6 shrink-0 text-gray-500', searchIconClassName)}
+          className={cn(
+            'size-6 shrink-0 text-gray-500 opacity-60',
+            searchIconClassName,
+          )}
         />
       )}
     </div>
