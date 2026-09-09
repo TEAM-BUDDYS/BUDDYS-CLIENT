@@ -1,16 +1,19 @@
 name: Sync to personal repo
 
 on:
-  push:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
     branches: [main]
   workflow_dispatch:
 
 concurrency:
-  group: sync-fork-${{ github.ref }}
+  group: sync-fork-${{ github.event.workflow_run.head_branch || github.ref_name }}
   cancel-in-progress: true
 
 jobs:
   mirror:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -18,7 +21,8 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+          ref: ${{ github.event.workflow_run.head_sha || github.ref }}
 
       - name: Push to personal repo
         run: |
-          git push https://x-access-token:${{ secrets.PERSONAL_REPO_PAT }}@github.com/winchoose/BUDDYS-CLIENT.git ${{ github.ref_name }} --force
+          git push https://x-access-token:${{ secrets.PERSONAL_REPO_PAT }}@github.com/winchoose/BUDDYS-CLIENT.git HEAD:${{ github.event.workflow_run.head_branch || github.ref_name }} --force
