@@ -45,6 +45,7 @@ export const KakaoLoginButton = () => {
       align="center"
       icon={<KakaoIcon />}
       iconSize="lg"
+      className="bg-[#FAE100]"
       disabled={isDisabled}
       onClick={handleLoginClick}
     >
