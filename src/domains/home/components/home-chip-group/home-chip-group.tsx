@@ -32,7 +32,7 @@ export const HomeChipGroup = ({
           {tagRow.map((tag) => (
             <ChipButton
               key={tag.id}
-              size="md"
+              variant="lineMedium"
               active={selectedTagId === tag.id}
               aria-label={`${tag.name} 태그 ${selectedTagId === tag.id ? '선택됨' : '선택'}`}
               onClick={() => handleTagClick(tag.id)}
