@@ -16,20 +16,30 @@ import type {
   GetUserPostsParams,
   GetUserPostsResponse,
   GetUserProfileResponse,
-  TagGroup,
 } from './type';
 
-const toOrderedTags = (
-  representativeTags: string[] | undefined,
-  allTags: TagGroup[] | undefined,
-) => {
-  const representativeNames = representativeTags ?? [];
-  const otherNames = (allTags ?? [])
-    .flatMap((group) => group.tags ?? [])
-    .filter((name) => !representativeNames.includes(name));
+interface OrderedTag {
+  id: number;
+  name: string;
+}
 
-  return [...representativeNames, ...otherNames].map((name, index) => ({
-    id: index,
+const isOrderedTagArray = (value: unknown): value is OrderedTag[] => {
+  return (
+    value === undefined ||
+    (Array.isArray(value) &&
+      value.every(
+        (tag) =>
+          typeof tag === 'object' &&
+          tag !== null &&
+          typeof (tag as OrderedTag).id === 'number' &&
+          typeof (tag as OrderedTag).name === 'string',
+      ))
+  );
+};
+
+const toProfileTags = (tags: OrderedTag[] | undefined) => {
+  return (tags ?? []).map(({ id, name }) => ({
+    id,
     name,
   }));
 };
@@ -80,7 +90,6 @@ const isValidUserPublicProfileData = (
     profileImageUrl,
     verificationBadge,
     representativeTags,
-    allTags,
     bio,
     isDeleted,
   } = data as Partial<UserPublicProfileData>;
@@ -89,8 +98,7 @@ const isValidUserPublicProfileData = (
     typeof nickname === 'string' &&
     isNullableString(profileImageUrl) &&
     isValidVerificationBadge(verificationBadge) &&
-    (representativeTags === undefined || Array.isArray(representativeTags)) &&
-    (allTags === undefined || Array.isArray(allTags)) &&
+    isOrderedTagArray(representativeTags) &&
     isNullableString(bio) &&
     (isDeleted === undefined || typeof isDeleted === 'boolean')
   );
@@ -109,20 +117,14 @@ const getMyProfile = async (): Promise<MyProfile> => {
     throw new Error('프로필 응답 형식이 올바르지 않습니다.');
   }
 
-  const {
-    profileImageUrl,
-    nickname,
-    verificationBadge,
-    representativeTags,
-    allTags,
-    bio,
-  } = response.data;
+  const { profileImageUrl, nickname, verificationBadge, orderedTags, bio } =
+    response.data;
 
   return {
     imageUrl: profileImageUrl || null,
     nickname,
     isVerified: Boolean(verificationBadge),
-    tags: toOrderedTags(representativeTags, allTags),
+    tags: toProfileTags(orderedTags),
     bio: bio ?? null,
   };
 };
@@ -171,7 +173,6 @@ const getUserProfile = async (userId: number): Promise<OtherProfile | null> => {
     nickname,
     verificationBadge,
     representativeTags,
-    allTags,
     bio,
     isDeleted,
   } = response.data;
@@ -180,7 +181,7 @@ const getUserProfile = async (userId: number): Promise<OtherProfile | null> => {
     imageUrl: profileImageUrl || null,
     nickname,
     isVerified: Boolean(verificationBadge),
-    tags: toOrderedTags(representativeTags, allTags),
+    tags: toProfileTags(representativeTags),
     bio: bio ?? null,
     isWithdrawn: Boolean(isDeleted),
   };

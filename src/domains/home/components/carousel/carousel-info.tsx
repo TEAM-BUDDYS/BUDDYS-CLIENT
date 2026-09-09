@@ -2,14 +2,14 @@ import { CommonImage } from '@/shared/components/ui';
 
 export interface CarouselInfoProps {
   authorProfileImageUrl: string;
-  nickName: string;
+  nickname: string;
   title: string;
   country: string;
 }
 
 export const CarouselInfo = ({
   authorProfileImageUrl,
-  nickName,
+  nickname,
   title,
   country,
 }: CarouselInfoProps) => {
@@ -25,7 +25,7 @@ export const CarouselInfo = ({
           className="size-6"
         />
         <span className="text-body-r-14 flex items-center text-white">
-          {nickName}
+          {nickname}
         </span>
       </div>
       <div className="flex w-50 flex-col gap-1">

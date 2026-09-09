@@ -16,6 +16,10 @@ export type RenderableRecommendedPost = RecommendedPost & {
   postId: number;
   title: string;
   thumbnailUrl: string;
+  author: {
+    nickname: string;
+    profileImageUrl?: string | null;
+  };
   country: {
     name: string;
   };
@@ -29,7 +33,11 @@ export const isRenderableRecommendedPost = (
   post: RecommendedPost,
 ): post is RenderableRecommendedPost => {
   return Boolean(
-    post.postId && post.title && post.thumbnailUrl && post.country?.name,
+    post.postId &&
+    post.title &&
+    post.thumbnailUrl &&
+    post.author?.nickname &&
+    post.country?.name,
   );
 };
 
@@ -72,10 +80,10 @@ export const Carousel = ({ posts }: CarouselProps) => {
                 <div className="absolute inset-5">
                   <CarouselInfo
                     authorProfileImageUrl={
-                      item.authorProfileImageUrl || defaultProfileImage.src
+                      item.author.profileImageUrl || defaultProfileImage.src
                     }
                     title={item.title}
-                    nickName="Taek2"
+                    nickname={item.author.nickname}
                     country={item.country.name}
                   />
                 </div>
