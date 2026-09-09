@@ -5,8 +5,8 @@ import { cn } from '@/lib/cn';
 const FILTER_STYLES = {
   default: {
     bg: 'bg-white',
-    text: 'text-gray-800',
-    border: 'border border-gray-300',
+    text: 'text-gray-500',
+    border: 'border border-gray-100',
   },
   pressed: {
     bg: 'bg-gray-800',
@@ -15,21 +15,13 @@ const FILTER_STYLES = {
   },
 };
 
-type IconComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>;
-
 export interface FilterProps {
   label: string;
   pressed: boolean;
   onPress: () => void;
-  icon?: IconComponent;
 }
 
-export const Filter = ({
-  label,
-  pressed,
-  onPress,
-  icon: Icon,
-}: FilterProps) => {
+export const Filter = ({ label, pressed, onPress }: FilterProps) => {
   const { bg, text, border } = FILTER_STYLES[pressed ? 'pressed' : 'default'];
 
   return (
@@ -38,13 +30,12 @@ export const Filter = ({
       onClick={onPress}
       aria-pressed={pressed}
       className={cn(
-        'inline-flex shrink-0 items-center gap-1.5 rounded-[30px] py-2.5 pr-4 pl-3',
+        'inline-flex shrink-0 items-center rounded-[30px] px-4 py-2',
         bg,
         border,
       )}
     >
-      {Icon && <Icon aria-hidden="true" className={cn('size-5', text)} />}
-      <span className={cn('text-body-sb-14', text)}>{label}</span>
+      <span className={cn('text-body-r-14', text)}>{label}</span>
     </button>
   );
 };

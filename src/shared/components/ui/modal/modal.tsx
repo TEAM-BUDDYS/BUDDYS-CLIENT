@@ -77,7 +77,7 @@ export const Modal = (props: ModalProps) => {
         aria-labelledby={titleId}
         aria-modal="true"
         className={cn(
-          'relative flex w-80 flex-col items-center gap-6 rounded-2xl bg-white p-4',
+          'relative flex w-80 flex-col items-center gap-7 rounded-2xl bg-white p-4 pt-6',
           className,
         )}
         onKeyDown={handleModalKeyDown}
