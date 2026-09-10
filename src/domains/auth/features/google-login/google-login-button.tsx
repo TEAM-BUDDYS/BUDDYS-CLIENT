@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { GoogleIcon } from '@/shared/components/icons';
-import { Button } from '@/shared/components/ui';
+import { Button, useToast } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
 import { useAuthSession } from '../auth-session/auth-session-provider';
@@ -15,6 +15,7 @@ export const GoogleLoginButton = () => {
   const router = useRouter();
   const { status, onboardingCompleted } = useAuthSession();
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const { showToast } = useToast();
 
   useEffect(() => {
     if (status === 'authenticated') {
@@ -34,6 +35,13 @@ export const GoogleLoginButton = () => {
       if (process.env.NODE_ENV === 'development') {
         console.error('구글 로그인 URL 생성에 실패했습니다.', error);
       }
+
+      showToast(
+        '로그인 화면을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
+        {
+          variant: 'gray',
+        },
+      );
     }
   };
 
