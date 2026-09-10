@@ -13,7 +13,7 @@ export const SelectedRegionItem = ({
 }: SelectedRegionItemProps) => {
   return (
     <div className="bg-mint-50 flex h-13 w-full items-center justify-between gap-3 rounded-xl py-2.5 pr-3 pl-4">
-      <span className="text-body-sb-15 text-mint-300 truncate">
+      <span className="text-body-sb-15 text-mint-300 min-w-0 truncate">
         {regionName}
       </span>
 
