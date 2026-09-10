@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { CreatePostRequest } from '@/domains/posts/api/type';
 import { type City, getCityDisplayName } from '@/shared/api';
 import type { DateRangeTypes } from '@/shared/components/ui';
+import { formatDateToIsoDate } from '@/shared/utils/format-date-range';
 
 import { MAX_IMAGE_COUNT } from './constants';
 import type {
@@ -25,14 +26,6 @@ const INITIAL_DETAIL_FORM: PostCreateDetailFormState = {
   activityTagIds: [],
   interestTagIds: [],
   companionStyleTagIds: [],
-};
-
-const formatDateForPayload = (date: Date) => {
-  const year = date.getFullYear();
-  const month = `${date.getMonth() + 1}`.padStart(2, '0');
-  const day = `${date.getDate()}`.padStart(2, '0');
-
-  return `${year}-${month}-${day}`;
 };
 
 const isRequiredDetailComplete = (
@@ -195,8 +188,8 @@ export const usePostCreateForm = () => {
       cityId,
       title: detail.title.trim(),
       content: detail.content.trim(),
-      startDate: formatDateForPayload(startDate),
-      endDate: formatDateForPayload(endDate),
+      startDate: formatDateToIsoDate(startDate),
+      endDate: formatDateToIsoDate(endDate),
       ageConditions: detail.ageConditions,
       genderConditions: detail.genderConditions,
       companionType: detail.companionType,
