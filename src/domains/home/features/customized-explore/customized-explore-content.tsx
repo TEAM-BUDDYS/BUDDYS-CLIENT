@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { type KeyboardEvent, useState } from 'react';
 
+import { WriteFloatingButton } from '@/domains/home/components/write-floating-button/write-floating-button';
 import { FilterSheet } from '@/domains/home/features/filter-sheet/filter-sheet';
 import { SearchSheet } from '@/domains/home/features/search-sheet/search-sheet';
 import { useFilterSheetValue } from '@/domains/home/hooks/use-filter-sheet-value';
@@ -13,12 +14,7 @@ import {
 } from '@/domains/home/model/buddy-filter';
 import { cn } from '@/lib/cn';
 import { BottomNavigation, Header } from '@/shared/components/layout';
-import {
-  AsyncBoundary,
-  Filter,
-  Searchbar,
-  WriteFloatingButton,
-} from '@/shared/components/ui';
+import { AsyncBoundary, Filter, Searchbar } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
 import { CustomizedExplorePostList } from './customized-explore-post-list';

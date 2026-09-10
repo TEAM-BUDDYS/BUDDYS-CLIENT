@@ -38,4 +38,3 @@ export { Tab } from './tab/tab';
 export { TextArea, type TextAreaStatus } from './text-area/text-area';
 export { TextField, type TextFieldStatus } from './text-field/text-field';
 export { ToastProvider, type ToastVariant, useToast } from './toast';
-export { WriteFloatingButton } from './write-floating-button/write-floating-button';
