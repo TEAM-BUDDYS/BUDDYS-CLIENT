@@ -1,7 +1,12 @@
 import Link from 'next/link';
 
+import { cn } from '@/lib/cn';
 import { CourseIcon, LocationIcon } from '@/shared/components/icons';
 import { ROUTES } from '@/shared/config';
+
+interface WriteFloatingMenuProps {
+  className?: string;
+}
 
 const WRITE_MENU_ITEMS = [
   {
@@ -16,9 +21,14 @@ const WRITE_MENU_ITEMS = [
   },
 ];
 
-export const WriteFloatingMenu = () => {
+export const WriteFloatingMenu = ({ className }: WriteFloatingMenuProps) => {
   return (
-    <ul className="pointer-events-auto mb-2 flex w-fit flex-col gap-2 rounded-[20px] bg-white p-2">
+    <ul
+      className={cn(
+        'pointer-events-auto mb-2 flex w-fit flex-col gap-2 rounded-[20px] bg-white p-2',
+        className,
+      )}
+    >
       {WRITE_MENU_ITEMS.map(({ label, icon, href }) => (
         <li key={label}>
           <Link
