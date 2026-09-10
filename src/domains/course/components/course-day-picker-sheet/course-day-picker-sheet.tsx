@@ -31,6 +31,11 @@ export const CourseDayPickerSheet = ({
     selectedDayNumber >= 1 &&
     selectedDayNumber <= dates.length;
 
+  const handleDaySelect = (dayNumber: number) => {
+    onDaySelect(dayNumber);
+    onClose();
+  };
+
   if (!open) {
     return null;
   }
@@ -65,7 +70,7 @@ export const CourseDayPickerSheet = ({
                     isSelected && 'bg-gray-50',
                     hasSelectedDay && !isSelected && 'text-gray-500',
                   )}
-                  onClick={() => onDaySelect(dayNumber)}
+                  onClick={() => handleDaySelect(dayNumber)}
                 >
                   <span>{`Day ${dayNumber}`}</span>
                   <time dateTime={formatDateToIsoDate(date)}>
