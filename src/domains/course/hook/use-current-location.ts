@@ -1,13 +1,10 @@
 import { useEffect, useState } from 'react';
 
-interface CurrentLocation {
-  lat: number;
-  lng: number;
-}
+import type { CourseMapCenter } from '@/domains/course/model/course-map';
 
 export const useCurrentLocation = () => {
   const [currentLocation, setCurrentLocation] =
-    useState<CurrentLocation | null>(null);
+    useState<CourseMapCenter | null>(null);
 
   useEffect(() => {
     if (!navigator.geolocation) return;

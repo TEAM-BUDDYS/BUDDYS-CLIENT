@@ -1,9 +1,12 @@
 'use client';
 
-import { AdvancedMarker, APIProvider, Map } from '@vis.gl/react-google-maps';
+import { APIProvider, Map } from '@vis.gl/react-google-maps';
 
 import type { Place } from '@/domains/course/api/type';
+import { CourseMapCamera } from '@/domains/course/components/course-map/course-map-camera';
+import { CourseMapMarker } from '@/domains/course/components/course-map/course-map-marker';
 import { useCurrentLocation } from '@/domains/course/hook/use-current-location';
+import type { CourseMapCenter } from '@/domains/course/model/course-map';
 
 const FALLBACK_CENTER = {
   lat: 37.5665,
@@ -13,12 +16,14 @@ const FALLBACK_CENTER = {
 interface CourseMapProps {
   places: Place[];
   selectedPlaceId?: string;
+  cameraTarget?: CourseMapCenter | null;
   onPlaceSelect?: (placeId: string) => void;
 }
 
 export const CourseMap = ({
   places,
   selectedPlaceId,
+  cameraTarget = null,
   onPlaceSelect,
 }: CourseMapProps) => {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -38,6 +43,7 @@ export const CourseMap = ({
       : null;
 
   const center = selectedPlaceCenter ?? currentLocation ?? FALLBACK_CENTER;
+  const resolvedCameraTarget = cameraTarget ?? currentLocation;
 
   if (!apiKey || !mapId) {
     return (
@@ -54,36 +60,26 @@ export const CourseMap = ({
       <APIProvider apiKey={apiKey}>
         <Map
           mapId={mapId}
-          center={center}
+          defaultCenter={center}
           defaultZoom={15}
           gestureHandling="greedy"
           disableDefaultUI
         >
+          <CourseMapCamera center={resolvedCameraTarget} />
+
           {places.map((place) => {
             if (place.latitude == null || place.longitude == null) return null;
 
-            const isSelected = place.placeId === selectedPlaceId;
-
             return (
-              <AdvancedMarker
+              <CourseMapMarker
                 key={place.placeId}
+                placeId={place.placeId}
                 position={{
                   lat: place.latitude,
                   lng: place.longitude,
                 }}
-                onClick={() => onPlaceSelect?.(place.placeId)}
-              >
-                <div className="relative h-10 w-8">
-                  <div
-                    className={
-                      isSelected
-                        ? 'absolute top-0 left-0 h-8 w-8 rotate-45 rounded-[50%_50%_0_50%] bg-[#ff5a5f] shadow-md'
-                        : 'absolute top-0 left-0 h-8 w-8 rotate-45 rounded-[50%_50%_0_50%] bg-gray-400 shadow-md'
-                    }
-                  />
-                  <div className="absolute top-2.5 left-2.5 h-3 w-3 rounded-full bg-white" />
-                </div>
-              </AdvancedMarker>
+                onSelect={onPlaceSelect}
+              />
             );
           })}
         </Map>
