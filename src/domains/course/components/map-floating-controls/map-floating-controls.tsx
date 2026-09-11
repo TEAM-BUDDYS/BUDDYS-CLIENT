@@ -1,6 +1,5 @@
 import { BookmarkIcon, LocationIcon } from '@/shared/components/icons';
-
-import { MapFloatingButton } from './map-floating-button';
+import { IconButton } from '@/shared/components/ui';
 
 interface MapFloatingControlsProps {
   onBookmarkClick: () => void;
@@ -13,16 +12,18 @@ export const MapFloatingControls = ({
 }: MapFloatingControlsProps) => {
   return (
     <div className="flex flex-col gap-2">
-      <MapFloatingButton
+      <IconButton
         aria-label="북마크"
-        color="white"
+        className="text-mint-300 size-9 bg-white"
         icon={<BookmarkIcon />}
+        iconClassName="size-5"
         onClick={onBookmarkClick}
       />
-      <MapFloatingButton
+      <IconButton
         aria-label="현재 위치"
-        color="mint"
+        className="bg-mint-300 size-9 text-white"
         icon={<LocationIcon />}
+        iconClassName="size-5"
         onClick={onLocationClick}
       />
     </div>
