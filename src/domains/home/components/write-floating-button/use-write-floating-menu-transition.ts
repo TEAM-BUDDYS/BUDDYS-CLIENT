@@ -40,6 +40,7 @@ export const useWriteFloatingMenuTransition = <
   }, [clearCloseTimeout]);
 
   const closeMenu = useCallback(() => {
+    clearCloseTimeout();
     clearAnimationFrame();
     setIsOpen(false);
     setIsMenuVisible(false);
@@ -48,7 +49,7 @@ export const useWriteFloatingMenuTransition = <
       setIsMenuMounted(false);
       closeTimeoutRef.current = null;
     }, MENU_TRANSITION_DURATION);
-  }, [clearAnimationFrame]);
+  }, [clearCloseTimeout, clearAnimationFrame]);
 
   const toggleMenu = useCallback(() => {
     if (isOpen) {
