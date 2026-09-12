@@ -30,6 +30,7 @@ type IconButtonVariantTypes = NonNullable<
 interface IconButtonBaseProps extends IconButtonElementProps {
   variant?: IconButtonVariantTypes;
   icon: ReactNode;
+  iconClassName?: string;
 }
 
 type IconButtonWithLabelProps = IconButtonBaseProps & {
@@ -48,6 +49,7 @@ export const IconButton = ({
   ref,
   variant,
   icon,
+  iconClassName,
   className,
   children,
   type = 'button',
@@ -68,7 +70,10 @@ export const IconButton = ({
     >
       <span
         aria-hidden
-        className="inline-flex size-[24px] items-center justify-center text-current [&>svg]:size-full [&>svg]:shrink-0"
+        className={cn(
+          'inline-flex size-[24px] items-center justify-center text-current [&>svg]:size-full [&>svg]:shrink-0',
+          iconClassName,
+        )}
       >
         {icon}
       </span>
