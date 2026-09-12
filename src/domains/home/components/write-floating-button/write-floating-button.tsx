@@ -50,7 +50,7 @@ export const WriteFloatingButton = () => {
           icon={isOpen ? <XIcon /> : <PlusIcon />}
           aria-label={isOpen ? '닫기' : '글쓰기'}
           aria-expanded={isOpen}
-          className="pointer-events-auto"
+          className={cn('pointer-events-auto', !isOpen && 'h-11 px-2.5 py-0')}
           onClick={toggleMenu}
         >
           {isOpen ? undefined : '글쓰기'}
