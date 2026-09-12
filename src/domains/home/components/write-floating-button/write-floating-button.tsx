@@ -1,68 +1,21 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-
 import { cn } from '@/lib/cn';
 import { PlusIcon, XIcon } from '@/shared/components/icons';
 import { IconButton } from '@/shared/components/ui';
-import { useClickOutside } from '@/shared/hooks/use-click-outside';
 
+import { useWriteFloatingMenuTransition } from './use-write-floating-menu-transition';
 import { WriteFloatingMenu } from './write-floating-menu';
 
-const MENU_TRANSITION_DURATION = 150;
-
 export const WriteFloatingButton = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isMenuMounted, setIsMenuMounted] = useState(false);
-  const [isMenuVisible, setIsMenuVisible] = useState(false);
-  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const animationFrameRef = useRef<number | null>(null);
-
-  const clearCloseTimeout = useCallback(() => {
-    if (closeTimeoutRef.current === null) return;
-
-    clearTimeout(closeTimeoutRef.current);
-    closeTimeoutRef.current = null;
-  }, []);
-
-  const clearAnimationFrame = useCallback(() => {
-    if (animationFrameRef.current === null) return;
-
-    cancelAnimationFrame(animationFrameRef.current);
-    animationFrameRef.current = null;
-  }, []);
-
-  const openMenu = useCallback(() => {
-    clearCloseTimeout();
-    setIsOpen(true);
-    setIsMenuMounted(true);
-    setIsMenuVisible(false);
-
-    animationFrameRef.current = requestAnimationFrame(() => {
-      setIsMenuVisible(true);
-      animationFrameRef.current = null;
-    });
-  }, [clearCloseTimeout]);
-
-  const closeMenu = useCallback(() => {
-    clearAnimationFrame();
-    setIsOpen(false);
-    setIsMenuVisible(false);
-
-    closeTimeoutRef.current = setTimeout(() => {
-      setIsMenuMounted(false);
-      closeTimeoutRef.current = null;
-    }, MENU_TRANSITION_DURATION);
-  }, [clearAnimationFrame]);
-
-  const containerRef = useClickOutside<HTMLDivElement>(closeMenu);
-
-  useEffect(() => {
-    return () => {
-      clearCloseTimeout();
-      clearAnimationFrame();
-    };
-  }, [clearAnimationFrame, clearCloseTimeout]);
+  const {
+    isOpen,
+    isMenuMounted,
+    isMenuVisible,
+    containerRef,
+    closeMenu,
+    toggleMenu,
+  } = useWriteFloatingMenuTransition<HTMLDivElement>();
 
   return (
     <>
@@ -98,7 +51,7 @@ export const WriteFloatingButton = () => {
           aria-label={isOpen ? '닫기' : '글쓰기'}
           aria-expanded={isOpen}
           className="pointer-events-auto"
-          onClick={() => (isOpen ? closeMenu() : openMenu())}
+          onClick={toggleMenu}
         >
           {isOpen ? undefined : '글쓰기'}
         </IconButton>
