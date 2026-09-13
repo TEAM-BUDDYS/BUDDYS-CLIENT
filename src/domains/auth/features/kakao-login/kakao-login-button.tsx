@@ -1,27 +1,18 @@
 'use client';
 
 import * as Sentry from '@sentry/nextjs';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { KakaoIcon } from '@/shared/components/icons';
 import { Button, useToast } from '@/shared/components/ui';
-import { ROUTES } from '@/shared/config';
 
 import { useAuthSession } from '../auth-session/auth-session-provider';
 import { createKakaoAuthorizeUrl } from './kakao-oauth';
 
 export const KakaoLoginButton = () => {
-  const router = useRouter();
-  const { status, onboardingCompleted } = useAuthSession();
+  const { status } = useAuthSession();
   const [isRedirecting, setIsRedirecting] = useState(false);
   const { showToast } = useToast();
-
-  useEffect(() => {
-    if (status === 'authenticated') {
-      router.replace(onboardingCompleted ? ROUTES.HOME : ROUTES.ONBOARDING);
-    }
-  }, [onboardingCompleted, router, status]);
 
   const handleLoginClick = () => {
     setIsRedirecting(true);
