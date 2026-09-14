@@ -7,6 +7,7 @@ import { PostDetailConditionSection } from '@/domains/posts/sections/post-detail
 import { PostDetailContentSection } from '@/domains/posts/sections/post-detail-content-section';
 import { MoreIcon } from '@/shared/components/icons';
 import { Header } from '@/shared/components/layout';
+import { PostMenuBottomSheet } from '@/shared/components/ui';
 import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
 
 interface PostDetailViewProps {
@@ -15,6 +16,7 @@ interface PostDetailViewProps {
 
 export const PostDetailView = ({ post }: PostDetailViewProps) => {
   const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
+  const [isMenuBottomSheetOpen, setIsMenuBottomSheetOpen] = useState(false);
 
   return (
     <div className="min-h-dvh bg-white">
@@ -26,7 +28,7 @@ export const PostDetailView = ({ post }: PostDetailViewProps) => {
               aria-label="게시물 메뉴"
               className="flex size-11 items-center justify-center text-gray-800"
               type="button"
-              onClick={() => setIsComingSoonOpen(true)}
+              onClick={() => setIsMenuBottomSheetOpen(true)}
             >
               <MoreIcon className="size-6" />
             </button>
@@ -55,6 +57,13 @@ export const PostDetailView = ({ post }: PostDetailViewProps) => {
           <StartChatButton participantUserId={post.author.userId} />
         </div>
       )}
+
+      <PostMenuBottomSheet
+        open={isMenuBottomSheetOpen}
+        isMine={post.isMine}
+        onClose={() => setIsMenuBottomSheetOpen(false)}
+        onAction={() => setIsComingSoonOpen(true)}
+      />
 
       <ComingSoonModal
         open={isComingSoonOpen}
