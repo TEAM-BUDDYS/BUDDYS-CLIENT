@@ -2,17 +2,11 @@
 
 import { cn } from '@/lib/cn';
 
-export type PartnerTabValue = 'now' | 'recommend';
-
-interface PartnerTabItem {
-  label: string;
-  value: PartnerTabValue;
-}
-
-const PARTNER_TAB_ITEMS: PartnerTabItem[] = [
+const PARTNER_TAB_ITEMS = [
   { label: 'NOW', value: 'now' },
   { label: '추천 동행', value: 'recommend' },
-];
+] as const;
+export type PartnerTabValue = (typeof PARTNER_TAB_ITEMS)[number]['value'];
 
 interface PartnerTabProps {
   value: PartnerTabValue;
