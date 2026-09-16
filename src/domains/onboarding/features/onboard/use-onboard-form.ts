@@ -4,11 +4,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { type City, getCityDisplayName } from '@/shared/api';
+import { useDebouncedValue } from '@/shared/hooks/use-debounced-value';
 import { formatDateInput } from '@/shared/utils/format-date-input';
 import type { GenderType } from '@/types/gender';
 
 import { ONBOARDING_QUERY_OPTIONS } from '../../api/query';
-import { useDebouncedValue } from '../../hooks/use-debounced-value';
 import type { OnboardLocationOption, OnboardStep } from '../../model/onboard';
 import type { OnboardingFormPayload } from '../../model/onboarding-form';
 import { isValidDate } from '../../utils/is-valid-date';
