@@ -1,6 +1,6 @@
 'use client';
 
-import { EditIcon, SendIcon, TrashIcon } from '@/shared/components/icons';
+import { EditIcon, ShareIcon, TrashIcon } from '@/shared/components/icons';
 
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { Button } from '../button/button';
@@ -32,7 +32,7 @@ export const PostMenuBottomSheet = ({
           <Button
             variant="neutral"
             align="left"
-            icon={<SendIcon />}
+            icon={<ShareIcon />}
             onClick={() => handleAction('share')}
           >
             공유하기
