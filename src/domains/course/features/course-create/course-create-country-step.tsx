@@ -35,9 +35,9 @@ export const CourseCreateCountryStep = ({
   };
 
   const handleCountrySelect = (country: Country) => {
-    setKeyword(country.name);
-    setSelectedResultId(country.id);
     onCountrySelect(country);
+    setKeyword('');
+    setSelectedResultId(null);
   };
 
   const handleCountryRemove = (countryId: number) => {

@@ -39,9 +39,9 @@ export const CourseCreateCityStep = ({
   };
 
   const handleCitySelect = (city: CourseCreateCityOption) => {
-    setKeyword(getCityDisplayName(city, keyword));
-    setSelectedResultId(city.id);
     onCitySelect(city);
+    setKeyword('');
+    setSelectedResultId(null);
   };
 
   const handleCityRemove = (cityId: number) => {
