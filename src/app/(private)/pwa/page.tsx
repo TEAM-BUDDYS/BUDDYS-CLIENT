@@ -3,13 +3,16 @@ import { PWA_INFO_LIST } from '@/domains/home/model/pwa';
 import { PwaInfoBalloonIcon } from '@/shared/components/icons';
 import { Header } from '@/shared/components/layout';
 
-export default function page() {
+export default function PwaPage() {
   return (
-    <div className="flex h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col">
       <Header hasBackButton />
       <main className="flex flex-1 flex-col justify-center px-4 pb-4">
         <div>
-          <PwaInfoBalloonIcon className="h-12 w-[177px]" />
+          <PwaInfoBalloonIcon
+            className="h-12 w-[177px]"
+            aria-label="앱스토어 다운로드 없이"
+          />
           <p className="text-title-b-20 pt-4 pb-7 text-gray-800">
             홈 화면에 buddys 앱을 추가하세요!
           </p>
