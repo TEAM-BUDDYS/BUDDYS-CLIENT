@@ -21,7 +21,10 @@ interface PartnerTabProps {
 
 export const PartnerTab = ({ value, onChange }: PartnerTabProps) => {
   return (
-    <div className="flex w-full border-b border-gray-200 px-4" role="tablist">
+    <div
+      className="flex h-11 w-full border-b border-gray-100 px-4"
+      role="tablist"
+    >
       {PARTNER_TAB_ITEMS.map((item) => {
         const isSelected = value === item.value;
 
