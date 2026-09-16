@@ -1,7 +1,9 @@
 'use client';
 
 import { EditIcon, SendIcon, TrashIcon } from '@/shared/components/icons';
-import { BottomSheet, Button } from '@/shared/components/ui';
+
+import { BottomSheet } from '../bottom-sheet/bottom-sheet';
+import { Button } from '../button/button';
 
 type PostMenuAction = 'share' | 'edit' | 'delete';
 
