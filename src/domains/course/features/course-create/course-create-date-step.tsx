@@ -6,9 +6,13 @@ import {
   DateRangePickerSheet,
   type DateRangeTypes,
   DateSelectButton,
+  useToast,
 } from '@/shared/components/ui';
 
-import { COURSE_CREATE_PAST_YEAR_COUNT } from './constants';
+import {
+  COURSE_CREATE_MAX_DATE_RANGE_DAYS,
+  COURSE_CREATE_PAST_YEAR_COUNT,
+} from './constants';
 
 interface CourseCreateDateStepProps {
   dateRange: DateRangeTypes;
@@ -25,6 +29,7 @@ export const CourseCreateDateStep = ({
   onDatePickerClose,
   onDateConfirm,
 }: CourseCreateDateStepProps) => {
+  const { showToast } = useToast();
   const minSelectableDate = useMemo(() => {
     const today = new Date();
 
@@ -44,11 +49,18 @@ export const CourseCreateDateStep = ({
         onClick={onDateClick}
       />
       <DateRangePickerSheet
+        maxRangeDays={COURSE_CREATE_MAX_DATE_RANGE_DAYS}
         minDate={minSelectableDate}
         open={isDatePickerOpen}
         value={dateRange}
         onClose={onDatePickerClose}
         onConfirm={onDateConfirm}
+        onRangeLimitExceeded={() =>
+          showToast('코스 일정은 최대 30일까지 추가할 수 있어요', {
+            bottomOffsetClassName: 'bottom-22.5',
+            variant: 'gray',
+          })
+        }
       />
     </div>
   );

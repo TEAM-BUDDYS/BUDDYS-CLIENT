@@ -19,6 +19,7 @@ import {
   checkBeforeDate,
   createMonths,
   type DateRangeTypes,
+  getDateRangeDayCount,
   getNextDateRange,
   getStartOfDay,
 } from './date-utils';
@@ -41,9 +42,11 @@ interface DateRangePickerSheetProps {
   value: DateRangeTypes;
   title?: string;
   minDate?: Date;
+  maxRangeDays?: number;
   className?: string;
   onClose: () => void;
   onConfirm: (value: DateRangeTypes) => void;
+  onRangeLimitExceeded?: () => void;
 }
 
 type DateRangePickerContentProps = Omit<DateRangePickerSheetProps, 'open'>;
@@ -52,9 +55,11 @@ const DateRangePickerContent = ({
   value,
   title = '출발일/도착일을 선택해 주세요',
   minDate,
+  maxRangeDays,
   className,
   onClose,
   onConfirm,
+  onRangeLimitExceeded,
 }: DateRangePickerContentProps) => {
   const titleId = useId();
   const [draftValue, setDraftValue] = useState(value);
@@ -131,10 +136,20 @@ const DateRangePickerContent = ({
 
   const handleDateSelect = (date: Date) => {
     const selectedDate = getStartOfDay(date);
+    const nextValue = getNextDateRange(selectedDate, draftValue);
 
-    setDraftValue((currentValue) =>
-      getNextDateRange(selectedDate, currentValue),
-    );
+    if (
+      maxRangeDays &&
+      nextValue.startDate &&
+      nextValue.endDate &&
+      getDateRangeDayCount(nextValue.startDate, nextValue.endDate) >
+        maxRangeDays
+    ) {
+      onRangeLimitExceeded?.();
+      return;
+    }
+
+    setDraftValue(nextValue);
   };
 
   const handleCalendarScroll = (event: UIEvent<HTMLDivElement>) => {
