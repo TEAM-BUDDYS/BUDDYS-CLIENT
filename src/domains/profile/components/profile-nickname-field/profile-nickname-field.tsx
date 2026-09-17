@@ -16,7 +16,7 @@ interface ProfileNicknameFieldProps extends Pick<
   isDuplicateChecked?: boolean;
 }
 
-const DUPLICATE_CHECK_SUCCESS_MESSAGE = '사용 가능한 닉네임이에요';
+const DUPLICATE_CHECK_SUCCESS_MESSAGE = '사용 가능한 닉네임입니다.';
 
 export const ProfileNicknameField = ({
   value,
