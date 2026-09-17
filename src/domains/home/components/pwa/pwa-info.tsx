@@ -1,10 +1,10 @@
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 
 interface PwaInfoProps {
   step: number;
   description: string;
   images: readonly {
-    src: string;
+    src: StaticImageData;
     width: number;
     height: number;
   }[];
@@ -22,7 +22,7 @@ export const PwaInfo = ({ step, description, images }: PwaInfoProps) => {
       <div className="flex flex-col items-center gap-2">
         {images.map(({ src, width, height }) => (
           <Image
-            key={src}
+            key={src.src}
             src={src}
             alt={`${step}단계 안내 이미지`}
             width={width}
