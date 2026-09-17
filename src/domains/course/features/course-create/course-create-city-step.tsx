@@ -25,31 +25,19 @@ export const CourseCreateCityStep = ({
   onCityRemove,
 }: CourseCreateCityStepProps) => {
   const [keyword, setKeyword] = useState('');
-  const [selectedResultId, setSelectedResultId] = useState<number | null>(null);
-  const citySearch = useCourseCitySearch({
-    countries,
-    keyword,
-    isInputSelected: selectedResultId !== null,
-  });
+  const citySearch = useCourseCitySearch({ countries, keyword });
   const isResultOpen = citySearch.cities.length > 0;
 
   const handleKeywordChange = (value: string) => {
     setKeyword(value);
-    setSelectedResultId(null);
   };
 
   const handleCitySelect = (city: CourseCreateCityOption) => {
     onCitySelect(city);
     setKeyword('');
-    setSelectedResultId(null);
   };
 
   const handleCityRemove = (cityId: number) => {
-    if (selectedResultId === cityId) {
-      setKeyword('');
-      setSelectedResultId(null);
-    }
-
     onCityRemove(cityId);
   };
 
@@ -63,13 +51,11 @@ export const CourseCreateCityStep = ({
           aria-expanded={isResultOpen}
           aria-haspopup="listbox"
           aria-label="도시 검색"
-          isCompleted={selectedResultId !== null}
           placeholder="도시를 검색해주세요."
           role="combobox"
           size="medium"
           value={keyword}
           onChange={handleKeywordChange}
-          onFocus={() => setSelectedResultId(null)}
         />
 
         {isResultOpen && (
