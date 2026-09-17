@@ -1,6 +1,7 @@
 import { NotificationBellButton } from '@/domains/home/components/notification-bell-button/notification-bell-button';
 import { SearchSheetButton } from '@/domains/home/components/search-sheet-button/search-sheet-button';
 import { WriteFloatingButton } from '@/domains/home/components/write-floating-button/write-floating-button';
+import { PwaInstallPromptClient } from '@/domains/home/features/pwa/pwa-install-prompt-client';
 import { BuddySearchSection } from '@/domains/home/sections/buddy-search-section';
 import { PreferenceBuddySection } from '@/domains/home/sections/preference-buddy-section';
 import { SameCountryBuddySection } from '@/domains/home/sections/same-country-buddy-section';
@@ -47,6 +48,7 @@ export default function Home() {
       </main>
       <WriteFloatingButton />
       <BottomNavigation className="fixed right-0 bottom-0 left-0 z-20 mx-auto max-w-107.5" />
+      <PwaInstallPromptClient />
     </>
   );
 }
