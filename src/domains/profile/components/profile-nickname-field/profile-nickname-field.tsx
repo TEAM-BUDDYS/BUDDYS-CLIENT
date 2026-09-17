@@ -37,8 +37,6 @@ export const ProfileNicknameField = ({
     isNicknameUnchanged ||
     isChecking ||
     isDuplicateChecked;
-  // 값을 바꾸지 않았다면 검증 자체가 필요 없는 상태이므로,
-  // isDuplicateChecked가 true여도 통과 문구를 띄우지 않습니다.
   const showDuplicateCheckSuccessMessage =
     isDuplicateChecked && !isNicknameUnchanged;
 

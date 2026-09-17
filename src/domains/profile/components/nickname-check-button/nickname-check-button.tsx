@@ -21,7 +21,6 @@ export const NicknameCheckButton = ({
       type="button"
       className={cn(
         'text-caption-m-10 relative shrink-0 rounded-lg bg-gray-200 px-2 py-1.5 text-center text-gray-500 disabled:bg-gray-100 disabled:text-gray-300',
-        // 시각 크기는 유지하고 터치영역만 상하좌우 8px씩 확장합니다.
         'before:absolute before:-inset-2',
         "before:content-['']",
         className,
