@@ -6,16 +6,16 @@ export const INTRO_SLIDES = [
   {
     titleLines: ['간단한 질문으로', '유학 생활이 더욱 편해져요'],
     image: introImg1,
-    alt: '첫 번째 소개 이미지',
+    alt: '사용자와 같은 나라로 떠나는 동행을 추천해주는 예시 이미지',
   },
   {
     titleLines: ['솔직하게 답할수록', '정확하게 추천해드려요'],
     image: introImg2,
-    alt: '두 번째 소개 이미지',
+    alt: '사용자와 취향이 90% 일치하는 동행을 추천해주는 예시 이미지',
   },
   {
     titleLines: ['나와 딱 맞는 동행과 코스', '지금 확인해볼까요?'],
     image: introImg3,
-    alt: '세 번째 소개 이미지',
+    alt: '사용자의 관심 국가에서 기록된 코스를 추천해주는 예시 이미지',
   },
 ] as const;

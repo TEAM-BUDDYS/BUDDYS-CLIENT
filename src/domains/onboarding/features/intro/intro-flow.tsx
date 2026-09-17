@@ -19,7 +19,7 @@ export const IntroFlow = () => {
   const isLastSlide = currentIndex === INTRO_SLIDES.length - 1;
 
   return (
-    <div className="relative flex h-dvh flex-col overflow-hidden bg-white px-4 py-8.5">
+    <div className="relative flex h-dvh flex-col overflow-hidden bg-white py-8.5">
       {/* 배경: 왼쪽 원 */}
       <div
         aria-hidden="true"
@@ -39,12 +39,24 @@ export const IntroFlow = () => {
         }}
       />
 
-      <div className="flex flex-1 flex-col justify-center">
+      <div
+        role="region"
+        aria-roledescription="캐러셀"
+        aria-labelledby="intro-heading"
+        className="flex flex-1 flex-col justify-center"
+      >
+        <h1 id="intro-heading" className="sr-only">
+          맞춤 추천을 위한 온보딩 안내
+        </h1>
         <div ref={emblaRef} className="overflow-hidden">
           <div className="flex">
-            {INTRO_SLIDES.map((slide) => (
+            {INTRO_SLIDES.map((slide, index) => (
               <div
                 key={slide.titleLines[0]}
+                role="group"
+                aria-roledescription="슬라이드"
+                aria-hidden={index !== currentIndex}
+                aria-label={`${INTRO_SLIDES.length}개 중 ${index + 1}번째`}
                 className="min-w-0 flex-[0_0_100%]"
               >
                 <IntroSlide {...slide} />
@@ -71,7 +83,7 @@ export const IntroFlow = () => {
         </div>
       </div>
 
-      <div className="relative z-10 mt-8">
+      <div className="relative z-10 mx-4 mt-8">
         <Button
           disabled={!isLastSlide}
           onClick={() => router.push(ROUTES.ONBOARDING)}

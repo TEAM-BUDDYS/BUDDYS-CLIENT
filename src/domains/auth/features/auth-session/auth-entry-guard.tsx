@@ -36,7 +36,7 @@ export const AuthEntryGuard = ({ children }: AuthEntryGuardProps) => {
     status === 'unauthenticated'
       ? ROUTES.LANDING
       : shouldRedirectToOnboarding
-        ? ROUTES.ONBOARDING
+        ? ROUTES.ONBOARDING_INTRO
         : shouldRedirectToHome
           ? ROUTES.HOME
           : null;

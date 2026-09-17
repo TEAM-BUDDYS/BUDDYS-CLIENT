@@ -8,8 +8,14 @@ interface IntroSlideProps {
 
 export const IntroSlide = ({ titleLines, image, alt }: IntroSlideProps) => {
   return (
-    <section className="flex flex-col items-center gap-12.75 pb-9.75">
-      <p className="text-title-b-22 text-center text-gray-800">
+    <div className="flex flex-col items-center gap-12.75 pb-9.75">
+      <p
+        className="text-title-b-22 bg-clip-text text-center text-transparent"
+        style={{
+          backgroundImage:
+            'linear-gradient(180deg, var(--color-gray-800) 0%, #636972 100%)',
+        }}
+      >
         {titleLines[0]}
         <br />
         {titleLines[1]}
@@ -21,6 +27,6 @@ export const IntroSlide = ({ titleLines, image, alt }: IntroSlideProps) => {
         height={320}
         className="relative z-20"
       />
-    </section>
+    </div>
   );
 };
