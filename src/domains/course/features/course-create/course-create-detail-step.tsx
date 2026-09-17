@@ -37,7 +37,7 @@ export const CourseCreateDetailStep = ({
         <TextArea
           label="내용"
           maxLength={COURSE_CREATE_MAX_CONTENT_LENGTH}
-          placeholder="예시)"
+          placeholder="어떤 코스인지 자유롭게 작성해주세요."
           rows={5}
           value={value.content}
           onChange={(event) => onChange({ content: event.target.value })}
