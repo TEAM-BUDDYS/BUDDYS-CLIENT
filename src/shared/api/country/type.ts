@@ -9,10 +9,9 @@ export type SearchCountriesParams =
 export type SearchCountriesResponse =
   components['schemas']['BaseResponseCountryListResponse'];
 
-export interface Country {
-  id: number;
-  name: string;
-}
+type CountryResponse = components['schemas']['CountryResponse'];
+
+export type Country = Required<Pick<CountryResponse, 'id' | 'name'>>;
 
 export interface CountryPage {
   countries: Country[];

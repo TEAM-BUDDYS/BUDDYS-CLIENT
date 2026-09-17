@@ -13,12 +13,7 @@ import type {
   SearchCountriesResponse,
 } from './type';
 
-const isCountryResponse = (
-  country: unknown,
-): country is {
-  id: number;
-  name: string;
-} => {
+const isCountryResponse = (country: unknown): country is Country => {
   if (typeof country !== 'object' || country === null) {
     return false;
   }
