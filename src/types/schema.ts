@@ -1551,13 +1551,13 @@ export interface components {
        * @description 출발일
        * @example 2026-09-01
        */
-      startDate: string;
+      startDate?: string;
       /**
        * Format: date
        * @description 도착일
        * @example 2026-09-05
        */
-      endDate: string;
+      endDate?: string;
       /**
        * @description 연결할 태그 ID 목록 (활동 최대 3개, 관심사 최대 2개, 동행스타일 최대 2개, 활동 태그 1개 이상 필수)
        * @example [

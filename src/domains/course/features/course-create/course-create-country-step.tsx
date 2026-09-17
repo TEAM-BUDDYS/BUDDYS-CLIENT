@@ -22,30 +22,19 @@ export const CourseCreateCountryStep = ({
   onCountryRemove,
 }: CourseCreateCountryStepProps) => {
   const [keyword, setKeyword] = useState('');
-  const [selectedResultId, setSelectedResultId] = useState<number | null>(null);
-  const countrySearch = useCourseCountrySearch({
-    keyword,
-    isInputSelected: selectedResultId !== null,
-  });
+  const countrySearch = useCourseCountrySearch({ keyword });
   const isResultOpen = countrySearch.countries.length > 0;
 
   const handleKeywordChange = (value: string) => {
     setKeyword(value);
-    setSelectedResultId(null);
   };
 
   const handleCountrySelect = (country: Country) => {
     onCountrySelect(country);
     setKeyword('');
-    setSelectedResultId(null);
   };
 
   const handleCountryRemove = (countryId: number) => {
-    if (selectedResultId === countryId) {
-      setKeyword('');
-      setSelectedResultId(null);
-    }
-
     onCountryRemove(countryId);
   };
 
@@ -73,13 +62,11 @@ export const CourseCreateCountryStep = ({
           aria-expanded={isResultOpen}
           aria-haspopup="listbox"
           aria-label="국가 검색"
-          className={selectedResultId !== null ? 'text-body-sb-15' : undefined}
           placeholder="국가를 검색해주세요."
           role="combobox"
           size="medium"
           value={keyword}
           onChange={handleKeywordChange}
-          onFocus={() => setSelectedResultId(null)}
         />
 
         {isResultOpen && (
