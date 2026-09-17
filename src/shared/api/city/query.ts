@@ -11,7 +11,11 @@ const isCityResponse = (city: unknown): city is City => {
     return false;
   }
 
-  const { id, name, koreanName } = city as City;
+  const { id, name, koreanName } = city as {
+    id?: unknown;
+    name?: unknown;
+    koreanName?: unknown;
+  };
 
   return (
     typeof id === 'number' &&
