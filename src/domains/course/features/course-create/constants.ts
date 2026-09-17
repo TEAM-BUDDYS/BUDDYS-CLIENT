@@ -25,7 +25,7 @@ export const COURSE_CREATE_QUESTION_CONTENT = {
   },
   date: {
     title: '어떤 일정으로 계획하고 계신가요?',
-    description: '동행할 날짜를 선택해주세요',
+    description: '최대 30일까지 선택할 수 있어요.',
   },
 } satisfies Record<
   Exclude<CourseCreateScreen, 'detail'>,
