@@ -1,11 +1,16 @@
 import Link from 'next/link';
+import type { ComponentPropsWithRef, KeyboardEvent } from 'react';
 
 import { cn } from '@/lib/cn';
 import { CourseIcon, LocationIcon } from '@/shared/components/icons';
 import { ROUTES } from '@/shared/config';
 
-interface WriteFloatingMenuProps {
+interface WriteFloatingMenuProps extends Pick<
+  ComponentPropsWithRef<'ul'>,
+  'ref'
+> {
   className?: string;
+  onKeyDown?: (event: KeyboardEvent<HTMLUListElement>) => void;
 }
 
 const WRITE_MENU_ITEMS = [
@@ -21,9 +26,15 @@ const WRITE_MENU_ITEMS = [
   },
 ];
 
-export const WriteFloatingMenu = ({ className }: WriteFloatingMenuProps) => {
+export const WriteFloatingMenu = ({
+  ref,
+  className,
+  onKeyDown,
+}: WriteFloatingMenuProps) => {
   return (
     <ul
+      ref={ref}
+      onKeyDown={onKeyDown}
       className={cn(
         'pointer-events-auto mb-2 flex w-fit flex-col gap-2 rounded-[20px] bg-white p-2',
         className,

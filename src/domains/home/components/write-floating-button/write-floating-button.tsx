@@ -13,6 +13,9 @@ export const WriteFloatingButton = () => {
     isMenuMounted,
     isMenuVisible,
     containerRef,
+    triggerRef,
+    menuRef,
+    handleMenuKeyDown,
     closeMenu,
     toggleMenu,
   } = useWriteFloatingMenuTransition<HTMLDivElement>();
@@ -37,6 +40,8 @@ export const WriteFloatingButton = () => {
       >
         {isMenuMounted && (
           <WriteFloatingMenu
+            ref={menuRef}
+            onKeyDown={handleMenuKeyDown}
             className={cn(
               'transition-all duration-150 ease-out',
               isMenuVisible
@@ -46,6 +51,7 @@ export const WriteFloatingButton = () => {
           />
         )}
         <IconButton
+          ref={triggerRef}
           variant="primary"
           icon={isOpen ? <XIcon /> : <PlusIcon />}
           aria-label={isOpen ? '닫기' : '글쓰기'}

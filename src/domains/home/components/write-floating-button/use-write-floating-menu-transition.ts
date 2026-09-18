@@ -1,8 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  type KeyboardEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { useClickOutside } from '@/shared/hooks/use-click-outside';
 
 const MENU_TRANSITION_DURATION = 150;
+const MENU_FOCUSABLE_SELECTOR = 'a[href], button:not([disabled])';
 
 export const useWriteFloatingMenuTransition = <
   T extends HTMLElement = HTMLElement,
@@ -12,6 +19,8 @@ export const useWriteFloatingMenuTransition = <
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const animationFrameRef = useRef<number | null>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLUListElement>(null);
 
   const clearCloseTimeout = useCallback(() => {
     if (closeTimeoutRef.current === null) return;
@@ -44,6 +53,7 @@ export const useWriteFloatingMenuTransition = <
     clearAnimationFrame();
     setIsOpen(false);
     setIsMenuVisible(false);
+    triggerRef.current?.focus();
 
     closeTimeoutRef.current = setTimeout(() => {
       setIsMenuMounted(false);
@@ -62,6 +72,39 @@ export const useWriteFloatingMenuTransition = <
   const containerRef = useClickOutside<T>(closeMenu);
 
   useEffect(() => {
+    if (!isMenuVisible) return;
+
+    const firstItem = menuRef.current?.querySelector<HTMLElement>(
+      MENU_FOCUSABLE_SELECTOR,
+    );
+    firstItem?.focus();
+  }, [isMenuVisible]);
+
+  const handleMenuKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLUListElement>) => {
+      if (event.key !== 'Tab' || !menuRef.current) return;
+
+      const focusable = Array.from(
+        menuRef.current.querySelectorAll<HTMLElement>(MENU_FOCUSABLE_SELECTOR),
+      );
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+
+      if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    },
+    [],
+  );
+
+  useEffect(() => {
     return () => {
       clearCloseTimeout();
       clearAnimationFrame();
@@ -73,6 +116,9 @@ export const useWriteFloatingMenuTransition = <
     isMenuMounted,
     isMenuVisible,
     containerRef,
+    triggerRef,
+    menuRef,
+    handleMenuKeyDown,
     openMenu,
     closeMenu,
     toggleMenu,
