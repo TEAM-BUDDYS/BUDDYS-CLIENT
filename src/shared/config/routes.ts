@@ -7,6 +7,7 @@ export const ROUTES = {
     GOOGLE_CALLBACK: '/auth/google/callback',
   },
   ONBOARDING: '/onboarding',
+  ONBOARDING_INTRO: '/onboarding/intro',
   CUSTOMIZED_EXPLORE: '/customized-explore',
   POST: {
     ROOT: '/posts',
