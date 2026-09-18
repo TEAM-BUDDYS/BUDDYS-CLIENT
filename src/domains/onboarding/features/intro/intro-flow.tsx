@@ -19,7 +19,7 @@ export const IntroFlow = () => {
   const isLastSlide = currentIndex === INTRO_SLIDES.length - 1;
 
   return (
-    <div className="relative flex h-dvh flex-col overflow-hidden bg-white py-8.5">
+    <div className="relative flex min-h-dvh flex-col overflow-x-hidden bg-white py-8.5">
       {/* 배경: 왼쪽 원 */}
       <div
         aria-hidden="true"
