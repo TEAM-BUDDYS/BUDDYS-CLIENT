@@ -15,7 +15,7 @@ import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/
 import { CHAT_CONFIRM_MODAL_CONTENT } from '../../model/chat-room-menu';
 
 type ConfirmType = 'block' | 'report' | null;
-type ChatBottomSheetAction =
+export type ChatBottomSheetAction =
   | 'report'
   | 'toggleNotification'
   | 'block'

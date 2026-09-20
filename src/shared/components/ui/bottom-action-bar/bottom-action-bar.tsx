@@ -48,7 +48,10 @@ export const BottomActionBar = ({
       <input
         {...inputProps}
         aria-label="내용 입력"
-        className="text-body-m-16 h-12 min-w-0 flex-1 rounded-full bg-gray-50 px-[20.5px] text-gray-800 outline-none placeholder:text-gray-500"
+        className={cn(
+          'text-body-m-16 h-12 min-w-0 flex-1 rounded-full bg-gray-50 px-[20.5px] text-gray-800 outline-none placeholder:text-gray-500',
+          'disabled:cursor-not-allowed disabled:placeholder:text-gray-200',
+        )}
         onChange={(event) => onValueChange(event.target.value)}
         placeholder={placeholder}
         type="text"
@@ -56,7 +59,10 @@ export const BottomActionBar = ({
       />
       <IconButton
         aria-label="전송"
-        className="shrink-0"
+        className={cn(
+          'shrink-0',
+          'disabled:disabled:border-mint-200 disabled:bg-mint-50 disabled:text-mint-200',
+        )}
         disabled={submitDisabled}
         icon={<SendIcon />}
         type="submit"
