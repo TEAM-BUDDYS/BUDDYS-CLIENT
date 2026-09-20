@@ -1,58 +1,49 @@
 import { CourseSectionHeader } from '@/domains/course/components/course-section-header/course-section-header';
 import { CardList, ChipButton } from '@/shared/components/ui';
 
-export interface CourseFilterCountry {
+import type { FilteredCourseItem } from './course-filter-section';
+
+export interface SuggestedCourseCategory {
   id: number;
   name: string;
 }
 
-export interface FilteredCourseItem {
-  id: number;
-  title: string;
-  description: string;
-  images: {
-    src: string;
-    alt: string;
-  }[];
-  isBookmarked: boolean;
-}
-
-interface CourseFilterSectionProps {
-  countries: readonly CourseFilterCountry[];
+interface SuggestedCourseSectionProps {
+  categories: readonly SuggestedCourseCategory[];
   courses: readonly FilteredCourseItem[];
-  selectedCountryId?: number;
-  onExploreClick?: () => void;
-  onCountryChange: (countryId: number) => void;
+  selectedCategoryId?: number;
+  onMoreClick?: () => void;
+  onCategoryChange: (categoryId: number) => void;
   onCourseBookmarkChange: (courseId: number, nextBookmarked: boolean) => void;
 }
 
-export const CourseFilterSection = ({
-  countries,
+export const SuggestedCourseSection = ({
+  categories,
   courses,
-  selectedCountryId,
-  onExploreClick,
-  onCountryChange,
+  selectedCategoryId,
+  onMoreClick,
+  onCategoryChange,
   onCourseBookmarkChange,
-}: CourseFilterSectionProps) => {
+}: SuggestedCourseSectionProps) => {
   return (
     <section className="flex flex-col gap-4">
       <CourseSectionHeader
-        title="원하는 조건의 코스를 찾아보세요"
-        onClick={onExploreClick}
+        title="이런 코스는 어떠세요?"
+        onClick={onMoreClick}
       />
 
       <div className="flex scrollbar-none gap-2 overflow-x-auto overscroll-x-none [&::-webkit-scrollbar]:hidden">
-        {countries.map((country) => {
-          const isSelected = country.id === selectedCountryId;
+        {categories.map((category) => {
+          const isSelected = category.id === selectedCategoryId;
 
           return (
             <ChipButton
-              key={country.id}
+              key={category.id}
               active={isSelected}
               variant="fillMedium"
-              onClick={() => onCountryChange(country.id)}
+              onClick={() => onCategoryChange(category.id)}
             >
-              {country.name}
+              {category.name}
             </ChipButton>
           );
         })}

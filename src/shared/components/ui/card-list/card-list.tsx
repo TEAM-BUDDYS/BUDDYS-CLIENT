@@ -71,7 +71,7 @@ export const CardList = ({
         role="group"
         aria-label={`${title} 이미지 목록`}
         tabIndex={0}
-        className="focus-visible:outline-mint-300 flex w-full scrollbar-none items-center gap-2 overflow-x-auto focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid [&::-webkit-scrollbar]:hidden"
+        className="focus-visible:outline-mint-300 flex w-full scrollbar-none items-center gap-2 overflow-x-auto overscroll-x-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid [&::-webkit-scrollbar]:hidden"
       >
         {images.map(({ src, alt }) => (
           <CommonImage
