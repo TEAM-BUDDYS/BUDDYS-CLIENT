@@ -1,6 +1,7 @@
 'use client';
 
 import { APIProvider, Map } from '@vis.gl/react-google-maps';
+import { useState } from 'react';
 
 import type { Place } from '@/domains/course/api/type';
 import { CourseMapCamera } from '@/domains/course/components/course-map/course-map-camera';
@@ -26,9 +27,10 @@ export const CourseMap = ({
   cameraTarget = null,
   onPlaceSelect,
 }: CourseMapProps) => {
+  const [hasMapLoadError, setHasMapLoadError] = useState(false);
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const mapId = process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID;
-  const currentLocation = useCurrentLocation();
+  const { currentLocation } = useCurrentLocation();
 
   const selectedPlace = places.find(
     (place) => place.placeId === selectedPlaceId,
@@ -43,13 +45,16 @@ export const CourseMap = ({
       : null;
 
   const center = selectedPlaceCenter ?? currentLocation ?? FALLBACK_CENTER;
-  const resolvedCameraTarget = cameraTarget ?? currentLocation;
+  const resolvedCameraTarget =
+    cameraTarget ?? selectedPlaceCenter ?? currentLocation;
 
-  if (!apiKey || !mapId) {
+  if (!apiKey || !mapId || hasMapLoadError) {
     return (
       <section className="relative h-80 w-full overflow-hidden rounded-2xl bg-gray-50">
         <div className="flex h-full w-full items-center justify-center text-gray-500">
-          {selectedPlace?.name ?? '지도가 표시될 영역입니다'}
+          {hasMapLoadError
+            ? '지도를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.'
+            : (selectedPlace?.name ?? '지도가 표시될 영역입니다')}
         </div>
       </section>
     );
@@ -57,7 +62,7 @@ export const CourseMap = ({
 
   return (
     <section className="relative h-80 w-full overflow-hidden rounded-2xl">
-      <APIProvider apiKey={apiKey}>
+      <APIProvider apiKey={apiKey} onError={() => setHasMapLoadError(true)}>
         <Map
           mapId={mapId}
           defaultCenter={center}
@@ -78,6 +83,7 @@ export const CourseMap = ({
                   lat: place.latitude,
                   lng: place.longitude,
                 }}
+                title={place.name ?? '이름 없는 장소'}
                 onSelect={onPlaceSelect}
               />
             );
