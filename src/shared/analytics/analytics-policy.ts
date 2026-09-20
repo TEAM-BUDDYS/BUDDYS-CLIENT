@@ -1,6 +1,9 @@
 import { ROUTES } from '@/shared/config/routes';
 
-const EXCLUDED_ANALYTICS_PATHS = new Set<string>([ROUTES.AUTH.KAKAO_CALLBACK]);
+const EXCLUDED_ANALYTICS_PATHS = new Set<string>([
+  ROUTES.AUTH.KAKAO_CALLBACK,
+  ROUTES.AUTH.GOOGLE_CALLBACK,
+]);
 
 const DYNAMIC_ANALYTICS_PATHS = [
   {

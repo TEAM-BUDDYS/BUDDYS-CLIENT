@@ -13,6 +13,7 @@ export {
   type CountryPage,
   type GetCountriesParams,
   useCountryList,
+  useCountrySearch,
 } from './country';
 export { END_POINT } from './end-point';
 export { POST_MUTATION_KEY } from './mutation-key';

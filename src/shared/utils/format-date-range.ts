@@ -35,6 +35,12 @@ const getDateParts = (date: Date | string) => {
   };
 };
 
+export const formatDateToIsoDate = (date: Date) => {
+  const { day, month, year } = getDateParts(date);
+
+  return `${year}-${month}-${day}`;
+};
+
 export const formatDate = (date: Date | string) => {
   const { day, month, year } = getDateParts(date);
 

@@ -2,7 +2,6 @@ import { queryOptions } from '@tanstack/react-query';
 
 import {
   apiClient,
-  COUNTRY_QUERY_KEY,
   createSearchParams,
   END_POINT,
   RECOMMENDATION_QUERY_KEY,
@@ -11,8 +10,6 @@ import {
 import type {
   GetExchangeCountryRecommendedUsersParams,
   GetExchangeCountryRecommendedUsersResponse,
-  SearchCountriesParams,
-  SearchCountriesResponse,
 } from './type';
 
 const getExchangeCountryRecommendedUsers = async (
@@ -25,14 +22,6 @@ const getExchangeCountryRecommendedUsers = async (
     .json<GetExchangeCountryRecommendedUsersResponse>();
 };
 
-const searchCountries = async (params: SearchCountriesParams) => {
-  return apiClient
-    .get(END_POINT.COUNTRY.SEARCH, {
-      searchParams: createSearchParams(params),
-    })
-    .json<SearchCountriesResponse>();
-};
-
 export const HOME_QUERY_OPTIONS = {
   EXCHANGE_COUNTRY_RECOMMENDED_USERS: (
     params?: GetExchangeCountryRecommendedUsersParams,
@@ -40,10 +29,5 @@ export const HOME_QUERY_OPTIONS = {
     queryOptions({
       queryKey: RECOMMENDATION_QUERY_KEY.USERS_BY_EXCHANGE_COUNTRY(params),
       queryFn: () => getExchangeCountryRecommendedUsers(params),
-    }),
-  SEARCH_COUNTRIES: (params: SearchCountriesParams) =>
-    queryOptions({
-      queryKey: COUNTRY_QUERY_KEY.SEARCH(params),
-      queryFn: () => searchCountries(params),
     }),
 };

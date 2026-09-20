@@ -3,13 +3,13 @@
 import * as Sentry from '@sentry/nextjs';
 import { useState } from 'react';
 
-import { KakaoIcon } from '@/shared/components/icons';
+import { GoogleIcon } from '@/shared/components/icons';
 import { Button, useToast } from '@/shared/components/ui';
 
 import { useAuthSession } from '../auth-session/auth-session-provider';
-import { createKakaoAuthorizeUrl } from './kakao-oauth';
+import { createGoogleAuthorizeUrl } from './google-oauth';
 
-export const KakaoLoginButton = () => {
+export const GoogleLoginButton = () => {
   const { status } = useAuthSession();
   const [isRedirecting, setIsRedirecting] = useState(false);
   const { showToast } = useToast();
@@ -18,13 +18,13 @@ export const KakaoLoginButton = () => {
     setIsRedirecting(true);
 
     try {
-      window.location.assign(createKakaoAuthorizeUrl());
+      window.location.assign(createGoogleAuthorizeUrl());
     } catch (error) {
       setIsRedirecting(false);
       Sentry.captureException(error);
 
       if (process.env.NODE_ENV === 'development') {
-        console.error('카카오 로그인 URL 생성에 실패했습니다.', error);
+        console.error('구글 로그인 URL 생성에 실패했습니다.', error);
       }
 
       showToast(
@@ -42,13 +42,13 @@ export const KakaoLoginButton = () => {
     <Button
       variant="login"
       align="center"
-      icon={<KakaoIcon />}
+      icon={<GoogleIcon />}
       iconSize="lg"
-      className="bg-[#FAE100]"
+      className="border border-gray-200 bg-white"
       disabled={isDisabled}
       onClick={handleLoginClick}
     >
-      카카오로 시작하기
+      Google로 시작하기
     </Button>
   );
 };

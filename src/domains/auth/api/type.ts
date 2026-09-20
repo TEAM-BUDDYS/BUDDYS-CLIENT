@@ -4,6 +4,11 @@ export type KakaoLoginParams = operations['kakaoLogin']['parameters']['query'];
 export type KakaoLoginResponse =
   components['schemas']['BaseResponseLoginResponse'];
 
+export type GoogleLoginParams =
+  operations['googleLogin']['parameters']['query'];
+export type GoogleLoginResponse =
+  components['schemas']['BaseResponseLoginResponse'];
+
 export type ReissueResponse =
   components['schemas']['BaseResponseLoginResponse'];
 

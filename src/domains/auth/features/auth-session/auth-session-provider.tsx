@@ -15,8 +15,12 @@ import {
 import { setAccessToken, setAccessTokenRefreshHandler } from '@/shared/api';
 import { ROUTES } from '@/shared/config';
 
-import { loginWithKakao, reissueAccessToken } from '../../api/query';
-import type { KakaoLoginParams } from '../../api/type';
+import {
+  loginWithGoogle,
+  loginWithKakao,
+  reissueAccessToken,
+} from '../../api/query';
+import type { GoogleLoginParams, KakaoLoginParams } from '../../api/type';
 import type { AuthSession, AuthStatusTypes } from '../../model/auth';
 
 interface MarkOnboardingCompletedOptions {
@@ -29,6 +33,7 @@ interface AuthSessionContextValue {
   onboardingCompleted: boolean | null;
   isOnboardingCompletionVisible: boolean;
   authenticateWithKakao: (params: KakaoLoginParams) => Promise<AuthSession>;
+  authenticateWithGoogle: (params: GoogleLoginParams) => Promise<AuthSession>;
   markOnboardingCompleted: (options: MarkOnboardingCompletedOptions) => void;
   finishOnboarding: () => void;
 }
@@ -41,7 +46,9 @@ const AuthSessionContext = createContext<AuthSessionContextValue | null>(null);
 
 export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
   const pathname = usePathname();
-  const shouldSkipSessionBootstrap = pathname === ROUTES.AUTH.KAKAO_CALLBACK;
+  const shouldSkipSessionBootstrap =
+    pathname === ROUTES.AUTH.KAKAO_CALLBACK ||
+    pathname === ROUTES.AUTH.GOOGLE_CALLBACK;
   const hasBootstrappedRef = useRef(false);
   const [status, setStatus] = useState<AuthStatusTypes>('initializing');
   const [userId, setUserId] = useState<number | null>(null);
@@ -87,6 +94,20 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
     async (params: KakaoLoginParams) => {
       try {
         const loginResponse = await loginWithKakao(params);
+        setAuthenticatedSession(loginResponse);
+        return loginResponse;
+      } catch (error) {
+        clearSession();
+        throw error;
+      }
+    },
+    [clearSession, setAuthenticatedSession],
+  );
+
+  const authenticateWithGoogle = useCallback(
+    async (params: GoogleLoginParams) => {
+      try {
+        const loginResponse = await loginWithGoogle(params);
         setAuthenticatedSession(loginResponse);
         return loginResponse;
       } catch (error) {
@@ -143,11 +164,13 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
       onboardingCompleted,
       isOnboardingCompletionVisible,
       authenticateWithKakao,
+      authenticateWithGoogle,
       markOnboardingCompleted,
       finishOnboarding,
     }),
     [
       authenticateWithKakao,
+      authenticateWithGoogle,
       finishOnboarding,
       isOnboardingCompletionVisible,
       markOnboardingCompleted,
