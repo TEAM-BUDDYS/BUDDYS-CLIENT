@@ -31,7 +31,7 @@ export const PwaBottomSheet = ({
         <PwaSymbolIcon className="size-20" />
         <p className="text-title-b-18 pb-3 text-center text-gray-800">
           {isDesktop ? '모바일로' : '홈화면에'} buddys 앱을 추가하고
-          <br /> 알림을 바로 받아보세요
+          <br /> 편리하게 사용해 보세요
         </p>
         <Button onClick={onShowPwaGuide}>
           {isDesktop ? 'QR 코드 보기' : '설치 없이 앱으로 열기'}
