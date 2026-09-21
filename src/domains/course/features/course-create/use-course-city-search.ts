@@ -11,13 +11,11 @@ import type { CourseCreateCityOption } from './model';
 interface UseCourseCitySearchParams {
   countries: Country[];
   keyword: string;
-  isInputSelected: boolean;
 }
 
 export const useCourseCitySearch = ({
   countries,
   keyword,
-  isInputSelected,
 }: UseCourseCitySearchParams) => {
   const trimmedKeyword = keyword.trim();
   const debouncedKeyword = useDebouncedValue(
@@ -26,10 +24,7 @@ export const useCourseCitySearch = ({
   );
   const isKeywordSynced = debouncedKeyword === trimmedKeyword;
   const isSearchEnabled =
-    !isInputSelected &&
-    countries.length > 0 &&
-    trimmedKeyword.length > 0 &&
-    isKeywordSynced;
+    countries.length > 0 && trimmedKeyword.length > 0 && isKeywordSynced;
   const citySearchQueries = useQueries({
     queries: countries.map(({ id }) => ({
       ...CITY_QUERY_OPTIONS.SEARCH(id, debouncedKeyword),
@@ -76,7 +71,6 @@ export const useCourseCitySearch = ({
     isError:
       isSearchEnabled && citySearchQueries.some((query) => query.isError),
     isSearching:
-      !isInputSelected &&
       countries.length > 0 &&
       trimmedKeyword.length > 0 &&
       (!isKeywordSynced || isFetching),

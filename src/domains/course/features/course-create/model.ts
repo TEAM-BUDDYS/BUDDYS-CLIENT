@@ -1,13 +1,26 @@
 import type { City, Country } from '@/shared/api';
 
-export type CourseCreateLocationStep = 1 | 2;
+export type CourseCreateScreen = 'country' | 'city' | 'date' | 'detail';
 
 export interface CourseCreateCityOption
   extends Required<Pick<City, 'id' | 'name'>>, Pick<City, 'koreanName'> {
   countryId: number;
 }
 
-export interface CourseCreateLocationValue {
+export interface CourseCreateDetailFormState {
+  title: string;
+  content: string;
+  activityTagIds: number[];
+  interestTagIds: number[];
+  travelStyleTagIds: number[];
+}
+
+export interface CourseCreateBasicInfoValue {
   countries: Country[];
   cities: CourseCreateCityOption[];
+  dateRange?: {
+    startDate: Date;
+    endDate: Date;
+  };
+  detail: CourseCreateDetailFormState;
 }
