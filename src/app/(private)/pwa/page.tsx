@@ -1,6 +1,4 @@
-import { PwaInfo } from '@/domains/home/components/pwa/pwa-info';
-import { PWA_INFO_LIST } from '@/domains/home/model/pwa';
-import { PwaInfoBalloonIcon } from '@/shared/components/icons';
+import { PwaGuide } from '@/domains/home/features/pwa/pwa-guide';
 import { Header } from '@/shared/components/layout';
 
 export default function PwaPage() {
@@ -8,25 +6,7 @@ export default function PwaPage() {
     <div className="flex min-h-dvh flex-col">
       <Header hasBackButton />
       <main className="flex flex-1 flex-col justify-center px-4 pb-4">
-        <div>
-          <PwaInfoBalloonIcon
-            className="h-12 w-[177px] text-gray-800"
-            aria-label="앱스토어 다운로드 없이"
-          />
-          <h1 className="text-title-b-20 pt-4 pb-7 text-gray-800">
-            홈 화면에 buddys 앱을 추가하세요!
-          </h1>
-        </div>
-        <div className="flex flex-col gap-2">
-          {PWA_INFO_LIST.map(({ step, description, images }) => (
-            <PwaInfo
-              key={step}
-              step={step}
-              description={description}
-              images={images}
-            />
-          ))}
-        </div>
+        <PwaGuide />
       </main>
     </div>
   );
