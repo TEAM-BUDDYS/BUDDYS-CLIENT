@@ -44,7 +44,7 @@ export const WriteFloatingMenu = ({
         <li key={label}>
           <Link
             href={href}
-            className="text-body-m-15 flex h-12 items-center gap-3 rounded-xl px-4 text-gray-800 active:bg-gray-50"
+            className="text-body-m-15 focus-visible:outline-mint-300 flex h-12 items-center gap-3 rounded-xl px-4 text-gray-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid active:bg-gray-50"
           >
             <span
               aria-hidden
