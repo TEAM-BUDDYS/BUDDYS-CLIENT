@@ -82,6 +82,12 @@ export const useWriteFloatingMenuTransition = <
 
   const handleMenuKeyDown = useCallback(
     (event: KeyboardEvent<HTMLUListElement>) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeMenu();
+        return;
+      }
+
       if (event.key !== 'Tab' || !menuRef.current) return;
 
       const focusable = Array.from(
@@ -101,7 +107,7 @@ export const useWriteFloatingMenuTransition = <
         first.focus();
       }
     },
-    [],
+    [closeMenu],
   );
 
   useEffect(() => {
