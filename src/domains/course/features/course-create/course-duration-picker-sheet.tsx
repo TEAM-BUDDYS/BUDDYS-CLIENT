@@ -10,21 +10,24 @@ import {
   COURSE_CREATE_MIN_DURATION_DAYS,
 } from './constants';
 
-interface CourseDurationPickerSheetProps {
-  open: boolean;
+interface CourseDurationPickerContentProps {
   value: number | null;
   onClose: () => void;
   onConfirm: (durationDays: number) => void;
 }
 
-const stepperButtonClassName =
+interface CourseDurationPickerSheetProps extends CourseDurationPickerContentProps {
+  open: boolean;
+}
+
+const STEPPER_BUTTON_CLASS_NAME =
   'size-10 shrink-0 disabled:border-mint-200 disabled:bg-mint-50 disabled:text-mint-300 disabled:opacity-40';
 
 const CourseDurationPickerContent = ({
   value,
   onClose,
   onConfirm,
-}: Omit<CourseDurationPickerSheetProps, 'open'>) => {
+}: CourseDurationPickerContentProps) => {
   const titleId = useId();
   const [draftDays, setDraftDays] = useState(
     value ?? COURSE_CREATE_MIN_DURATION_DAYS,
@@ -48,7 +51,7 @@ const CourseDurationPickerContent = ({
           <IconButton
             aria-label="기간 하루 줄이기"
             disabled={draftDays <= COURSE_CREATE_MIN_DURATION_DAYS}
-            className={stepperButtonClassName}
+            className={STEPPER_BUTTON_CLASS_NAME}
             icon={<MinusIcon />}
             iconClassName="size-5.5"
             onClick={() =>
@@ -68,7 +71,7 @@ const CourseDurationPickerContent = ({
           <IconButton
             aria-label="기간 하루 늘리기"
             disabled={draftDays >= COURSE_CREATE_MAX_DATE_RANGE_DAYS}
-            className={stepperButtonClassName}
+            className={STEPPER_BUTTON_CLASS_NAME}
             icon={<PlusIcon />}
             iconClassName="size-5.5"
             onClick={() =>
