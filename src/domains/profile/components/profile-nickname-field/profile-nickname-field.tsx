@@ -17,6 +17,7 @@ interface ProfileNicknameFieldProps extends Pick<
 }
 
 const DUPLICATE_CHECK_SUCCESS_MESSAGE = '사용 가능한 닉네임입니다.';
+const NICKNAME_MAX_LENGTH = 14;
 
 export const ProfileNicknameField = ({
   value,
@@ -31,9 +32,11 @@ export const ProfileNicknameField = ({
   disabled,
 }: ProfileNicknameFieldProps) => {
   const isNicknameUnchanged = value === initialNickname;
+  const trimmedLength = value.trim().length;
   const isCheckButtonDisabled =
     disabled ||
-    value.length === 0 ||
+    trimmedLength === 0 ||
+    trimmedLength > NICKNAME_MAX_LENGTH ||
     isNicknameUnchanged ||
     isChecking ||
     isDuplicateChecked;
@@ -45,6 +48,7 @@ export const ProfileNicknameField = ({
       className="pr-24"
       disabled={disabled}
       label={label}
+      maxLength={NICKNAME_MAX_LENGTH}
       message={
         showDuplicateCheckSuccessMessage
           ? DUPLICATE_CHECK_SUCCESS_MESSAGE
