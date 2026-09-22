@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import type { Country } from '@/shared/api';
 import type { DateRangeTypes } from '@/shared/components/ui';
+import { getDateRangeDayCount } from '@/shared/components/ui/date-range-picker/date-utils';
 
 import type {
   CourseCreateBasicInfoValue,
@@ -36,8 +37,17 @@ export const useCourseCreateForm = () => {
   >([]);
   const [dateRange, setDateRange] =
     useState<DateRangeTypes>(INITIAL_DATE_RANGE);
+  const [selectedDurationDays, setSelectedDurationDays] = useState<
+    number | null
+  >(null);
   const [detail, setDetail] =
     useState<CourseCreateDetailFormState>(INITIAL_DETAIL_FORM);
+  const durationDays = dateRange.startDate
+    ? getDateRangeDayCount(
+        dateRange.startDate,
+        dateRange.endDate ?? dateRange.startDate,
+      )
+    : selectedDurationDays;
 
   const handleCountrySelect = (country: Country) => {
     setSelectedCountries((prevCountries) =>
@@ -78,6 +88,15 @@ export const useCourseCreateForm = () => {
     setDateRange(INITIAL_DATE_RANGE);
   };
 
+  const handleDateRangeChange = (value: DateRangeTypes) => {
+    setDateRange(value);
+    setSelectedDurationDays(null);
+  };
+
+  const handleDurationConfirm = (value: number) => {
+    setSelectedDurationDays(value);
+  };
+
   const canGoNext = (screen: CourseCreateScreen) => {
     if (screen === 'country') {
       return selectedCountries.length > 0;
@@ -91,13 +110,18 @@ export const useCourseCreateForm = () => {
       return Boolean(dateRange.startDate);
     }
 
-    return isDetailComplete(detail);
+    if (screen === 'duration') {
+      return selectedDurationDays !== null;
+    }
+
+    return durationDays !== null && isDetailComplete(detail);
   };
 
   const getBasicInfoValue = (): CourseCreateBasicInfoValue | null => {
     if (
       selectedCountries.length === 0 ||
       selectedCities.length === 0 ||
+      durationDays === null ||
       !isDetailComplete(detail)
     ) {
       return null;
@@ -106,6 +130,7 @@ export const useCourseCreateForm = () => {
     return {
       countries: selectedCountries,
       cities: selectedCities,
+      durationDays,
       ...(dateRange.startDate
         ? {
             dateRange: {
@@ -126,12 +151,14 @@ export const useCourseCreateForm = () => {
     selectedCountries,
     selectedCities,
     dateRange,
+    durationDays,
     detail,
     handleCountrySelect,
     handleCountryRemove,
     handleCitySelect,
     handleCityRemove,
-    setDateRange,
+    handleDateRangeChange,
+    handleDurationConfirm,
     clearDateRange,
     updateDetail,
     canGoNext,

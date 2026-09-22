@@ -20,6 +20,7 @@ import { CourseCreateCityStep } from './course-create-city-step';
 import { CourseCreateCountryStep } from './course-create-country-step';
 import { CourseCreateDateStep } from './course-create-date-step';
 import { CourseCreateDetailStep } from './course-create-detail-step';
+import { CourseCreateDurationStep } from './course-create-duration-step';
 import { CourseCreateQuestionHeader } from './course-create-question-header';
 import type { CourseCreateBasicInfoValue, CourseCreateScreen } from './model';
 import { useCourseCreateForm } from './use-course-create-form';
@@ -57,7 +58,11 @@ export const CourseCreateFlow = ({
       return;
     }
 
-    setCurrentScreen('date');
+    setCurrentScreen(
+      currentScreen === 'detail' && !courseCreateForm.dateRange.startDate
+        ? 'duration'
+        : 'date',
+    );
   };
 
   const handleNextClick = () => {
@@ -75,7 +80,7 @@ export const CourseCreateFlow = ({
       return;
     }
 
-    if (currentScreen === 'date') {
+    if (currentScreen === 'date' || currentScreen === 'duration') {
       setCurrentScreen('detail');
       return;
     }
@@ -88,13 +93,13 @@ export const CourseCreateFlow = ({
   };
 
   const handleDateConfirm = (value: DateRangeTypes) => {
-    courseCreateForm.setDateRange(value);
+    courseCreateForm.handleDateRangeChange(value);
     setIsDatePickerOpen(false);
   };
 
   const handleDateSkipClick = () => {
     courseCreateForm.clearDateRange();
-    setCurrentScreen('detail');
+    setCurrentScreen('duration');
   };
 
   return (
@@ -122,7 +127,12 @@ export const CourseCreateFlow = ({
           currentScreen === 'detail' ? 'pt-8' : 'pt-10',
         )}
       >
-        <div className="flex flex-col gap-6">
+        <div
+          className={cn(
+            'flex flex-col',
+            currentScreen === 'duration' ? 'gap-10' : 'gap-6',
+          )}
+        >
           {isQuestionScreen && (
             <CourseCreateQuestionHeader
               title={COURSE_CREATE_QUESTION_CONTENT[currentScreen].title}
@@ -156,6 +166,13 @@ export const CourseCreateFlow = ({
               onDateClick={() => setIsDatePickerOpen(true)}
               onDatePickerClose={() => setIsDatePickerOpen(false)}
               onDateConfirm={handleDateConfirm}
+            />
+          )}
+
+          {currentScreen === 'duration' && (
+            <CourseCreateDurationStep
+              durationDays={courseCreateForm.durationDays}
+              onConfirm={courseCreateForm.handleDurationConfirm}
             />
           )}
 
