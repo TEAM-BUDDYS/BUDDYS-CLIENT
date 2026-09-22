@@ -13,7 +13,7 @@ interface ProfileNicknameFieldProps extends Pick<
   initialNickname: string;
   onCheckDuplicate: () => void;
   isChecking?: boolean;
-  isDuplicateChecked?: boolean;
+  checkedNickname?: string | null;
 }
 
 const DUPLICATE_CHECK_SUCCESS_MESSAGE = '사용 가능한 닉네임입니다.';
@@ -25,7 +25,7 @@ export const ProfileNicknameField = ({
   initialNickname,
   onCheckDuplicate,
   isChecking = false,
-  isDuplicateChecked = false,
+  checkedNickname = null,
   label,
   message,
   status,
@@ -33,6 +33,8 @@ export const ProfileNicknameField = ({
 }: ProfileNicknameFieldProps) => {
   const isNicknameUnchanged = value === initialNickname;
   const trimmedLength = value.trim().length;
+  const isDuplicateChecked =
+    checkedNickname !== null && checkedNickname === value;
   const isCheckButtonDisabled =
     disabled ||
     trimmedLength === 0 ||
