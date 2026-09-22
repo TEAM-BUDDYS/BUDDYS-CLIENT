@@ -31,6 +31,7 @@ export { HomeIcon } from './home-icon';
 export { KakaoIcon } from './kakao-icon';
 export { LocationIcon } from './location-icon';
 export { MessageIcon } from './message-icon';
+export { MinusIcon } from './minus-icon';
 export { MoreIcon } from './more-icon';
 export { MyIcon } from './my-icon';
 export { NoticeIcon } from './notice-icon';
