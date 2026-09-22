@@ -42,11 +42,7 @@ export const useCourseCitySearch = ({
           }
 
           query.data?.forEach((city) => {
-            if (
-              city.id === undefined ||
-              city.name === undefined ||
-              seenCityIds.has(city.id)
-            ) {
+            if (seenCityIds.has(city.id)) {
               return;
             }
 

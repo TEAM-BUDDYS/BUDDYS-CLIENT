@@ -27,4 +27,4 @@ export {
 } from './query-key';
 export { RECOMMENDATION_QUERY_OPTIONS } from './recommended-posts/query';
 export { createSearchParams } from './search-params';
-export { type PreferenceTag, TAG_QUERY_OPTIONS, type TagType } from './tag';
+export { TAG_QUERY_OPTIONS, type TagType } from './tag';

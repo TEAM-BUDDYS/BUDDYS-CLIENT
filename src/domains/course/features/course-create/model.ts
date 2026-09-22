@@ -2,8 +2,7 @@ import type { City, Country } from '@/shared/api';
 
 export type CourseCreateScreen = 'country' | 'city' | 'date' | 'detail';
 
-export interface CourseCreateCityOption
-  extends Required<Pick<City, 'id' | 'name'>>, Pick<City, 'koreanName'> {
+export interface CourseCreateCityOption extends City {
   countryId: number;
 }
 

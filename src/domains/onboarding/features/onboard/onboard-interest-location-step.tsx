@@ -62,7 +62,7 @@ export const OnboardInterestLocationStep = ({
           value={city}
           selectedOption={selectedCity}
           results={cityResults}
-          getOptionKey={(city) => city.id ?? ''}
+          getOptionKey={(city) => city.id}
           getOptionLabel={(cityResult) => getCityDisplayName(cityResult, city)}
           onChange={onCityChange}
           onSelect={onCitySelect}
