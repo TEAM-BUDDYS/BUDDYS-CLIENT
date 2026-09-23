@@ -36,5 +36,9 @@ export { SearchbarWithDropdown } from './searchbar/searchbar-with-dropdown';
 export { Skeleton } from './skeleton/skeleton';
 export { Tab } from './tab/tab';
 export { TextArea, type TextAreaStatus } from './text-area/text-area';
-export { TextField, type TextFieldStatus } from './text-field/text-field';
+export {
+  TextField,
+  type TextFieldProps,
+  type TextFieldStatus,
+} from './text-field/text-field';
 export { ToastProvider, type ToastVariant, useToast } from './toast';

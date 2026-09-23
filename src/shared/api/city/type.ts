@@ -5,4 +5,7 @@ export type SearchCitiesParams =
 export type SearchCitiesResponse =
   components['schemas']['BaseResponseCityListResponse'];
 
-export type City = components['schemas']['CityResponse'];
+type CityResponse = components['schemas']['CityResponse'];
+
+export type City = Required<Pick<CityResponse, 'id' | 'name'>> &
+  Pick<CityResponse, 'koreanName'>;

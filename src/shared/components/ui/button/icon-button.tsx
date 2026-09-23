@@ -6,7 +6,7 @@ import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
 const IconButtonVariants = cva(
-  ' inline-flex items-center justify-center p-3 rounded-full gap-1.5 w-fit text-body-m-15 disabled:border disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-200',
+  'focus-visible:outline-mint-300 inline-flex items-center justify-center p-3 rounded-full gap-1.5 w-fit text-body-m-15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid disabled:border disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-200',
   {
     variants: {
       variant: {

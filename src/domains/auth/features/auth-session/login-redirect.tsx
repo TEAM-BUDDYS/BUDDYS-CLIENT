@@ -14,7 +14,7 @@ export const LoginRedirect = () => {
     status === 'authenticated' && onboardingCompleted !== null
       ? onboardingCompleted
         ? ROUTES.HOME
-        : ROUTES.ONBOARDING
+        : ROUTES.ONBOARDING_INTRO
       : null;
 
   useEffect(() => {

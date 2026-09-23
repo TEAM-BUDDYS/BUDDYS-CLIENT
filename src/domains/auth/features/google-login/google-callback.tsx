@@ -54,7 +54,9 @@ export const GoogleCallback = () => {
       });
 
       router.replace(
-        loginSession.onboardingCompleted ? ROUTES.HOME : ROUTES.ONBOARDING,
+        loginSession.onboardingCompleted
+          ? ROUTES.HOME
+          : ROUTES.ONBOARDING_INTRO,
       );
     };
 
