@@ -2,10 +2,8 @@ import type { ComponentProps } from 'react';
 
 import { ChevronRightIcon } from '@/shared/components/icons';
 
-interface CourseSectionHeaderProps extends Pick<
-  ComponentProps<'button'>,
-  'onClick'
-> {
+interface CourseSectionHeaderProps {
+  onClick: NonNullable<ComponentProps<'button'>['onClick']>;
   title: string;
 }
 
