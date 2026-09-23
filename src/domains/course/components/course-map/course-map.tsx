@@ -8,6 +8,7 @@ import { CourseMapCamera } from '@/domains/course/components/course-map/course-m
 import { CourseMapMarker } from '@/domains/course/components/course-map/course-map-marker';
 import { useCurrentLocation } from '@/domains/course/hook/use-current-location';
 import type { CourseMapCenter } from '@/domains/course/model/course-map';
+import { AsyncErrorState } from '@/shared/components/ui';
 
 const FALLBACK_CENTER = {
   lat: 37.5665,
@@ -48,13 +49,23 @@ export const CourseMap = ({
   const resolvedCameraTarget =
     cameraTarget ?? selectedPlaceCenter ?? currentLocation;
 
-  if (!apiKey || !mapId || hasMapLoadError) {
+  if (hasMapLoadError) {
+    return (
+      <section className="relative h-80 w-full overflow-hidden rounded-2xl bg-gray-50">
+        <AsyncErrorState
+          className="min-h-full py-4"
+          title="지도를 불러오지 못했어요"
+          onRetry={() => setHasMapLoadError(false)}
+        />
+      </section>
+    );
+  }
+
+  if (!apiKey || !mapId) {
     return (
       <section className="relative h-80 w-full overflow-hidden rounded-2xl bg-gray-50">
         <div className="flex h-full w-full items-center justify-center text-gray-500">
-          {hasMapLoadError
-            ? '지도를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.'
-            : (selectedPlace?.name ?? '지도가 표시될 영역입니다')}
+          {selectedPlace?.name ?? '지도가 표시될 영역입니다'}
         </div>
       </section>
     );
