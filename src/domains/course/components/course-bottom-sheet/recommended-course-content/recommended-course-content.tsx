@@ -55,8 +55,8 @@ const INITIAL_SAVED_COURSES: readonly FilteredCourseItem[] = Array.from(
 );
 
 interface RecommendedCourseContentProps {
-  onExploreClick?: () => void;
-  onSuggestedMoreClick?: () => void;
+  onExploreClick: () => void;
+  onSuggestedMoreClick: () => void;
 }
 
 export const RecommendedCourseContent = ({

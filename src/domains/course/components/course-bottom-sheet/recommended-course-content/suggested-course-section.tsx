@@ -12,7 +12,7 @@ interface SuggestedCourseSectionProps {
   categories: readonly SuggestedCourseCategory[];
   courses: readonly FilteredCourseItem[];
   selectedCategoryId?: number;
-  onMoreClick?: () => void;
+  onMoreClick: () => void;
   onCategoryChange: (categoryId: number) => void;
   onCourseBookmarkChange: (courseId: number, nextBookmarked: boolean) => void;
 }

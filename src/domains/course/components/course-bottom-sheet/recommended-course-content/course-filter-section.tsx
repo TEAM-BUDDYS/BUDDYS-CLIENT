@@ -21,7 +21,7 @@ interface CourseFilterSectionProps {
   countries: readonly CourseFilterCountry[];
   courses: readonly FilteredCourseItem[];
   selectedCountryId?: number;
-  onExploreClick?: () => void;
+  onExploreClick: () => void;
   onCountryChange: (countryId: number) => void;
   onCourseBookmarkChange: (courseId: number, nextBookmarked: boolean) => void;
 }

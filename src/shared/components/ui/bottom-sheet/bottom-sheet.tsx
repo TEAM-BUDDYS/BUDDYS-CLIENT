@@ -5,12 +5,15 @@ import { Drawer } from 'vaul';
 
 import { cn } from '@/lib/cn';
 
+import { useNonModalPointerEvents } from './use-non-modal-pointer-events';
+
 interface BottomSheetProps {
   open: boolean;
   children: ReactNode;
   className?: string;
   ariaLabel?: string;
   ariaLabelledBy?: string;
+  modal?: boolean;
   onClose: () => void;
 }
 
@@ -20,8 +23,11 @@ export const BottomSheet = ({
   className,
   ariaLabel,
   ariaLabelledBy,
+  modal = true,
   onClose,
 }: BottomSheetProps) => {
+  useNonModalPointerEvents(open, modal);
+
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {
       onClose();
@@ -29,7 +35,7 @@ export const BottomSheet = ({
   };
 
   return (
-    <Drawer.Root open={open} onOpenChange={handleOpenChange}>
+    <Drawer.Root open={open} modal={modal} onOpenChange={handleOpenChange}>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 z-50 bg-black/60" />
         <Drawer.Content

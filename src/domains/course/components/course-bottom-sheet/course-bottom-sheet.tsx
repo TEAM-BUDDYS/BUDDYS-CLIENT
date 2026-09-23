@@ -16,6 +16,8 @@ interface CourseBottomSheetProps {
   nearbyItems: readonly NearbyCourseItem[];
   onClose: () => void;
   onBookmarkChange: (placeId: string, nextBookmarked: boolean) => void;
+  onExploreClick: () => void;
+  onSuggestedMoreClick: () => void;
 }
 
 export const CourseBottomSheet = ({
@@ -23,6 +25,8 @@ export const CourseBottomSheet = ({
   nearbyItems,
   onClose,
   onBookmarkChange,
+  onExploreClick,
+  onSuggestedMoreClick,
 }: CourseBottomSheetProps) => {
   const [tab, setTab] = useState<'nearby' | 'recommend'>('nearby');
 
@@ -31,6 +35,7 @@ export const CourseBottomSheet = ({
       open={open}
       ariaLabel="코스 탐색"
       className="flex h-[59dvh] flex-col"
+      modal={false}
       onClose={onClose}
     >
       <div className="flex min-h-0 flex-1 flex-col px-4">
@@ -45,7 +50,10 @@ export const CourseBottomSheet = ({
               onBookmarkChange={onBookmarkChange}
             />
           ) : (
-            <RecommendedCourseContent />
+            <RecommendedCourseContent
+              onExploreClick={onExploreClick}
+              onSuggestedMoreClick={onSuggestedMoreClick}
+            />
           )}
         </div>
       </div>
