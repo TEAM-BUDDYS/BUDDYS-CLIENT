@@ -1,10 +1,9 @@
 import type { ChangeEvent } from 'react';
 
-import { TextField, type TextFieldProps } from '@/shared/components/ui';
+import { TextField, type TextFieldProps } from '../text-field/text-field';
+import { NicknameCheckButton } from './nickname-check-button';
 
-import { NicknameCheckButton } from '../nickname-check-button/nickname-check-button';
-
-interface ProfileNicknameFieldProps extends Pick<
+interface NicknameFieldProps extends Pick<
   TextFieldProps,
   'label' | 'message' | 'status' | 'disabled'
 > {
@@ -19,7 +18,7 @@ interface ProfileNicknameFieldProps extends Pick<
 const DUPLICATE_CHECK_SUCCESS_MESSAGE = '사용 가능한 닉네임입니다.';
 const NICKNAME_MAX_LENGTH = 14;
 
-export const ProfileNicknameField = ({
+export const NicknameField = ({
   value,
   onChange,
   initialNickname,
@@ -30,7 +29,7 @@ export const ProfileNicknameField = ({
   message,
   status,
   disabled,
-}: ProfileNicknameFieldProps) => {
+}: NicknameFieldProps) => {
   const isNicknameUnchanged = value === initialNickname;
   const trimmedLength = value.trim().length;
   const isDuplicateChecked =
