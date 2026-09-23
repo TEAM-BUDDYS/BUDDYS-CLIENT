@@ -43,6 +43,7 @@ export { SandglassIcon } from './sandglass-icon';
 export { SearchIcon } from './search-icon';
 export { SendIcon } from './send-icon';
 export { SettingIcon } from './setting-icon';
+export { ShareIcon } from './share-icon';
 export { SightseeingIcon } from './sightseeing-icon';
 export { SpeechBubbleIcon } from './speech-bubble-icon';
 export { TrashIcon } from './trash-icon';
