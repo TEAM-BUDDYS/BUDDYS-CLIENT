@@ -1,6 +1,13 @@
 'use client';
 
-import { type KeyboardEvent, useCallback, useId, useState } from 'react';
+import {
+  type KeyboardEvent,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 
 import { ChevronDownIcon, ChevronUpIcon } from '@/shared/components/icons';
 import { useClickOutside } from '@/shared/hooks/use-click-outside';
@@ -13,7 +20,7 @@ const DEFAULT_SORT_OPTIONS = ['최신순', '저장순'];
 interface SortDropdownProps {
   options?: string[];
   value: string;
-  onChange?: (value: string) => void;
+  onChange: (value: string) => void;
 }
 
 export const SortDropdown = ({
@@ -23,22 +30,59 @@ export const SortDropdown = ({
 }: SortDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const listboxId = useId();
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const optionRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const handleClickOutside = useCallback(() => setIsOpen(false), []);
   const dropdownRef = useClickOutside<HTMLDivElement>(handleClickOutside);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const selectedIndex = options.indexOf(value);
+
+    optionRefs.current[selectedIndex === -1 ? 0 : selectedIndex]?.focus();
+  }, [isOpen, options, value]);
+
+  const closeAndFocusTrigger = () => {
+    setIsOpen(false);
+    triggerRef.current?.focus();
+  };
 
   const handleTriggerClick = () => {
     setIsOpen((prev) => !prev);
   };
 
   const handleOptionSelect = (option: string) => {
-    onChange?.(option);
-    setIsOpen(false);
+    onChange(option);
+    closeAndFocusTrigger();
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Escape') {
-      setIsOpen(false);
+      closeAndFocusTrigger();
+      return;
     }
+
+    if (!isOpen || (event.key !== 'ArrowDown' && event.key !== 'ArrowUp')) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const lastIndex = options.length - 1;
+    const currentIndex = optionRefs.current.findIndex(
+      (optionRef) => optionRef === document.activeElement,
+    );
+    const nextIndex =
+      event.key === 'ArrowDown'
+        ? currentIndex >= lastIndex
+          ? 0
+          : currentIndex + 1
+        : currentIndex <= 0
+          ? lastIndex
+          : currentIndex - 1;
+
+    optionRefs.current[nextIndex]?.focus();
   };
 
   return (
@@ -48,6 +92,7 @@ export const SortDropdown = ({
       onKeyDown={handleKeyDown}
     >
       <button
+        ref={triggerRef}
         aria-controls={isOpen ? listboxId : undefined}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
@@ -66,10 +111,13 @@ export const SortDropdown = ({
       </button>
 
       {isOpen && (
-        <OptionList id={listboxId}>
-          {options.map((option) => (
+        <OptionList aria-label="정렬 기준" id={listboxId}>
+          {options.map((option, index) => (
             <OptionItem
               key={option}
+              ref={(node) => {
+                optionRefs.current[index] = node;
+              }}
               label={option}
               isSelected={option === value}
               onSelect={() => handleOptionSelect(option)}

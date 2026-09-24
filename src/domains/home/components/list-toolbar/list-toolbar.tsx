@@ -4,7 +4,7 @@ interface ListToolbarProps {
   count: number;
   options?: string[];
   value: string;
-  onChange?: (value: string) => void;
+  onChange: (value: string) => void;
 }
 
 export const ListToolbar = ({

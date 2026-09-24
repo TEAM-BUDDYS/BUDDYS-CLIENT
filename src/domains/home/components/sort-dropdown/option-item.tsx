@@ -1,21 +1,26 @@
 'use client';
 
+import type { Ref } from 'react';
+
 import { cn } from '@/lib/cn';
 
 interface OptionItemProps {
+  ref?: Ref<HTMLButtonElement>;
   label: string;
   isSelected: boolean;
   onSelect: () => void;
 }
 
 export const OptionItem = ({
+  ref,
   label,
   isSelected,
   onSelect,
 }: OptionItemProps) => {
   return (
-    <li>
+    <li role="presentation">
       <button
+        ref={ref}
         aria-selected={isSelected}
         className={cn(
           'text-caption-m-12 w-full rounded-lg py-2 pr-6 pl-2 text-left whitespace-nowrap text-gray-500',
