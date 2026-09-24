@@ -61,7 +61,7 @@ export const BottomActionBar = ({
         aria-label="전송"
         className={cn(
           'shrink-0',
-          'disabled:disabled:border-mint-200 disabled:bg-mint-50 disabled:text-mint-200',
+          'disabled:border-mint-200 disabled:bg-mint-50 disabled:text-mint-200',
         )}
         disabled={submitDisabled}
         icon={<SendIcon />}
