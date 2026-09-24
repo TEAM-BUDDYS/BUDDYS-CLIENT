@@ -8,6 +8,8 @@ export interface CourseFilterCountry {
 
 export interface FilteredCourseItem {
   id: number;
+  countryIds: readonly number[];
+  tagIds: readonly number[];
   title: string;
   description: string;
   images: {

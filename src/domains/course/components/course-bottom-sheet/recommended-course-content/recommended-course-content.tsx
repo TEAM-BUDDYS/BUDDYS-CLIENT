@@ -21,32 +21,47 @@ const COURSE_IMAGES = [
   { src: '/apple-icon.png', alt: '코스 장소 이미지 4' },
 ];
 
-const INITIAL_COURSES: readonly FilteredCourseItem[] = Array.from(
-  { length: 4 },
-  (_, index) => ({
-    id: index + 1,
-    title: '프라하 3박 4일 (코스 제목)',
-    description: '체코 · 프라하',
-    images: COURSE_IMAGES,
-    isBookmarked: false,
-  }),
-);
+const DEFAULT_VISIBLE_COURSE_COUNT = 4;
+const COURSE_CITIES = [
+  '파리',
+  '바르셀로나',
+  '뉴욕',
+  '밴쿠버',
+  '로마',
+  '취리히',
+  '런던',
+  '베를린',
+  '프라하',
+] as const;
 
-const INITIAL_SUGGESTED_COURSES: readonly FilteredCourseItem[] = Array.from(
-  { length: 4 },
-  (_, index) => ({
-    id: index + 101,
-    title: '프라하 3박 4일 (코스 제목)',
-    description: '체코 · 프라하',
+const INITIAL_COURSES: readonly FilteredCourseItem[] =
+  COURSE_FILTER_COUNTRIES.map((country, index) => ({
+    id: index + 1,
+    countryIds: [country.id],
+    tagIds: [COURSE_CATEGORIES[index % COURSE_CATEGORIES.length].id],
+    title: `${country.name} 추천 코스`,
+    description: `${country.name} · ${COURSE_CITIES[index]}`,
     images: COURSE_IMAGES,
     isBookmarked: false,
-  }),
-);
+  }));
+
+const INITIAL_SUGGESTED_COURSES: readonly FilteredCourseItem[] =
+  COURSE_CATEGORIES.map((category, index) => ({
+    id: index + 101,
+    countryIds: [COURSE_FILTER_COUNTRIES[index].id],
+    tagIds: [category.id],
+    title: `${category.name} 추천 코스`,
+    description: `${COURSE_FILTER_COUNTRIES[index].name} · ${COURSE_CITIES[index]}`,
+    images: COURSE_IMAGES,
+    isBookmarked: false,
+  }));
 
 const INITIAL_SAVED_COURSES: readonly FilteredCourseItem[] = Array.from(
   { length: 3 },
   (_, index) => ({
     id: index + 201,
+    countryIds: [COURSE_FILTER_COUNTRIES[index].id],
+    tagIds: [COURSE_CATEGORIES[index].id],
     title: '프라하 3박 4일 (코스 제목)',
     description: '체코 · 프라하',
     images: COURSE_IMAGES,
@@ -70,6 +85,18 @@ export const RecommendedCourseContent = ({
     INITIAL_SUGGESTED_COURSES,
   );
   const [savedCourses, setSavedCourses] = useState(INITIAL_SAVED_COURSES);
+  const filteredCourses =
+    selectedCountryId === undefined
+      ? courses.slice(0, DEFAULT_VISIBLE_COURSE_COUNT)
+      : courses.filter((course) =>
+          course.countryIds.includes(selectedCountryId),
+        );
+  const filteredSuggestedCourses =
+    selectedCategoryId === undefined
+      ? suggestedCourses.slice(0, DEFAULT_VISIBLE_COURSE_COUNT)
+      : suggestedCourses.filter((course) =>
+          course.tagIds.includes(selectedCategoryId),
+        );
 
   const handleCourseBookmarkChange = (
     courseId: number,
@@ -112,7 +139,7 @@ export const RecommendedCourseContent = ({
     <div>
       <CourseFilterSection
         countries={COURSE_FILTER_COUNTRIES}
-        courses={courses}
+        courses={filteredCourses}
         selectedCountryId={selectedCountryId}
         onCountryChange={setSelectedCountryId}
         onCourseBookmarkChange={handleCourseBookmarkChange}
@@ -126,7 +153,7 @@ export const RecommendedCourseContent = ({
 
       <SuggestedCourseSection
         categories={COURSE_CATEGORIES}
-        courses={suggestedCourses}
+        courses={filteredSuggestedCourses}
         selectedCategoryId={selectedCategoryId}
         onCategoryChange={setSelectedCategoryId}
         onCourseBookmarkChange={handleSuggestedCourseBookmarkChange}
