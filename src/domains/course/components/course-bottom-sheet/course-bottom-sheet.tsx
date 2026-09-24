@@ -34,7 +34,7 @@ export const CourseBottomSheet = ({
     <BottomSheet
       open={open}
       ariaLabel="코스 탐색"
-      className="flex h-[59dvh] flex-col"
+      className="z-10 flex h-[59dvh] flex-col"
       modal={false}
       onClose={onClose}
     >
