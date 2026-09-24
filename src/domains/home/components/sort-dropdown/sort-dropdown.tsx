@@ -12,8 +12,8 @@ import {
 import { ChevronDownIcon, ChevronUpIcon } from '@/shared/components/icons';
 import { useClickOutside } from '@/shared/hooks/use-click-outside';
 
-import { OptionItem } from './option-item';
-import { OptionList } from './option-list';
+import { SortOptionItem } from './sort-option-item';
+import { SortOptionList } from './sort-option-list';
 
 const DEFAULT_SORT_OPTIONS = ['최신순', '저장순'];
 
@@ -111,9 +111,9 @@ export const SortDropdown = ({
       </button>
 
       {isOpen && (
-        <OptionList aria-label="정렬 기준" id={listboxId}>
+        <SortOptionList aria-label="정렬 기준" id={listboxId}>
           {options.map((option, index) => (
-            <OptionItem
+            <SortOptionItem
               key={option}
               ref={(node) => {
                 optionRefs.current[index] = node;
@@ -123,7 +123,7 @@ export const SortDropdown = ({
               onSelect={() => handleOptionSelect(option)}
             />
           ))}
-        </OptionList>
+        </SortOptionList>
       )}
     </div>
   );

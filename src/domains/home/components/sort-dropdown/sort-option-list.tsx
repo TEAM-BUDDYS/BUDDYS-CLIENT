@@ -1,8 +1,8 @@
 import type { ComponentPropsWithoutRef } from 'react';
 
-type OptionListProps = ComponentPropsWithoutRef<'ul'>;
+type SortOptionListProps = ComponentPropsWithoutRef<'ul'>;
 
-export const OptionList = ({ children, ...props }: OptionListProps) => {
+export const SortOptionList = ({ children, ...props }: SortOptionListProps) => {
   return (
     <ul
       {...props}

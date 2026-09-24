@@ -4,19 +4,19 @@ import type { Ref } from 'react';
 
 import { cn } from '@/lib/cn';
 
-interface OptionItemProps {
+interface SortOptionItemProps {
   ref?: Ref<HTMLButtonElement>;
   label: string;
   isSelected: boolean;
   onSelect: () => void;
 }
 
-export const OptionItem = ({
+export const SortOptionItem = ({
   ref,
   label,
   isSelected,
   onSelect,
-}: OptionItemProps) => {
+}: SortOptionItemProps) => {
   return (
     <li role="presentation">
       <button
