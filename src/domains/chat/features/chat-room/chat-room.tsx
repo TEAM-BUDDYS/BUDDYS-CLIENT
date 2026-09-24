@@ -9,7 +9,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAuthSession } from '@/domains/auth/features/auth-session/auth-session-provider';
 import { Header } from '@/shared/components/layout';
-import { BottomActionBar } from '@/shared/components/ui';
+import { BottomActionBar, Button } from '@/shared/components/ui';
 
 import { CHAT_QUERY_OPTIONS } from '../../api/query';
 import {
@@ -30,6 +30,8 @@ interface ChatRoomProps {
 export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
   const { userId: currentUserId } = useAuthSession();
   const [message, setMessage] = useState('');
+  // 실제 서버 응답 필드에 맞춰 수정 예정
+  const isInputDisabled = false;
   const [realtimeMessages, setRealtimeMessages] = useState<ChatMessageData[]>(
     [],
   );
@@ -167,6 +169,9 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
   }, [isConnected, markChatRoomAsRead, messages]);
 
   const handleSubmit = () => {
+    if (isInputDisabled) {
+      return;
+    }
     const isSent = sendMessage(message);
 
     if (isSent) {
@@ -195,10 +200,20 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
           isFetchPreviousMessagesError={isFetchNextPageError}
           onLoadPreviousMessages={fetchNextPage}
         />
-
+        <div className="mx-4 my-4">
+          <Button>코스 기록 바로가기</Button>
+        </div>
         <BottomActionBar
+          className="border-t border-t-gray-100"
           value={message}
+          inputProps={{ disabled: isInputDisabled }}
+          submitDisabled={isInputDisabled}
           onValueChange={setMessage}
+          placeholder={
+            isInputDisabled
+              ? '메시지를 보낼 수 없어요.'
+              : '내용을 입력해주세요.'
+          }
           onSubmit={(event) => {
             event.preventDefault();
             handleSubmit();
