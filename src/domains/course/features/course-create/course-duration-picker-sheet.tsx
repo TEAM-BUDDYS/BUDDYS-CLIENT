@@ -46,7 +46,7 @@ const CourseDurationPickerContent = ({
           onClick={onClose}
         />
       </header>
-      <div className="my-6 flex h-30 flex-col items-center justify-center gap-4 px-4">
+      <div className="my-6 flex h-30 flex-col items-center justify-center gap-4">
         <div className="flex items-center justify-center gap-6">
           <IconButton
             aria-label="기간 하루 줄이기"
