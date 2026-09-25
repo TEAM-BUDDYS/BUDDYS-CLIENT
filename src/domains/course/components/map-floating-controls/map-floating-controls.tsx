@@ -21,8 +21,8 @@ export const MapFloatingControls = ({
         aria-pressed={isBookmarkActive}
         className={
           isBookmarkActive
-            ? 'text-mint-300 size-9 bg-gray-100'
-            : 'text-mint-300 size-9 bg-white'
+            ? 'text-mint-300 size-9 bg-gray-100 enabled:active:bg-gray-100'
+            : 'text-mint-300 size-9 bg-white enabled:active:bg-white'
         }
         icon={<BookmarkIcon />}
         iconClassName="size-5"
