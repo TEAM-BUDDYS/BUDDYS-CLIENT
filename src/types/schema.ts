@@ -3809,6 +3809,13 @@ export interface components {
       places: components['schemas']['PlaceResponse'][];
       /** @description 해당 일자의 항공편 목록 */
       flights: components['schemas']['FlightResponse'][];
+      /** @description 해당 일자의 메모 */
+      memo: string | null;
+      /**
+       * Format: int64
+       * @description 해당 일자의 비용
+       */
+      cost: number | null;
     };
     FlightResponse: {
       /**
