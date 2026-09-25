@@ -72,7 +72,7 @@ export const CourseMap = ({
   }
 
   return (
-    <section className="relative h-80 w-full overflow-hidden rounded-2xl">
+    <section className="relative h-full w-full overflow-hidden rounded-2xl">
       <APIProvider apiKey={apiKey} onError={() => setHasMapLoadError(true)}>
         <Map
           mapId={mapId}
@@ -80,6 +80,7 @@ export const CourseMap = ({
           defaultZoom={15}
           gestureHandling="greedy"
           disableDefaultUI
+          keyboardShortcuts={false}
         >
           <CourseMapCamera center={resolvedCameraTarget} />
 

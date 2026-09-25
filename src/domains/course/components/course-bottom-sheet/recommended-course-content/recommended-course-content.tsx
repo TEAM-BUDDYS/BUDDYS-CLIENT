@@ -98,6 +98,18 @@ export const RecommendedCourseContent = ({
           course.tagIds.includes(selectedCategoryId),
         );
 
+  const handleCountryChange = (countryId: number) => {
+    setSelectedCountryId((currentCountryId) =>
+      currentCountryId === countryId ? undefined : countryId,
+    );
+  };
+
+  const handleCategoryChange = (categoryId: number) => {
+    setSelectedCategoryId((currentCategoryId) =>
+      currentCategoryId === categoryId ? undefined : categoryId,
+    );
+  };
+
   const handleCourseBookmarkChange = (
     courseId: number,
     nextBookmarked: boolean,
@@ -141,7 +153,7 @@ export const RecommendedCourseContent = ({
         countries={COURSE_FILTER_COUNTRIES}
         courses={filteredCourses}
         selectedCountryId={selectedCountryId}
-        onCountryChange={setSelectedCountryId}
+        onCountryChange={handleCountryChange}
         onCourseBookmarkChange={handleCourseBookmarkChange}
         onExploreClick={onExploreClick}
       />
@@ -155,7 +167,7 @@ export const RecommendedCourseContent = ({
         categories={COURSE_CATEGORIES}
         courses={filteredSuggestedCourses}
         selectedCategoryId={selectedCategoryId}
-        onCategoryChange={setSelectedCategoryId}
+        onCategoryChange={handleCategoryChange}
         onCourseBookmarkChange={handleSuggestedCourseBookmarkChange}
         onMoreClick={onSuggestedMoreClick}
       />
