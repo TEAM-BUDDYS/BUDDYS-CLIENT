@@ -41,6 +41,7 @@ const BOTTOM_NAVIGATION_ITEMS: BottomNavigationItem[] = [
   },
   {
     key: 'course',
+    href: ROUTES.COURSE.ROOT,
     icon: CourseIcon,
     label: '코스',
   },
