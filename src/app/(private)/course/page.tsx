@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import {
@@ -8,6 +9,7 @@ import {
 } from '@/domains/course/components/course-bottom-sheet/course-bottom-sheet';
 import { CourseMap } from '@/domains/course/components/course-map/course-map';
 import { MapFloatingControls } from '@/domains/course/components/map-floating-controls/map-floating-controls';
+import { useCurrentLocation } from '@/domains/course/hook/use-current-location';
 import { cn } from '@/lib/cn';
 import {
   AccommodationIcon,
@@ -17,6 +19,7 @@ import {
 } from '@/shared/components/icons';
 import { BottomNavigation, Header } from '@/shared/components/layout';
 import { ChipButton, Searchbar } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
 
 const MAP_CATEGORY_ITEMS = [
   { key: 'sightseeing', label: '관광', icon: SightseeingIcon },
@@ -28,17 +31,35 @@ const MAP_CATEGORY_ITEMS = [
 type MapCategory = (typeof MAP_CATEGORY_ITEMS)[number]['key'];
 
 export default function CoursePage() {
+  const router = useRouter();
   const [bottomSheetPosition, setBottomSheetPosition] =
     useState<CourseBottomSheetPosition>('default');
   const [isBookmarkActive, setIsBookmarkActive] = useState(false);
   const [isLocationActive, setIsLocationActive] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<MapCategory>();
+  const { currentLocation, status, refetchCurrentLocation } =
+    useCurrentLocation({ requestOnMount: false });
 
   const handleCategoryChange = (category: MapCategory) => {
     setSelectedCategory((currentCategory) =>
       currentCategory === category ? undefined : category,
     );
+  };
+
+  const handleLocationClick = async () => {
+    if (isLocationActive) {
+      setIsLocationActive(false);
+      return;
+    }
+
+    if (status === 'loading') return;
+
+    const location = await refetchCurrentLocation();
+
+    if (location) {
+      setIsLocationActive(true);
+    }
   };
 
   return (
@@ -74,7 +95,16 @@ export default function CoursePage() {
           ))}
         </div>
 
-        <CourseMap places={[]} />
+        <CourseMap
+          bottomOverlayRatio={
+            bottomSheetPosition === 'default' ? 0.59 : undefined
+          }
+          cameraTarget={isLocationActive ? currentLocation : null}
+          currentLocation={currentLocation}
+          places={[]}
+          preserveCamera={bottomSheetPosition === 'expanded'}
+          showCurrentLocation={isLocationActive}
+        />
 
         <div
           className={cn(
@@ -88,7 +118,7 @@ export default function CoursePage() {
             isBookmarkActive={isBookmarkActive}
             isLocationActive={isLocationActive}
             onBookmarkClick={() => setIsBookmarkActive((active) => !active)}
-            onLocationClick={() => setIsLocationActive((active) => !active)}
+            onLocationClick={handleLocationClick}
           />
         </div>
 
@@ -99,7 +129,7 @@ export default function CoursePage() {
           onClose={() => setBottomSheetPosition('collapsed')}
           onPositionChange={setBottomSheetPosition}
           onBookmarkChange={() => {}}
-          onExploreClick={() => {}}
+          onExploreClick={() => router.push(ROUTES.COURSE.CUSTOMIZED_EXPLORE)}
           onSuggestedMoreClick={() => {}}
         />
       </main>
