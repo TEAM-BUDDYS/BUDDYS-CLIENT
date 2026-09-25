@@ -23,6 +23,8 @@ const convertDateForPayload = (date: string) => {
 };
 
 export const useOnboardForm = () => {
+  const [interestCountryKeyword, setInterestCountryKeyword] = useState('');
+  const [exchangeCountryKeyword, setExchangeCountryKeyword] = useState('');
   const [interestCountry, setInterestCountry] =
     useState<OnboardLocationOption | null>(null);
   const [interestCity, setInterestCity] = useState('');
@@ -74,9 +76,20 @@ export const useOnboardForm = () => {
         )
       : [];
 
+  const handleInterestCountryKeywordChange = (value: string) => {
+    setInterestCountryKeyword(value);
+
+    if (interestCountry && interestCountry.name !== value) {
+      setInterestCountry(null);
+      setInterestCity('');
+      setSelectedInterestCity(null);
+    }
+  };
+
   const handleInterestCountrySelect = (value: OnboardLocationOption) => {
     const shouldResetCity = interestCountry?.id !== value.id;
 
+    setInterestCountryKeyword(value.name);
     setInterestCountry(value);
 
     if (shouldResetCity) {
@@ -101,9 +114,20 @@ export const useOnboardForm = () => {
     setSelectedInterestCity(value);
   };
 
+  const handleExchangeCountryKeywordChange = (value: string) => {
+    setExchangeCountryKeyword(value);
+
+    if (exchangeCountry && exchangeCountry.name !== value) {
+      setExchangeCountry(null);
+      setExchangeSchool('');
+      setSelectedExchangeSchool(null);
+    }
+  };
+
   const handleExchangeCountrySelect = (value: OnboardLocationOption) => {
     const shouldResetSchool = exchangeCountry?.id !== value.id;
 
+    setExchangeCountryKeyword(value.name);
     setExchangeCountry(value);
 
     if (shouldResetSchool) {
@@ -144,6 +168,7 @@ export const useOnboardForm = () => {
   };
 
   const resetExchangeInfo = () => {
+    setExchangeCountryKeyword('');
     setExchangeCountry(null);
     setExchangeSchool('');
     setSelectedExchangeSchool(null);
@@ -268,6 +293,10 @@ export const useOnboardForm = () => {
   };
 
   return {
+    interestCountryKeyword,
+    exchangeCountryKeyword,
+    handleInterestCountryKeywordChange,
+    handleExchangeCountryKeywordChange,
     interestCountry,
     interestCity,
     selectedInterestCity,

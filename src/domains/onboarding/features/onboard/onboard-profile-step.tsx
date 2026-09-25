@@ -9,6 +9,7 @@ import {
 } from '@/shared/components/ui';
 import type { GenderType } from '@/types/gender';
 
+import { isValidDate } from '../../utils/is-valid-date';
 import { GENDER_OPTIONS } from './constant';
 
 interface OnboardProfileStepProps {
@@ -45,6 +46,12 @@ export const OnboardProfileStep = ({
   const genderLabels = GENDER_OPTIONS.map((option) => option.label);
   const [isBlur, setIsBlur] = useState(false);
   const [currentNickname, setCurrentNickname] = useState('');
+  const [isBirthDateTouched, setIsBirthDateTouched] = useState(false);
+
+  const birthDateError =
+    isBirthDateTouched && birthDate.trim() && !isValidDate(birthDate)
+      ? '올바르지 않은 형식입니다.'
+      : undefined;
 
   const handleGenderChange = (label: string) => {
     const selectedGender = GENDER_OPTIONS.find(
@@ -130,6 +137,9 @@ export const OnboardProfileStep = ({
           placeholder="예: 2002.04.04"
           required
           value={birthDate}
+          status={birthDateError ? 'error' : 'default'}
+          message={birthDateError}
+          onBlur={() => setIsBirthDateTouched(true)}
           onChange={(event) => onBirthDateChange(event.target.value)}
         />
         <TextField

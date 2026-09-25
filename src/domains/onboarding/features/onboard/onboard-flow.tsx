@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isHTTPError } from 'ky';
 import { useEffect, useState } from 'react';
 
-import { useCitySearch, useCountryList } from '@/shared/api';
+import { useCitySearch, useCountrySearch } from '@/shared/api';
 import { TAG_QUERY_OPTIONS } from '@/shared/api';
 import { useImageUpload } from '@/shared/api/image';
 import {
@@ -82,12 +82,15 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
   const [nicknameError, setNicknameError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const {
-    countryOptions,
-    hasMoreCountries,
-    isLoadingMoreCountries,
-    loadMoreCountries,
-  } = useCountryList();
+  const interestCountrySearch = useCountrySearch({
+    keyword: onboardForm.interestCountryKeyword,
+    enabled:
+      currentStep === 'interest-location' && !onboardForm.interestCountry,
+  });
+  const exchangeCountrySearch = useCountrySearch({
+    keyword: onboardForm.exchangeCountryKeyword,
+    enabled: currentStep === 'exchange-info' && !onboardForm.exchangeCountry,
+  });
   const interestCitySearch = useCitySearch({
     countryId: onboardForm.interestCountry?.id,
     keyword: onboardForm.interestCity,
@@ -195,16 +198,17 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
       <section className="flex flex-1 flex-col pt-10">
         {currentStep === 'interest-location' && (
           <OnboardInterestLocationStep
-            countryOptions={countryOptions}
+            countryKeyword={onboardForm.interestCountryKeyword}
+            countryOptions={interestCountrySearch.countries}
             selectedCountry={onboardForm.interestCountry}
-            hasMoreCountries={hasMoreCountries}
-            isLoadingMoreCountries={isLoadingMoreCountries}
             city={onboardForm.interestCity}
             selectedCity={onboardForm.selectedInterestCity}
             cityResults={interestCitySearch.cities}
             isCitySearchError={interestCitySearch.isError}
             onCountryChange={onboardForm.handleInterestCountrySelect}
-            onLoadMoreCountries={loadMoreCountries}
+            onCountryKeywordChange={
+              onboardForm.handleInterestCountryKeywordChange
+            }
             onCityChange={onboardForm.handleInterestCityChange}
             onCitySelect={onboardForm.handleInterestCitySelect}
           />
@@ -212,17 +216,18 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
 
         {currentStep === 'exchange-info' && (
           <OnboardExchangeInfoStep
-            countryOptions={countryOptions}
+            countryKeyword={onboardForm.exchangeCountryKeyword}
+            countryOptions={exchangeCountrySearch.countries}
             selectedCountry={onboardForm.exchangeCountry}
-            hasMoreCountries={hasMoreCountries}
-            isLoadingMoreCountries={isLoadingMoreCountries}
             school={onboardForm.exchangeSchool}
             selectedSchool={onboardForm.selectedExchangeSchool}
             schoolResults={onboardForm.exchangeSchoolResults}
             startMonth={onboardForm.startMonth}
             endMonth={onboardForm.endMonth}
             onCountryChange={onboardForm.handleExchangeCountrySelect}
-            onLoadMoreCountries={loadMoreCountries}
+            onCountryKeywordChange={
+              onboardForm.handleExchangeCountryKeywordChange
+            }
             onSchoolChange={onboardForm.handleExchangeSchoolChange}
             onSchoolSelect={onboardForm.handleExchangeSchoolSelect}
             onStartMonthChange={onboardForm.handleStartMonthChange}
