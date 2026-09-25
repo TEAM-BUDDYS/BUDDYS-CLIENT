@@ -130,7 +130,9 @@ export default function CoursePage() {
           onPositionChange={setBottomSheetPosition}
           onBookmarkChange={() => {}}
           onExploreClick={() => router.push(ROUTES.COURSE.CUSTOMIZED_EXPLORE)}
-          onSuggestedMoreClick={() => {}}
+          onSuggestedMoreClick={() =>
+            router.push(ROUTES.COURSE.SUGGEST_EXPLORE)
+          }
         />
       </main>
 
