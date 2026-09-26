@@ -48,16 +48,12 @@ export const GoogleCallback = () => {
     }
 
     const completeGoogleLogin = async () => {
-      const loginSession = await authenticateWithGoogle({
+      await authenticateWithGoogle({
         code,
         redirectUri: getGoogleRedirectUri(),
       });
 
-      router.replace(
-        loginSession.onboardingCompleted
-          ? ROUTES.HOME
-          : ROUTES.ONBOARDING_INTRO,
-      );
+      router.replace(`${ROUTES.VERIFICATION.UNIVERSITY_EMAIL}?from=login`);
     };
 
     void completeGoogleLogin().catch(() => {
