@@ -20,11 +20,15 @@ export const AuthEntryGuard = ({ children }: AuthEntryGuardProps) => {
   const isOnboardingFormRoute = pathname === ROUTES.ONBOARDING;
   const isOnboardingIntroRoute = pathname === ROUTES.ONBOARDING_INTRO;
   const isOnboardingFlowRoute = isOnboardingFormRoute || isOnboardingIntroRoute;
+  const isVerificationRoute =
+    pathname === ROUTES.VERIFICATION.UNIVERSITY_EMAIL ||
+    pathname === ROUTES.VERIFICATION.EXCHANGE;
 
   const shouldRedirectToOnboarding =
     status === 'authenticated' &&
     onboardingCompleted === false &&
-    !isOnboardingFlowRoute;
+    !isOnboardingFlowRoute &&
+    !isVerificationRoute;
 
   const shouldRedirectToHome =
     status === 'authenticated' &&

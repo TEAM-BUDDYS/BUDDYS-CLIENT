@@ -6,6 +6,10 @@ export const ROUTES = {
     KAKAO_CALLBACK: '/auth/kakao/callback',
     GOOGLE_CALLBACK: '/auth/google/callback',
   },
+  VERIFICATION: {
+    UNIVERSITY_EMAIL: '/verification/university-email',
+    EXCHANGE: '/verification/exchange',
+  },
   ONBOARDING: '/onboarding',
   ONBOARDING_INTRO: '/onboarding/intro',
   CUSTOMIZED_EXPLORE: '/customized-explore',
