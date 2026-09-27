@@ -7,7 +7,10 @@ import type { Place } from '@/domains/course/api/type';
 import { CourseCurrentLocationMarker } from '@/domains/course/components/course-map/course-current-location-marker';
 import { CourseMapCamera } from '@/domains/course/components/course-map/course-map-camera';
 import { CourseMapMarker } from '@/domains/course/components/course-map/course-map-marker';
-import type { CourseMapCenter } from '@/domains/course/model/course-map';
+import type {
+  CourseMapCameraState,
+  CourseMapCenter,
+} from '@/domains/course/model/course-map';
 import { AsyncErrorState } from '@/shared/components/ui';
 
 const FALLBACK_CENTER = {
@@ -23,6 +26,8 @@ interface CourseMapProps {
   showCurrentLocation?: boolean;
   selectedPlaceId?: string;
   cameraTarget?: CourseMapCenter | null;
+  initialCamera?: CourseMapCameraState | null;
+  onCameraChange?: (camera: CourseMapCameraState) => void;
   onPlaceSelect?: (placeId: string) => void;
 }
 
@@ -34,6 +39,8 @@ export const CourseMap = ({
   showCurrentLocation = false,
   selectedPlaceId,
   cameraTarget = null,
+  initialCamera = null,
+  onCameraChange,
   onPlaceSelect,
 }: CourseMapProps) => {
   const [hasMapLoadError, setHasMapLoadError] = useState(false);
@@ -82,11 +89,14 @@ export const CourseMap = ({
       <APIProvider apiKey={apiKey} onError={() => setHasMapLoadError(true)}>
         <Map
           mapId={mapId}
-          defaultCenter={center}
-          defaultZoom={15}
+          defaultCenter={initialCamera?.center ?? center}
+          defaultZoom={initialCamera?.zoom ?? 15}
           gestureHandling="greedy"
           disableDefaultUI
           keyboardShortcuts={false}
+          onCameraChanged={({ detail }) =>
+            onCameraChange?.({ center: detail.center, zoom: detail.zoom })
+          }
         >
           <CourseMapCamera
             bottomOverlayRatio={bottomOverlayRatio}

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import { COURSE_FILTER_COUNTRIES } from '@/domains/course/model/recommended-course';
-import { BottomNavigation, Header } from '@/shared/components/layout';
+import { Header } from '@/shared/components/layout';
 import { CardList, ChipButton } from '@/shared/components/ui';
 
 const COURSE_IMAGES = [
@@ -88,8 +88,6 @@ export const FilterExplore = () => {
           </div>
         </section>
       </main>
-
-      <BottomNavigation className="fixed right-0 bottom-0 left-0 z-20 mx-auto max-w-107.5" />
     </>
   );
 };

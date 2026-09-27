@@ -3,13 +3,10 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import {
-  CourseBottomSheet,
-  type CourseBottomSheetPosition,
-} from '@/domains/course/components/course-bottom-sheet/course-bottom-sheet';
+import { CourseBottomSheet } from '@/domains/course/components/course-bottom-sheet/course-bottom-sheet';
 import { CourseMap } from '@/domains/course/components/course-map/course-map';
 import { MapFloatingControls } from '@/domains/course/components/map-floating-controls/map-floating-controls';
-import { useCurrentLocation } from '@/domains/course/hook/use-current-location';
+import { useCourseBrowse } from '@/domains/course/features/course-browse/course-browse-provider';
 import { cn } from '@/lib/cn';
 import {
   AccommodationIcon,
@@ -17,7 +14,7 @@ import {
   FoodIcon,
   SightseeingIcon,
 } from '@/shared/components/icons';
-import { BottomNavigation, Header } from '@/shared/components/layout';
+import { Header } from '@/shared/components/layout';
 import { ChipButton, Searchbar } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
@@ -29,17 +26,30 @@ const MAP_CATEGORY_ITEMS = [
 ] as const;
 
 type MapCategory = (typeof MAP_CATEGORY_ITEMS)[number]['key'];
+const EMPTY_COURSE_ITEMS = [] as const;
 
 export default function CoursePage() {
   const router = useRouter();
-  const [bottomSheetPosition, setBottomSheetPosition] =
-    useState<CourseBottomSheetPosition>('default');
-  const [isBookmarkActive, setIsBookmarkActive] = useState(false);
-  const [isLocationActive, setIsLocationActive] = useState(false);
-  const [searchKeyword, setSearchKeyword] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<MapCategory>();
-  const { currentLocation, status, refetchCurrentLocation } =
-    useCurrentLocation({ requestOnMount: false });
+  const {
+    bottomSheetPosition,
+    bottomSheetTab,
+    currentLocation,
+    currentLocationStatus,
+    getMapCamera,
+    isBookmarkActive,
+    isLocationActive,
+    refetchCurrentLocation,
+    searchKeyword,
+    selectedCategory,
+    setBottomSheetPosition,
+    setBottomSheetTab,
+    setIsBookmarkActive,
+    setIsLocationActive,
+    setMapCamera,
+    setSearchKeyword,
+    setSelectedCategory,
+  } = useCourseBrowse();
+  const [restoredMapCamera, setRestoredMapCamera] = useState(getMapCamera);
 
   const handleCategoryChange = (category: MapCategory) => {
     setSelectedCategory((currentCategory) =>
@@ -53,11 +63,13 @@ export default function CoursePage() {
       return;
     }
 
-    if (status === 'loading') return;
+    if (currentLocationStatus === 'loading') return;
 
     const location = await refetchCurrentLocation();
 
     if (location) {
+      setRestoredMapCamera(null);
+      setMapCamera(null);
       setIsLocationActive(true);
     }
   };
@@ -101,9 +113,13 @@ export default function CoursePage() {
           }
           cameraTarget={isLocationActive ? currentLocation : null}
           currentLocation={currentLocation}
+          initialCamera={restoredMapCamera}
           places={[]}
-          preserveCamera={bottomSheetPosition === 'expanded'}
+          preserveCamera={
+            restoredMapCamera !== null || bottomSheetPosition === 'expanded'
+          }
           showCurrentLocation={isLocationActive}
+          onCameraChange={setMapCamera}
         />
 
         <div
@@ -125,9 +141,13 @@ export default function CoursePage() {
         <CourseBottomSheet
           open
           position={bottomSheetPosition}
-          nearbyItems={[]}
+          tab={bottomSheetTab}
+          bookmarkedItems={EMPTY_COURSE_ITEMS}
+          isBookmarkMode={isBookmarkActive}
+          nearbyItems={EMPTY_COURSE_ITEMS}
           onClose={() => setBottomSheetPosition('collapsed')}
           onPositionChange={setBottomSheetPosition}
+          onTabChange={setBottomSheetTab}
           onBookmarkChange={() => {}}
           onExploreClick={() => router.push(ROUTES.COURSE.CUSTOMIZED_EXPLORE)}
           onSuggestedMoreClick={() =>
@@ -135,8 +155,6 @@ export default function CoursePage() {
           }
         />
       </main>
-
-      <BottomNavigation className="fixed right-0 bottom-0 left-0 z-20 mx-auto max-w-107.5" />
     </>
   );
 }

@@ -17,7 +17,7 @@ export const ROUTES = {
     ROOT: '/course',
     CREATE: '/course/post',
     CUSTOMIZED_EXPLORE: '/course/customized-explore',
-    SUGGEST_EXPLORE: '/course/suggest-explore',
+    SUGGEST_EXPLORE: '/course/customized-explore?type=suggest',
   },
   CHAT: {
     ROOT: '/chat',

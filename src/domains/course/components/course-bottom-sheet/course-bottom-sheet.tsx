@@ -1,10 +1,10 @@
-'use client';
-
-import { useState } from 'react';
-
-import { CourseTab } from '@/domains/course/components/course-tab/course-tab';
+import {
+  CourseTab,
+  type CourseTabValue,
+} from '@/domains/course/components/course-tab/course-tab';
 import { BottomSheet } from '@/shared/components/ui';
 
+import { BookmarkedPlaceContent } from './bookmarked-place-content';
 import {
   NearbyCourseContent,
   type NearbyCourseItem,
@@ -25,9 +25,13 @@ export type CourseBottomSheetPosition = 'collapsed' | 'default' | 'expanded';
 interface CourseBottomSheetProps {
   open: boolean;
   position: CourseBottomSheetPosition;
+  tab: CourseTabValue;
+  bookmarkedItems: readonly NearbyCourseItem[];
+  isBookmarkMode: boolean;
   nearbyItems: readonly NearbyCourseItem[];
   onClose: () => void;
   onPositionChange: (position: CourseBottomSheetPosition) => void;
+  onTabChange: (tab: CourseTabValue) => void;
   onBookmarkChange: (placeId: string, nextBookmarked: boolean) => void;
   onExploreClick: () => void;
   onSuggestedMoreClick: () => void;
@@ -36,15 +40,17 @@ interface CourseBottomSheetProps {
 export const CourseBottomSheet = ({
   open,
   position,
+  tab,
+  bookmarkedItems,
+  isBookmarkMode,
   nearbyItems,
   onClose,
   onPositionChange,
+  onTabChange,
   onBookmarkChange,
   onExploreClick,
   onSuggestedMoreClick,
 }: CourseBottomSheetProps) => {
-  const [tab, setTab] = useState<'nearby' | 'recommend'>('nearby');
-
   const handleSnapPointChange = (snapPoint: number | string | null) => {
     if (snapPoint === COLLAPSED_SNAP_POINT) {
       onPositionChange('collapsed');
@@ -78,12 +84,19 @@ export const CourseBottomSheet = ({
       onSnapPointChange={handleSnapPointChange}
     >
       <div className="flex min-h-0 flex-1 flex-col px-4">
-        <div className="shrink-0 pb-4">
-          <CourseTab value={tab} onChange={setTab} />
-        </div>
+        {!isBookmarkMode ? (
+          <div className="shrink-0 pb-4">
+            <CourseTab value={tab} onChange={onTabChange} />
+          </div>
+        ) : null}
 
         <div className="min-h-0 flex-1 scrollbar-none overflow-x-hidden overflow-y-auto overscroll-contain pb-13.5 [&::-webkit-scrollbar]:hidden">
-          {tab === 'nearby' ? (
+          {isBookmarkMode ? (
+            <BookmarkedPlaceContent
+              items={bookmarkedItems}
+              onBookmarkChange={onBookmarkChange}
+            />
+          ) : tab === 'nearby' ? (
             <NearbyCourseContent
               items={nearbyItems}
               onBookmarkChange={onBookmarkChange}
