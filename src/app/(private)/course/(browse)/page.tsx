@@ -15,7 +15,7 @@ import {
   SightseeingIcon,
 } from '@/shared/components/icons';
 import { Header } from '@/shared/components/layout';
-import { ChipButton, Searchbar } from '@/shared/components/ui';
+import { ChipButton, Searchbar, useToast } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
 const MAP_CATEGORY_ITEMS = [
@@ -30,6 +30,7 @@ const EMPTY_COURSE_ITEMS = [] as const;
 
 export default function CoursePage() {
   const router = useRouter();
+  const { showToast } = useToast();
   const {
     bottomSheetPosition,
     bottomSheetTab,
@@ -67,11 +68,17 @@ export default function CoursePage() {
 
     const location = await refetchCurrentLocation();
 
-    if (location) {
-      setRestoredMapCamera(null);
-      setMapCamera(null);
-      setIsLocationActive(true);
+    if (!location) {
+      showToast('위치 권한을 확인하거나 다시 시도해 주세요', {
+        variant: 'gray',
+      });
+      return;
     }
+
+    setBottomSheetPosition('default');
+    setRestoredMapCamera(null);
+    setMapCamera(null);
+    setIsLocationActive(true);
   };
 
   return (
