@@ -7,7 +7,6 @@ import { CourseMapCamera } from '@/domains/course/components/course-map/course-m
 import { CourseMapMarker } from '@/domains/course/components/course-map/course-map-marker';
 import { useCurrentLocation } from '@/domains/course/hook/use-current-location';
 import type { CourseMapCenter } from '@/domains/course/model/course-map';
-import { cn } from '@/lib/cn';
 import { AsyncErrorState } from '@/shared/components/ui';
 
 import type { CourseCreateDayFormState } from '../model';
@@ -21,8 +20,7 @@ interface CourseCreatePlaceMapProps {
   center?: CourseMapCenter | null;
   places: CourseCreateDayFormState['places'];
   selectedPlaceId?: string;
-  className?: string;
-  onPlaceSelect?: (placeId: string) => void;
+  onPlaceSelect: (placeId: string) => void;
 }
 
 const getPlaceCenter = (
@@ -42,7 +40,6 @@ export const CourseCreatePlaceMap = ({
   center = null,
   places,
   selectedPlaceId,
-  className,
   onPlaceSelect,
 }: CourseCreatePlaceMapProps) => {
   const [hasMapLoadError, setHasMapLoadError] = useState(false);
@@ -62,10 +59,7 @@ export const CourseCreatePlaceMap = ({
     center ?? currentLocation ?? firstPlaceCenter ?? FALLBACK_CENTER;
   const cameraTarget =
     selectedPlaceCenter ?? center ?? currentLocation ?? firstPlaceCenter;
-  const sectionClassName = cn(
-    'relative h-80 w-full overflow-hidden bg-gray-50',
-    className,
-  );
+  const sectionClassName = 'relative h-full w-full overflow-hidden bg-gray-50';
 
   if (hasMapLoadError) {
     return (

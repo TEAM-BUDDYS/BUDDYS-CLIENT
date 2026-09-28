@@ -37,6 +37,17 @@ const isDetailComplete = (detail: CourseCreateDetailFormState) => {
   return Boolean(detail.title.trim() && detail.activityTagIds.length > 0);
 };
 
+const isItineraryComplete = (
+  days: CourseCreateDayFormState[],
+  durationDays: number | null,
+) => {
+  return (
+    durationDays !== null &&
+    days.length === durationDays &&
+    days.every((day) => day.images.length >= COURSE_CREATE_MIN_DAY_IMAGE_COUNT)
+  );
+};
+
 const getDateByDayIndex = (startDate: Date, dayIndex: number) => {
   const date = new Date(startDate);
 
@@ -249,13 +260,7 @@ export const useCourseCreateForm = () => {
     }
 
     if (screen === 'itinerary') {
-      return (
-        durationDays !== null &&
-        days.length === durationDays &&
-        days.every(
-          (day) => day.images.length >= COURSE_CREATE_MIN_DAY_IMAGE_COUNT,
-        )
-      );
+      return isItineraryComplete(days, durationDays);
     }
 
     return durationDays !== null && isDetailComplete(detail);
@@ -296,8 +301,7 @@ export const useCourseCreateForm = () => {
 
     if (
       !basicInfoValue ||
-      days.length !== basicInfoValue.durationDays ||
-      days.some((day) => day.images.length < COURSE_CREATE_MIN_DAY_IMAGE_COUNT)
+      !isItineraryComplete(days, basicInfoValue.durationDays)
     ) {
       return null;
     }
@@ -329,7 +333,6 @@ export const useCourseCreateForm = () => {
     removeDayImage,
     updateDayMemoCost,
     canGoNext,
-    getBasicInfoValue,
     getCourseCreateValue,
   };
 };
