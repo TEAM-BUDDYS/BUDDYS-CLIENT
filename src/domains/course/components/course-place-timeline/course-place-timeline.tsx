@@ -82,9 +82,12 @@ export const CoursePlaceTimeline = ({
     return null;
   }
 
+  const placeOccurrences = new Map<string, number>();
+
   return (
     <ol className="flex flex-col gap-4" aria-label="장소 방문 순서">
       {places.map((place, index) => {
+        const occurrence = placeOccurrences.get(place.placeId) ?? 0;
         const nextPlace = places[index + 1];
         const distance = nextPlace
           ? formatPlaceDistance(getPlaceDistance(place, nextPlace))
@@ -93,9 +96,11 @@ export const CoursePlaceTimeline = ({
           nextPlace &&
           `다음 장소까지 ${distance === '-' ? '거리 정보 없음' : distance}`;
 
+        placeOccurrences.set(place.placeId, occurrence + 1);
+
         return (
           <li
-            key={place.placeId}
+            key={`${place.placeId}-${occurrence}`}
             className="grid min-h-18.5 grid-cols-[2.25rem_minmax(0,1fr)] gap-x-4"
           >
             <div className="relative flex min-h-18.5 items-center justify-center">

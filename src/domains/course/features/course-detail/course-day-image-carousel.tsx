@@ -41,6 +41,8 @@ export const CourseDayImageCarousel = ({
     return null;
   }
 
+  const imageUrlOccurrences = new Map<string, number>();
+
   return (
     <div className="relative h-55 w-full overflow-hidden">
       <div
@@ -53,26 +55,32 @@ export const CourseDayImageCarousel = ({
         onKeyDown={handleKeyDown}
       >
         <div className="flex h-full">
-          {imageUrls.map((imageUrl, index) => (
-            <div
-              key={imageUrl}
-              className="relative h-full min-w-0 shrink-0 grow-0 basis-full"
-              role="group"
-              aria-roledescription="slide"
-              aria-label={`${index + 1} / ${imageUrls.length}`}
-            >
-              <CommonImage
-                src={imageUrl}
-                alt={`Day ${dayNumber} 여행 사진 ${index + 1}`}
-                width={430}
-                height={220}
-                radius="rounded-none"
-                sizes="(max-width: 430px) 100vw, 430px"
-                className="h-full w-full"
-                preload={preload && index === 0}
-              />
-            </div>
-          ))}
+          {imageUrls.map((imageUrl, index) => {
+            const occurrence = imageUrlOccurrences.get(imageUrl) ?? 0;
+
+            imageUrlOccurrences.set(imageUrl, occurrence + 1);
+
+            return (
+              <div
+                key={`${imageUrl}-${occurrence}`}
+                className="relative h-full min-w-0 shrink-0 grow-0 basis-full"
+                role="group"
+                aria-roledescription="slide"
+                aria-label={`${index + 1} / ${imageUrls.length}`}
+              >
+                <CommonImage
+                  src={imageUrl}
+                  alt={`Day ${dayNumber} 여행 사진 ${index + 1}`}
+                  width={430}
+                  height={220}
+                  radius="rounded-none"
+                  sizes="(max-width: 430px) 100vw, 430px"
+                  className="h-full w-full"
+                  preload={preload && index === 0}
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
 
