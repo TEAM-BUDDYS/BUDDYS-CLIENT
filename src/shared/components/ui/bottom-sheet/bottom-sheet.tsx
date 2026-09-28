@@ -13,6 +13,8 @@ interface BottomSheetProps {
   className?: string;
   ariaLabel?: string;
   ariaLabelledBy?: string;
+  handleClassName?: string;
+  dismissible?: boolean;
   modal?: boolean;
   onClose: () => void;
 }
@@ -23,6 +25,8 @@ export const BottomSheet = ({
   className,
   ariaLabel,
   ariaLabelledBy,
+  handleClassName,
+  dismissible = true,
   modal = true,
   onClose,
 }: BottomSheetProps) => {
@@ -35,9 +39,14 @@ export const BottomSheet = ({
   };
 
   return (
-    <Drawer.Root open={open} modal={modal} onOpenChange={handleOpenChange}>
+    <Drawer.Root
+      open={open}
+      dismissible={dismissible}
+      modal={modal}
+      onOpenChange={handleOpenChange}
+    >
       <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 z-50 bg-black/60" />
+        {modal && <Drawer.Overlay className="fixed inset-0 z-50 bg-black/60" />}
         <Drawer.Content
           aria-describedby={undefined}
           aria-label={ariaLabel}
@@ -48,7 +57,12 @@ export const BottomSheet = ({
           )}
         >
           <div className="flex shrink-0 justify-center pt-2 pb-4">
-            <Drawer.Handle className="h-1.25 w-11 rounded-[15px] bg-gray-200" />
+            <Drawer.Handle
+              className={cn(
+                'h-1.25 w-11 rounded-[15px] bg-gray-200',
+                handleClassName,
+              )}
+            />
           </div>
           {children}
         </Drawer.Content>
