@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { cn } from '@/lib/cn';
 import type { TagType } from '@/shared/api';
-import { EditIcon } from '@/shared/components/icons';
+import { EditIcon, HandleIcon } from '@/shared/components/icons';
 import { Chip, ChipGroup, IconButton } from '@/shared/components/ui';
 import type { Tag } from '@/types/tag';
 
@@ -37,7 +37,13 @@ export const TagEditSection = ({
 
       <div className="flex flex-wrap items-center gap-2">
         {selectedTags.map((tag) => (
-          <Chip key={tag.id} variant="lineMedium" active>
+          <Chip
+            key={tag.id}
+            variant="lineMedium"
+            active
+            className={cn(isEditing && 'gap-1')}
+          >
+            {isEditing && <HandleIcon className="size-3.5" />}
             {tag.name}
           </Chip>
         ))}
