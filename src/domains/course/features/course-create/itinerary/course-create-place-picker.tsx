@@ -65,6 +65,8 @@ export const CourseCreatePlacePicker = ({
   const [draftPlaces, setDraftPlaces] = useState(selectedPlaces);
   const [focusedPlaceId, setFocusedPlaceId] = useState<string>();
   const [isBookmarkSheetOpen, setIsBookmarkSheetOpen] = useState(true);
+
+  // TODO: 장소 검색 API 연동 시 keyword/category를 요청 파라미터로 전달하고 로컬 필터링을 서버 검색 결과로 대체 (불필요 state 정리)
   const normalizedKeyword = keyword.trim().toLocaleLowerCase();
   const visiblePlaces = recentPlaces.filter((place) => {
     const matchesCategory =
