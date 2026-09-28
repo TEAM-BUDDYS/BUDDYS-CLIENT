@@ -28,6 +28,8 @@ export { OptionList } from './dropdown/option-list';
 export { EmptyState } from './empty-state/empty-state';
 export { Filter, type FilterProps } from './filter/filter';
 export { FormLabel, type FormLabelProps } from './form-label/form-label';
+export { ImageInput } from './image-input/image-input';
+export { ImagePreview } from './image-preview/image-preview';
 export { Modal } from './modal/modal';
 export { NicknameCheckButton } from './nickname-field/nickname-check-button';
 export { NicknameField } from './nickname-field/nickname-field';
