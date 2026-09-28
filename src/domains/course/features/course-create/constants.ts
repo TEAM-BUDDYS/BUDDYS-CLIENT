@@ -7,6 +7,9 @@ export const COURSE_CREATE_MAX_CONTENT_LENGTH = 120;
 export const COURSE_CREATE_PAST_YEAR_COUNT = 5;
 export const COURSE_CREATE_MAX_DATE_RANGE_DAYS = 30;
 export const COURSE_CREATE_MIN_DURATION_DAYS = 1;
+export const COURSE_CREATE_MAX_DAY_IMAGE_COUNT = 10;
+export const COURSE_CREATE_MIN_DAY_IMAGE_COUNT = 1;
+export const COURSE_CREATE_MAX_DAY_PLACE_COUNT = 10;
 
 export const COURSE_CREATE_PROGRESS_STEP_BY_SCREEN = {
   country: 1,
@@ -14,6 +17,7 @@ export const COURSE_CREATE_PROGRESS_STEP_BY_SCREEN = {
   date: 3,
   duration: 3,
   detail: 3,
+  itinerary: 4,
 } satisfies Record<CourseCreateScreen, number>;
 
 export const COURSE_CREATE_QUESTION_CONTENT = {
@@ -34,6 +38,6 @@ export const COURSE_CREATE_QUESTION_CONTENT = {
     description: '정확한 일정 대신, 기간만 선택해주세요',
   },
 } satisfies Record<
-  Exclude<CourseCreateScreen, 'detail'>,
+  Exclude<CourseCreateScreen, 'detail' | 'itinerary'>,
   { title: string; description: string }
 >;
