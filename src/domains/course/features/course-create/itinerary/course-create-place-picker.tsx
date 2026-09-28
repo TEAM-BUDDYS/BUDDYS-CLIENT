@@ -66,7 +66,7 @@ export const CourseCreatePlacePicker = ({
   const [focusedPlaceId, setFocusedPlaceId] = useState<string>();
   const [isBookmarkSheetOpen, setIsBookmarkSheetOpen] = useState(true);
 
-  // TODO: 장소 검색 API 연동 시 keyword/category를 요청 파라미터로 전달하고 로컬 필터링을 서버 검색 결과로 대체 (불필요 state 정리)
+  // TODO: 장소 검색 API 연동 시 keyword/category를 요청 파라미터로 전달하고 로컬 필터링을 서버 검색 결과로 대체
   const normalizedKeyword = keyword.trim().toLocaleLowerCase();
   const visiblePlaces = recentPlaces.filter((place) => {
     const matchesCategory =
@@ -118,13 +118,9 @@ export const CourseCreatePlacePicker = ({
     <div className="fixed inset-0 z-40 mx-auto max-w-107.5 overflow-hidden bg-white">
       <CourseCreatePlaceMap
         center={mapCenter}
-        className="h-full"
         places={visiblePlaces}
         selectedPlaceId={focusedPlaceId}
-        onPlaceSelect={(placeId) => {
-          setFocusedPlaceId(placeId);
-          handlePlaceSelect(placeId);
-        }}
+        onPlaceSelect={handlePlaceSelect}
       />
 
       <div className="absolute top-2 right-4 left-2 z-10 flex items-center">
@@ -138,6 +134,7 @@ export const CourseCreatePlacePicker = ({
         </button>
         <div className="min-w-0 flex-1 rounded-xl bg-white shadow-[0_2px_2px_rgba(0,0,0,0.2)] [&>div]:bg-white">
           <Searchbar
+            aria-label="장소 검색"
             size="small"
             value={keyword}
             placeholder="검색어를 입력해주세요"

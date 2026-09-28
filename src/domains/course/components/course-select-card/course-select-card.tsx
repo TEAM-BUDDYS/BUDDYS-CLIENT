@@ -17,8 +17,9 @@ export const CourseSelectCard = ({
   isSelected,
   onSelect,
 }: CourseSelectCardProps) => {
-  const [hasImageError, setHasImageError] = useState(false);
+  const [failedPhotoUrl, setFailedPhotoUrl] = useState<string>();
   const { placeId, name, address, photoUrl } = place;
+  const hasImageError = failedPhotoUrl === photoUrl;
   const displayName = name ?? '이름 없는 장소';
   const location =
     'country' in place
@@ -36,7 +37,7 @@ export const CourseSelectCard = ({
           height={100}
           radius="rounded-xl"
           className="size-25"
-          onError={() => setHasImageError(true)}
+          onError={() => setFailedPhotoUrl(photoUrl)}
         />
       ) : (
         <div aria-hidden className="size-25 shrink-0 rounded-xl bg-gray-50" />
