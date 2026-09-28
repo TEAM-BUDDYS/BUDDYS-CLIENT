@@ -13,6 +13,7 @@ export const ROUTES = {
     ROOT: '/posts',
     DETAIL: (postId: number) => `/posts/${postId}` as const,
   },
+  PARTNER: '/partner',
   COURSE: {
     CREATE: '/course/post',
   },
