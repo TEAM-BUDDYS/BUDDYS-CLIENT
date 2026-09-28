@@ -99,9 +99,7 @@ export const CourseCreatePlacePicker = ({
     }
 
     if (draftPlaces.length >= COURSE_CREATE_MAX_DAY_PLACE_COUNT) {
-      showToast('하루에 장소를 최대 10곳까지 추가할 수 있어요.', {
-        variant: 'gray',
-      });
+      showToast('하루에 최대 10개의 장소를 추가할 수 있어요');
       return;
     }
 
