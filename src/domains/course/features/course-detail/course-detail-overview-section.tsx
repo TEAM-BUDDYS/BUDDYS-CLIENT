@@ -39,6 +39,10 @@ interface CourseDetailMetaItemProps {
   label: string;
 }
 
+interface CourseDetailFlightMetaItemProps {
+  flights: CourseDetailFlight[];
+}
+
 const AUTHOR_GENDER_LABELS: Record<
   NonNullable<CourseDetail['author']['gender']>,
   string
@@ -60,14 +64,10 @@ const getAuthorDescription = (course: CourseDetailOverviewData) => {
     .join(' · ');
 };
 
-const getRepresentativeFlight = (
-  days: CourseDetailDay[],
-): CourseDetailFlight | null => {
-  const dayWithFlight = [...days]
+const getFlights = (days: CourseDetailDay[]) => {
+  return [...days]
     .sort((firstDay, secondDay) => firstDay.dayNumber - secondDay.dayNumber)
-    .find((day) => day.flights.length > 0);
-
-  return dayWithFlight?.flights[0] ?? null;
+    .flatMap((day) => day.flights);
 };
 
 const getFlightTime = (dateTime: string) => {
@@ -90,6 +90,17 @@ const getFlightLabel = (flight: CourseDetailFlight) => {
   return `${departureLabel} - ${arrivalLabel} · ${flightIdentifier}`;
 };
 
+const getFlightKey = (flight: CourseDetailFlight) => {
+  return [
+    flight.airline,
+    flight.flightNumber,
+    flight.departureAirport,
+    flight.departureAt,
+    flight.arrivalAirport,
+    flight.arrivalAt,
+  ].join('|');
+};
+
 const CourseDetailMetaItem = ({ icon, label }: CourseDetailMetaItemProps) => {
   return (
     <li className="flex min-w-0 items-center gap-2">
@@ -100,6 +111,37 @@ const CourseDetailMetaItem = ({ icon, label }: CourseDetailMetaItemProps) => {
         {icon}
       </span>
       <span className="text-body-m-15 min-w-0 text-gray-800">{label}</span>
+    </li>
+  );
+};
+
+const CourseDetailFlightMetaItem = ({
+  flights,
+}: CourseDetailFlightMetaItemProps) => {
+  const flightOccurrences = new Map<string, number>();
+
+  return (
+    <li className="flex min-w-0 items-start gap-1">
+      <span
+        aria-hidden
+        className="flex size-6 shrink-0 items-center text-gray-500 [&>svg]:size-4"
+      >
+        <FlightIcon />
+      </span>
+      <div className="text-body-m-15 flex min-w-0 flex-col gap-0.5 text-gray-800">
+        {flights.map((flight) => {
+          const flightKey = getFlightKey(flight);
+          const occurrence = flightOccurrences.get(flightKey) ?? 0;
+
+          flightOccurrences.set(flightKey, occurrence + 1);
+
+          return (
+            <span key={`${flightKey}-${occurrence}`}>
+              {getFlightLabel(flight)}
+            </span>
+          );
+        })}
+      </div>
     </li>
   );
 };
@@ -115,7 +157,7 @@ export const CourseDetailOverviewSection = ({
     ? formatMonthDayWithWeekday(course.startDate)
     : null;
   const participantCount = course.companions.length + 1;
-  const representativeFlight = getRepresentativeFlight(course.days);
+  const flights = getFlights(course.days);
   const mapDays = course.days.map(({ dayNumber, places }) => ({
     dayNumber,
     places,
@@ -178,11 +220,8 @@ export const CourseDetailOverviewSection = ({
               icon={<MyIcon />}
               label={`${participantCount}명`}
             />
-            {representativeFlight ? (
-              <CourseDetailMetaItem
-                icon={<FlightIcon />}
-                label={getFlightLabel(representativeFlight)}
-              />
+            {flights.length > 0 ? (
+              <CourseDetailFlightMetaItem flights={flights} />
             ) : null}
           </ul>
 
