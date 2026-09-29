@@ -2,17 +2,17 @@
 
 import { useState } from 'react';
 
-import type { CourseMapCenter } from '@/domains/course/model/course-map';
-
-import type { CourseCreateDayFormState } from '../model';
+import type {
+  CourseCreateCityOption,
+  CourseCreateDayFormState,
+} from '../model';
 import { CourseCreateDaySection } from './course-create-day-section';
 import { CourseCreatePlacePicker } from './course-create-place-picker';
 
 interface CourseCreateItineraryStepProps {
   title: string;
+  cities: CourseCreateCityOption[];
   days: CourseCreateDayFormState[];
-  placeMapCenter?: CourseMapCenter | null;
-  recentPlaces: CourseCreateDayFormState['places'];
   onDayPlacesChange: (
     dayNumber: number,
     places: CourseCreateDayFormState['places'],
@@ -27,9 +27,8 @@ interface CourseCreateItineraryStepProps {
 
 export const CourseCreateItineraryStep = ({
   title,
+  cities,
   days,
-  placeMapCenter = null,
-  recentPlaces,
   onDayPlacesChange,
   onDayImagesAdd,
   onDayImageRemove,
@@ -67,9 +66,8 @@ export const CourseCreateItineraryStep = ({
 
       {placePickerDay && (
         <CourseCreatePlacePicker
+          cities={cities}
           dayNumber={placePickerDay.dayNumber}
-          mapCenter={placeMapCenter}
-          recentPlaces={recentPlaces}
           selectedPlaces={placePickerDay.places}
           onClose={() => setPlacePickerDayNumber(null)}
           onConfirm={(places) =>
