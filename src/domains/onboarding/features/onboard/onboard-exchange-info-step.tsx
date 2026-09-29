@@ -8,6 +8,7 @@ import type { OnboardLocationOption } from '../../model/onboard';
 interface OnboardExchangeInfoStepProps {
   countryKeyword: string;
   countryOptions: OnboardLocationOption[];
+  isCountrySearchError: boolean;
   selectedCountry: OnboardLocationOption | null;
   school: string;
   selectedSchool: OnboardLocationOption | null;
@@ -25,6 +26,7 @@ interface OnboardExchangeInfoStepProps {
 export const OnboardExchangeInfoStep = ({
   countryKeyword,
   countryOptions,
+  isCountrySearchError,
   selectedCountry,
   school,
   selectedSchool,
@@ -54,6 +56,11 @@ export const OnboardExchangeInfoStep = ({
           onChange={onCountryKeywordChange}
           onSelect={onCountryChange}
         />
+        {isCountrySearchError && (
+          <p className="text-caption-r-12 text-error" role="alert">
+            국가 목록을 불러오지 못했습니다. 다시 검색해주세요.
+          </p>
+        )}
       </div>
 
       <div className="flex flex-col gap-2">

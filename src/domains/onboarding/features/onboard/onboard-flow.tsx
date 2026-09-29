@@ -15,6 +15,7 @@ import {
   ProgressBar,
   useToast,
 } from '@/shared/components/ui';
+import { useDebouncedValue } from '@/shared/hooks/use-debounced-value';
 
 import {
   ONBOARDING_MUTATION_OPTIONS,
@@ -49,6 +50,7 @@ const NEXT_STEP_BY_STEP = {
 
 const ONBOARD_TAG_TYPES = ['ACTIVITY', 'INTEREST', 'TRAVEL_STYLE'] as const;
 const RECOMMENDED_USER_SIZE = 1;
+const COUNTRY_SEARCH_DEBOUNCE_MS = 300;
 
 type DisplayableRecommendedUser = RecommendedUser & {
   nickname: string;
@@ -81,15 +83,34 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
   const canGoNext = onboardForm.canGoNext(currentStep);
   const [nicknameError, setNicknameError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const debouncedInterestCountryKeyword = useDebouncedValue(
+    onboardForm.interestCountryKeyword.trim(),
+    COUNTRY_SEARCH_DEBOUNCE_MS,
+  );
+  const debouncedExchangeCountryKeyword = useDebouncedValue(
+    onboardForm.exchangeCountryKeyword.trim(),
+    COUNTRY_SEARCH_DEBOUNCE_MS,
+  );
+  const isInterestCountrySearchSynced =
+    debouncedInterestCountryKeyword ===
+    onboardForm.interestCountryKeyword.trim();
+  const isExchangeCountrySearchSynced =
+    debouncedExchangeCountryKeyword ===
+    onboardForm.exchangeCountryKeyword.trim();
 
   const interestCountrySearch = useCountrySearch({
-    keyword: onboardForm.interestCountryKeyword,
+    keyword: debouncedInterestCountryKeyword,
     enabled:
-      currentStep === 'interest-location' && !onboardForm.interestCountry,
+      currentStep === 'interest-location' &&
+      !onboardForm.interestCountry &&
+      isInterestCountrySearchSynced,
   });
   const exchangeCountrySearch = useCountrySearch({
-    keyword: onboardForm.exchangeCountryKeyword,
-    enabled: currentStep === 'exchange-info' && !onboardForm.exchangeCountry,
+    keyword: debouncedExchangeCountryKeyword,
+    enabled:
+      currentStep === 'exchange-info' &&
+      !onboardForm.exchangeCountry &&
+      isExchangeCountrySearchSynced,
   });
   const interestCitySearch = useCitySearch({
     countryId: onboardForm.interestCountry?.id,
@@ -200,6 +221,11 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
           <OnboardInterestLocationStep
             countryKeyword={onboardForm.interestCountryKeyword}
             countryOptions={interestCountrySearch.countries}
+            isCountrySearchError={
+              !onboardForm.interestCountry &&
+              isInterestCountrySearchSynced &&
+              interestCountrySearch.isError
+            }
             selectedCountry={onboardForm.interestCountry}
             city={onboardForm.interestCity}
             selectedCity={onboardForm.selectedInterestCity}
@@ -218,6 +244,11 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
           <OnboardExchangeInfoStep
             countryKeyword={onboardForm.exchangeCountryKeyword}
             countryOptions={exchangeCountrySearch.countries}
+            isCountrySearchError={
+              !onboardForm.exchangeCountry &&
+              isExchangeCountrySearchSynced &&
+              exchangeCountrySearch.isError
+            }
             selectedCountry={onboardForm.exchangeCountry}
             school={onboardForm.exchangeSchool}
             selectedSchool={onboardForm.selectedExchangeSchool}
