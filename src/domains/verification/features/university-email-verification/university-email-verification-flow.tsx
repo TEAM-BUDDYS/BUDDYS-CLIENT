@@ -41,7 +41,7 @@ export const UniversityEmailVerificationFlow = ({
   const isVerificationCodeComplete = verificationCode.length === 6;
 
   const router = useRouter();
-  const exchangeVerificationHref = `${ROUTES.VERIFICATION.EXCHANGE}?from=${entryPoint}`;
+  const exchangeDocumentVerificationHref = `${ROUTES.VERIFICATION.EXCHANGE_DOCUMENT}?from=${entryPoint}`;
 
   const handleBackButtonClick = () => {
     if (currentStep === 2) {
@@ -59,14 +59,15 @@ export const UniversityEmailVerificationFlow = ({
   };
 
   const handleSendVerificationCode = () => {
-    // TODO: 학교 이메일 인증번호 발송 API 호출한 뒤 인증번호 입력 단계로 이동
+    // TODO: 학교 이메일 인증번호 발송 API 성공 후 인증번호 입력 단계로 이동
+    setVerificationCode('');
     setCurrentStep(2);
   };
 
   const handleConfirmVerificationCode = () => {
     // TODO: 학교 이메일 인증번호 확인 API 호출
     if (entryPoint === 'login') {
-      router.replace(exchangeVerificationHref);
+      router.replace(exchangeDocumentVerificationHref);
       return;
     }
 
@@ -74,7 +75,8 @@ export const UniversityEmailVerificationFlow = ({
   };
 
   const handleResendVerificationCode = () => {
-    // TODO: 현재 학교 이메일로 인증번호 발송 API 호출
+    // TODO: 현재 학교 이메일로 인증번호 재발송 API 성공 후 입력값 초기화
+    setVerificationCode('');
   };
 
   return (
@@ -114,7 +116,7 @@ export const UniversityEmailVerificationFlow = ({
             {entryPoint === 'login' && (
               <Link
                 className="text-body-r-14 text-center text-gray-500"
-                href={exchangeVerificationHref}
+                href={exchangeDocumentVerificationHref}
               >
                 건너뛰기
               </Link>

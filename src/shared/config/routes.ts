@@ -8,7 +8,7 @@ export const ROUTES = {
   },
   VERIFICATION: {
     UNIVERSITY_EMAIL: '/verification/university-email',
-    EXCHANGE: '/verification/exchange',
+    EXCHANGE_DOCUMENT: '/verification/exchange-document',
   },
   ONBOARDING: '/onboarding',
   ONBOARDING_INTRO: '/onboarding/intro',

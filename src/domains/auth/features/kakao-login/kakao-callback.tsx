@@ -48,12 +48,16 @@ export const KakaoCallback = () => {
     }
 
     const completeKakaoLogin = async () => {
-      await authenticateWithKakao({
+      const loginSession = await authenticateWithKakao({
         code,
         redirectUri: getKakaoRedirectUri(),
       });
 
-      router.replace(`${ROUTES.VERIFICATION.UNIVERSITY_EMAIL}?from=login`);
+      router.replace(
+        loginSession.onboardingCompleted
+          ? ROUTES.HOME
+          : `${ROUTES.VERIFICATION.UNIVERSITY_EMAIL}?from=login`,
+      );
     };
 
     void completeKakaoLogin().catch(() => {

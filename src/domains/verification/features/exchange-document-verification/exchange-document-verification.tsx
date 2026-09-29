@@ -13,7 +13,7 @@ import { FileUpload } from '../../components/file-upload/file-upload';
 import { VerificationHeader } from '../../components/verification-header/verification-header';
 import type { VerificationEntry } from '../../model/verification-entry';
 
-interface ExchangeVerificationProps {
+interface ExchangeDocumentVerificationProps {
   entryPoint: VerificationEntry;
 }
 
@@ -31,9 +31,9 @@ const FILE_ERROR_MESSAGES: Record<FileValidationError, string> = {
   'file-size': '10MB 이하의 파일만 업로드 가능합니다.',
 };
 
-export const ExchangeVerification = ({
+export const ExchangeDocumentVerification = ({
   entryPoint,
-}: ExchangeVerificationProps) => {
+}: ExchangeDocumentVerificationProps) => {
   const { showToast } = useToast();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<FileValidationError | null>(null);
