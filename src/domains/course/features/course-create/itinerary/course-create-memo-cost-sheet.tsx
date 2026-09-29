@@ -8,6 +8,7 @@ import {
   TextArea,
   TextField,
 } from '@/shared/components/ui';
+import { useVirtualKeyboard } from '@/shared/hooks/use-virtual-keyboard';
 
 import type { CourseCreateDayFormState } from '../model';
 
@@ -33,6 +34,7 @@ export const CourseCreateMemoCostSheet = ({
   const titleId = useId();
   const [draftMemo, setDraftMemo] = useState(memo);
   const [draftCost, setDraftCost] = useState(cost);
+  const isVirtualKeyboardOpen = useVirtualKeyboard();
 
   const handleCostChange = (value: string) => {
     const digits = value.replace(/\D/g, '');
@@ -81,9 +83,11 @@ export const CourseCreateMemoCostSheet = ({
           value={formatCostInput(draftCost)}
           onChange={(event) => handleCostChange(event.target.value)}
         />
-        <Button onClick={handleConfirm}>
-          {draftMemo.trim() || draftCost !== null ? '작성 완료' : '닫기'}
-        </Button>
+        {!isVirtualKeyboardOpen && (
+          <Button onClick={handleConfirm}>
+            {draftMemo.trim() || draftCost !== null ? '작성 완료' : '닫기'}
+          </Button>
+        )}
       </div>
     </BottomSheet>
   );
