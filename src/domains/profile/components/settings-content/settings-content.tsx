@@ -3,24 +3,33 @@
 import { useState } from 'react';
 
 import { SettingsMenuItem } from '@/domains/profile/components/settings-menu-item/settings-menu-item';
+import { Toggle } from '@/domains/profile/components/toggle/toggle';
 import { Button } from '@/shared/components/ui';
 import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
 
 const SETTINGS_MENU_ITEMS = [
-  { label: '프로필 수정' },
-  { label: '알림 설정' },
-  { label: '비밀번호 변경' },
+  { label: '학교 이메일 인증' },
+  { label: '파견교 서류 인증' },
   { label: '개인정보 처리방침' },
   { label: '이용약관' },
 ] as const;
 
 export const SettingsContent = () => {
   const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
+  const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
 
   return (
     <>
       <nav>
         <ul className="flex flex-col">
+          <li className="flex w-full items-center justify-between border-b border-gray-100 px-4 py-5.5">
+            <span className="text-body-sb-16 text-gray-800">알림 설정</span>
+            <Toggle
+              checked={isNotificationEnabled}
+              onChange={setIsNotificationEnabled}
+              ariaLabel="알림 설정"
+            />
+          </li>
           {SETTINGS_MENU_ITEMS.map((item) => (
             <li key={item.label}>
               <SettingsMenuItem
