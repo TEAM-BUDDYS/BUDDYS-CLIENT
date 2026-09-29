@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import type { CourseMapCenter } from '@/domains/course/model/course-map';
 import { cn } from '@/lib/cn';
 import { Header } from '@/shared/components/layout';
 import {
@@ -22,15 +23,24 @@ import { CourseCreateDateStep } from './course-create-date-step';
 import { CourseCreateDetailStep } from './course-create-detail-step';
 import { CourseCreateDurationStep } from './course-create-duration-step';
 import { CourseCreateQuestionHeader } from './course-create-question-header';
-import type { CourseCreateBasicInfoValue, CourseCreateScreen } from './model';
+import { CourseCreateItineraryStep } from './itinerary/course-create-itinerary-step';
+import type {
+  CourseCreateDayFormState,
+  CourseCreateScreen,
+  CourseCreateValue,
+} from './model';
 import { useCourseCreateForm } from './use-course-create-form';
 
 interface CourseCreateFlowProps {
-  onBasicInfoComplete?: (value: CourseCreateBasicInfoValue) => void;
+  placeMapCenter?: CourseMapCenter | null;
+  recentPlaces?: CourseCreateDayFormState['places'];
+  onComplete?: (value: CourseCreateValue) => void;
 }
 
 export const CourseCreateFlow = ({
-  onBasicInfoComplete,
+  placeMapCenter = null,
+  recentPlaces = [],
+  onComplete,
 }: CourseCreateFlowProps) => {
   const router = useRouter();
   const [currentScreen, setCurrentScreen] =
@@ -40,7 +50,8 @@ export const CourseCreateFlow = ({
   const currentProgressStep =
     COURSE_CREATE_PROGRESS_STEP_BY_SCREEN[currentScreen];
   const canGoNext = courseCreateForm.canGoNext(currentScreen);
-  const isQuestionScreen = currentScreen !== 'detail';
+  const isQuestionScreen =
+    currentScreen !== 'detail' && currentScreen !== 'itinerary';
 
   const handleBackClick = () => {
     if (currentScreen === 'country') {
@@ -55,6 +66,11 @@ export const CourseCreateFlow = ({
 
     if (currentScreen === 'date') {
       setCurrentScreen('city');
+      return;
+    }
+
+    if (currentScreen === 'itinerary') {
+      setCurrentScreen('detail');
       return;
     }
 
@@ -85,10 +101,16 @@ export const CourseCreateFlow = ({
       return;
     }
 
-    const basicInfoValue = courseCreateForm.getBasicInfoValue();
+    if (currentScreen === 'detail') {
+      courseCreateForm.initializeDays();
+      setCurrentScreen('itinerary');
+      return;
+    }
 
-    if (basicInfoValue) {
-      onBasicInfoComplete?.(basicInfoValue);
+    const courseCreateValue = courseCreateForm.getCourseCreateValue();
+
+    if (courseCreateValue) {
+      onComplete?.(courseCreateValue);
     }
   };
 
@@ -124,13 +146,17 @@ export const CourseCreateFlow = ({
       <section
         className={cn(
           'flex flex-1 flex-col px-4',
-          currentScreen === 'detail' ? 'pt-8' : 'pt-10',
+          currentScreen === 'detail' || currentScreen === 'itinerary'
+            ? 'pt-8'
+            : 'pt-10',
         )}
       >
         <div
           className={cn(
             'flex flex-col',
-            currentScreen === 'duration' ? 'gap-10' : 'gap-6',
+            currentScreen === 'duration' || currentScreen === 'itinerary'
+              ? 'gap-10'
+              : 'gap-6',
           )}
         >
           {isQuestionScreen && (
@@ -180,6 +206,19 @@ export const CourseCreateFlow = ({
             <CourseCreateDetailStep
               value={courseCreateForm.detail}
               onChange={courseCreateForm.updateDetail}
+            />
+          )}
+
+          {currentScreen === 'itinerary' && (
+            <CourseCreateItineraryStep
+              title={courseCreateForm.detail.title}
+              days={courseCreateForm.days}
+              placeMapCenter={placeMapCenter}
+              recentPlaces={recentPlaces}
+              onDayPlacesChange={courseCreateForm.setDayPlaces}
+              onDayImagesAdd={courseCreateForm.addDayImages}
+              onDayImageRemove={courseCreateForm.removeDayImage}
+              onDayMemoCostChange={courseCreateForm.updateDayMemoCost}
             />
           )}
         </div>

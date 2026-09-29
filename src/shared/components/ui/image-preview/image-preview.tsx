@@ -2,7 +2,7 @@ import type { ComponentProps } from 'react';
 
 import { cn } from '@/lib/cn';
 import { XIcon } from '@/shared/components/icons';
-import { CommonImage } from '@/shared/components/ui';
+import { CommonImage } from '@/shared/components/ui/common-image/common-image';
 
 interface ImagePreviewProps extends Omit<ComponentProps<'div'>, 'children'> {
   src: string;
