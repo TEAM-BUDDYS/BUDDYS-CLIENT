@@ -17,7 +17,6 @@ import {
 import {
   BottomSheet,
   Button,
-  Chip,
   ChipButton,
   IconButton,
   Searchbar,
@@ -230,10 +229,6 @@ export const CourseCreatePlacePicker = ({
         onClose={() => setIsResultSheetOpen(false)}
       >
         <div className="flex min-h-0 flex-1 flex-col px-4">
-          <div className="flex shrink-0 gap-2 pb-4">
-            <Chip variant="fillMedium">최근 저장</Chip>
-          </div>
-
           <div className="min-h-0 flex-1 scrollbar-none overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:hidden">
             {placeResults.isLoading ? null : placeResults.isError ? (
               <div className="flex flex-col items-center py-16">
