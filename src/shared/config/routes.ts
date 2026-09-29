@@ -1,5 +1,6 @@
 export const ROUTES = {
   HOME: '/',
+  PWA: '/pwa',
   LANDING: '/landing',
   AUTH: {
     LOGIN: '/login',
