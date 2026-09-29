@@ -4,6 +4,10 @@ import { useState } from 'react';
 
 import { SettingsMenuItem } from '@/domains/profile/components/settings-menu-item/settings-menu-item';
 import { Toggle } from '@/domains/profile/components/toggle/toggle';
+import {
+  SETTINGS_CONFIRM_MODAL_CONTENT,
+  type SettingsConfirmType,
+} from '@/domains/profile/model/settings';
 import { Button, Modal } from '@/shared/components/ui';
 import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
 import { ROUTES } from '@/shared/config/routes';
@@ -18,7 +22,12 @@ const SETTINGS_MENU_ITEMS: { label: string; href?: string }[] = [
 export const SettingsContent = () => {
   const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [confirmType, setConfirmType] = useState<SettingsConfirmType | null>(
+    null,
+  );
+
+  const confirmContent =
+    confirmType === null ? null : SETTINGS_CONFIRM_MODAL_CONTENT[confirmType];
 
   return (
     <>
@@ -45,29 +54,31 @@ export const SettingsContent = () => {
       </nav>
 
       <div className="mt-6 flex flex-col items-center gap-3 px-4">
-        <Button variant="secondary" onClick={() => setIsLogoutModalOpen(true)}>
+        <Button variant="secondary" onClick={() => setConfirmType('logout')}>
           로그아웃
         </Button>
 
         <button
           type="button"
           className="text-body-r-14 text-gray-500"
-          onClick={() => setIsComingSoonOpen(true)}
+          onClick={() => setConfirmType('withdraw')}
         >
           회원 탈퇴
         </button>
       </div>
 
-      <Modal
-        type="confirm"
-        open={isLogoutModalOpen}
-        title="로그아웃 하시겠습니까?"
-        description="정말 로그아웃 하시겠습니까?"
-        cancelLabel="닫기"
-        confirmLabel="로그아웃"
-        onClose={() => setIsLogoutModalOpen(false)}
-        onConfirm={() => setIsLogoutModalOpen(false)}
-      />
+      {confirmContent && (
+        <Modal
+          type="confirm"
+          open={true}
+          title={confirmContent.title}
+          description={confirmContent.description}
+          cancelLabel="닫기"
+          confirmLabel={confirmContent.confirmLabel}
+          onClose={() => setConfirmType(null)}
+          onConfirm={() => setConfirmType(null)}
+        />
+      )}
 
       <ComingSoonModal
         open={isComingSoonOpen}
