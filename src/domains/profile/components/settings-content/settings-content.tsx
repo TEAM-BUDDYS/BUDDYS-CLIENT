@@ -6,13 +6,14 @@ import { SettingsMenuItem } from '@/domains/profile/components/settings-menu-ite
 import { Toggle } from '@/domains/profile/components/toggle/toggle';
 import { Button } from '@/shared/components/ui';
 import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
+import { ROUTES } from '@/shared/config/routes';
 
-const SETTINGS_MENU_ITEMS = [
+const SETTINGS_MENU_ITEMS: { label: string; href?: string }[] = [
   { label: '학교 이메일 인증' },
   { label: '파견교 서류 인증' },
-  { label: '개인정보 처리방침' },
+  { label: '개인정보 처리방침', href: ROUTES.PROFILE.PRIVACY_POLICY },
   { label: '이용약관' },
-] as const;
+];
 
 export const SettingsContent = () => {
   const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
@@ -34,6 +35,7 @@ export const SettingsContent = () => {
             <li key={item.label}>
               <SettingsMenuItem
                 label={item.label}
+                href={item.href}
                 onClick={() => setIsComingSoonOpen(true)}
               />
             </li>
