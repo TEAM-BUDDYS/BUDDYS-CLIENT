@@ -32,7 +32,6 @@ export const CourseCreateDaySection = ({
   onMemoCostChange,
 }: CourseCreateDaySectionProps) => {
   const [isMemoCostSheetOpen, setIsMemoCostSheetOpen] = useState(false);
-  const hasMemoOrCost = Boolean(day.memo || day.cost !== null);
   const headingId = `course-day-${day.dayNumber}-title`;
 
   return (
@@ -59,10 +58,7 @@ export const CourseCreateDaySection = ({
             장소 추가
           </button>
           <button
-            className={cn(
-              'text-body-sb-14 h-12 rounded-lg bg-gray-50 text-gray-500 active:bg-gray-100',
-              hasMemoOrCost && 'border-mint-200 text-mint-300 border bg-white',
-            )}
+            className="text-body-sb-14 h-12 rounded-lg bg-gray-50 text-gray-500 active:bg-gray-100"
             type="button"
             onClick={() => setIsMemoCostSheetOpen(true)}
           >
