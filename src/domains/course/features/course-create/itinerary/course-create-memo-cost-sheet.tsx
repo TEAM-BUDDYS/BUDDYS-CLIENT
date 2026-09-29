@@ -84,9 +84,7 @@ export const CourseCreateMemoCostSheet = ({
           onChange={(event) => handleCostChange(event.target.value)}
         />
         {!isVirtualKeyboardOpen && (
-          <Button onClick={handleConfirm}>
-            {draftMemo.trim() || draftCost !== null ? '작성 완료' : '닫기'}
-          </Button>
+          <Button onClick={handleConfirm}>작성 완료</Button>
         )}
       </div>
     </BottomSheet>
