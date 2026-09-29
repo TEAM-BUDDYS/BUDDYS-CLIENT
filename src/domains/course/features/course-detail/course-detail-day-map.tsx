@@ -31,6 +31,7 @@ interface CourseDetailMapViewportProps {
 }
 
 interface CourseDetailMapMarkerProps {
+  isStart: boolean;
   order: number;
   position: CourseMapCenter;
   title: string;
@@ -83,6 +84,7 @@ const CourseDetailMapViewport = ({
 };
 
 const CourseDetailMapMarker = ({
+  isStart,
   order,
   position,
   title,
@@ -92,13 +94,13 @@ const CourseDetailMapMarker = ({
       position={position}
       title={title}
       anchorLeft="-50%"
-      anchorTop={order === 1 ? '-100%' : '-50%'}
+      anchorTop={isStart ? '-100%' : '-50%'}
       zIndex={2}
     >
-      {order === 1 ? (
+      {isStart ? (
         <CourseMarkerIcon className="size-6" />
       ) : (
-        <span className="text-caption-m-10 bg-error flex size-[17px] items-center justify-center rounded-full text-center text-white drop-shadow-[0_1px_0.5px_rgba(0,0,0,0.42)]">
+        <span className="text-caption-m-10 bg-error flex size-4.25 items-center justify-center rounded-full text-center text-white drop-shadow-[0_1px_0.5px_rgba(0,0,0,0.42)]">
           {order}
         </span>
       )}
@@ -123,25 +125,22 @@ export const CourseDetailDayMap = ({ days }: CourseDetailDayMapProps) => {
   const activeDay = sortedDays[activeDayIndex];
   const markerPlaces = useMemo(
     () =>
-      (activeDay?.places ?? [])
-        .flatMap((place, placeIndex) => {
-          if (place.latitude == null || place.longitude == null) return [];
+      (activeDay?.places ?? []).flatMap((place, placeIndex) => {
+        if (place.latitude == null || place.longitude == null) return [];
 
-          return [
-            {
-              key: `${place.placeId}-${placeIndex}`,
-              position: {
-                lat: place.latitude,
-                lng: place.longitude,
-              },
-              title: place.name ?? '이름 없는 장소',
+        return [
+          {
+            isStart: placeIndex === 0,
+            key: `${place.placeId}-${placeIndex}`,
+            order: placeIndex + 1,
+            position: {
+              lat: place.latitude,
+              lng: place.longitude,
             },
-          ];
-        })
-        .map((markerPlace, markerIndex) => ({
-          ...markerPlace,
-          order: markerIndex + 1,
-        })),
+            title: place.name ?? '이름 없는 장소',
+          },
+        ];
+      }),
     [activeDay],
   );
   const positions = useMemo(
@@ -242,9 +241,10 @@ export const CourseDetailDayMap = ({ days }: CourseDetailDayMapProps) => {
             />
           ) : null}
 
-          {markerPlaces.map(({ key, order, position, title }) => (
+          {markerPlaces.map(({ isStart, key, order, position, title }) => (
             <CourseDetailMapMarker
               key={key}
+              isStart={isStart}
               order={order}
               position={position}
               title={title}
