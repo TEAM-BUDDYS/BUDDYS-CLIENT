@@ -1,5 +1,6 @@
 export const ROUTES = {
   HOME: '/',
+  PWA: '/pwa',
   LANDING: '/landing',
   AUTH: {
     LOGIN: '/login',
@@ -14,7 +15,10 @@ export const ROUTES = {
     DETAIL: (postId: number) => `/posts/${postId}` as const,
   },
   COURSE: {
+    ROOT: '/course',
     CREATE: '/course/post',
+    CUSTOMIZED_EXPLORE: '/course/customized-explore',
+    SUGGEST_EXPLORE: '/course/customized-explore?type=suggest',
   },
   CHAT: {
     ROOT: '/chat',

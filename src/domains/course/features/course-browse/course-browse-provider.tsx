@@ -1,0 +1,149 @@
+'use client';
+
+import {
+  createContext,
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+
+import type { CourseBottomSheetPosition } from '@/domains/course/components/course-bottom-sheet/course-bottom-sheet';
+import type { CourseTabValue } from '@/domains/course/components/course-tab/course-tab';
+import {
+  type CurrentLocationStatus,
+  useCurrentLocation,
+} from '@/domains/course/hook/use-current-location';
+import type {
+  CourseMapCameraState,
+  CourseMapCenter,
+} from '@/domains/course/model/course-map';
+
+export type CourseMapCategory =
+  | 'sightseeing'
+  | 'food'
+  | 'cafe'
+  | 'accommodation';
+
+interface CourseBrowseContextValue {
+  bottomSheetPosition: CourseBottomSheetPosition;
+  bottomSheetTab: CourseTabValue;
+  currentLocation: CourseMapCenter | null;
+  currentLocationStatus: CurrentLocationStatus;
+  getMapCamera: () => CourseMapCameraState | null;
+  isBookmarkActive: boolean;
+  isLocationActive: boolean;
+  refetchCurrentLocation: () => Promise<CourseMapCenter | null>;
+  searchKeyword: string;
+  selectedCategory?: CourseMapCategory;
+  selectedRecommendedCategoryId?: number;
+  selectedRecommendedCountryId?: number;
+  setBottomSheetPosition: Dispatch<SetStateAction<CourseBottomSheetPosition>>;
+  setBottomSheetTab: Dispatch<SetStateAction<CourseTabValue>>;
+  setIsBookmarkActive: Dispatch<SetStateAction<boolean>>;
+  setIsLocationActive: Dispatch<SetStateAction<boolean>>;
+  setMapCamera: (camera: CourseMapCameraState | null) => void;
+  setSearchKeyword: Dispatch<SetStateAction<string>>;
+  setSelectedCategory: Dispatch<SetStateAction<CourseMapCategory | undefined>>;
+  setSelectedRecommendedCategoryId: Dispatch<
+    SetStateAction<number | undefined>
+  >;
+  setSelectedRecommendedCountryId: Dispatch<SetStateAction<number | undefined>>;
+}
+
+interface CourseBrowseProviderProps {
+  children: ReactNode;
+}
+
+const CourseBrowseContext = createContext<CourseBrowseContextValue | null>(
+  null,
+);
+
+export const CourseBrowseProvider = ({
+  children,
+}: CourseBrowseProviderProps) => {
+  const [bottomSheetPosition, setBottomSheetPosition] =
+    useState<CourseBottomSheetPosition>('default');
+  const [bottomSheetTab, setBottomSheetTab] =
+    useState<CourseTabValue>('nearby');
+  const [isBookmarkActive, setIsBookmarkActive] = useState(false);
+  const [isLocationActive, setIsLocationActive] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<CourseMapCategory>();
+  const [selectedRecommendedCategoryId, setSelectedRecommendedCategoryId] =
+    useState<number>();
+  const [selectedRecommendedCountryId, setSelectedRecommendedCountryId] =
+    useState<number>();
+  const mapCameraRef = useRef<CourseMapCameraState | null>(null);
+  const {
+    currentLocation,
+    status: currentLocationStatus,
+    refetchCurrentLocation,
+  } = useCurrentLocation({ requestOnMount: false });
+
+  const getMapCamera = useCallback(() => mapCameraRef.current, []);
+  const setMapCamera = useCallback((camera: CourseMapCameraState | null) => {
+    mapCameraRef.current = camera;
+  }, []);
+
+  const value = useMemo(
+    () => ({
+      bottomSheetPosition,
+      bottomSheetTab,
+      currentLocation,
+      currentLocationStatus,
+      getMapCamera,
+      isBookmarkActive,
+      isLocationActive,
+      refetchCurrentLocation,
+      searchKeyword,
+      selectedCategory,
+      selectedRecommendedCategoryId,
+      selectedRecommendedCountryId,
+      setBottomSheetPosition,
+      setBottomSheetTab,
+      setIsBookmarkActive,
+      setIsLocationActive,
+      setMapCamera,
+      setSearchKeyword,
+      setSelectedCategory,
+      setSelectedRecommendedCategoryId,
+      setSelectedRecommendedCountryId,
+    }),
+    [
+      bottomSheetPosition,
+      bottomSheetTab,
+      currentLocation,
+      currentLocationStatus,
+      getMapCamera,
+      isBookmarkActive,
+      isLocationActive,
+      refetchCurrentLocation,
+      searchKeyword,
+      selectedCategory,
+      selectedRecommendedCategoryId,
+      selectedRecommendedCountryId,
+      setMapCamera,
+    ],
+  );
+
+  return (
+    <CourseBrowseContext.Provider value={value}>
+      {children}
+    </CourseBrowseContext.Provider>
+  );
+};
+
+export const useCourseBrowse = () => {
+  const context = useContext(CourseBrowseContext);
+
+  if (!context) {
+    throw new Error('useCourseBrowse must be used within CourseBrowseProvider');
+  }
+
+  return context;
+};

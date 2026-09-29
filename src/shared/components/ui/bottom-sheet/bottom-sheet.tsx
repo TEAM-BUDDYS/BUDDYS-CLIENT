@@ -10,25 +10,31 @@ import { useNonModalPointerEvents } from './use-non-modal-pointer-events';
 interface BottomSheetProps {
   open: boolean;
   children: ReactNode;
+  activeSnapPoint?: number | string | null;
   className?: string;
   ariaLabel?: string;
   ariaLabelledBy?: string;
   handleClassName?: string;
   dismissible?: boolean;
   modal?: boolean;
+  snapPoints?: (number | string)[];
   onClose: () => void;
+  onSnapPointChange?: (snapPoint: number | string | null) => void;
 }
 
 export const BottomSheet = ({
   open,
   children,
+  activeSnapPoint,
   className,
   ariaLabel,
   ariaLabelledBy,
   handleClassName,
   dismissible = true,
   modal = true,
+  snapPoints,
   onClose,
+  onSnapPointChange,
 }: BottomSheetProps) => {
   useNonModalPointerEvents(open, modal);
 
@@ -40,9 +46,12 @@ export const BottomSheet = ({
 
   return (
     <Drawer.Root
-      open={open}
+      activeSnapPoint={activeSnapPoint}
       dismissible={dismissible}
       modal={modal}
+      open={open}
+      setActiveSnapPoint={onSnapPointChange}
+      snapPoints={snapPoints}
       onOpenChange={handleOpenChange}
     >
       <Drawer.Portal>

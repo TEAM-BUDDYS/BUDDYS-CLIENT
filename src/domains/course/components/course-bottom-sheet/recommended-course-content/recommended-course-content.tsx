@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 
+import { useCourseBrowse } from '@/domains/course/features/course-browse/course-browse-provider';
 import {
   COURSE_CATEGORIES,
   COURSE_FILTER_COUNTRIES,
@@ -78,25 +79,41 @@ export const RecommendedCourseContent = ({
   onExploreClick,
   onSuggestedMoreClick,
 }: RecommendedCourseContentProps) => {
-  const [selectedCountryId, setSelectedCountryId] = useState<number>();
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number>();
+  const {
+    selectedRecommendedCategoryId,
+    selectedRecommendedCountryId,
+    setSelectedRecommendedCategoryId,
+    setSelectedRecommendedCountryId,
+  } = useCourseBrowse();
   const [courses, setCourses] = useState(INITIAL_COURSES);
   const [suggestedCourses, setSuggestedCourses] = useState(
     INITIAL_SUGGESTED_COURSES,
   );
   const [savedCourses, setSavedCourses] = useState(INITIAL_SAVED_COURSES);
   const filteredCourses =
-    selectedCountryId === undefined
+    selectedRecommendedCountryId === undefined
       ? courses.slice(0, DEFAULT_VISIBLE_COURSE_COUNT)
       : courses.filter((course) =>
-          course.countryIds.includes(selectedCountryId),
+          course.countryIds.includes(selectedRecommendedCountryId),
         );
   const filteredSuggestedCourses =
-    selectedCategoryId === undefined
+    selectedRecommendedCategoryId === undefined
       ? suggestedCourses.slice(0, DEFAULT_VISIBLE_COURSE_COUNT)
       : suggestedCourses.filter((course) =>
-          course.tagIds.includes(selectedCategoryId),
+          course.tagIds.includes(selectedRecommendedCategoryId),
         );
+
+  const handleCountryChange = (countryId: number) => {
+    setSelectedRecommendedCountryId((currentCountryId) =>
+      currentCountryId === countryId ? undefined : countryId,
+    );
+  };
+
+  const handleCategoryChange = (categoryId: number) => {
+    setSelectedRecommendedCategoryId((currentCategoryId) =>
+      currentCategoryId === categoryId ? undefined : categoryId,
+    );
+  };
 
   const handleCourseBookmarkChange = (
     courseId: number,
@@ -140,8 +157,8 @@ export const RecommendedCourseContent = ({
       <CourseFilterSection
         countries={COURSE_FILTER_COUNTRIES}
         courses={filteredCourses}
-        selectedCountryId={selectedCountryId}
-        onCountryChange={setSelectedCountryId}
+        selectedCountryId={selectedRecommendedCountryId}
+        onCountryChange={handleCountryChange}
         onCourseBookmarkChange={handleCourseBookmarkChange}
         onExploreClick={onExploreClick}
       />
@@ -154,8 +171,8 @@ export const RecommendedCourseContent = ({
       <SuggestedCourseSection
         categories={COURSE_CATEGORIES}
         courses={filteredSuggestedCourses}
-        selectedCategoryId={selectedCategoryId}
-        onCategoryChange={setSelectedCategoryId}
+        selectedCategoryId={selectedRecommendedCategoryId}
+        onCategoryChange={handleCategoryChange}
         onCourseBookmarkChange={handleSuggestedCourseBookmarkChange}
         onMoreClick={onSuggestedMoreClick}
       />

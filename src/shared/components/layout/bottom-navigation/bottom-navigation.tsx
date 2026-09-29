@@ -41,6 +41,7 @@ const BOTTOM_NAVIGATION_ITEMS: BottomNavigationItem[] = [
   },
   {
     key: 'course',
+    href: ROUTES.COURSE.ROOT,
     icon: CourseIcon,
     label: '코스',
   },
@@ -76,7 +77,9 @@ export const BottomNavigation = ({ className }: BottomNavigationProps) => {
       >
         <ul className="flex h-full w-full">
           {BOTTOM_NAVIGATION_ITEMS.map(({ key, href, icon: Icon, label }) => {
-            const isActive = href === pathname;
+            const isActive =
+              href === pathname ||
+              (href !== ROUTES.HOME && pathname.startsWith(`${href}/`));
             const itemClassName = cn(
               'focus-visible:outline-mint-300 flex h-full w-full flex-col items-center justify-center gap-0.5 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2',
               isActive ? 'text-gray-800' : 'text-gray-200',
