@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { SettingsMenuItem } from '@/domains/profile/components/settings-menu-item/settings-menu-item';
 import { Toggle } from '@/domains/profile/components/toggle/toggle';
-import { Button } from '@/shared/components/ui';
+import { Button, Modal } from '@/shared/components/ui';
 import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
 import { ROUTES } from '@/shared/config/routes';
 
@@ -18,6 +18,7 @@ const SETTINGS_MENU_ITEMS: { label: string; href?: string }[] = [
 export const SettingsContent = () => {
   const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   return (
     <>
@@ -44,7 +45,7 @@ export const SettingsContent = () => {
       </nav>
 
       <div className="mt-6 flex flex-col items-center gap-3 px-4">
-        <Button variant="secondary" onClick={() => setIsComingSoonOpen(true)}>
+        <Button variant="secondary" onClick={() => setIsLogoutModalOpen(true)}>
           로그아웃
         </Button>
 
@@ -56,6 +57,17 @@ export const SettingsContent = () => {
           회원 탈퇴
         </button>
       </div>
+
+      <Modal
+        type="confirm"
+        open={isLogoutModalOpen}
+        title="로그아웃 하시겠습니까?"
+        description="정말 로그아웃 하시겠습니까?"
+        cancelLabel="닫기"
+        confirmLabel="로그아웃"
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={() => setIsLogoutModalOpen(false)}
+      />
 
       <ComingSoonModal
         open={isComingSoonOpen}
