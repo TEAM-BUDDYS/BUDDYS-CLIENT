@@ -1,8 +1,4 @@
-export interface PolicySection {
-  title: string;
-  descriptions?: string[];
-  items?: string[];
-}
+import { type PolicySection } from '@/domains/profile/model/policy';
 
 export const PRIVACY_POLICY_SECTIONS: PolicySection[] = [
   {

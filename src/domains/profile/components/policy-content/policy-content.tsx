@@ -1,4 +1,4 @@
-import { type PolicySection } from '@/domains/profile/model/privacy-policy';
+import { type PolicySection } from '@/domains/profile/model/policy';
 
 interface PolicyContentProps {
   sections: PolicySection[];
@@ -21,6 +21,16 @@ export const PolicyContent = ({ sections }: PolicyContentProps) => {
                 ))}
               </ul>
             )}
+            {section.orderedItems && (
+              <ol className="list-decimal space-y-1 pl-5">
+                {section.orderedItems.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ol>
+            )}
+            {section.notes?.map((note) => (
+              <p key={note}>{note}</p>
+            ))}
           </div>
         </section>
       ))}

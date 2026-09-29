@@ -12,7 +12,7 @@ const SETTINGS_MENU_ITEMS: { label: string; href?: string }[] = [
   { label: '학교 이메일 인증' },
   { label: '파견교 서류 인증' },
   { label: '개인정보 처리방침', href: ROUTES.PROFILE.PRIVACY_POLICY },
-  { label: '이용약관' },
+  { label: '이용약관', href: ROUTES.PROFILE.TERMS },
 ];
 
 export const SettingsContent = () => {
