@@ -85,7 +85,7 @@ const getFlightLabel = (flight: CourseDetailFlight) => {
   const arrivalLabel = [flight.arrivalAirport, arrivalTime]
     .filter(Boolean)
     .join(' ');
-  const flightIdentifier = flight.flightNumber ?? flight.airline;
+  const flightIdentifier = flight.flightNumber?.trim() || flight.airline;
 
   return `${departureLabel} - ${arrivalLabel} · ${flightIdentifier}`;
 };
