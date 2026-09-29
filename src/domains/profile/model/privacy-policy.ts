@@ -44,6 +44,8 @@ export const PRIVACY_POLICY_SECTIONS: PolicySection[] = [
     title: '6. 개인정보 처리의 위탁',
     descriptions: [
       '서비스 운영을 위하여 다음과 같이 개인정보 처리를 위탁할 수 있습니다. 위탁 업체는 변경될 수 있으며 변경 시 본 방침을 통해 안내합니다.',
+    ],
+    items: [
       'OpenAI API - AI 추천 서비스 제공',
       'Google Cloud - 서버 운영 및 인프라',
     ],
