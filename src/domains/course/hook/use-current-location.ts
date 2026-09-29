@@ -2,7 +2,11 @@ import { useCallback, useEffect, useState } from 'react';
 
 import type { CourseMapCenter } from '@/domains/course/model/course-map';
 
-export type CurrentLocationStatus = 'loading' | 'success' | 'error';
+export type CurrentLocationStatus = 'idle' | 'loading' | 'success' | 'error';
+
+interface UseCurrentLocationOptions {
+  requestOnMount?: boolean;
+}
 
 const getCurrentLocation = () =>
   new Promise<CourseMapCenter>((resolve, reject) => {
@@ -27,10 +31,14 @@ const getCurrentLocation = () =>
     );
   });
 
-export const useCurrentLocation = () => {
+export const useCurrentLocation = ({
+  requestOnMount = true,
+}: UseCurrentLocationOptions = {}) => {
   const [currentLocation, setCurrentLocation] =
     useState<CourseMapCenter | null>(null);
-  const [status, setStatus] = useState<CurrentLocationStatus>('loading');
+  const [status, setStatus] = useState<CurrentLocationStatus>(
+    requestOnMount ? 'loading' : 'idle',
+  );
   const [error, setError] = useState<GeolocationPositionError | Error | null>(
     null,
   );
@@ -43,6 +51,7 @@ export const useCurrentLocation = () => {
       const location = await getCurrentLocation();
       setCurrentLocation(location);
       setStatus('success');
+      return location;
     } catch (locationError) {
       setCurrentLocation(null);
       setError(
@@ -51,10 +60,13 @@ export const useCurrentLocation = () => {
           : (locationError as GeolocationPositionError),
       );
       setStatus('error');
+      return null;
     }
   }, []);
 
   useEffect(() => {
+    if (!requestOnMount) return;
+
     void getCurrentLocation().then(
       (location) => {
         setCurrentLocation(location);
@@ -66,7 +78,7 @@ export const useCurrentLocation = () => {
         setStatus('error');
       },
     );
-  }, []);
+  }, [requestOnMount]);
 
   return {
     currentLocation,
