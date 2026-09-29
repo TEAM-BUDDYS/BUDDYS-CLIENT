@@ -111,7 +111,9 @@ export const CourseDetailOverviewSection = ({
   const cityLabel = cityNames.join(', ');
   const primaryCityName = cityNames[0];
   const authorDescription = getAuthorDescription(course);
-  const startDateLabel = formatMonthDayWithWeekday(course.startDate);
+  const startDateLabel = course.startDate
+    ? formatMonthDayWithWeekday(course.startDate)
+    : null;
   const participantCount = course.companions.length + 1;
   const representativeFlight = getRepresentativeFlight(course.days);
   const mapDays = course.days.map(({ dayNumber, places }) => ({
