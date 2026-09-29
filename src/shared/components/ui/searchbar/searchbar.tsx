@@ -1,6 +1,6 @@
 'use client';
 
-import { ComponentPropsWithoutRef } from 'react';
+import { type ComponentPropsWithoutRef, type MouseEvent, useRef } from 'react';
 
 import { cn } from '@/lib/cn';
 
@@ -35,9 +35,18 @@ export const Searchbar = ({
   placeholder = '검색어를 입력해주세요',
   ...inputProps
 }: SearchbarProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
   const { className: inputClassName, ...restInputProps } = inputProps ?? {};
 
   const showClearButton = value.length > 0 && !isCompleted;
+
+  const handleContainerClick = (event: MouseEvent<HTMLDivElement>) => {
+    if (event.target instanceof Element && event.target.closest('button')) {
+      return;
+    }
+
+    inputRef.current?.focus();
+  };
 
   return (
     <div
@@ -46,8 +55,10 @@ export const Searchbar = ({
         searchbarStyle[size],
         containerClassName,
       )}
+      onClick={handleContainerClick}
     >
       <input
+        ref={inputRef}
         {...restInputProps}
         value={value}
         onChange={(e) => onChange(e.target.value)}
