@@ -17,12 +17,12 @@ const WRITE_MENU_ITEMS = [
   {
     label: '동행 모집하기',
     icon: <LocationIcon />,
-    href: ROUTES.POST.ROOT, // TODO: 동행 글쓰기 라우트가 정해지면 교체
+    href: ROUTES.POST.ROOT,
   },
   {
     label: '코스 기록하기',
     icon: <CourseIcon />,
-    href: ROUTES.POST.ROOT, // TODO: 코스 글쓰기 라우트가 정해지면 교체
+    href: ROUTES.COURSE.CREATE,
   },
 ];
 

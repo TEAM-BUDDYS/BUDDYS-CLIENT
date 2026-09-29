@@ -90,7 +90,7 @@ export const CourseBottomSheet = ({
           </div>
         ) : null}
 
-        <div className="min-h-0 flex-1 scrollbar-none overflow-x-hidden overflow-y-auto overscroll-contain pb-13.5 [&::-webkit-scrollbar]:hidden">
+        <div className="min-h-0 flex-1 scrollbar-none overflow-x-hidden overflow-y-auto overscroll-contain pb-100 [&::-webkit-scrollbar]:hidden">
           {isBookmarkMode ? (
             <BookmarkedPlaceContent
               items={bookmarkedItems}

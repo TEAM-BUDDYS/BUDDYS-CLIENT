@@ -21,8 +21,8 @@ export const MapFloatingControls = ({
         aria-pressed={isBookmarkActive}
         className={
           isBookmarkActive
-            ? 'text-mint-300 size-9 bg-gray-100 enabled:active:bg-gray-100'
-            : 'text-mint-300 size-9 bg-white enabled:active:bg-white'
+            ? 'text-mint-300 size-9 bg-gray-100 shadow-[0_2px_6px_0_rgba(0,0,0,0.22)] enabled:active:bg-gray-100'
+            : 'text-mint-300 size-9 bg-white shadow-[0_2px_6px_0_rgba(0,0,0,0.22)] enabled:active:bg-white'
         }
         icon={<BookmarkIcon />}
         iconClassName="size-5"
@@ -33,8 +33,8 @@ export const MapFloatingControls = ({
         aria-pressed={isLocationActive}
         className={
           isLocationActive
-            ? 'bg-mint-400 size-9 text-white'
-            : 'bg-mint-300 size-9 text-white'
+            ? 'bg-mint-400 size-9 text-white shadow-[0_2px_6px_0_rgba(0,0,0,0.22)]'
+            : 'bg-mint-300 size-9 text-white shadow-[0_2px_6px_0_rgba(0,0,0,0.22)]'
         }
         icon={<LocationIcon />}
         iconClassName="size-5"
