@@ -191,7 +191,7 @@ export const useOnboardForm = () => {
   };
 
   const handleNicknameChange = (value: string) => {
-    setNickname(value.slice(0, 8));
+    setNickname(value.slice(0, 14));
   };
 
   const handleGenderChange = (value: GenderType) => {

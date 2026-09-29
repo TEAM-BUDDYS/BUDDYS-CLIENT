@@ -4,6 +4,7 @@ import firstProfileImage from '@/shared/assets/icons/profile.svg';
 import {
   Dropdown,
   FormLabel,
+  NicknameField,
   ProfileImageInput,
   TextField,
 } from '@/shared/components/ui';
@@ -15,12 +16,15 @@ import { GENDER_OPTIONS } from './constant';
 interface OnboardProfileStepProps {
   nickname: string;
   nicknameError: string | null;
+  checkedNickname: string | null;
+  isCheckingNickname: boolean;
   gender: GenderType | null;
   birthDate: string;
   bio: string;
   isUploading: boolean;
   profileImageFile: File | null;
   onNicknameChange: (value: string) => void;
+  onCheckNicknameDuplicate: () => void;
   onGenderChange: (value: GenderType) => void;
   onBirthDateChange: (value: string) => void;
   onBioChange: (value: string) => void;
@@ -30,12 +34,15 @@ interface OnboardProfileStepProps {
 export const OnboardProfileStep = ({
   nickname,
   nicknameError,
+  checkedNickname,
+  isCheckingNickname,
   gender,
   birthDate,
   bio,
   isUploading,
   profileImageFile,
   onNicknameChange,
+  onCheckNicknameDuplicate,
   onGenderChange,
   onBirthDateChange,
   onBioChange,
@@ -107,14 +114,16 @@ export const OnboardProfileStep = ({
       </div>
 
       <div className="mb-[59px] flex flex-col gap-7">
-        <TextField
+        <NicknameField
           label="닉네임"
-          maxLength={8}
-          placeholder="닉네임을 입력하세요"
+          initialNickname=""
+          checkedNickname={checkedNickname}
+          isChecking={isCheckingNickname}
           required
           value={nickname}
           status={nicknameError ? 'error' : 'default'}
           message={nicknameError}
+          onCheckDuplicate={onCheckNicknameDuplicate}
           onChange={(event) => onNicknameChange(event.target.value)}
           onBlur={(event) => {
             setCurrentNickname(event.target.value);

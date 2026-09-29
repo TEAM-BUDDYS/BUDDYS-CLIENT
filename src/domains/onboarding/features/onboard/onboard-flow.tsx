@@ -12,6 +12,7 @@ import {
   AsyncLoadingState,
   Button,
   EmptyState,
+  Modal,
   ProgressBar,
   useToast,
 } from '@/shared/components/ui';
@@ -82,6 +83,9 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
     PROGRESS_STEP_BY_STEP[currentStep as keyof typeof PROGRESS_STEP_BY_STEP];
   const canGoNext = onboardForm.canGoNext(currentStep);
   const [nicknameError, setNicknameError] = useState<string | null>(null);
+  const [checkedNickname, setCheckedNickname] = useState<string | null>(null);
+  const [isNicknameCheckModalOpen, setIsNicknameCheckModalOpen] =
+    useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const debouncedInterestCountryKeyword = useDebouncedValue(
     onboardForm.interestCountryKeyword.trim(),
@@ -172,6 +176,7 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
           | undefined;
 
         if (response?.code === 'AUTH-E003') {
+          setCheckedNickname(null);
           setNicknameError(response.message ?? '이미 사용 중인 닉네임입니다.');
           return;
         }
@@ -191,6 +196,11 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
     }
 
     if (currentStep === 'profile') {
+      if (checkedNickname !== onboardForm.nickname) {
+        setIsNicknameCheckModalOpen(true);
+        return;
+      }
+
       void handleOnboardingSubmit();
       return;
     }
@@ -303,6 +313,8 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
           <OnboardProfileStep
             nickname={onboardForm.nickname}
             nicknameError={nicknameError}
+            checkedNickname={checkedNickname}
+            isCheckingNickname={false}
             gender={onboardForm.gender}
             birthDate={onboardForm.birthDate}
             bio={onboardForm.bio}
@@ -310,7 +322,16 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
             profileImageFile={onboardForm.profileImageFile}
             onNicknameChange={(value) => {
               setNicknameError(null);
+              setCheckedNickname(null);
               onboardForm.handleNicknameChange(value);
+            }}
+            onCheckNicknameDuplicate={() => {
+              showToast(
+                '닉네임 중복 확인을 할 수 없어요. 잠시 후 다시 시도해주세요.',
+                {
+                  variant: 'gray',
+                },
+              );
             }}
             onGenderChange={onboardForm.handleGenderChange}
             onBirthDateChange={onboardForm.handleBirthDateChange}
@@ -380,6 +401,15 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
           )}
         </div>
       )}
+      <Modal
+        type="alert"
+        buttonVariant="primary"
+        cancelLabel="확인"
+        open={isNicknameCheckModalOpen}
+        title="닉네임 중복확인 안내"
+        description="중복확인 후 다시 시도해 주세요."
+        onClose={() => setIsNicknameCheckModalOpen(false)}
+      />
     </main>
   );
 };
