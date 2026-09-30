@@ -18,6 +18,7 @@ export {
 export { END_POINT } from './end-point';
 export { POST_MUTATION_KEY } from './mutation-key';
 export {
+  AIRLINE_QUERY_KEY,
   CHAT_ROOM_QUERY_KEY,
   COUNTRY_QUERY_KEY,
   POST_QUERY_KEY,
