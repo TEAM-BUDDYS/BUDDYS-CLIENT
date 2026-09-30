@@ -2,8 +2,11 @@
 
 import { useState } from 'react';
 
+import { CourseDayPickerSheet } from '@/domains/course/components/course-day-picker-sheet/course-day-picker-sheet';
 import type { CourseMapCenter } from '@/domains/course/model/course-map';
+import { PlusIcon } from '@/shared/components/icons';
 
+import { COURSE_CREATE_MAX_FLIGHT_COUNT } from '../constants';
 import type { CourseCreateDayFormState } from '../model';
 import { CourseCreateDaySection } from './course-create-day-section';
 import { CourseCreatePlacePicker } from './course-create-place-picker';
@@ -23,6 +26,7 @@ interface CourseCreateItineraryStepProps {
     dayNumber: number,
     value: Pick<CourseCreateDayFormState, 'memo' | 'cost'>,
   ) => void;
+  onFlightDaySelect: (dayNumber: number) => void;
 }
 
 export const CourseCreateItineraryStep = ({
@@ -34,35 +38,56 @@ export const CourseCreateItineraryStep = ({
   onDayImagesAdd,
   onDayImageRemove,
   onDayMemoCostChange,
+  onFlightDaySelect,
 }: CourseCreateItineraryStepProps) => {
   const [placePickerDayNumber, setPlacePickerDayNumber] = useState<
     number | null
   >(null);
+  const [isFlightDayPickerOpen, setIsFlightDayPickerOpen] = useState(false);
   const placePickerDay = days.find(
     ({ dayNumber }) => dayNumber === placePickerDayNumber,
+  );
+  const flightCount = days.reduce(
+    (count, { flights }) => count + flights.length,
+    0,
   );
 
   return (
     <>
-      <div className="flex flex-col gap-1">
-        <p className="text-body-sb-14 text-gray-200">
-          버디님의 코스를 정리해주세요
-        </p>
-        <h1 className="text-title-b-20 truncate text-gray-800">{title}</h1>
-      </div>
+      <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
+            <p className="text-body-sb-14 text-gray-200">
+              버디님의 코스를 정리해주세요
+            </p>
+            <h1 className="text-title-b-20 truncate text-gray-800">{title}</h1>
+          </div>
 
-      <div className="flex flex-col">
-        {days.map((day, index) => (
-          <CourseCreateDaySection
-            key={day.dayNumber}
-            day={day}
-            isLast={index === days.length - 1}
-            onPlaceAdd={setPlacePickerDayNumber}
-            onImagesAdd={onDayImagesAdd}
-            onImageRemove={onDayImageRemove}
-            onMemoCostChange={onDayMemoCostChange}
-          />
-        ))}
+          <button
+            className="text-caption-m-12 flex h-8.5 w-[93px] items-center justify-center gap-1 rounded-lg border border-gray-200 bg-white text-gray-800 disabled:cursor-not-allowed disabled:text-gray-200"
+            disabled={flightCount >= COURSE_CREATE_MAX_FLIGHT_COUNT}
+            type="button"
+            onClick={() => setIsFlightDayPickerOpen(true)}
+          >
+            <PlusIcon aria-hidden className="size-4" />
+            {`항공편 ${flightCount}/${COURSE_CREATE_MAX_FLIGHT_COUNT}`}
+          </button>
+        </div>
+
+        <div>
+          {days.map((day, index) => (
+            <CourseCreateDaySection
+              key={day.dayNumber}
+              day={day}
+              isFirst={index === 0}
+              isLast={index === days.length - 1}
+              onPlaceAdd={setPlacePickerDayNumber}
+              onImagesAdd={onDayImagesAdd}
+              onImageRemove={onDayImageRemove}
+              onMemoCostChange={onDayMemoCostChange}
+            />
+          ))}
+        </div>
       </div>
 
       {placePickerDay && (
@@ -77,6 +102,14 @@ export const CourseCreateItineraryStep = ({
           }
         />
       )}
+
+      <CourseDayPickerSheet
+        days={days}
+        open={isFlightDayPickerOpen}
+        selectedDayNumber={null}
+        onClose={() => setIsFlightDayPickerOpen(false)}
+        onDaySelect={onFlightDaySelect}
+      />
     </>
   );
 };
