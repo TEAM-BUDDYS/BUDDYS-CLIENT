@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { CourseDayPickerSheet } from '@/domains/course/components/course-day-picker-sheet/course-day-picker-sheet';
 import type { CourseMapCenter } from '@/domains/course/model/course-map';
 import { PlusIcon } from '@/shared/components/icons';
+import { useToast } from '@/shared/components/ui';
 
 import { COURSE_CREATE_MAX_FLIGHT_COUNT } from '../constants';
 import type { CourseCreateDayFormState } from '../model';
@@ -40,6 +41,7 @@ export const CourseCreateItineraryStep = ({
   onDayMemoCostChange,
   onFlightDaySelect,
 }: CourseCreateItineraryStepProps) => {
+  const { showToast } = useToast();
   const [placePickerDayNumber, setPlacePickerDayNumber] = useState<
     number | null
   >(null);
@@ -51,6 +53,18 @@ export const CourseCreateItineraryStep = ({
     (count, { flights }) => count + flights.length,
     0,
   );
+  const isFlightLimitReached = flightCount >= COURSE_CREATE_MAX_FLIGHT_COUNT;
+
+  const handleFlightAddClick = () => {
+    if (isFlightLimitReached) {
+      showToast('항공편은 최대 5개까지 추가할 수 있어요', {
+        bottomOffsetClassName: 'bottom-8.5',
+      });
+      return;
+    }
+
+    setIsFlightDayPickerOpen(true);
+  };
 
   return (
     <>
@@ -64,10 +78,10 @@ export const CourseCreateItineraryStep = ({
           </div>
 
           <button
-            className="text-caption-m-12 flex h-8.5 w-[93px] items-center justify-center gap-1 rounded-lg border border-gray-200 bg-white text-gray-800 disabled:cursor-not-allowed disabled:text-gray-200"
-            disabled={flightCount >= COURSE_CREATE_MAX_FLIGHT_COUNT}
+            aria-disabled={isFlightLimitReached}
+            className="text-caption-m-12 flex h-8.5 w-[93px] items-center justify-center gap-1 rounded-lg border border-gray-200 bg-white text-gray-800 aria-disabled:cursor-not-allowed aria-disabled:border-gray-50 aria-disabled:bg-gray-50 aria-disabled:text-gray-200"
             type="button"
-            onClick={() => setIsFlightDayPickerOpen(true)}
+            onClick={handleFlightAddClick}
           >
             <PlusIcon aria-hidden className="size-4" />
             {`항공편 ${flightCount}/${COURSE_CREATE_MAX_FLIGHT_COUNT}`}
