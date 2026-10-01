@@ -18,12 +18,10 @@ export const CourseContinuationBanner = ({
     >
       <span className="flex min-w-0 flex-col gap-0.75">
         <strong className="text-body-sb-14 truncate text-gray-800">
-          이 코스로 이어서 여행을 계획해볼까요?
+          내 여행도 코스로 남겨 공유해볼까요?
         </strong>
         <span className="flex items-center gap-1">
-          <span className="text-caption-m-12 text-gray-500">
-            이어서 작성하기
-          </span>
+          <span className="text-caption-m-12 text-gray-500">코스 작성하기</span>
           <span className="flex size-3 items-center justify-center rounded-md bg-gray-500 text-white">
             <ChevronRightIcon className="size-2" />
           </span>
