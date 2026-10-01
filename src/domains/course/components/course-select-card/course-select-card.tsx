@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import type { BookmarkedPlace, Place } from '@/domains/course/api/type';
 import { cn } from '@/lib/cn';
+import { getApiResourceUrl } from '@/shared/api';
 import { ChipButton, CommonImage } from '@/shared/components/ui';
 
 interface CourseSelectCardProps {
@@ -19,7 +20,8 @@ export const CourseSelectCard = ({
 }: CourseSelectCardProps) => {
   const [failedPhotoUrl, setFailedPhotoUrl] = useState<string>();
   const { placeId, name, address, photoUrl } = place;
-  const hasImageError = failedPhotoUrl === photoUrl;
+  const imageUrl = photoUrl ? getApiResourceUrl(photoUrl) : null;
+  const hasImageError = failedPhotoUrl === imageUrl;
   const displayName = name ?? '이름 없는 장소';
   const location =
     'country' in place
@@ -28,16 +30,16 @@ export const CourseSelectCard = ({
 
   return (
     <article className="flex w-full items-center gap-4">
-      {photoUrl && !hasImageError ? (
+      {imageUrl && !hasImageError ? (
         <CommonImage
           unoptimized
-          src={photoUrl}
+          src={imageUrl}
           alt={`${displayName} 이미지`}
           width={100}
           height={100}
           radius="rounded-xl"
           className="size-25"
-          onError={() => setFailedPhotoUrl(photoUrl)}
+          onError={() => setFailedPhotoUrl(imageUrl)}
         />
       ) : (
         <div aria-hidden className="size-25 shrink-0 rounded-xl bg-gray-50" />

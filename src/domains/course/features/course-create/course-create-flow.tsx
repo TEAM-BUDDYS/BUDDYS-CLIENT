@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import type { CourseMapCenter } from '@/domains/course/model/course-map';
 import { cn } from '@/lib/cn';
 import { Header } from '@/shared/components/layout';
 import {
@@ -24,24 +23,14 @@ import { CourseCreateDetailStep } from './course-create-detail-step';
 import { CourseCreateDurationStep } from './course-create-duration-step';
 import { CourseCreateQuestionHeader } from './course-create-question-header';
 import { CourseCreateItineraryStep } from './itinerary/course-create-itinerary-step';
-import type {
-  CourseCreateDayFormState,
-  CourseCreateScreen,
-  CourseCreateValue,
-} from './model';
+import type { CourseCreateScreen, CourseCreateValue } from './model';
 import { useCourseCreateForm } from './use-course-create-form';
 
 interface CourseCreateFlowProps {
-  placeMapCenter?: CourseMapCenter | null;
-  recentPlaces?: CourseCreateDayFormState['places'];
   onComplete?: (value: CourseCreateValue) => void;
 }
 
-export const CourseCreateFlow = ({
-  placeMapCenter = null,
-  recentPlaces = [],
-  onComplete,
-}: CourseCreateFlowProps) => {
+export const CourseCreateFlow = ({ onComplete }: CourseCreateFlowProps) => {
   const router = useRouter();
   const [currentScreen, setCurrentScreen] =
     useState<CourseCreateScreen>('country');
@@ -212,9 +201,8 @@ export const CourseCreateFlow = ({
           {currentScreen === 'itinerary' && (
             <CourseCreateItineraryStep
               title={courseCreateForm.detail.title}
+              cities={courseCreateForm.selectedCities}
               days={courseCreateForm.days}
-              placeMapCenter={placeMapCenter}
-              recentPlaces={recentPlaces}
               onDayPlacesChange={courseCreateForm.setDayPlaces}
               onDayImagesAdd={courseCreateForm.addDayImages}
               onDayImageRemove={courseCreateForm.removeDayImage}
