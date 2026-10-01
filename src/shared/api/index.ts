@@ -1,4 +1,4 @@
-export { apiClient } from './api-client';
+export { apiClient, getApiResourceUrl } from './api-client';
 export { setAccessToken, setAccessTokenRefreshHandler } from './auth-token';
 export {
   type City,
@@ -21,6 +21,7 @@ export {
   AIRLINE_QUERY_KEY,
   CHAT_ROOM_QUERY_KEY,
   COUNTRY_QUERY_KEY,
+  PLACE_QUERY_KEY,
   POST_QUERY_KEY,
   RECOMMENDATION_QUERY_KEY,
   TAG_QUERY_KEY,

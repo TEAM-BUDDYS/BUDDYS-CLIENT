@@ -25,6 +25,10 @@ export const END_POINT = {
   IMAGE: {
     PRESIGNED_URL: 'api/v1/images/presigned-url',
   },
+  PLACE: {
+    SEARCH: 'api/v1/places/search',
+    BOOKMARKS: 'api/v1/places/bookmarks',
+  },
   POST: {
     LIST: 'api/v1/posts',
     CREATE: 'api/v1/posts',

@@ -20,6 +20,14 @@ const excludePageParam = <Params extends { page?: unknown }>(
   return restParams;
 };
 
+const excludePageTokenParam = <Params extends { pageToken?: unknown }>(
+  params: Params,
+) => {
+  const { pageToken: _pageToken, ...restParams } = params;
+
+  return restParams;
+};
+
 export const AIRLINE_QUERY_KEY = {
   ALL: ['airlines'] as const,
   SEARCH: (params: GetQueryParams<'/api/v1/airlines/search'>) =>
@@ -66,6 +74,15 @@ export const COUNTRY_QUERY_KEY = {
       'search',
       params,
     ] as const,
+};
+
+export const PLACE_QUERY_KEY = {
+  ALL: ['places'] as const,
+  SEARCH: (params: GetQueryParams<'/api/v1/places/search'>) =>
+    [...PLACE_QUERY_KEY.ALL, 'search', excludePageTokenParam(params)] as const,
+  BOOKMARKS_ALL: () => [...PLACE_QUERY_KEY.ALL, 'bookmarks'] as const,
+  BOOKMARKS: (params?: GetQueryParams<'/api/v1/places/bookmarks'>) =>
+    [...PLACE_QUERY_KEY.BOOKMARKS_ALL(), excludePageParam(params)] as const,
 };
 
 export const POST_QUERY_KEY = {
