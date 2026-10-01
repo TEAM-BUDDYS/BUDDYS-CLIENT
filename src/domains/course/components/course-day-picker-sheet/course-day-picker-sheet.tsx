@@ -4,11 +4,14 @@ import { useId } from 'react';
 
 import { cn } from '@/lib/cn';
 import { BottomSheet } from '@/shared/components/ui';
-import { formatMonthDayWithWeekday } from '@/shared/utils/format-date-range';
+import {
+  formatDateToIsoDate,
+  formatMonthDayWithWeekday,
+} from '@/shared/utils/format-date-range';
 
 interface CourseDayPickerItem {
   dayNumber: number;
-  date?: string | null;
+  date?: Date | string | null;
 }
 
 interface CourseDayPickerSheetProps {
@@ -32,8 +35,8 @@ export const CourseDayPickerSheet = ({
     days.some(({ dayNumber }) => dayNumber === selectedDayNumber);
 
   const handleDaySelect = (dayNumber: number) => {
-    onDaySelect(dayNumber);
     onClose();
+    onDaySelect(dayNumber);
   };
 
   if (!open) {
@@ -73,7 +76,11 @@ export const CourseDayPickerSheet = ({
                 >
                   <span>{`Day ${dayNumber}`}</span>
                   {date && (
-                    <time dateTime={date}>
+                    <time
+                      dateTime={
+                        date instanceof Date ? formatDateToIsoDate(date) : date
+                      }
+                    >
                       {formatMonthDayWithWeekday(date)}
                     </time>
                   )}

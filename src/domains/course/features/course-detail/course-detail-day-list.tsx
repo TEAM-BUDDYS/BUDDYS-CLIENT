@@ -14,17 +14,14 @@ export const CourseDetailDayList = ({
 }: CourseDetailDayListProps) => {
   if (days.length === 0) {
     return (
-      <p
-        id="course-day-section"
-        className="text-body-r-14 px-4 py-16 text-center text-gray-500"
-      >
+      <p className="text-body-r-14 px-4 py-16 text-center text-gray-500">
         등록된 일정이 없어요.
       </p>
     );
   }
 
   return (
-    <div id="course-day-section" className="flex flex-col gap-6 py-6">
+    <div className="flex flex-col gap-2 bg-gray-50 py-2">
       {days.map((day, index) => (
         <CourseDetailDaySection
           key={day.dayNumber}

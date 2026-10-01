@@ -1,34 +1,53 @@
 import type { HTMLAttributes } from 'react';
 
-import { CommentItem } from '@/domains/posts/components/comment-item/comment-item';
-import type { PostDetailComment } from '@/domains/posts/model/comment';
 import { cn } from '@/lib/cn';
-import { MessageIcon } from '@/shared/components/icons';
-import { EmptyState } from '@/shared/components/ui';
+import { BookmarkIcon, MessageIcon } from '@/shared/components/icons';
+import { CommentItem } from '@/shared/components/ui/comment-item/comment-item';
+import { EmptyState } from '@/shared/components/ui/empty-state/empty-state';
 
-interface PostDetailCommentSectionProps extends HTMLAttributes<HTMLElement> {
-  viewCount: number;
+export interface CommentSectionItem {
+  commentId: number;
+  writerId: number;
+  writerName: string;
+  writerProfileImageUrl?: string | null;
+  content: string;
+  createdAt?: string;
+  timeAgo?: string;
+}
+
+interface CommentSectionProps extends HTMLAttributes<HTMLElement> {
+  bookmarkCount?: number;
   commentCount: number;
-  comments: PostDetailComment[];
+  comments: CommentSectionItem[];
+  viewCount: number;
   viewerUserId: number | null;
 }
 
-export const PostDetailCommentSection = ({
-  viewCount,
+export const CommentSection = ({
+  bookmarkCount,
   commentCount,
   comments,
+  viewCount,
   viewerUserId,
   className,
   ...props
-}: PostDetailCommentSectionProps) => {
+}: CommentSectionProps) => {
   return (
     <section className={cn('flex w-full flex-col gap-6', className)} {...props}>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         <span className="text-body-r-14 text-gray-800">조회 {viewCount}</span>
-        <div className="flex items-center gap-2">
+        <span className="flex items-center gap-1">
           <MessageIcon className="size-4 text-gray-500" />
           <span className="text-body-r-14 text-gray-800">{commentCount}</span>
-        </div>
+        </span>
+        {bookmarkCount !== undefined && (
+          <span className="flex items-center gap-1">
+            <BookmarkIcon className="size-4 text-gray-500" />
+            <span className="text-body-r-14 text-gray-800">
+              {bookmarkCount}
+            </span>
+          </span>
+        )}
       </div>
 
       {comments.length === 0 ? (
