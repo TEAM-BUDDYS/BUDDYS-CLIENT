@@ -17,6 +17,7 @@ import {
   convertChatRoomListResponse,
 } from './mapper';
 import type {
+  BlockChatPartnerResponse,
   CreateChatRoomRequest,
   CreateChatRoomResponse,
   GetChatRoomResponse,
@@ -24,6 +25,8 @@ import type {
   GetChatRoomsResponse,
   GetMessagesParams,
   GetMessagesResponse,
+  ReportChatPartnerRequest,
+  ReportChatPartnerResponse,
 } from './type';
 
 const getChatRooms = async (params?: GetChatRoomsParams) => {
@@ -96,6 +99,35 @@ const getMessages = async (
   return convertChatMessageListResponse(response);
 };
 
+const reportChatPartner = async (
+  chatRoomId: number,
+  body?: ReportChatPartnerRequest,
+) => {
+  const response = await apiClient
+    .post(END_POINT.CHAT_ROOM.REPORT(chatRoomId), {
+      json: body,
+    })
+    .json<ReportChatPartnerResponse>();
+
+  if (response.success !== true) {
+    throw new Error(response.message || '신고에 실패했습니다.');
+  }
+
+  return response;
+};
+
+const blockChatPartner = async (chatRoomId: number) => {
+  const response = await apiClient
+    .post(END_POINT.CHAT_ROOM.BLOCK(chatRoomId))
+    .json<BlockChatPartnerResponse>();
+
+  if (response.success !== true) {
+    throw new Error(response.message || '차단에 실패했습니다.');
+  }
+
+  return response;
+};
+
 export const CHAT_QUERY_OPTIONS = {
   INFINITE_LIST: (params?: GetChatRoomsParams) =>
     infiniteQueryOptions({
@@ -166,5 +198,19 @@ export const CHAT_MUTATION_OPTIONS = {
   CREATE: () =>
     mutationOptions({
       mutationFn: (body: CreateChatRoomRequest) => createChatRoom(body),
+    }),
+  REPORT: () =>
+    mutationOptions({
+      mutationFn: ({
+        chatRoomId,
+        body,
+      }: {
+        chatRoomId: number;
+        body?: ReportChatPartnerRequest;
+      }) => reportChatPartner(chatRoomId, body),
+    }),
+  BLOCK: () =>
+    mutationOptions({
+      mutationFn: (chatRoomId: number) => blockChatPartner(chatRoomId),
     }),
 };

@@ -1,31 +1,55 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
+import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { MoreIcon } from '@/shared/components/icons';
+import { useToast } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
+import { CHAT_MUTATION_OPTIONS } from '../../api/query';
 import {
   BottomSheetChat,
   ChatBottomSheetAction,
 } from '../../components/bottom-sheet-chat/bottom-sheet-chat';
 
-export const ChatRoomMenu = () => {
+interface ChatRoomMenuProps {
+  chatRoomId: number;
+}
+
+export const ChatRoomMenu = ({ chatRoomId }: ChatRoomMenuProps) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const reportMutation = useMutation(CHAT_MUTATION_OPTIONS.REPORT());
+  const blockMutation = useMutation(CHAT_MUTATION_OPTIONS.BLOCK());
+  const { showToast } = useToast();
 
   const handleAction = async (action: ChatBottomSheetAction) => {
-    if (action === 'block') {
-      //await blockUser();
-    } else if (action === 'report') {
-      //await reportUser();
-    } else {
+    if (action !== 'block' && action !== 'report') {
       return;
     }
 
-    //api 전송 성공 후
-    router.replace(ROUTES.CHAT.ROOT);
+    try {
+      if (action === 'block') {
+        await blockMutation.mutateAsync(chatRoomId);
+      } else {
+        await reportMutation.mutateAsync({ chatRoomId });
+      }
+
+      // 성공했을 때만 이동
+      router.replace(ROUTES.CHAT.ROOT);
+    } catch (error) {
+      Sentry.captureException(error);
+
+      showToast(
+        action === 'block'
+          ? '차단하지 못했어요. 다시 시도해 주세요.'
+          : '신고하지 못했어요. 다시 시도해 주세요.',
+        { variant: 'gray' },
+      );
+    }
   };
 
   return (
