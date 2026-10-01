@@ -1,6 +1,6 @@
 'use client';
 
-import { type SubmitEvent, useMemo, useState } from 'react';
+import { type SubmitEvent, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { CourseDetail } from '@/domains/course/api/type';
 import { CourseDayPickerSheet } from '@/domains/course/components/course-day-picker-sheet/course-day-picker-sheet';
@@ -38,6 +38,7 @@ export const CourseDetailView = ({
   );
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState(initialComments);
+  const pendingDayScrollRef = useRef<number | null>(null);
   const dayPickerDays = useMemo(
     () =>
       [...course.days]
@@ -53,10 +54,12 @@ export const CourseDetailView = ({
   const bookmarkCount =
     course.bookmarkCount + Number(isBookmarked) - Number(course.isBookmarked);
 
-  const handleDaySelect = (dayNumber: number) => {
-    setSelectedDayNumber(dayNumber);
+  useEffect(() => {
+    if (isDayPickerOpen || pendingDayScrollRef.current === null) return;
 
-    window.requestAnimationFrame(() => {
+    const dayNumber = pendingDayScrollRef.current;
+    pendingDayScrollRef.current = null;
+    const frameId = window.requestAnimationFrame(() => {
       const dayHeading = document.getElementById(
         `course-day-${dayNumber}-heading`,
       );
@@ -68,6 +71,13 @@ export const CourseDetailView = ({
         top: window.scrollY + dayHeading.getBoundingClientRect().top - 60,
       });
     });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [isDayPickerOpen]);
+
+  const handleDaySelect = (dayNumber: number) => {
+    pendingDayScrollRef.current = dayNumber;
+    setSelectedDayNumber(dayNumber);
   };
 
   const handleCommentSubmit = (event: SubmitEvent<HTMLFormElement>) => {
