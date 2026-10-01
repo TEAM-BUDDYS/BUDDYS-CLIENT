@@ -1,22 +1,22 @@
 'use client';
 
-import { Dropdown, FormLabel, TextField } from '@/shared/components/ui';
+import { FormLabel, TextField } from '@/shared/components/ui';
 
 import { SearchOptionField } from '../../components/search-option-field/search-option-field';
 import type { OnboardLocationOption } from '../../model/onboard';
 
 interface OnboardExchangeInfoStepProps {
+  countryKeyword: string;
   countryOptions: OnboardLocationOption[];
+  isCountrySearchError: boolean;
   selectedCountry: OnboardLocationOption | null;
-  hasMoreCountries: boolean;
-  isLoadingMoreCountries: boolean;
   school: string;
   selectedSchool: OnboardLocationOption | null;
   schoolResults: OnboardLocationOption[];
   startMonth: string;
   endMonth: string;
   onCountryChange: (value: OnboardLocationOption) => void;
-  onLoadMoreCountries: () => void;
+  onCountryKeywordChange: (value: string) => void;
   onSchoolChange: (value: string) => void;
   onSchoolSelect: (value: OnboardLocationOption) => void;
   onStartMonthChange: (value: string) => void;
@@ -24,17 +24,17 @@ interface OnboardExchangeInfoStepProps {
 }
 
 export const OnboardExchangeInfoStep = ({
+  countryKeyword,
   countryOptions,
+  isCountrySearchError,
   selectedCountry,
-  hasMoreCountries,
-  isLoadingMoreCountries,
   school,
   selectedSchool,
   schoolResults,
   startMonth,
   endMonth,
   onCountryChange,
-  onLoadMoreCountries,
+  onCountryKeywordChange,
   onSchoolChange,
   onSchoolSelect,
   onStartMonthChange,
@@ -44,17 +44,23 @@ export const OnboardExchangeInfoStep = ({
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-2">
         <FormLabel as="h2">파견 국가</FormLabel>
-        <Dropdown
-          options={countryOptions}
-          placeholder="국가 선택"
-          value={selectedCountry}
-          hasMore={hasMoreCountries}
-          isLoadingMore={isLoadingMoreCountries}
+        <SearchOptionField
+          id="exchange-country"
+          label="파견 국가 검색"
+          placeholder="국가명을 검색해주세요"
+          value={countryKeyword}
+          selectedOption={selectedCountry}
+          results={countryOptions}
           getOptionLabel={(country) => country.name}
           getOptionKey={(country) => country.id}
-          onChange={onCountryChange}
-          onLoadMore={onLoadMoreCountries}
+          onChange={onCountryKeywordChange}
+          onSelect={onCountryChange}
         />
+        {isCountrySearchError && (
+          <p className="text-caption-r-12 text-error" role="alert">
+            국가 목록을 불러오지 못했습니다. 다시 검색해주세요.
+          </p>
+        )}
       </div>
 
       <div className="flex flex-col gap-2">

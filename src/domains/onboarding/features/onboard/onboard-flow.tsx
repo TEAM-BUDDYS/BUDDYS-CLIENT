@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isHTTPError } from 'ky';
 import { useEffect, useState } from 'react';
 
-import { useCitySearch, useCountryList } from '@/shared/api';
+import { useCitySearch, useCountrySearch } from '@/shared/api';
 import { TAG_QUERY_OPTIONS } from '@/shared/api';
 import { useImageUpload } from '@/shared/api/image';
 import {
@@ -12,9 +12,11 @@ import {
   AsyncLoadingState,
   Button,
   EmptyState,
+  Modal,
   ProgressBar,
   useToast,
 } from '@/shared/components/ui';
+import { useDebouncedValue } from '@/shared/hooks/use-debounced-value';
 
 import {
   ONBOARDING_MUTATION_OPTIONS,
@@ -49,6 +51,7 @@ const NEXT_STEP_BY_STEP = {
 
 const ONBOARD_TAG_TYPES = ['ACTIVITY', 'INTEREST', 'TRAVEL_STYLE'] as const;
 const RECOMMENDED_USER_SIZE = 1;
+const COUNTRY_SEARCH_DEBOUNCE_MS = 300;
 
 type DisplayableRecommendedUser = RecommendedUser & {
   nickname: string;
@@ -80,14 +83,39 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
     PROGRESS_STEP_BY_STEP[currentStep as keyof typeof PROGRESS_STEP_BY_STEP];
   const canGoNext = onboardForm.canGoNext(currentStep);
   const [nicknameError, setNicknameError] = useState<string | null>(null);
+  const [checkedNickname, setCheckedNickname] = useState<string | null>(null);
+  const [isNicknameCheckModalOpen, setIsNicknameCheckModalOpen] =
+    useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const debouncedInterestCountryKeyword = useDebouncedValue(
+    onboardForm.interestCountryKeyword.trim(),
+    COUNTRY_SEARCH_DEBOUNCE_MS,
+  );
+  const debouncedExchangeCountryKeyword = useDebouncedValue(
+    onboardForm.exchangeCountryKeyword.trim(),
+    COUNTRY_SEARCH_DEBOUNCE_MS,
+  );
+  const isInterestCountrySearchSynced =
+    debouncedInterestCountryKeyword ===
+    onboardForm.interestCountryKeyword.trim();
+  const isExchangeCountrySearchSynced =
+    debouncedExchangeCountryKeyword ===
+    onboardForm.exchangeCountryKeyword.trim();
 
-  const {
-    countryOptions,
-    hasMoreCountries,
-    isLoadingMoreCountries,
-    loadMoreCountries,
-  } = useCountryList();
+  const interestCountrySearch = useCountrySearch({
+    keyword: debouncedInterestCountryKeyword,
+    enabled:
+      currentStep === 'interest-location' &&
+      !onboardForm.interestCountry &&
+      isInterestCountrySearchSynced,
+  });
+  const exchangeCountrySearch = useCountrySearch({
+    keyword: debouncedExchangeCountryKeyword,
+    enabled:
+      currentStep === 'exchange-info' &&
+      !onboardForm.exchangeCountry &&
+      isExchangeCountrySearchSynced,
+  });
   const interestCitySearch = useCitySearch({
     countryId: onboardForm.interestCountry?.id,
     keyword: onboardForm.interestCity,
@@ -148,6 +176,7 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
           | undefined;
 
         if (response?.code === 'AUTH-E003') {
+          setCheckedNickname(null);
           setNicknameError(response.message ?? '이미 사용 중인 닉네임입니다.');
           return;
         }
@@ -167,6 +196,11 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
     }
 
     if (currentStep === 'profile') {
+      if (checkedNickname !== onboardForm.nickname) {
+        setIsNicknameCheckModalOpen(true);
+        return;
+      }
+
       void handleOnboardingSubmit();
       return;
     }
@@ -195,16 +229,22 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
       <section className="flex flex-1 flex-col pt-10">
         {currentStep === 'interest-location' && (
           <OnboardInterestLocationStep
-            countryOptions={countryOptions}
+            countryKeyword={onboardForm.interestCountryKeyword}
+            countryOptions={interestCountrySearch.countries}
+            isCountrySearchError={
+              !onboardForm.interestCountry &&
+              isInterestCountrySearchSynced &&
+              interestCountrySearch.isError
+            }
             selectedCountry={onboardForm.interestCountry}
-            hasMoreCountries={hasMoreCountries}
-            isLoadingMoreCountries={isLoadingMoreCountries}
             city={onboardForm.interestCity}
             selectedCity={onboardForm.selectedInterestCity}
             cityResults={interestCitySearch.cities}
             isCitySearchError={interestCitySearch.isError}
             onCountryChange={onboardForm.handleInterestCountrySelect}
-            onLoadMoreCountries={loadMoreCountries}
+            onCountryKeywordChange={
+              onboardForm.handleInterestCountryKeywordChange
+            }
             onCityChange={onboardForm.handleInterestCityChange}
             onCitySelect={onboardForm.handleInterestCitySelect}
           />
@@ -212,17 +252,23 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
 
         {currentStep === 'exchange-info' && (
           <OnboardExchangeInfoStep
-            countryOptions={countryOptions}
+            countryKeyword={onboardForm.exchangeCountryKeyword}
+            countryOptions={exchangeCountrySearch.countries}
+            isCountrySearchError={
+              !onboardForm.exchangeCountry &&
+              isExchangeCountrySearchSynced &&
+              exchangeCountrySearch.isError
+            }
             selectedCountry={onboardForm.exchangeCountry}
-            hasMoreCountries={hasMoreCountries}
-            isLoadingMoreCountries={isLoadingMoreCountries}
             school={onboardForm.exchangeSchool}
             selectedSchool={onboardForm.selectedExchangeSchool}
             schoolResults={onboardForm.exchangeSchoolResults}
             startMonth={onboardForm.startMonth}
             endMonth={onboardForm.endMonth}
             onCountryChange={onboardForm.handleExchangeCountrySelect}
-            onLoadMoreCountries={loadMoreCountries}
+            onCountryKeywordChange={
+              onboardForm.handleExchangeCountryKeywordChange
+            }
             onSchoolChange={onboardForm.handleExchangeSchoolChange}
             onSchoolSelect={onboardForm.handleExchangeSchoolSelect}
             onStartMonthChange={onboardForm.handleStartMonthChange}
@@ -267,6 +313,8 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
           <OnboardProfileStep
             nickname={onboardForm.nickname}
             nicknameError={nicknameError}
+            checkedNickname={checkedNickname}
+            isCheckingNickname={false}
             gender={onboardForm.gender}
             birthDate={onboardForm.birthDate}
             bio={onboardForm.bio}
@@ -274,7 +322,16 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
             profileImageFile={onboardForm.profileImageFile}
             onNicknameChange={(value) => {
               setNicknameError(null);
+              setCheckedNickname(null);
               onboardForm.handleNicknameChange(value);
+            }}
+            onCheckNicknameDuplicate={() => {
+              showToast(
+                '닉네임 중복 확인을 할 수 없어요. 잠시 후 다시 시도해주세요.',
+                {
+                  variant: 'gray',
+                },
+              );
             }}
             onGenderChange={onboardForm.handleGenderChange}
             onBirthDateChange={onboardForm.handleBirthDateChange}
@@ -344,6 +401,15 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
           )}
         </div>
       )}
+      <Modal
+        type="alert"
+        buttonVariant="primary"
+        cancelLabel="확인"
+        open={isNicknameCheckModalOpen}
+        title="닉네임 중복확인 안내"
+        description="중복확인 후 다시 시도해 주세요."
+        onClose={() => setIsNicknameCheckModalOpen(false)}
+      />
     </main>
   );
 };

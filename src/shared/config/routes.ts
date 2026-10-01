@@ -1,10 +1,15 @@
 export const ROUTES = {
   HOME: '/',
+  PWA: '/pwa',
   LANDING: '/landing',
   AUTH: {
     LOGIN: '/login',
     KAKAO_CALLBACK: '/auth/kakao/callback',
     GOOGLE_CALLBACK: '/auth/google/callback',
+  },
+  VERIFICATION: {
+    UNIVERSITY_EMAIL: '/verification/university-email',
+    EXCHANGE_DOCUMENT: '/verification/exchange-document',
   },
   ONBOARDING: '/onboarding',
   ONBOARDING_INTRO: '/onboarding/intro',
@@ -15,7 +20,10 @@ export const ROUTES = {
   },
   PARTNER: '/partner',
   COURSE: {
+    ROOT: '/course',
     CREATE: '/course/post',
+    CUSTOMIZED_EXPLORE: '/course/customized-explore',
+    SUGGEST_EXPLORE: '/course/customized-explore?type=suggest',
   },
   CHAT: {
     ROOT: '/chat',

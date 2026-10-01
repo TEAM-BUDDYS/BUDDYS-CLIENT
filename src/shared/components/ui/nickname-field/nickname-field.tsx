@@ -5,7 +5,7 @@ import { NicknameCheckButton } from './nickname-check-button';
 
 interface NicknameFieldProps extends Pick<
   TextFieldProps,
-  'label' | 'message' | 'status' | 'disabled'
+  'label' | 'message' | 'status' | 'disabled' | 'required' | 'onBlur'
 > {
   value: string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -29,6 +29,8 @@ export const NicknameField = ({
   message,
   status,
   disabled,
+  required,
+  onBlur,
 }: NicknameFieldProps) => {
   const isNicknameUnchanged = value === initialNickname;
   const trimmedLength = value.trim().length;
@@ -49,6 +51,8 @@ export const NicknameField = ({
       className="pr-24"
       disabled={disabled}
       label={label}
+      required={required}
+      onBlur={onBlur}
       maxLength={NICKNAME_MAX_LENGTH}
       message={
         showDuplicateCheckSuccessMessage

@@ -4,10 +4,13 @@ import { APIProvider, Map } from '@vis.gl/react-google-maps';
 import { useState } from 'react';
 
 import type { Place } from '@/domains/course/api/type';
+import { CourseCurrentLocationMarker } from '@/domains/course/components/course-map/course-current-location-marker';
 import { CourseMapCamera } from '@/domains/course/components/course-map/course-map-camera';
 import { CourseMapMarker } from '@/domains/course/components/course-map/course-map-marker';
-import { useCurrentLocation } from '@/domains/course/hook/use-current-location';
-import type { CourseMapCenter } from '@/domains/course/model/course-map';
+import type {
+  CourseMapCameraState,
+  CourseMapCenter,
+} from '@/domains/course/model/course-map';
 import { AsyncErrorState } from '@/shared/components/ui';
 
 const FALLBACK_CENTER = {
@@ -17,21 +20,32 @@ const FALLBACK_CENTER = {
 
 interface CourseMapProps {
   places: Place[];
+  bottomOverlayRatio?: number;
+  currentLocation?: CourseMapCenter | null;
+  preserveCamera?: boolean;
+  showCurrentLocation?: boolean;
   selectedPlaceId?: string;
   cameraTarget?: CourseMapCenter | null;
+  initialCamera?: CourseMapCameraState | null;
+  onCameraChange?: (camera: CourseMapCameraState) => void;
   onPlaceSelect?: (placeId: string) => void;
 }
 
 export const CourseMap = ({
   places,
+  bottomOverlayRatio = 0,
+  currentLocation = null,
+  preserveCamera = false,
+  showCurrentLocation = false,
   selectedPlaceId,
   cameraTarget = null,
+  initialCamera = null,
+  onCameraChange,
   onPlaceSelect,
 }: CourseMapProps) => {
   const [hasMapLoadError, setHasMapLoadError] = useState(false);
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const mapId = process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID;
-  const { currentLocation } = useCurrentLocation();
 
   const selectedPlace = places.find(
     (place) => place.placeId === selectedPlaceId,
@@ -46,8 +60,7 @@ export const CourseMap = ({
       : null;
 
   const center = selectedPlaceCenter ?? currentLocation ?? FALLBACK_CENTER;
-  const resolvedCameraTarget =
-    cameraTarget ?? selectedPlaceCenter ?? currentLocation;
+  const resolvedCameraTarget = cameraTarget ?? selectedPlaceCenter;
 
   if (hasMapLoadError) {
     return (
@@ -72,16 +85,28 @@ export const CourseMap = ({
   }
 
   return (
-    <section className="relative h-80 w-full overflow-hidden rounded-2xl">
+    <section className="relative h-full w-full overflow-hidden rounded-2xl">
       <APIProvider apiKey={apiKey} onError={() => setHasMapLoadError(true)}>
         <Map
           mapId={mapId}
-          defaultCenter={center}
-          defaultZoom={15}
+          defaultCenter={initialCamera?.center ?? center}
+          defaultZoom={initialCamera?.zoom ?? 15}
           gestureHandling="greedy"
           disableDefaultUI
+          keyboardShortcuts={false}
+          onCameraChanged={({ detail }) =>
+            onCameraChange?.({ center: detail.center, zoom: detail.zoom })
+          }
         >
-          <CourseMapCamera center={resolvedCameraTarget} />
+          <CourseMapCamera
+            bottomOverlayRatio={bottomOverlayRatio}
+            center={resolvedCameraTarget}
+            preserveCamera={preserveCamera}
+          />
+
+          {showCurrentLocation && currentLocation && (
+            <CourseCurrentLocationMarker position={currentLocation} />
+          )}
 
           {places.map((place) => {
             if (place.latitude == null || place.longitude == null) return null;

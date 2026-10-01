@@ -71,7 +71,7 @@ export const IconButton = ({
       <span
         aria-hidden
         className={cn(
-          'inline-flex size-[24px] items-center justify-center text-current [&>svg]:size-full [&>svg]:shrink-0',
+          'inline-flex size-6 items-center justify-center text-current [&>svg]:size-full [&>svg]:shrink-0',
           iconClassName,
         )}
       >

@@ -4,22 +4,27 @@ import firstProfileImage from '@/shared/assets/icons/profile.svg';
 import {
   Dropdown,
   FormLabel,
+  NicknameField,
   ProfileImageInput,
   TextField,
 } from '@/shared/components/ui';
 import type { GenderType } from '@/types/gender';
 
+import { isValidDate } from '../../utils/is-valid-date';
 import { GENDER_OPTIONS } from './constant';
 
 interface OnboardProfileStepProps {
   nickname: string;
   nicknameError: string | null;
+  checkedNickname: string | null;
+  isCheckingNickname: boolean;
   gender: GenderType | null;
   birthDate: string;
   bio: string;
   isUploading: boolean;
   profileImageFile: File | null;
   onNicknameChange: (value: string) => void;
+  onCheckNicknameDuplicate: () => void;
   onGenderChange: (value: GenderType) => void;
   onBirthDateChange: (value: string) => void;
   onBioChange: (value: string) => void;
@@ -29,12 +34,15 @@ interface OnboardProfileStepProps {
 export const OnboardProfileStep = ({
   nickname,
   nicknameError,
+  checkedNickname,
+  isCheckingNickname,
   gender,
   birthDate,
   bio,
   isUploading,
   profileImageFile,
   onNicknameChange,
+  onCheckNicknameDuplicate,
   onGenderChange,
   onBirthDateChange,
   onBioChange,
@@ -45,6 +53,12 @@ export const OnboardProfileStep = ({
   const genderLabels = GENDER_OPTIONS.map((option) => option.label);
   const [isBlur, setIsBlur] = useState(false);
   const [currentNickname, setCurrentNickname] = useState('');
+  const [isBirthDateTouched, setIsBirthDateTouched] = useState(false);
+
+  const birthDateError =
+    isBirthDateTouched && birthDate.trim() && !isValidDate(birthDate)
+      ? '올바르지 않은 형식입니다.'
+      : undefined;
 
   const handleGenderChange = (label: string) => {
     const selectedGender = GENDER_OPTIONS.find(
@@ -100,14 +114,16 @@ export const OnboardProfileStep = ({
       </div>
 
       <div className="mb-[59px] flex flex-col gap-7">
-        <TextField
+        <NicknameField
           label="닉네임"
-          maxLength={8}
-          placeholder="닉네임을 입력하세요"
+          initialNickname=""
+          checkedNickname={checkedNickname}
+          isChecking={isCheckingNickname}
           required
           value={nickname}
           status={nicknameError ? 'error' : 'default'}
           message={nicknameError}
+          onCheckDuplicate={onCheckNicknameDuplicate}
           onChange={(event) => onNicknameChange(event.target.value)}
           onBlur={(event) => {
             setCurrentNickname(event.target.value);
@@ -130,6 +146,9 @@ export const OnboardProfileStep = ({
           placeholder="예: 2002.04.04"
           required
           value={birthDate}
+          status={birthDateError ? 'error' : 'default'}
+          message={birthDateError}
+          onBlur={() => setIsBirthDateTouched(true)}
           onChange={(event) => onBirthDateChange(event.target.value)}
         />
         <TextField

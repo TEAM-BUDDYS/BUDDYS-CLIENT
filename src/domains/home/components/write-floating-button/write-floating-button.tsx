@@ -36,7 +36,7 @@ export const WriteFloatingButton = () => {
       )}
       <div
         ref={containerRef}
-        className="pointer-events-none fixed bottom-22 left-1/2 z-40 flex w-full max-w-107.5 -translate-x-1/2 flex-col items-end px-4"
+        className="pointer-events-none fixed bottom-18.5 left-1/2 z-40 flex w-full max-w-107.5 -translate-x-1/2 flex-col items-end px-4"
       >
         {isMenuMounted && (
           <WriteFloatingMenu
