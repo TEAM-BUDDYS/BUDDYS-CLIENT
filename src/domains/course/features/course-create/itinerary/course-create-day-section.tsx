@@ -13,6 +13,7 @@ import { CourseCreateMemoCostSheet } from './course-create-memo-cost-sheet';
 
 interface CourseCreateDaySectionProps {
   day: CourseCreateDayFormState;
+  isFirst: boolean;
   isLast: boolean;
   onPlaceAdd: (dayNumber: number) => void;
   onImagesAdd: (dayNumber: number, files: File[]) => void;
@@ -25,6 +26,7 @@ interface CourseCreateDaySectionProps {
 
 export const CourseCreateDaySection = ({
   day,
+  isFirst,
   isLast,
   onPlaceAdd,
   onImagesAdd,
@@ -37,7 +39,8 @@ export const CourseCreateDaySection = ({
   return (
     <section
       className={cn(
-        'flex flex-col gap-8 py-10',
+        'flex flex-col gap-8 pb-10',
+        !isFirst && 'pt-10',
         !isLast && 'border-b border-gray-100',
       )}
       aria-labelledby={headingId}

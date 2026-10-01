@@ -10,6 +10,9 @@ if (!API_BASE_URL) {
   throw new Error('NEXT_PUBLIC_API_BASE_URL is not defined');
 }
 
+export const getApiResourceUrl = (resourceUrl: string) =>
+  new URL(resourceUrl, API_BASE_URL).toString();
+
 export const apiClient = ky.create({
   prefix: API_BASE_URL,
   credentials: 'include',

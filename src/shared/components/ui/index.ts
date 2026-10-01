@@ -41,6 +41,7 @@ export { NicknameField } from './nickname-field/nickname-field';
 export { PostMenuBottomSheet } from './post-menu-bottom-sheet/post-menu-bottom-sheet';
 export { ProfileImageInput } from './profile-image-input/profile-image-input';
 export { ProgressBar } from './progress-bar/progress-bar';
+export { SearchOptionField } from './search-option-field/search-option-field';
 export { Searchbar, type SearchbarSize } from './searchbar/searchbar';
 export { SearchbarWithDropdown } from './searchbar/searchbar-with-dropdown';
 export { Skeleton } from './skeleton/skeleton';

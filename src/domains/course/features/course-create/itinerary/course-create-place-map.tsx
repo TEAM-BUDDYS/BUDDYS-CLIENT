@@ -45,7 +45,9 @@ export const CourseCreatePlaceMap = ({
   const [hasMapLoadError, setHasMapLoadError] = useState(false);
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const mapId = process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID;
-  const { currentLocation } = useCurrentLocation();
+  const { currentLocation } = useCurrentLocation({
+    requestOnMount: center === null,
+  });
   const selectedPlace = places.find(
     ({ placeId }) => placeId === selectedPlaceId,
   );

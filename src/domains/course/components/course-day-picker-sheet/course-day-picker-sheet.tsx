@@ -9,14 +9,14 @@ import {
   formatMonthDayWithWeekday,
 } from '@/shared/utils/format-date-range';
 
-interface CourseDayPickerOption {
+interface CourseDayPickerItem {
   dayNumber: number;
-  date: Date | null;
+  date?: Date | string | null;
 }
 
 interface CourseDayPickerSheetProps {
   open: boolean;
-  days: CourseDayPickerOption[];
+  days: readonly CourseDayPickerItem[];
   selectedDayNumber: number | null;
   onClose: () => void;
   onDaySelect: (dayNumber: number) => void;
@@ -76,7 +76,11 @@ export const CourseDayPickerSheet = ({
                 >
                   <span>{`Day ${dayNumber}`}</span>
                   {date && (
-                    <time dateTime={formatDateToIsoDate(date)}>
+                    <time
+                      dateTime={
+                        date instanceof Date ? formatDateToIsoDate(date) : date
+                      }
+                    >
                       {formatMonthDayWithWeekday(date)}
                     </time>
                   )}

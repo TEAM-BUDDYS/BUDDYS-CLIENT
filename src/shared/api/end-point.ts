@@ -1,4 +1,7 @@
 export const END_POINT = {
+  AIRLINE: {
+    SEARCH: 'api/v1/airlines/search',
+  },
   AUTH: {
     KAKAO: 'api/v1/auth/kakao',
     GOOGLE: 'api/v1/auth/google',
@@ -21,6 +24,10 @@ export const END_POINT = {
   },
   IMAGE: {
     PRESIGNED_URL: 'api/v1/images/presigned-url',
+  },
+  PLACE: {
+    SEARCH: 'api/v1/places/search',
+    BOOKMARKS: 'api/v1/places/bookmarks',
   },
   POST: {
     LIST: 'api/v1/posts',
