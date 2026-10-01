@@ -60,6 +60,8 @@ const PostList = ({
     onIntersect: handleIntersect,
   });
 
+  const totalElements = data.pages[0]?.data?.totalElements ?? 0;
+
   if (isEmpty) {
     return (
       <div>
@@ -76,7 +78,7 @@ const PostList = ({
   return (
     <>
       <p className="text-caption-m-12 pt-4 text-gray-500">
-        총 {posts.length}건
+        총 {totalElements}건
       </p>
       <div className="flex flex-col gap-6 pt-4">
         {posts.map((post) => (
@@ -114,11 +116,21 @@ const PostList = ({
   );
 };
 
-export const PartnerNowTab = () => {
+interface PartnerNowTabProps {
+  isTopNavigationVisible: boolean;
+}
+
+export const PartnerNowTab = ({
+  isTopNavigationVisible,
+}: PartnerNowTabProps) => {
   const [bookmarkedItemIds, setBookmarkedItemIds] = useState<number[]>([]);
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
-  const { filterValue, appliedFilterKeys, handleFilterApply } =
-    usePartnerFilterValue();
+  const {
+    appliedFilterKeys,
+    appliedFilterSummary,
+    filterValue,
+    handleFilterApply,
+  } = usePartnerFilterValue();
   const { sheetRef, sheetScrollClassName } = useSheetScroll(isFilterSheetOpen);
 
   const handleFilterPress = (_filterKey: PartnerFilterKey) => {
@@ -142,29 +154,40 @@ export const PartnerNowTab = () => {
   return (
     <>
       <section className="flex flex-col">
-        <div className="mt-6 flex items-center justify-between">
-          <h2 className="text-title-b-18 text-gray-800">
-            원하는 조건으로 동행 찾기
-          </h2>
-          <p className="text-body-r-14 text-gray-500">체코 외 1</p>
-        </div>
+        <div
+          className={cn(
+            'sticky z-30 -mx-4 bg-white px-4',
+            isTopNavigationVisible ? 'top-[105px]' : 'top-0',
+          )}
+        >
+          <div className="flex items-center justify-between pt-6">
+            <h2 className="text-title-b-18 text-gray-800">
+              원하는 조건으로 동행 찾기
+            </h2>
+            {appliedFilterSummary && (
+              <p className="text-body-r-14 text-gray-500">
+                {appliedFilterSummary}
+              </p>
+            )}
+          </div>
 
-        <div className="flex scrollbar-none gap-2 overflow-x-auto py-3">
-          {partnerFilterItems.map((filterItem) => (
-            <Filter
-              key={filterItem.key}
-              label={filterItem.label}
-              pressed={appliedFilterKeys.includes(filterItem.key)}
-              onPress={() => handleFilterPress(filterItem.key)}
-            />
-          ))}
-          <div aria-hidden="true" className="w-2 shrink-0" />
-        </div>
+          <div className="flex scrollbar-none gap-2 overflow-x-auto py-3">
+            {partnerFilterItems.map((filterItem) => (
+              <Filter
+                key={filterItem.key}
+                label={filterItem.label}
+                pressed={appliedFilterKeys.includes(filterItem.key)}
+                onPress={() => handleFilterPress(filterItem.key)}
+              />
+            ))}
+            <div aria-hidden="true" className="w-2 shrink-0" />
+          </div>
 
-        <hr
-          className="-mx-4 h-2 border-0 bg-gray-50 opacity-50"
-          aria-hidden="true"
-        />
+          <hr
+            className="-mx-4 h-2 border-0 bg-gray-50 opacity-50"
+            aria-hidden="true"
+          />
+        </div>
 
         <AsyncBoundary
           className="py-8"

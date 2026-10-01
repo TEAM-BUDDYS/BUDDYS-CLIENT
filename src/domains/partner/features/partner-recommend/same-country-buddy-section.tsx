@@ -2,8 +2,8 @@
 
 import { useSuspenseQuery } from '@tanstack/react-query';
 
-import { HOME_QUERY_OPTIONS } from '@/domains/home/api/query';
-import type { ExchangeCountryRecommendedUser } from '@/domains/home/api/type';
+import { HOME_QUERY_OPTIONS } from '@/domains/partner/api/query';
+import type { ExchangeCountryRecommendedUser } from '@/domains/partner/api/type';
 import { ProfileCard } from '@/domains/partner/components/profile-card/profile-card';
 import { AsyncBoundary, EmptyState } from '@/shared/components/ui';
 

@@ -50,7 +50,7 @@ export interface paths {
     get: operations['getCourseDetail'];
     /**
      * 코스 수정
-     * @description 코스 작성자가 코스 정보를 수정합니다. 요청 본문으로 국가/도시/날짜/제목/내용/태그/일자별 사진·장소·메모·비용/항공편 정보 전체를 대체합니다.
+     * @description 코스 작성자가 코스 정보를 수정합니다. 요청 본문으로 국가/도시/날짜/제목/내용/태그/일자별 사진·장소·메모·비용/항공편 정보 전체를 대체합니다. 출발일(startDate)과 도착일(endDate)은 선택 입력이며, 둘 다 생략하면 날짜 없이 수정됩니다. 단, 하나만 입력하면 잘못된 요청으로 처리됩니다.
      */
     put: operations['updateCourse'];
     post?: never;
@@ -170,7 +170,7 @@ export interface paths {
     };
     /**
      * 동행 게시글 목록 조회
-     * @description 모집중인 동행 게시글 목록을 조건에 따라 조회합니다.
+     * @description 모집중인 삭제되지 않은 동행 게시글 목록을 조건에 따라 조회합니다. totalElements는 페이지 번호·크기와 무관한 검색·필터 조건에 일치하는 전체 게시글 수입니다.
      */
     get: operations['getPosts'];
     put?: never;
@@ -323,7 +323,7 @@ export interface paths {
     put?: never;
     /**
      * 코스 게시글 작성
-     * @description 로그인한 사용자가 여행 코스 게시글을 작성합니다.
+     * @description 로그인한 사용자가 여행 코스 게시글을 작성합니다. 출발일(startDate)과 도착일(endDate)은 선택 입력이며, 둘 다 생략하면 날짜 없이 코스가 생성됩니다. 단, 하나만 입력하면 잘못된 요청으로 처리됩니다.
      */
     post: operations['createCourse'];
     delete?: never;
@@ -879,7 +879,7 @@ export interface paths {
     };
     /**
      * 통합 검색
-     * @description 검색어로 코스, 사용자, 모집 중 동행 게시글을 동시에 검색합니다. 각 영역에 동일한 페이지 번호와 크기를 적용합니다.
+     * @description 검색어로 코스, 사용자, 모집 중 동행 게시글을 동시에 검색합니다. 각 영역에 동일한 페이지 번호와 크기를 적용합니다. posts.totalElements는 페이지 번호·크기와 무관하게 검색어에 일치하는 삭제되지 않은 모집 중 게시글의 전체 수입니다.
      */
     get: operations['search'];
     put?: never;
@@ -999,7 +999,7 @@ export interface paths {
     };
     /**
      * 저장한 게시글 목록 조회
-     * @description 로그인한 사용자가 저장한 게시글 목록을 최신 저장순으로 조회합니다.
+     * @description 로그인한 사용자가 저장한 게시글 목록을 최신 저장순으로 조회합니다. totalElements는 모집 상태와 무관하게 해당 사용자가 저장한 삭제되지 않은 전체 게시글 수입니다.
      */
     get: operations['getBookmarkedPosts'];
     put?: never;
@@ -1224,7 +1224,7 @@ export interface paths {
     };
     /**
      * 도시 검색
-     * @description 특정 국가에 속한 도시를 검색합니다.
+     * @description 특정 국가에 속한 도시를 검색합니다. 응답의 latitude/longitude는 해당 도시의 중심 좌표로, 근처 장소 조회(/api/v1/places/nearby)의 lat/lng로 그대로 사용할 수 있습니다. 일부 도시는 좌표가 없어 null일 수 있습니다. recommendedRadius는 도시 인구 기반으로 추정한 추천 반경(미터)으로, 동일 API의 radius로 사용할 수 있습니다.
      */
     get: operations['searchCities'];
     put?: never;
@@ -1428,6 +1428,16 @@ export interface components {
        *     ]
        */
       imageUrls: string[];
+      /**
+       * @description 해당 일자의 메모
+       * @example 예약 필수
+       */
+      memo?: string;
+      /**
+       * @description 해당 일자의 비용
+       * @example 22000
+       */
+      cost?: number;
       /** @description 해당 일자에 방문한 장소 목록 (최대 10곳) */
       places?: components['schemas']['CoursePlaceRequest'][];
       /** @description 해당 일자의 항공편 목록 (최대 5개) */
@@ -1499,16 +1509,6 @@ export interface components {
        * @example 0
        */
       orderNo?: number;
-      /**
-       * @description 메모
-       * @example 예약 필수
-       */
-      memo?: string;
-      /**
-       * @description 비용
-       * @example 22000
-       */
-      cost?: number;
     };
     UpdateCourseRequest: {
       /**
@@ -1537,16 +1537,16 @@ export interface components {
       content?: string;
       /**
        * Format: date
-       * @description 출발일
+       * @description 출발일. 미입력 시 날짜 없이 수정됩니다.
        * @example 2026-09-01
        */
-      startDate: string;
+      startDate?: string | null;
       /**
        * Format: date
-       * @description 도착일
+       * @description 도착일. 미입력 시 날짜 없이 수정됩니다.
        * @example 2026-09-05
        */
-      endDate: string;
+      endDate?: string | null;
       /**
        * @description 연결할 태그 ID 목록 (활동 최대 3개, 관심사 최대 2개, 동행스타일 최대 2개, 활동 태그 1개 이상 필수)
        * @example [
@@ -1938,16 +1938,16 @@ export interface components {
       content?: string;
       /**
        * Format: date
-       * @description 출발일
+       * @description 출발일. 미입력 시 날짜 없이 코스가 생성됩니다.
        * @example 2026-09-01
        */
-      startDate?: string;
+      startDate?: string | null;
       /**
        * Format: date
-       * @description 도착일
+       * @description 도착일. 미입력 시 날짜 없이 코스가 생성됩니다.
        * @example 2026-09-05
        */
-      endDate?: string;
+      endDate?: string | null;
       /**
        * @description 연결할 태그 ID 목록 (활동 최대 3개, 관심사 최대 2개, 동행스타일 최대 2개, 활동 태그 1개 이상 필수)
        * @example [
@@ -2687,6 +2687,12 @@ export interface components {
        * @example true
        */
       hasNext?: boolean;
+      /**
+       * Format: int64
+       * @description 페이지 번호·크기와 무관한 조회 조건에 일치하는 전체 게시글 수. 저장 목록은 해당 사용자가 저장한 삭제되지 않은 게시글 수입니다.
+       * @example 42
+       */
+      totalElements?: number;
     };
     PostSummaryCountryResponse: {
       /**
@@ -3739,13 +3745,13 @@ export interface components {
        * @description 출발일
        * @example 2026-09-01
        */
-      startDate: string;
+      startDate: string | null;
       /**
        * Format: date
        * @description 도착일
        * @example 2026-09-05
        */
-      endDate: string;
+      endDate: string | null;
       /** @description 연결된 태그 목록 */
       tags: components['schemas']['CourseTagResponse'][];
       /** @description 함께한 유저 목록 */
@@ -3805,6 +3811,16 @@ export interface components {
       date: string | null;
       /** @description 해당 일자의 사진 목록 */
       imageUrls: string[];
+      /**
+       * @description 해당 일자의 메모
+       * @example 예약 필수
+       */
+      memo: string | null;
+      /**
+       * @description 해당 일자의 비용
+       * @example 22000
+       */
+      cost: number | null;
       /** @description 해당 일자에 방문한 장소 목록 */
       places: components['schemas']['PlaceResponse'][];
       /** @description 해당 일자의 항공편 목록 */
@@ -4019,6 +4035,22 @@ export interface components {
        * @example 서울
        */
       koreanName?: string | null;
+      /**
+       * @description 도시 중심 위도. 근처 장소 조회(/api/v1/places/nearby) 요청 시 lat로 사용할 수 있습니다.
+       * @example 37.5665
+       */
+      latitude?: number | null;
+      /**
+       * @description 도시 중심 경도. 근처 장소 조회(/api/v1/places/nearby) 요청 시 lng로 사용할 수 있습니다.
+       * @example 126.978
+       */
+      longitude?: number | null;
+      /**
+       * Format: int32
+       * @description 도시 인구 기반으로 추정한 추천 검색 반경(미터). 근처 장소 조회(/api/v1/places/nearby) 요청 시 radius로 사용할 수 있습니다.
+       * @example 25000
+       */
+      recommendedRadius?: number;
     };
     BaseResponseChatRoomListResponse: {
       success?: boolean;

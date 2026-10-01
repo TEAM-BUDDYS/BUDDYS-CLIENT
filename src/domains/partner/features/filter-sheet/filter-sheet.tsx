@@ -7,7 +7,6 @@ import {
 import { XIcon } from '@/shared/components/icons';
 import { Header } from '@/shared/components/layout';
 import {
-  AsyncBoundary,
   Button,
   ChipGroup,
   FormLabel,
@@ -74,34 +73,15 @@ export const FilterSheet = ({ value, onClose, onApply }: FilterSheetProps) => {
         />
       </div>
       <main className="flex flex-col gap-6 px-4 pt-15 pb-26">
-        <div className="flex flex-col gap-3 py-4">
+        <div className="mt-4 flex flex-col gap-3">
           <FormLabel as="p" className="text-body-sb-16">
             국가
           </FormLabel>
-          <AsyncBoundary
-            loadingFallback={
-              <p
-                role="status"
-                className="text-body-m-15 rounded-xl bg-gray-50 px-4 py-3.5 text-gray-500"
-              >
-                국가 목록을 불러오는 중입니다.
-              </p>
-            }
-            errorFallback={({ reset }) => (
-              <button
-                type="button"
-                className="text-body-m-15 w-full rounded-xl bg-gray-50 px-4 py-3.5 text-left text-red-500"
-                onClick={reset}
-              >
-                국가 목록을 불러오지 못했습니다. 다시 시도
-              </button>
-            )}
-          >
-            <CountryFilterField
-              value={filterValue.country}
-              onChange={(country) => updateFilterValue('country', country)}
-            />
-          </AsyncBoundary>
+          <CountryFilterField
+            key={filterValue.country?.id ?? 'empty'}
+            value={filterValue.country}
+            onChange={(country) => updateFilterValue('country', country)}
+          />
         </div>
         <div className="flex flex-col gap-3">
           <FormLabel as="p" className="text-body-sb-16">
@@ -184,7 +164,7 @@ export const FilterSheet = ({ value, onClose, onApply }: FilterSheetProps) => {
           />
         </div>
       </main>
-      <div className="fixed right-0 bottom-0 left-0 z-10 mx-auto flex max-w-107.5 gap-3 bg-white px-4 pt-3 pb-5">
+      <div className="fixed right-0 bottom-0 left-0 z-10 mx-auto flex max-w-107.5 gap-3 bg-white px-4 pt-3 pb-5 shadow-[0_-2px_16px_0_rgba(0,0,0,0.04)]">
         <Button
           variant="secondary"
           className="h-13 max-w-21 flex-none rounded-xl"

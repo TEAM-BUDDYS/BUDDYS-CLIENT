@@ -1,35 +1,80 @@
 'use client';
 
-import { type Country, useCountryList } from '@/shared/api';
-import { Dropdown } from '@/shared/components/ui';
+import { type UIEvent, useState } from 'react';
+
+import { type Country, useCountrySearch } from '@/shared/api';
+import { OptionItem, OptionList, Searchbar } from '@/shared/components/ui';
+import { useDebouncedValue } from '@/shared/hooks/use-debounced-value';
 
 interface CountryFilterFieldProps {
   value: Country | null;
-  onChange: (value: Country) => void;
+  onChange: (value: Country | null) => void;
 }
 
 export const CountryFilterField = ({
   value,
   onChange,
 }: CountryFilterFieldProps) => {
-  const {
-    countryOptions,
-    hasMoreCountries,
-    isLoadingMoreCountries,
-    loadMoreCountries,
-  } = useCountryList();
+  const [keyword, setKeyword] = useState(value?.name ?? '');
+  const debouncedKeyword = useDebouncedValue(keyword, 300);
+  const trimmedKeyword = keyword.trim();
+  const isSelectedCountry = value?.name === trimmedKeyword;
+  const isSearchKeywordSynced = debouncedKeyword.trim() === trimmedKeyword;
+  const { countries, loadMoreCountries } = useCountrySearch({
+    keyword: debouncedKeyword,
+    enabled: !isSelectedCountry,
+  });
+  const countryResults = isSearchKeywordSynced ? countries : [];
+  const isResultOpen = countryResults.length > 0;
+  const listboxId = 'partner-country-filter-results';
+
+  const handleKeywordChange = (nextKeyword: string) => {
+    setKeyword(nextKeyword);
+
+    if (value && value.name !== nextKeyword.trim()) {
+      onChange(null);
+    }
+  };
+
+  const handleCountrySelect = (country: Country) => {
+    setKeyword(country.name);
+    onChange(country);
+  };
+
+  const handleResultScroll = (event: UIEvent<HTMLUListElement>) => {
+    const { clientHeight, scrollHeight, scrollTop } = event.currentTarget;
+
+    if (scrollHeight - scrollTop <= clientHeight + 24) {
+      loadMoreCountries();
+    }
+  };
 
   return (
-    <Dropdown
-      options={countryOptions}
-      value={value}
-      placeholder="선택해주세요."
-      hasMore={hasMoreCountries}
-      isLoadingMore={isLoadingMoreCountries}
-      getOptionLabel={(country) => country.name}
-      getOptionKey={(country) => country.id}
-      onChange={onChange}
-      onLoadMore={loadMoreCountries}
-    />
+    <div className="relative w-full">
+      <Searchbar
+        aria-autocomplete="list"
+        aria-controls={isResultOpen ? listboxId : undefined}
+        aria-expanded={isResultOpen}
+        aria-haspopup="listbox"
+        aria-label="국가 검색"
+        placeholder="국가명을 검색해주세요"
+        role="combobox"
+        size="medium"
+        value={keyword}
+        onChange={handleKeywordChange}
+      />
+      {isResultOpen && (
+        <OptionList id={listboxId} onScroll={handleResultScroll}>
+          {countryResults.map((country) => (
+            <OptionItem
+              key={country.id}
+              option={country.name}
+              isSelected={value?.id === country.id}
+              onSelect={() => handleCountrySelect(country)}
+            />
+          ))}
+        </OptionList>
+      )}
+    </div>
   );
 };
