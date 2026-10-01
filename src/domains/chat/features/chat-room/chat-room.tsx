@@ -200,9 +200,12 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
           isFetchPreviousMessagesError={isFetchNextPageError}
           onLoadPreviousMessages={fetchNextPage}
         />
-        <div className="mx-4 my-4">
-          <Button>코스 기록 바로가기</Button>
-        </div>
+        {!isInputDisabled && (
+          <div className="mx-4 mb-4">
+            <Button>코스 기록 바로가기</Button>
+          </div>
+        )}
+
         <BottomActionBar
           className="border-t border-t-gray-100"
           value={message}
