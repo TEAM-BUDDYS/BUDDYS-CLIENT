@@ -1,12 +1,13 @@
 'use client';
 
 import * as Sentry from '@sentry/nextjs';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { CHAT_ROOM_QUERY_KEY } from '@/shared/api';
 import { MoreIcon } from '@/shared/components/icons';
-import { useToast } from '@/shared/components/ui';
+import { AsyncLoadingState, useToast } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
 import { CHAT_MUTATION_OPTIONS } from '../../api/query';
@@ -22,11 +23,30 @@ interface ChatRoomMenuProps {
 export const ChatRoomMenu = ({ chatRoomId }: ChatRoomMenuProps) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  const reportMutation = useMutation(CHAT_MUTATION_OPTIONS.REPORT());
-  const blockMutation = useMutation(CHAT_MUTATION_OPTIONS.BLOCK());
   const { showToast } = useToast();
+  const queryClient = useQueryClient();
+
+  const refreshChatRoomDetail = () =>
+    queryClient.invalidateQueries({
+      queryKey: CHAT_ROOM_QUERY_KEY.DETAIL(chatRoomId),
+      exact: true,
+    });
+
+  const reportMutation = useMutation({
+    ...CHAT_MUTATION_OPTIONS.REPORT(),
+    onSuccess: refreshChatRoomDetail,
+  });
+
+  const blockMutation = useMutation({
+    ...CHAT_MUTATION_OPTIONS.BLOCK(),
+    onSuccess: refreshChatRoomDetail,
+  });
+
+  const isProcessing = reportMutation.isPending || blockMutation.isPending;
 
   const handleAction = async (action: ChatBottomSheetAction) => {
+    if (isProcessing) return;
+
     if (action !== 'block' && action !== 'report') {
       return;
     }
@@ -38,7 +58,6 @@ export const ChatRoomMenu = ({ chatRoomId }: ChatRoomMenuProps) => {
         await reportMutation.mutateAsync({ chatRoomId });
       }
 
-      // 성공했을 때만 이동
       router.replace(ROUTES.CHAT.ROOT);
     } catch (error) {
       Sentry.captureException(error);
@@ -54,6 +73,13 @@ export const ChatRoomMenu = ({ chatRoomId }: ChatRoomMenuProps) => {
 
   return (
     <>
+      {isProcessing && (
+        <AsyncLoadingState
+          title="처리 중이에요"
+          className="fixed inset-0 z-50 bg-white"
+        />
+      )}
+
       <button
         className="-mr-2 p-2.5"
         type="button"

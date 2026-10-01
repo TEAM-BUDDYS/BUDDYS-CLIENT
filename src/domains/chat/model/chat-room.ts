@@ -1,6 +1,7 @@
 import { ChatRoomParticipant } from './chat-list';
 
 export interface ChatRoomDetail {
+  canSendMessage: boolean;
   createdAt: string;
   participantNickname: string;
 }

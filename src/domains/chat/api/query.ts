@@ -52,6 +52,7 @@ const getChatRoom = async (chatRoomId: number): Promise<ChatRoomDetail> => {
     .get(END_POINT.CHAT_ROOM.DETAIL(chatRoomId))
     .json<GetChatRoomResponse>();
 
+  const canSendMessage = response.data?.canSendMessage;
   const createdAt = response.data?.createdAt;
   const participantNickname = response.data?.participant?.nickname;
 
@@ -60,7 +61,8 @@ const getChatRoom = async (chatRoomId: number): Promise<ChatRoomDetail> => {
     typeof createdAt !== 'string' ||
     createdAt.length === 0 ||
     typeof participantNickname !== 'string' ||
-    participantNickname.length === 0
+    participantNickname.length === 0 ||
+    typeof canSendMessage !== 'boolean'
   ) {
     throw new Error(
       response.message || '채팅방 상세 응답이 올바르지 않습니다.',
@@ -68,6 +70,7 @@ const getChatRoom = async (chatRoomId: number): Promise<ChatRoomDetail> => {
   }
 
   return {
+    canSendMessage,
     createdAt,
     participantNickname,
   };
