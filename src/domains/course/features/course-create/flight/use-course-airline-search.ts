@@ -35,15 +35,17 @@ export const useCourseAirlineSearch = ({
   });
 
   const loadMore = () => {
-    if (
-      airlineSearchQuery.hasNextPage &&
-      !airlineSearchQuery.isFetchingNextPage
-    ) {
+    if (airlineSearchQuery.hasNextPage && !airlineSearchQuery.isFetching) {
       void airlineSearchQuery.fetchNextPage();
     }
   };
 
   const retry = () => {
+    if (airlineSearchQuery.isFetchNextPageError) {
+      void airlineSearchQuery.fetchNextPage();
+      return;
+    }
+
     void airlineSearchQuery.refetch();
   };
 
