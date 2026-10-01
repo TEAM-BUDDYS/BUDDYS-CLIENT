@@ -76,7 +76,8 @@ export const ChatRoomMenu = ({ chatRoomId }: ChatRoomMenuProps) => {
       {isProcessing && (
         <AsyncLoadingState
           title="처리 중이에요"
-          className="fixed inset-0 z-50 bg-white"
+          description="잠시만 기다려 주세요."
+          className="fixed inset-0 z-50 mx-auto w-full max-w-[430px] min-w-[375px] bg-white"
         />
       )}
 

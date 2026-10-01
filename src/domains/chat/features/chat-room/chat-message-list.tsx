@@ -115,7 +115,7 @@ export const ChatMessageList = ({
           ),
         )}
       </div>
-      <div ref={bottomRef} />
+      <div ref={bottomRef} className="h-4 shrink-0" aria-hidden="true" />
     </div>
   );
 };
