@@ -47,14 +47,15 @@ export const TagEditSection = ({
             {tag.name}
           </Chip>
         ))}
-        <IconButton
-          variant="primary"
-          icon={<EditIcon />}
-          aria-label={isEditing ? '태그 편집 닫기' : '태그 편집'}
-          aria-expanded={isEditing}
-          className="size-10 px-2 pt-1.75 pb-2.25"
-          onClick={() => setIsEditing((prevIsEditing) => !prevIsEditing)}
-        />
+        {!isEditing && (
+          <IconButton
+            variant="primary"
+            icon={<EditIcon />}
+            aria-label="태그 편집"
+            className="size-10 px-2 pt-1.75 pb-2.25"
+            onClick={() => setIsEditing(true)}
+          />
+        )}
       </div>
 
       {isEditing && (
