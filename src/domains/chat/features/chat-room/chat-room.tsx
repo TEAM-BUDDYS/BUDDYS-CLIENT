@@ -30,8 +30,6 @@ interface ChatRoomProps {
 export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
   const { userId: currentUserId } = useAuthSession();
   const [message, setMessage] = useState('');
-  // 실제 서버 응답 필드에 맞춰 수정 예정
-  const isInputDisabled = false;
   const [realtimeMessages, setRealtimeMessages] = useState<ChatMessageData[]>(
     [],
   );
@@ -48,6 +46,8 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
   const { data: chatRoomData } = useSuspenseQuery(
     CHAT_QUERY_OPTIONS.DETAIL(chatRoomId),
   );
+
+  const isInputDisabled = !chatRoomData.canSendMessage;
 
   const {
     data: messagePages,
