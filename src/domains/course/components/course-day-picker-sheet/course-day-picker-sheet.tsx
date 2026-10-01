@@ -9,9 +9,14 @@ import {
   formatMonthDayWithWeekday,
 } from '@/shared/utils/format-date-range';
 
+interface CourseDayPickerOption {
+  dayNumber: number;
+  date: Date | null;
+}
+
 interface CourseDayPickerSheetProps {
   open: boolean;
-  dates: Date[];
+  days: CourseDayPickerOption[];
   selectedDayNumber: number | null;
   onClose: () => void;
   onDaySelect: (dayNumber: number) => void;
@@ -19,7 +24,7 @@ interface CourseDayPickerSheetProps {
 
 export const CourseDayPickerSheet = ({
   open,
-  dates,
+  days,
   selectedDayNumber,
   onClose,
   onDaySelect,
@@ -27,13 +32,11 @@ export const CourseDayPickerSheet = ({
   const titleId = useId();
   const hasSelectedDay =
     selectedDayNumber !== null &&
-    Number.isInteger(selectedDayNumber) &&
-    selectedDayNumber >= 1 &&
-    selectedDayNumber <= dates.length;
+    days.some(({ dayNumber }) => dayNumber === selectedDayNumber);
 
   const handleDaySelect = (dayNumber: number) => {
-    onDaySelect(dayNumber);
     onClose();
+    onDaySelect(dayNumber);
   };
 
   if (!open) {
@@ -56,8 +59,7 @@ export const CourseDayPickerSheet = ({
         </h2>
 
         <ul className="flex min-h-0 flex-1 scrollbar-none flex-col overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:hidden">
-          {dates.map((date, index) => {
-            const dayNumber = index + 1;
+          {days.map(({ dayNumber, date }) => {
             const isSelected = selectedDayNumber === dayNumber;
 
             return (
@@ -73,9 +75,11 @@ export const CourseDayPickerSheet = ({
                   onClick={() => handleDaySelect(dayNumber)}
                 >
                   <span>{`Day ${dayNumber}`}</span>
-                  <time dateTime={formatDateToIsoDate(date)}>
-                    {formatMonthDayWithWeekday(date)}
-                  </time>
+                  {date && (
+                    <time dateTime={formatDateToIsoDate(date)}>
+                      {formatMonthDayWithWeekday(date)}
+                    </time>
+                  )}
                 </button>
               </li>
             );

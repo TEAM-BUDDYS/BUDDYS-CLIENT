@@ -22,7 +22,10 @@ export const CourseDetailDaySection = ({
   const headingId = `course-day-${day.dayNumber}-heading`;
 
   return (
-    <section className="flex flex-col gap-6" aria-labelledby={headingId}>
+    <section
+      className="flex flex-col gap-6 bg-white py-6"
+      aria-labelledby={headingId}
+    >
       <CourseDayHeader
         className="px-4"
         id={headingId}
