@@ -22,6 +22,7 @@ import { CourseCreateDateStep } from './course-create-date-step';
 import { CourseCreateDetailStep } from './course-create-detail-step';
 import { CourseCreateDurationStep } from './course-create-duration-step';
 import { CourseCreateQuestionHeader } from './course-create-question-header';
+import { CourseCreateFlightForm } from './flight/course-create-flight-form';
 import { CourseCreateItineraryStep } from './itinerary/course-create-itinerary-step';
 import type { CourseCreateScreen, CourseCreateValue } from './model';
 import { useCourseCreateForm } from './use-course-create-form';
@@ -35,7 +36,21 @@ export const CourseCreateFlow = ({ onComplete }: CourseCreateFlowProps) => {
   const [currentScreen, setCurrentScreen] =
     useState<CourseCreateScreen>('country');
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [flightDayNumber, setFlightDayNumber] = useState<number | null>(null);
   const courseCreateForm = useCourseCreateForm();
+
+  if (flightDayNumber !== null) {
+    return (
+      <CourseCreateFlightForm
+        onBack={() => setFlightDayNumber(null)}
+        onConfirm={(flight) => {
+          courseCreateForm.addDayFlight(flightDayNumber, flight);
+          setFlightDayNumber(null);
+        }}
+      />
+    );
+  }
+
   const currentProgressStep =
     COURSE_CREATE_PROGRESS_STEP_BY_SCREEN[currentScreen];
   const canGoNext = courseCreateForm.canGoNext(currentScreen);
@@ -143,9 +158,7 @@ export const CourseCreateFlow = ({ onComplete }: CourseCreateFlowProps) => {
         <div
           className={cn(
             'flex flex-col',
-            currentScreen === 'duration' || currentScreen === 'itinerary'
-              ? 'gap-10'
-              : 'gap-6',
+            currentScreen === 'duration' ? 'gap-10' : 'gap-6',
           )}
         >
           {isQuestionScreen && (
@@ -207,6 +220,7 @@ export const CourseCreateFlow = ({ onComplete }: CourseCreateFlowProps) => {
               onDayImagesAdd={courseCreateForm.addDayImages}
               onDayImageRemove={courseCreateForm.removeDayImage}
               onDayMemoCostChange={courseCreateForm.updateDayMemoCost}
+              onFlightDaySelect={setFlightDayNumber}
             />
           )}
         </div>

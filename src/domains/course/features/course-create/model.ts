@@ -4,6 +4,7 @@ import type { components } from '@/types/schema';
 import type { BookmarkedPlace, Place } from '../../api/type';
 
 type CourseDayRequest = components['schemas']['CourseDayRequest'];
+type CourseFlightRequest = components['schemas']['CourseFlightRequest'];
 
 export type CourseCreateScreen =
   | 'country'
@@ -41,6 +42,15 @@ export interface CourseCreateImageDraft {
   previewUrl: string;
 }
 
+export interface CourseCreateFlightFormState {
+  airline: CourseFlightRequest['airline'];
+  flightNumber: NonNullable<CourseFlightRequest['flightNumber']>;
+  departureAirport: CourseFlightRequest['departureAirport'];
+  departureTime: string;
+  arrivalAirport: CourseFlightRequest['arrivalAirport'];
+  arrivalTime: string;
+}
+
 export interface CourseCreateDayFormState {
   dayNumber: CourseDayRequest['dayNumber'];
   date?: CourseDayRequest['date'];
@@ -48,6 +58,7 @@ export interface CourseCreateDayFormState {
   images: CourseCreateImageDraft[];
   memo: NonNullable<CourseDayRequest['memo']>;
   cost: NonNullable<CourseDayRequest['cost']> | null;
+  flights: CourseCreateFlightFormState[];
 }
 
 export interface CourseCreateValue extends CourseCreateBasicInfoValue {

@@ -28,6 +28,12 @@ const excludePageTokenParam = <Params extends { pageToken?: unknown }>(
   return restParams;
 };
 
+export const AIRLINE_QUERY_KEY = {
+  ALL: ['airlines'] as const,
+  SEARCH: (params: GetQueryParams<'/api/v1/airlines/search'>) =>
+    [...AIRLINE_QUERY_KEY.ALL, 'search', excludePageParam(params)] as const,
+};
+
 export const CHAT_ROOM_QUERY_KEY = {
   ALL: ['chat-rooms'] as const,
   INFINITE_LIST_ALL: () =>
