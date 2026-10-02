@@ -25,17 +25,19 @@ export const SearchBuddys = ({
         className,
       )}
     >
-      <CommonImage
-        src={profileImageUrl || defaultProfileImage.src}
-        alt={`${nickname}님의 프로필 이미지`}
-        width={50}
-        height={50}
-        radius="rounded-full"
-        className="size-12.5 shrink-0 border border-gray-100"
-      />
-      <span className="text-body-sb-15 ml-3.25 max-w-67.5 min-w-0 truncate text-gray-800">
-        {nickname}
-      </span>
+      <div className="flex min-w-0 items-center gap-3.25">
+        <CommonImage
+          src={profileImageUrl || defaultProfileImage.src}
+          alt={`${nickname}님의 프로필 이미지`}
+          width={50}
+          height={50}
+          radius="rounded-full"
+          className="size-12.5 shrink-0 border border-gray-100"
+        />
+        <span className="text-body-sb-15 min-w-0 truncate text-gray-800">
+          {nickname}
+        </span>
+      </div>
       <IconButton
         variant="primary"
         icon={<ChatIcon />}
