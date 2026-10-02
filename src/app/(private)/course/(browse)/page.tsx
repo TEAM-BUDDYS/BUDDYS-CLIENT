@@ -1,8 +1,10 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
+import { PLACE_QUERY_OPTIONS } from '@/domains/course/api/query';
 import { CourseBottomSheet } from '@/domains/course/components/course-bottom-sheet/course-bottom-sheet';
 import { CourseMap } from '@/domains/course/components/course-map/course-map';
 import { MapFloatingControls } from '@/domains/course/components/map-floating-controls/map-floating-controls';
@@ -27,6 +29,13 @@ const MAP_CATEGORY_ITEMS = [
 
 type MapCategory = (typeof MAP_CATEGORY_ITEMS)[number]['key'];
 const EMPTY_COURSE_ITEMS = [] as const;
+const NEARBY_PLACE_RADIUS_METERS = 1500;
+const API_CATEGORY_BY_MAP_CATEGORY = {
+  sightseeing: 'TOURISM',
+  food: 'RESTAURANT',
+  cafe: 'CAFE',
+  accommodation: 'ACCOMMODATION',
+} as const satisfies Record<MapCategory, string>;
 
 export default function CoursePage() {
   const router = useRouter();
@@ -51,8 +60,46 @@ export default function CoursePage() {
     setSelectedCategory,
   } = useCourseBrowse();
   const [restoredMapCamera, setRestoredMapCamera] = useState(getMapCamera);
+  const [selectedPlaceId, setSelectedPlaceId] = useState<string>();
+  const nearbyPlaceParams = currentLocation
+    ? {
+        lat: currentLocation.lat,
+        lng: currentLocation.lng,
+        radius: NEARBY_PLACE_RADIUS_METERS,
+        category: selectedCategory
+          ? API_CATEGORY_BY_MAP_CATEGORY[selectedCategory]
+          : undefined,
+      }
+    : null;
+  const {
+    data: nearbyPlaces = [],
+    isError: hasNearbyError,
+    isPending: isNearbyLoading,
+    refetch: refetchNearbyPlaces,
+  } = useQuery(PLACE_QUERY_OPTIONS.NEARBY(nearbyPlaceParams));
+  const nearbyItems = useMemo(() => {
+    const selectedPlace = nearbyPlaces.find(
+      ({ placeId }) => placeId === selectedPlaceId,
+    );
+    const orderedPlaces = selectedPlace
+      ? [
+          selectedPlace,
+          ...nearbyPlaces.filter(
+            ({ placeId }) => placeId !== selectedPlace.placeId,
+          ),
+        ]
+      : nearbyPlaces;
+
+    return orderedPlaces.map((place) => ({
+      place,
+      description:
+        [place.country, place.city].filter(Boolean).join(' · ') ||
+        '위치 정보 없음',
+    }));
+  }, [nearbyPlaces, selectedPlaceId]);
 
   const handleCategoryChange = (category: MapCategory) => {
+    setSelectedPlaceId(undefined);
     setSelectedCategory((currentCategory) =>
       currentCategory === category ? undefined : category,
     );
@@ -78,7 +125,16 @@ export default function CoursePage() {
     setBottomSheetPosition('default');
     setRestoredMapCamera(null);
     setMapCamera(null);
+    setSelectedPlaceId(undefined);
     setIsLocationActive(true);
+  };
+
+  const handlePlaceSelect = (placeId: string) => {
+    setSelectedPlaceId(placeId);
+    setIsLocationActive(false);
+    setIsBookmarkActive(false);
+    setBottomSheetTab('nearby');
+    setBottomSheetPosition('default');
   };
 
   return (
@@ -121,12 +177,14 @@ export default function CoursePage() {
           cameraTarget={isLocationActive ? currentLocation : null}
           currentLocation={currentLocation}
           initialCamera={restoredMapCamera}
-          places={[]}
+          places={nearbyPlaces}
           preserveCamera={
             restoredMapCamera !== null || bottomSheetPosition === 'expanded'
           }
+          selectedPlaceId={selectedPlaceId}
           showCurrentLocation={isLocationActive}
           onCameraChange={setMapCamera}
+          onPlaceSelect={handlePlaceSelect}
         />
 
         <div
@@ -150,13 +208,16 @@ export default function CoursePage() {
           position={bottomSheetPosition}
           tab={bottomSheetTab}
           bookmarkedItems={EMPTY_COURSE_ITEMS}
+          hasNearbyError={hasNearbyError}
           isBookmarkMode={isBookmarkActive}
-          nearbyItems={EMPTY_COURSE_ITEMS}
+          isNearbyLoading={isNearbyLoading}
+          nearbyItems={nearbyItems}
           onClose={() => setBottomSheetPosition('collapsed')}
           onPositionChange={setBottomSheetPosition}
           onTabChange={setBottomSheetTab}
           onBookmarkChange={() => {}}
           onExploreClick={() => router.push(ROUTES.COURSE.CUSTOMIZED_EXPLORE)}
+          onNearbyRetry={() => void refetchNearbyPlaces()}
           onSuggestedMoreClick={() =>
             router.push(ROUTES.COURSE.SUGGEST_EXPLORE)
           }

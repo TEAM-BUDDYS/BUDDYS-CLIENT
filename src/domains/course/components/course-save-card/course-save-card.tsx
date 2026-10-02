@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import type { Place } from '@/domains/course/api/type';
 import { BookmarkButton, CommonImage } from '@/shared/components/ui';
 
@@ -15,8 +17,15 @@ export const CourseSaveCard = ({
   description,
   onBookmarkChange,
 }: CourseSaveCardProps) => {
+  const [failedPhotoUrl, setFailedPhotoUrl] = useState<string>();
   const { placeId, name, address, bookmarked, photoUrl } = place;
   const displayName = name ?? '이름 없는 장소';
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const resolvedPhotoUrl =
+    photoUrl?.startsWith('/') && apiBaseUrl
+      ? new URL(photoUrl, apiBaseUrl).toString()
+      : photoUrl;
+  const hasImageError = failedPhotoUrl === resolvedPhotoUrl;
 
   const handleBookmarkClick = () => {
     onBookmarkChange(placeId, !bookmarked);
@@ -24,15 +33,19 @@ export const CourseSaveCard = ({
 
   return (
     <article className="flex w-full items-center gap-4">
-      {photoUrl && (
+      {resolvedPhotoUrl && !hasImageError ? (
         <CommonImage
-          src={photoUrl}
+          unoptimized
+          src={resolvedPhotoUrl}
           alt={`${displayName} 이미지`}
           width={100}
           height={100}
           radius="rounded-xl"
           className="size-25"
+          onError={() => setFailedPhotoUrl(resolvedPhotoUrl)}
         />
+      ) : (
+        <div aria-hidden className="size-25 shrink-0 rounded-xl bg-gray-50" />
       )}
 
       <div className="flex min-w-0 flex-1 items-center gap-8">

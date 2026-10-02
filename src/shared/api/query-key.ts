@@ -87,6 +87,12 @@ export const POST_QUERY_KEY = {
     ] as const,
 };
 
+export const PLACE_QUERY_KEY = {
+  ALL: ['places'] as const,
+  NEARBY: (params: GetQueryParams<'/api/v1/places/nearby'> | null) =>
+    [...PLACE_QUERY_KEY.ALL, 'nearby', params] as const,
+};
+
 export const RECOMMENDATION_QUERY_KEY = {
   ALL: ['recommendations'] as const,
   USERS: (params?: GetQueryParams<'/api/v1/recommendations/users'>) =>

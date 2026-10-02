@@ -92,6 +92,7 @@ export const CourseMap = ({
           defaultCenter={initialCamera?.center ?? center}
           defaultZoom={initialCamera?.zoom ?? 15}
           gestureHandling="greedy"
+          clickableIcons={false}
           disableDefaultUI
           keyboardShortcuts={false}
           onCameraChanged={({ detail }) =>

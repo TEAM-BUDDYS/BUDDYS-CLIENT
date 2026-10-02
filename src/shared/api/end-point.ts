@@ -22,6 +22,9 @@ export const END_POINT = {
   IMAGE: {
     PRESIGNED_URL: 'api/v1/images/presigned-url',
   },
+  PLACE: {
+    NEARBY: 'api/v1/places/nearby',
+  },
   POST: {
     LIST: 'api/v1/posts',
     CREATE: 'api/v1/posts',

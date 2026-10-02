@@ -83,7 +83,7 @@ export const CourseBrowseProvider = ({
     currentLocation,
     status: currentLocationStatus,
     refetchCurrentLocation,
-  } = useCurrentLocation({ requestOnMount: false });
+  } = useCurrentLocation({ requestOnMount: true });
 
   const getMapCamera = useCallback(() => mapCameraRef.current, []);
   const setMapCamera = useCallback((camera: CourseMapCameraState | null) => {
