@@ -8,18 +8,16 @@ import {
   type SettingsConfirmType,
 } from '@/domains/profile/model/settings';
 import { Button, Modal } from '@/shared/components/ui';
-import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
 import { ROUTES } from '@/shared/config/routes';
 
-const SETTINGS_MENU_ITEMS: { label: string; href?: string }[] = [
-  { label: '학교 이메일 인증' },
-  { label: '파견교 서류 인증' },
+const SETTINGS_MENU_ITEMS = [
+  { label: '학교 이메일 인증', href: ROUTES.VERIFICATION.UNIVERSITY_EMAIL },
+  { label: '파견교 서류 인증', href: ROUTES.VERIFICATION.EXCHANGE_DOCUMENT },
   { label: '개인정보 처리방침', href: ROUTES.PROFILE.PRIVACY_POLICY },
   { label: '이용약관', href: ROUTES.PROFILE.TERMS },
-];
+] as const;
 
 export const SettingsContent = () => {
-  const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
   const [confirmType, setConfirmType] = useState<SettingsConfirmType | null>(
     null,
   );
@@ -33,11 +31,7 @@ export const SettingsContent = () => {
         <ul className="flex flex-col">
           {SETTINGS_MENU_ITEMS.map((item) => (
             <li key={item.label}>
-              <SettingsMenuItem
-                label={item.label}
-                href={item.href}
-                onClick={() => setIsComingSoonOpen(true)}
-              />
+              <SettingsMenuItem label={item.label} href={item.href} />
             </li>
           ))}
         </ul>
@@ -69,11 +63,6 @@ export const SettingsContent = () => {
           onConfirm={() => setConfirmType(null)}
         />
       )}
-
-      <ComingSoonModal
-        open={isComingSoonOpen}
-        onClose={() => setIsComingSoonOpen(false)}
-      />
     </>
   );
 };
