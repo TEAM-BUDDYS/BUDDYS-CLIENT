@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 
-import { getCourseDetailFixture } from '@/domains/course/features/course-detail/course-detail-fixture';
-import { CourseDetailView } from '@/domains/course/features/course-detail/course-detail-view';
+import { CourseDetailAsyncBoundary } from '@/domains/course/features/course-detail/course-detail-async-boundary';
+import { CourseDetailContent } from '@/domains/course/features/course-detail/course-detail-content';
 
 interface CourseDetailPageProps {
   params: Promise<{ courseId: string }>;
@@ -17,13 +17,9 @@ export default async function CourseDetailPage({
     notFound();
   }
 
-  const fixture = getCourseDetailFixture(parsedCourseId);
-
   return (
-    <CourseDetailView
-      course={fixture.course}
-      initialComments={fixture.comments}
-      viewerUserId={fixture.viewerUserId}
-    />
+    <CourseDetailAsyncBoundary courseId={parsedCourseId}>
+      <CourseDetailContent courseId={parsedCourseId} />
+    </CourseDetailAsyncBoundary>
   );
 }
