@@ -4,10 +4,11 @@ import { useState } from 'react';
 
 import { cn } from '@/lib/cn';
 import type { TagType } from '@/shared/api';
-import { EditIcon, HandleIcon } from '@/shared/components/icons';
+import { EditIcon } from '@/shared/components/icons';
 import { Chip, ChipGroup, IconButton } from '@/shared/components/ui';
 import type { Tag } from '@/types/tag';
 
+import { SortableTagChipList } from '../components/sortable-tag-chip-list/sortable-tag-chip-list';
 import {
   getSelectedTagIdsByType,
   type SelectedTag,
@@ -35,19 +36,19 @@ export const TagEditSection = ({
       <div className="flex flex-col gap-4">
         <h2 className="text-body-sb-15 text-gray-800">태그 변경</h2>
 
-        <div className="flex flex-wrap items-center gap-2">
-          {selectedTags.map((tag) => (
-            <Chip
-              key={`${tag.tagType}-${tag.id}`}
-              variant="lineMedium"
-              active
-              className={cn(isEditing && 'gap-1')}
-            >
-              {isEditing && <HandleIcon className="size-3.5" />}
-              {tag.name}
-            </Chip>
-          ))}
-          {!isEditing && (
+        {isEditing ? (
+          <SortableTagChipList tags={selectedTags} onChange={onChange} />
+        ) : (
+          <div className="flex flex-wrap items-center gap-2">
+            {selectedTags.map((tag) => (
+              <Chip
+                key={`${tag.tagType}-${tag.id}`}
+                variant="lineMedium"
+                active
+              >
+                {tag.name}
+              </Chip>
+            ))}
             <IconButton
               variant="primary"
               icon={<EditIcon />}
@@ -55,8 +56,8 @@ export const TagEditSection = ({
               className="size-10 px-2 pt-1.75 pb-2.25"
               onClick={() => setIsEditing(true)}
             />
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {isEditing && (
