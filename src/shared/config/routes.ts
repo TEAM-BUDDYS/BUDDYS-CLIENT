@@ -33,6 +33,8 @@ export const ROUTES = {
     ROOT: '/profile',
     DETAIL: (userId: number) => `/profile/${userId}` as const,
     SETTINGS: '/profile/settings',
+    PRIVACY_POLICY: '/profile/settings/privacy-policy',
+    TERMS: '/profile/settings/terms',
     EDIT: '/profile/edit',
   },
 } as const;
