@@ -10,6 +10,7 @@ type PostMenuAction = 'share' | 'edit' | 'delete';
 interface PostMenuBottomSheetProps {
   open: boolean;
   isMine: boolean;
+  ariaLabel?: string;
   onClose: () => void;
   onAction: (action: PostMenuAction) => void;
 }
@@ -17,6 +18,7 @@ interface PostMenuBottomSheetProps {
 export const PostMenuBottomSheet = ({
   open,
   isMine,
+  ariaLabel = '게시글 메뉴',
   onClose,
   onAction,
 }: PostMenuBottomSheetProps) => {
@@ -26,7 +28,7 @@ export const PostMenuBottomSheet = ({
   };
 
   return (
-    <BottomSheet open={open} onClose={onClose} ariaLabel="게시글 메뉴">
+    <BottomSheet open={open} onClose={onClose} ariaLabel={ariaLabel}>
       <div className="mx-4 mb-8.5 flex flex-col gap-4">
         <div className="overflow-hidden rounded-xl [&>button]:rounded-none">
           <Button

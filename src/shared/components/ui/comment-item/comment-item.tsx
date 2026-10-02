@@ -3,7 +3,7 @@ import type { HTMLAttributes } from 'react';
 
 import { cn } from '@/lib/cn';
 import { defaultProfileImage } from '@/shared/assets/illustrations';
-import { CommonImage } from '@/shared/components/ui';
+import { CommonImage } from '@/shared/components/ui/common-image/common-image';
 import { ROUTES } from '@/shared/config';
 import { formatRelativeTime } from '@/shared/utils/format-relative-time';
 
@@ -61,7 +61,7 @@ export const CommentItem = ({
             <span className="text-body-m-15 text-gray-500">{timeLabel}</span>
           )}
         </div>
-        <p className="text-body-m-15 text-gray-800">{content}</p>
+        <p className="text-body-m-15 break-words text-gray-800">{content}</p>
       </div>
     </article>
   );

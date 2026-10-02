@@ -8,4 +8,7 @@ export type SearchCitiesResponse =
 type CityResponse = components['schemas']['CityResponse'];
 
 export type City = Required<Pick<CityResponse, 'id' | 'name'>> &
-  Pick<CityResponse, 'koreanName'>;
+  Pick<
+    CityResponse,
+    'koreanName' | 'latitude' | 'longitude' | 'recommendedRadius'
+  >;

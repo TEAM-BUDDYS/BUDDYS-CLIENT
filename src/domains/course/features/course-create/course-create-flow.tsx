@@ -22,25 +22,40 @@ import { CourseCreateDateStep } from './course-create-date-step';
 import { CourseCreateDetailStep } from './course-create-detail-step';
 import { CourseCreateDurationStep } from './course-create-duration-step';
 import { CourseCreateQuestionHeader } from './course-create-question-header';
-import type { CourseCreateBasicInfoValue, CourseCreateScreen } from './model';
+import { CourseCreateFlightForm } from './flight/course-create-flight-form';
+import { CourseCreateItineraryStep } from './itinerary/course-create-itinerary-step';
+import type { CourseCreateScreen, CourseCreateValue } from './model';
 import { useCourseCreateForm } from './use-course-create-form';
 
 interface CourseCreateFlowProps {
-  onBasicInfoComplete?: (value: CourseCreateBasicInfoValue) => void;
+  onComplete?: (value: CourseCreateValue) => void;
 }
 
-export const CourseCreateFlow = ({
-  onBasicInfoComplete,
-}: CourseCreateFlowProps) => {
+export const CourseCreateFlow = ({ onComplete }: CourseCreateFlowProps) => {
   const router = useRouter();
   const [currentScreen, setCurrentScreen] =
     useState<CourseCreateScreen>('country');
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [flightDayNumber, setFlightDayNumber] = useState<number | null>(null);
   const courseCreateForm = useCourseCreateForm();
+
+  if (flightDayNumber !== null) {
+    return (
+      <CourseCreateFlightForm
+        onBack={() => setFlightDayNumber(null)}
+        onConfirm={(flight) => {
+          courseCreateForm.addDayFlight(flightDayNumber, flight);
+          setFlightDayNumber(null);
+        }}
+      />
+    );
+  }
+
   const currentProgressStep =
     COURSE_CREATE_PROGRESS_STEP_BY_SCREEN[currentScreen];
   const canGoNext = courseCreateForm.canGoNext(currentScreen);
-  const isQuestionScreen = currentScreen !== 'detail';
+  const isQuestionScreen =
+    currentScreen !== 'detail' && currentScreen !== 'itinerary';
 
   const handleBackClick = () => {
     if (currentScreen === 'country') {
@@ -55,6 +70,11 @@ export const CourseCreateFlow = ({
 
     if (currentScreen === 'date') {
       setCurrentScreen('city');
+      return;
+    }
+
+    if (currentScreen === 'itinerary') {
+      setCurrentScreen('detail');
       return;
     }
 
@@ -85,10 +105,16 @@ export const CourseCreateFlow = ({
       return;
     }
 
-    const basicInfoValue = courseCreateForm.getBasicInfoValue();
+    if (currentScreen === 'detail') {
+      courseCreateForm.initializeDays();
+      setCurrentScreen('itinerary');
+      return;
+    }
 
-    if (basicInfoValue) {
-      onBasicInfoComplete?.(basicInfoValue);
+    const courseCreateValue = courseCreateForm.getCourseCreateValue();
+
+    if (courseCreateValue) {
+      onComplete?.(courseCreateValue);
     }
   };
 
@@ -124,7 +150,9 @@ export const CourseCreateFlow = ({
       <section
         className={cn(
           'flex flex-1 flex-col px-4',
-          currentScreen === 'detail' ? 'pt-8' : 'pt-10',
+          currentScreen === 'detail' || currentScreen === 'itinerary'
+            ? 'pt-8'
+            : 'pt-10',
         )}
       >
         <div
@@ -180,6 +208,19 @@ export const CourseCreateFlow = ({
             <CourseCreateDetailStep
               value={courseCreateForm.detail}
               onChange={courseCreateForm.updateDetail}
+            />
+          )}
+
+          {currentScreen === 'itinerary' && (
+            <CourseCreateItineraryStep
+              title={courseCreateForm.detail.title}
+              cities={courseCreateForm.selectedCities}
+              days={courseCreateForm.days}
+              onDayPlacesChange={courseCreateForm.setDayPlaces}
+              onDayImagesAdd={courseCreateForm.addDayImages}
+              onDayImageRemove={courseCreateForm.removeDayImage}
+              onDayMemoCostChange={courseCreateForm.updateDayMemoCost}
+              onFlightDaySelect={setFlightDayNumber}
             />
           )}
         </div>

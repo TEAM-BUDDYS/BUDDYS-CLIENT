@@ -56,7 +56,7 @@ export const KakaoCallback = () => {
       router.replace(
         loginSession.onboardingCompleted
           ? ROUTES.HOME
-          : ROUTES.ONBOARDING_INTRO,
+          : `${ROUTES.VERIFICATION.UNIVERSITY_EMAIL}?from=login`,
       );
     };
 

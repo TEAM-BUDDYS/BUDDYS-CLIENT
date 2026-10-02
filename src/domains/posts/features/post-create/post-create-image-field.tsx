@@ -2,8 +2,7 @@
 
 import type { ChangeEvent } from 'react';
 
-import { ImageInput } from '@/domains/posts/components/image-input/image-input';
-import { ImagePreview } from '@/domains/posts/components/image-preview/image-preview';
+import { ImageInput, ImagePreview } from '@/shared/components/ui';
 
 import { MAX_IMAGE_COUNT } from './constants';
 import type { PostCreateImage } from './model';
