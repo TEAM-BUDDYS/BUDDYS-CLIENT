@@ -3,7 +3,6 @@
 import { useState } from 'react';
 
 import { SettingsMenuItem } from '@/domains/profile/components/settings-menu-item/settings-menu-item';
-import { Toggle } from '@/domains/profile/components/toggle/toggle';
 import {
   SETTINGS_CONFIRM_MODAL_CONTENT,
   type SettingsConfirmType,
@@ -21,7 +20,6 @@ const SETTINGS_MENU_ITEMS: { label: string; href?: string }[] = [
 
 export const SettingsContent = () => {
   const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
-  const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
   const [confirmType, setConfirmType] = useState<SettingsConfirmType | null>(
     null,
   );
@@ -33,14 +31,6 @@ export const SettingsContent = () => {
     <>
       <nav>
         <ul className="flex flex-col">
-          <li className="flex w-full items-center justify-between border-b border-gray-100 px-4 py-5.5">
-            <span className="text-body-sb-16 text-gray-800">알림 설정</span>
-            <Toggle
-              checked={isNotificationEnabled}
-              onChange={setIsNotificationEnabled}
-              ariaLabel="알림 설정"
-            />
-          </li>
           {SETTINGS_MENU_ITEMS.map((item) => (
             <li key={item.label}>
               <SettingsMenuItem
