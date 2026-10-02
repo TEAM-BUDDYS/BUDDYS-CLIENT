@@ -76,6 +76,12 @@ export const COUNTRY_QUERY_KEY = {
     ] as const,
 };
 
+export const COURSE_QUERY_KEY = {
+  ALL: ['courses'] as const,
+  DETAIL: (courseId: number) =>
+    [...COURSE_QUERY_KEY.ALL, 'detail', courseId] as const,
+};
+
 export const PLACE_QUERY_KEY = {
   ALL: ['places'] as const,
   SEARCH: (params: GetQueryParams<'/api/v1/places/search'>) =>
