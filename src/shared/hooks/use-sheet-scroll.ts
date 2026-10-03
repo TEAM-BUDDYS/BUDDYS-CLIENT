@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import { useLockBodyScroll } from '@/domains/home/hooks/use-lock-body-scroll';
+import { useLockBodyScroll } from '@/shared/hooks/use-lock-body-scroll';
 
 const sheetScrollClassName =
   'scrollbar-none overflow-y-auto overscroll-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden';
