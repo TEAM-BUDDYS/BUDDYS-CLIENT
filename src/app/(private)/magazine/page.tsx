@@ -8,15 +8,11 @@ export default function MagazinePage() {
   return (
     <>
       <Header
-        className="h-auto items-start pt-5 pb-4"
+        hasBackButton
         content={
-          <div className="flex items-center gap-0.5">
-            <BuddysLogoIcon
-              className="text-gray-800"
-              width={80.043}
-              height={21.12}
-            />
-            <h1 className="text-body-sb-16 whitespace-pre text-gray-800">
+          <div className="flex items-center">
+            <BuddysLogoIcon className="text-gray-800" width={76} height={20} />
+            <h1 className="text-title-b-20 whitespace-pre text-gray-800">
               <span aria-hidden="true">{' | '}</span>
               MAGAZINE
             </h1>
