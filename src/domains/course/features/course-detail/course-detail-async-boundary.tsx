@@ -16,11 +16,14 @@ interface CourseDetailAsyncBoundaryProps {
   courseId: number;
 }
 
+const isCourseNotFoundError = (error: unknown) =>
+  isHTTPError(error) && error.response.status === 404;
+
 const CourseDetailErrorFallback = ({
   error,
   reset,
 }: AsyncBoundaryErrorFallbackProps) => {
-  if (isHTTPError(error) && error.response.status === 404) {
+  if (isCourseNotFoundError(error)) {
     return <CourseNotFoundView />;
   }
 
@@ -36,6 +39,7 @@ export const CourseDetailAsyncBoundary = ({
       errorFallback={CourseDetailErrorFallback}
       loadingState={{ title: '코스를 불러오고 있어요' }}
       resetKeys={[courseId]}
+      shouldReportError={(error) => !isCourseNotFoundError(error)}
     >
       {children}
     </AsyncBoundary>
