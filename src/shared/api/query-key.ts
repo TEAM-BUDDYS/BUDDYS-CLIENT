@@ -78,6 +78,8 @@ export const COUNTRY_QUERY_KEY = {
 
 export const PLACE_QUERY_KEY = {
   ALL: ['places'] as const,
+  NEARBY: (params: GetQueryParams<'/api/v1/places/nearby'> | null) =>
+    [...PLACE_QUERY_KEY.ALL, 'nearby', params] as const,
   SEARCH: (params: GetQueryParams<'/api/v1/places/search'>) =>
     [...PLACE_QUERY_KEY.ALL, 'search', excludePageTokenParam(params)] as const,
   BOOKMARKS_ALL: () => [...PLACE_QUERY_KEY.ALL, 'bookmarks'] as const,

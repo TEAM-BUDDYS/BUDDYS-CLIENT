@@ -1,16 +1,18 @@
 'use client';
 
-import { APIProvider, Map } from '@vis.gl/react-google-maps';
+import {
+  APIProvider,
+  Map,
+  type MapMouseEvent,
+} from '@vis.gl/react-google-maps';
 import { useState } from 'react';
 
 import type { Place } from '@/domains/course/api/type';
 import { CourseCurrentLocationMarker } from '@/domains/course/components/course-map/course-current-location-marker';
 import { CourseMapCamera } from '@/domains/course/components/course-map/course-map-camera';
 import { CourseMapMarker } from '@/domains/course/components/course-map/course-map-marker';
-import type {
-  CourseMapCameraState,
-  CourseMapCenter,
-} from '@/domains/course/model/course-map';
+import type { CourseMapCenter } from '@/domains/course/model/course-map';
+import type { GoogleMapPoi } from '@/domains/course/model/google-place';
 import { AsyncErrorState } from '@/shared/components/ui';
 
 const FALLBACK_CENTER = {
@@ -26,8 +28,7 @@ interface CourseMapProps {
   showCurrentLocation?: boolean;
   selectedPlaceId?: string;
   cameraTarget?: CourseMapCenter | null;
-  initialCamera?: CourseMapCameraState | null;
-  onCameraChange?: (camera: CourseMapCameraState) => void;
+  onPoiSelect?: (poi: GoogleMapPoi) => void;
   onPlaceSelect?: (placeId: string) => void;
 }
 
@@ -39,8 +40,7 @@ export const CourseMap = ({
   showCurrentLocation = false,
   selectedPlaceId,
   cameraTarget = null,
-  initialCamera = null,
-  onCameraChange,
+  onPoiSelect,
   onPlaceSelect,
 }: CourseMapProps) => {
   const [hasMapLoadError, setHasMapLoadError] = useState(false);
@@ -61,6 +61,15 @@ export const CourseMap = ({
 
   const center = selectedPlaceCenter ?? currentLocation ?? FALLBACK_CENTER;
   const resolvedCameraTarget = cameraTarget ?? selectedPlaceCenter;
+
+  const handleMapClick = (event: MapMouseEvent) => {
+    const { latLng, placeId } = event.detail;
+
+    if (!placeId || !onPoiSelect) return;
+
+    event.stop();
+    onPoiSelect({ placeId, position: latLng });
+  };
 
   if (hasMapLoadError) {
     return (
@@ -89,14 +98,13 @@ export const CourseMap = ({
       <APIProvider apiKey={apiKey} onError={() => setHasMapLoadError(true)}>
         <Map
           mapId={mapId}
-          defaultCenter={initialCamera?.center ?? center}
-          defaultZoom={initialCamera?.zoom ?? 15}
+          defaultCenter={center}
+          defaultZoom={15}
           gestureHandling="greedy"
+          clickableIcons
           disableDefaultUI
           keyboardShortcuts={false}
-          onCameraChanged={({ detail }) =>
-            onCameraChange?.({ center: detail.center, zoom: detail.zoom })
-          }
+          onClick={handleMapClick}
         >
           <CourseMapCamera
             bottomOverlayRatio={bottomOverlayRatio}

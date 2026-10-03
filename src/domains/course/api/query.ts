@@ -1,4 +1,4 @@
-import { infiniteQueryOptions } from '@tanstack/react-query';
+import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 
 import {
   AIRLINE_QUERY_KEY,
@@ -13,6 +13,8 @@ import type {
   GetBookmarkedPlacesPageParams,
   GetBookmarkedPlacesParams,
   GetBookmarkedPlacesResponse,
+  GetNearbyPlacesParams,
+  GetNearbyPlacesResponse,
   Place,
   SearchAirlinesParams,
   SearchAirlinesResponse,
@@ -20,6 +22,22 @@ import type {
   SearchPlacesParams,
   SearchPlacesResponse,
 } from './type';
+
+const getNearbyPlaces = async (
+  params: GetNearbyPlacesParams,
+): Promise<Place[]> => {
+  const response = await apiClient
+    .get(END_POINT.PLACE.NEARBY, {
+      searchParams: createSearchParams(params),
+    })
+    .json<GetNearbyPlacesResponse>();
+
+  if (!response.success || !response.data) {
+    throw new Error(response.message || '근처 장소를 불러오지 못했습니다.');
+  }
+
+  return response.data.places ?? [];
+};
 
 const searchAirlines = async (
   params: SearchAirlinesParams,
@@ -173,6 +191,18 @@ export const AIRLINE_QUERY_OPTIONS = {
 };
 
 export const PLACE_QUERY_OPTIONS = {
+  NEARBY: (params: GetNearbyPlacesParams | null) =>
+    queryOptions({
+      queryKey: PLACE_QUERY_KEY.NEARBY(params),
+      queryFn: () => {
+        if (!params) {
+          throw new Error('근처 장소 조회 좌표가 필요합니다.');
+        }
+
+        return getNearbyPlaces(params);
+      },
+      enabled: params !== null,
+    }),
   SEARCH: (params: SearchPlacesParams) =>
     infiniteQueryOptions({
       queryKey: PLACE_QUERY_KEY.SEARCH(params),
