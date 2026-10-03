@@ -60,22 +60,26 @@ export const ChipButton = ({
   className,
   active = false,
   disabled,
+  'aria-disabled': ariaDisabled,
   variant = 'lineSmall',
   ...props
 }: ChipButtonProps) => {
   const styles = chipVariantStyles[variant];
+  const isDisabledStyle =
+    disabled || ariaDisabled === true || ariaDisabled === 'true';
 
   return (
     <button
       {...props}
       type="button"
       aria-pressed={active}
+      aria-disabled={ariaDisabled}
       disabled={disabled}
       className={cn(
         chipBase,
         styles.default,
         active && styles.active,
-        disabled && chipDisabled,
+        isDisabledStyle && chipDisabled,
         className,
       )}
     />

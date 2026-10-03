@@ -1,4 +1,7 @@
 export const END_POINT = {
+  AIRLINE: {
+    SEARCH: 'api/v1/airlines/search',
+  },
   AUTH: {
     KAKAO: 'api/v1/auth/kakao',
     GOOGLE: 'api/v1/auth/google',
@@ -24,6 +27,8 @@ export const END_POINT = {
   },
   PLACE: {
     NEARBY: 'api/v1/places/nearby',
+    SEARCH: 'api/v1/places/search',
+    BOOKMARKS: 'api/v1/places/bookmarks',
     PHOTO: (placeId: string, maxWidth: number) =>
       `api/v1/places/${encodeURIComponent(placeId)}/photo?maxWidth=${maxWidth}`,
   },

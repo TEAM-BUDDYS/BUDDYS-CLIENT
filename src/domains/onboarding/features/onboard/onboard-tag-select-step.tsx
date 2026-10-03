@@ -3,7 +3,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 import { TAG_QUERY_OPTIONS, type TagType } from '@/shared/api';
-import { ChipGroup } from '@/shared/components/ui';
+import { ChipGroup, useToast } from '@/shared/components/ui';
 
 interface OnboardTagSelectStepProps {
   title: string;
@@ -23,6 +23,14 @@ export const OnboardTagSelectStep = ({
   onChange,
 }: OnboardTagSelectStepProps) => {
   const { data: tags } = useSuspenseQuery(TAG_QUERY_OPTIONS.LIST(tagType));
+  const { showToast } = useToast();
+
+  const handleSelectionLimitReached = () => {
+    showToast(`최대 ${maxSelectionCount}개까지 선택할 수 있어요.`, {
+      variant: 'gray',
+      bottomOffsetClassName: 'bottom-25.5',
+    });
+  };
 
   return (
     <div className="flex flex-col gap-10">
@@ -45,6 +53,7 @@ export const OnboardTagSelectStep = ({
           rowGap="md"
           chipClassName="px-4.5 text-body-m-16"
           onChange={onChange}
+          onSelectionLimitReached={handleSelectionLimitReached}
         />
       </div>
     </div>

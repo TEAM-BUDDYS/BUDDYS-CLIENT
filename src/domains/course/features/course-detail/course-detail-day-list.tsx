@@ -21,7 +21,7 @@ export const CourseDetailDayList = ({
   }
 
   return (
-    <div className="flex flex-col gap-6 py-6">
+    <div className="flex flex-col gap-2 bg-gray-50 py-2">
       {days.map((day, index) => (
         <CourseDetailDaySection
           key={day.dayNumber}

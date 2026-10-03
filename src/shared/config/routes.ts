@@ -7,6 +7,10 @@ export const ROUTES = {
     KAKAO_CALLBACK: '/auth/kakao/callback',
     GOOGLE_CALLBACK: '/auth/google/callback',
   },
+  VERIFICATION: {
+    UNIVERSITY_EMAIL: '/verification/university-email',
+    EXCHANGE_DOCUMENT: '/verification/exchange-document',
+  },
   ONBOARDING: '/onboarding',
   ONBOARDING_INTRO: '/onboarding/intro',
   CUSTOMIZED_EXPLORE: '/customized-explore',
@@ -17,6 +21,7 @@ export const ROUTES = {
   COURSE: {
     ROOT: '/course',
     CREATE: '/course/post',
+    DETAIL: (courseId: number) => `/course/${courseId}` as const,
     CUSTOMIZED_EXPLORE: '/course/customized-explore',
     SUGGEST_EXPLORE: '/course/customized-explore?type=suggest',
   },
@@ -28,6 +33,8 @@ export const ROUTES = {
     ROOT: '/profile',
     DETAIL: (userId: number) => `/profile/${userId}` as const,
     SETTINGS: '/profile/settings',
+    PRIVACY_POLICY: '/profile/settings/privacy-policy',
+    TERMS: '/profile/settings/terms',
     EDIT: '/profile/edit',
   },
 } as const;

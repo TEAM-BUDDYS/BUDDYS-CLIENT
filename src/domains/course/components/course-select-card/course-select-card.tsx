@@ -1,37 +1,48 @@
 'use client';
 
-import type { Place } from '@/domains/course/api/type';
+import { useState } from 'react';
+
+import type { BookmarkedPlace, Place } from '@/domains/course/api/type';
 import { cn } from '@/lib/cn';
+import { getApiResourceUrl } from '@/shared/api';
 import { ChipButton, CommonImage } from '@/shared/components/ui';
 
 interface CourseSelectCardProps {
-  place: Place;
-  // TODO: 서버와 description 스키마 논의가 완료되면 Place 필드로 대체
-  description: string;
+  place: Place | BookmarkedPlace;
   isSelected: boolean;
   onSelect: (placeId: string) => void;
 }
 
 export const CourseSelectCard = ({
   place,
-  description,
   isSelected,
   onSelect,
 }: CourseSelectCardProps) => {
+  const [failedPhotoUrl, setFailedPhotoUrl] = useState<string>();
   const { placeId, name, address, photoUrl } = place;
+  const imageUrl = photoUrl ? getApiResourceUrl(photoUrl) : null;
+  const hasImageError = failedPhotoUrl === imageUrl;
   const displayName = name ?? '이름 없는 장소';
+  const location =
+    'country' in place
+      ? [place.country, place.city].filter(Boolean).join(' · ')
+      : null;
 
   return (
     <article className="flex w-full items-center gap-4">
-      {photoUrl && (
+      {imageUrl && !hasImageError ? (
         <CommonImage
-          src={photoUrl}
+          unoptimized
+          src={imageUrl}
           alt={`${displayName} 이미지`}
           width={100}
           height={100}
           radius="rounded-xl"
           className="size-25"
+          onError={() => setFailedPhotoUrl(imageUrl)}
         />
+      ) : (
+        <div aria-hidden className="size-25 shrink-0 rounded-xl bg-gray-50" />
       )}
 
       <div className="flex min-w-0 flex-1 items-center gap-4">
@@ -40,14 +51,14 @@ export const CourseSelectCard = ({
             {displayName}
           </h3>
           <div className="text-caption-m-12 flex min-w-0 flex-col gap-0.5 text-gray-500">
+            {location && <p className="truncate">{location}</p>}
             <p className="truncate">{address ?? '주소 정보 없음'}</p>
-            <p className="truncate">{description}</p>
           </div>
         </div>
 
         <ChipButton
           active={isSelected}
-          aria-label={`${displayName} 선택`}
+          aria-label={`${displayName} ${isSelected ? '선택 해제' : '선택'}`}
           className={cn(
             'focus-visible:outline-mint-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid',
             !isSelected && 'border-gray-100',
