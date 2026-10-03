@@ -48,7 +48,7 @@ export const MagazineContent = () => {
   };
 
   return (
-    <main className="px-4 pt-4 pb-19">
+    <main className="px-4 pt-4 pb-6">
       <div className="flex gap-2">
         {magazineCategoryItems.map((categoryItem) => (
           <Filter

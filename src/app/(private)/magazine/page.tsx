@@ -2,7 +2,7 @@ import { NotificationBellButton } from '@/domains/home/components/notification-b
 import { SearchSheetButton } from '@/domains/home/components/search-sheet-button/search-sheet-button';
 import { MagazineContent } from '@/domains/home/features/magazine/magazine-content';
 import { BuddysLogoIcon } from '@/shared/components/icons';
-import { BottomNavigation, Header } from '@/shared/components/layout';
+import { Header } from '@/shared/components/layout';
 
 export default function MagazinePage() {
   return (
@@ -26,7 +26,6 @@ export default function MagazinePage() {
         }
       />
       <MagazineContent />
-      <BottomNavigation className="fixed right-0 bottom-0 left-0 z-20 mx-auto max-w-107.5" />
     </>
   );
 }
