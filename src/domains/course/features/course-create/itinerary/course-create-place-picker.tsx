@@ -221,7 +221,6 @@ export const CourseCreatePlacePicker = ({
 
       <BottomSheet
         open={isResultSheetOpen}
-        dismissible={false}
         modal={false}
         ariaLabel={`Day ${dayNumber} ${placeResults.isSearchMode ? '장소 검색 결과' : '최근 저장 장소'}`}
         className="flex h-[57dvh] flex-col rounded-t-[20px]"

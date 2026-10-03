@@ -47,7 +47,7 @@ export const CourseDayPickerSheet = ({
     <BottomSheet
       open
       ariaLabelledBy={titleId}
-      className="flex flex-col"
+      className="flex h-73.25 flex-col"
       onClose={onClose}
     >
       <div className="flex min-h-0 flex-1 flex-col gap-4 px-4 pb-4">
@@ -58,12 +58,15 @@ export const CourseDayPickerSheet = ({
           날짜 선택
         </h2>
 
-        <ul className="flex min-h-0 flex-1 scrollbar-none flex-col overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:hidden">
+        <ul
+          data-vaul-no-drag
+          className="flex min-h-0 flex-1 scrollbar-none flex-col overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:hidden"
+        >
           {days.map(({ dayNumber, date }) => {
             const isSelected = selectedDayNumber === dayNumber;
 
             return (
-              <li key={dayNumber}>
+              <li key={dayNumber} className="shrink-0">
                 <button
                   type="button"
                   aria-pressed={isSelected}
