@@ -170,7 +170,7 @@ export interface paths {
     };
     /**
      * 동행 게시글 목록 조회
-     * @description 모집중인 동행 게시글 목록을 조건에 따라 조회합니다.
+     * @description 모집중인 삭제되지 않은 동행 게시글 목록을 조건에 따라 조회합니다. totalElements는 페이지 번호·크기와 무관한 검색·필터 조건에 일치하는 전체 게시글 수입니다.
      */
     get: operations['getPosts'];
     put?: never;
@@ -879,7 +879,7 @@ export interface paths {
     };
     /**
      * 통합 검색
-     * @description 검색어로 코스, 사용자, 모집 중 동행 게시글을 동시에 검색합니다. 각 영역에 동일한 페이지 번호와 크기를 적용합니다.
+     * @description 검색어로 코스, 사용자, 모집 중 동행 게시글을 동시에 검색합니다. type을 생략하면 세 영역을 모두 조회하고 반환하며, POST/COURSE/USER를 지정하면 해당 영역만 조회하고 반환합니다. 선택하지 않은 영역은 응답 필드에서 제외됩니다. 잘못된 type은 400(GLB-E001)을 반환합니다. 각 영역에 동일한 페이지 번호와 크기를 적용합니다. courses.totalElements와 users.totalElements는 page=0에서만 전체 건수를 제공하며 page>0에서는 건수를 조회하지 않고 명시적으로 null을 반환합니다. posts.totalElements는 페이지 번호·크기와 무관하게 검색어에 일치하는 삭제되지 않은 모집 중 게시글의 전체 수입니다.
      */
     get: operations['search'];
     put?: never;
@@ -999,7 +999,7 @@ export interface paths {
     };
     /**
      * 저장한 게시글 목록 조회
-     * @description 로그인한 사용자가 저장한 게시글 목록을 최신 저장순으로 조회합니다.
+     * @description 로그인한 사용자가 저장한 게시글 목록을 최신 저장순으로 조회합니다. totalElements는 모집 상태와 무관하게 해당 사용자가 저장한 삭제되지 않은 전체 게시글 수입니다.
      */
     get: operations['getBookmarkedPosts'];
     put?: never;
@@ -2606,24 +2606,30 @@ export interface components {
       message?: string;
       data?: components['schemas']['SearchResponse'];
     };
-    CourseListResponse: {
-      /** @description 코스 목록 */
+    CourseSearchResponse: {
+      /** @description 코스 검색 결과 */
       content: components['schemas']['CourseSummaryResponse'][];
       /**
        * Format: int32
-       * @description 현재 페이지 번호. 0부터 시작합니다.
+       * @description 현재 페이지 번호
        * @example 0
        */
       page: number;
       /**
        * Format: int32
        * @description 페이지 크기
-       * @example 20
+       * @example 5
        */
       size: number;
       /**
+       * Format: int64
+       * @description 검색 조건에 일치하는 전체 코스 수. page=0에서만 제공하며 page>0에서는 null입니다.
+       * @example 12
+       */
+      totalElements: number | null;
+      /**
        * @description 다음 페이지 존재 여부
-       * @example true
+       * @example false
        */
       hasNext: boolean;
     };
@@ -2687,6 +2693,12 @@ export interface components {
        * @example true
        */
       hasNext?: boolean;
+      /**
+       * Format: int64
+       * @description 페이지 번호·크기와 무관한 조회 조건에 일치하는 전체 게시글 수. 저장 목록은 해당 사용자가 저장한 삭제되지 않은 게시글 수입니다.
+       * @example 42
+       */
+      totalElements?: number;
     };
     PostSummaryCountryResponse: {
       /**
@@ -2697,7 +2709,7 @@ export interface components {
       countryId?: number;
       /**
        * @description 국가 이름
-       * @example France
+       * @example 프랑스
        */
       name?: string;
     };
@@ -2756,12 +2768,12 @@ export interface components {
       isBookmarked?: boolean;
     };
     SearchResponse: {
-      /** @description 코스 검색 결과 */
-      courses: components['schemas']['CourseListResponse'];
-      /** @description 사용자 검색 결과 */
-      users: components['schemas']['UserSearchResponse'];
-      /** @description 동행 게시글 검색 결과 */
-      posts: components['schemas']['PostListResponse'];
+      /** @description 코스 검색 결과. type 생략 또는 COURSE 지정 시에만 포함 */
+      courses?: components['schemas']['CourseSearchResponse'];
+      /** @description 사용자 검색 결과. type 생략 또는 USER 지정 시에만 포함 */
+      users?: components['schemas']['UserSearchResponse'];
+      /** @description 동행 게시글 검색 결과. type 생략 또는 POST 지정 시에만 포함 */
+      posts?: components['schemas']['PostListResponse'];
     };
     UserSearchResponse: {
       /** @description 사용자 검색 결과 */
@@ -2778,6 +2790,12 @@ export interface components {
        * @example 5
        */
       size: number;
+      /**
+       * Format: int64
+       * @description 검색 조건에 일치하는 전체 사용자 수. page=0에서만 제공하며 page>0에서는 null입니다.
+       * @example 12
+       */
+      totalElements: number | null;
       /**
        * @description 다음 페이지 존재 여부
        * @example false
@@ -3645,6 +3663,27 @@ export interface components {
       code?: string;
       message?: string;
       data?: components['schemas']['CourseListResponse'];
+    };
+    CourseListResponse: {
+      /** @description 코스 목록 */
+      content: components['schemas']['CourseSummaryResponse'][];
+      /**
+       * Format: int32
+       * @description 현재 페이지 번호. 0부터 시작합니다.
+       * @example 0
+       */
+      page: number;
+      /**
+       * Format: int32
+       * @description 페이지 크기
+       * @example 20
+       */
+      size: number;
+      /**
+       * @description 다음 페이지 존재 여부
+       * @example true
+       */
+      hasNext: boolean;
     };
     BaseResponseCourseDetailResponse: {
       success?: boolean;
@@ -8927,6 +8966,8 @@ export interface operations {
          * @example 5
          */
         size?: number;
+        /** @description 검색 영역. 생략하면 모든 영역을 조회하고 반환합니다. 지정하면 해당 영역만 조회하고 반환합니다. 잘못된 값은 400(GLB-E001)을 반환합니다. */
+        type?: 'POST' | 'COURSE' | 'USER';
       };
       header?: never;
       path?: never;

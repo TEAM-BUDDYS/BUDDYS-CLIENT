@@ -13,6 +13,8 @@ export const END_POINT = {
     DETAIL: (chatRoomId: number) => `api/v1/chat-rooms/${chatRoomId}`,
     MESSAGES: (chatRoomId: number) =>
       `api/v1/chat-rooms/${chatRoomId}/messages`,
+    REPORT: (chatRoomId: number) => `api/v1/chat-rooms/${chatRoomId}/report`,
+    BLOCK: (chatRoomId: number) => `api/v1/chat-rooms/${chatRoomId}/block`,
   },
   COUNTRY: {
     LIST: 'api/v1/countries',
