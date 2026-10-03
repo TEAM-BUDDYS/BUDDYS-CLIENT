@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 
 import { PLACE_QUERY_OPTIONS } from '@/domains/course/api/query';
+import type { Place } from '@/domains/course/api/type';
 import { CourseBottomSheet } from '@/domains/course/components/course-bottom-sheet/course-bottom-sheet';
 import { CourseMap } from '@/domains/course/components/course-map/course-map';
 import { MapFloatingControls } from '@/domains/course/components/map-floating-controls/map-floating-controls';
@@ -61,6 +62,7 @@ export default function CoursePage() {
   } = useCourseBrowse();
   const [restoredMapCamera, setRestoredMapCamera] = useState(getMapCamera);
   const [selectedPlaceId, setSelectedPlaceId] = useState<string>();
+  const [selectedMapPlace, setSelectedMapPlace] = useState<Place>();
   const nearbyPlaceParams = currentLocation
     ? {
         lat: currentLocation.lat,
@@ -78,9 +80,10 @@ export default function CoursePage() {
     refetch: refetchNearbyPlaces,
   } = useQuery(PLACE_QUERY_OPTIONS.NEARBY(nearbyPlaceParams));
   const nearbyItems = useMemo(() => {
-    const selectedPlace = nearbyPlaces.find(
-      ({ placeId }) => placeId === selectedPlaceId,
-    );
+    const selectedPlace =
+      selectedMapPlace?.placeId === selectedPlaceId
+        ? selectedMapPlace
+        : nearbyPlaces.find(({ placeId }) => placeId === selectedPlaceId);
     const orderedPlaces = selectedPlace
       ? [
           selectedPlace,
@@ -96,10 +99,11 @@ export default function CoursePage() {
         [place.country, place.city].filter(Boolean).join(' · ') ||
         '위치 정보 없음',
     }));
-  }, [nearbyPlaces, selectedPlaceId]);
+  }, [nearbyPlaces, selectedMapPlace, selectedPlaceId]);
 
   const handleCategoryChange = (category: MapCategory) => {
     setSelectedPlaceId(undefined);
+    setSelectedMapPlace(undefined);
     setSelectedCategory((currentCategory) =>
       currentCategory === category ? undefined : category,
     );
@@ -126,11 +130,22 @@ export default function CoursePage() {
     setRestoredMapCamera(null);
     setMapCamera(null);
     setSelectedPlaceId(undefined);
+    setSelectedMapPlace(undefined);
     setIsLocationActive(true);
   };
 
   const handlePlaceSelect = (placeId: string) => {
     setSelectedPlaceId(placeId);
+    setSelectedMapPlace(undefined);
+    setIsLocationActive(false);
+    setIsBookmarkActive(false);
+    setBottomSheetTab('nearby');
+    setBottomSheetPosition('default');
+  };
+
+  const handleMapPlaceSelect = (place: Place) => {
+    setSelectedPlaceId(place.placeId);
+    setSelectedMapPlace(place);
     setIsLocationActive(false);
     setIsBookmarkActive(false);
     setBottomSheetTab('nearby');
@@ -184,6 +199,7 @@ export default function CoursePage() {
           selectedPlaceId={selectedPlaceId}
           showCurrentLocation={isLocationActive}
           onCameraChange={setMapCamera}
+          onMapPlaceSelect={handleMapPlaceSelect}
           onPlaceSelect={handlePlaceSelect}
         />
 

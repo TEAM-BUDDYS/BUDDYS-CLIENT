@@ -1,6 +1,10 @@
 'use client';
 
-import { APIProvider, Map } from '@vis.gl/react-google-maps';
+import {
+  APIProvider,
+  Map,
+  type MapMouseEvent,
+} from '@vis.gl/react-google-maps';
 import { useState } from 'react';
 
 import type { Place } from '@/domains/course/api/type';
@@ -18,6 +22,46 @@ const FALLBACK_CENTER = {
   lng: 126.978,
 };
 
+interface GoogleAddressComponent {
+  longText: string;
+  types: string[];
+}
+
+interface GooglePlaceDetails {
+  addressComponents?: GoogleAddressComponent[];
+  displayName?: string;
+  formattedAddress?: string;
+  googleMapsURI?: string;
+  location?: { toJSON: () => CourseMapCenter };
+  fetchFields: (options: { fields: string[] }) => Promise<unknown>;
+}
+
+interface GooglePlaceConstructor {
+  new (options: { id: string }): GooglePlaceDetails;
+}
+
+interface GoogleMapsApi {
+  importLibrary: (
+    libraryName: 'places',
+  ) => Promise<{ Place: GooglePlaceConstructor }>;
+}
+
+const getAddressComponent = (
+  addressComponents: GoogleAddressComponent[] | undefined,
+  type: string,
+) =>
+  addressComponents?.find((component) => component.types.includes(type))
+    ?.longText ?? null;
+
+const getGoogleMapsApi = () =>
+  (
+    window as typeof window & {
+      google?: {
+        maps?: GoogleMapsApi;
+      };
+    }
+  ).google?.maps;
+
 interface CourseMapProps {
   places: Place[];
   bottomOverlayRatio?: number;
@@ -28,6 +72,7 @@ interface CourseMapProps {
   cameraTarget?: CourseMapCenter | null;
   initialCamera?: CourseMapCameraState | null;
   onCameraChange?: (camera: CourseMapCameraState) => void;
+  onMapPlaceSelect?: (place: Place) => void;
   onPlaceSelect?: (placeId: string) => void;
 }
 
@@ -41,6 +86,7 @@ export const CourseMap = ({
   cameraTarget = null,
   initialCamera = null,
   onCameraChange,
+  onMapPlaceSelect,
   onPlaceSelect,
 }: CourseMapProps) => {
   const [hasMapLoadError, setHasMapLoadError] = useState(false);
@@ -61,6 +107,68 @@ export const CourseMap = ({
 
   const center = selectedPlaceCenter ?? currentLocation ?? FALLBACK_CENTER;
   const resolvedCameraTarget = cameraTarget ?? selectedPlaceCenter;
+
+  const handleMapClick = async (event: MapMouseEvent) => {
+    const { latLng, placeId } = event.detail;
+
+    if (!placeId || !onMapPlaceSelect) return;
+
+    event.stop();
+
+    try {
+      const googleMapsApi = getGoogleMapsApi();
+
+      if (!googleMapsApi) throw new Error('Google Maps API is not ready.');
+
+      const { Place: GooglePlace } =
+        await googleMapsApi.importLibrary('places');
+      const googlePlace = new GooglePlace({ id: placeId });
+      await googlePlace.fetchFields({
+        fields: [
+          'addressComponents',
+          'displayName',
+          'formattedAddress',
+          'googleMapsURI',
+          'location',
+        ],
+      });
+
+      const position = googlePlace.location?.toJSON() ?? latLng;
+
+      onMapPlaceSelect({
+        placeId,
+        name: googlePlace.displayName ?? null,
+        address: googlePlace.formattedAddress ?? null,
+        latitude: position?.lat ?? null,
+        longitude: position?.lng ?? null,
+        bookmarked: false,
+        photoUrl: `/api/v1/places/${encodeURIComponent(placeId)}/photo?maxWidth=400`,
+        googleMapsUrl:
+          googlePlace.googleMapsURI ??
+          `https://www.google.com/maps/search/?api=1&query_place_id=${encodeURIComponent(placeId)}`,
+        country: getAddressComponent(googlePlace.addressComponents, 'country'),
+        city:
+          getAddressComponent(googlePlace.addressComponents, 'locality') ??
+          getAddressComponent(
+            googlePlace.addressComponents,
+            'administrative_area_level_1',
+          ),
+      });
+    } catch {
+      onMapPlaceSelect({
+        placeId,
+        name: null,
+        address: null,
+        latitude: latLng?.lat ?? null,
+        longitude: latLng?.lng ?? null,
+        bookmarked: false,
+        photoUrl: `/api/v1/places/${encodeURIComponent(placeId)}/photo?maxWidth=400`,
+        googleMapsUrl: `https://www.google.com/maps/search/?api=1&query_place_id=${encodeURIComponent(placeId)}`,
+        country: null,
+        city: null,
+      });
+    }
+  };
 
   if (hasMapLoadError) {
     return (
@@ -92,9 +200,10 @@ export const CourseMap = ({
           defaultCenter={initialCamera?.center ?? center}
           defaultZoom={initialCamera?.zoom ?? 15}
           gestureHandling="greedy"
-          clickableIcons={false}
+          clickableIcons
           disableDefaultUI
           keyboardShortcuts={false}
+          onClick={handleMapClick}
           onCameraChanged={({ detail }) =>
             onCameraChange?.({ center: detail.center, zoom: detail.zoom })
           }
