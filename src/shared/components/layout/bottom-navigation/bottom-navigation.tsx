@@ -23,6 +23,8 @@ interface BottomNavigationProps {
 interface BottomNavigationItem {
   key: string;
   href?: string;
+  // href 외에 이 탭을 활성 상태로 표시할 하위 경로
+  matchPaths?: string[];
   icon: (props: SVGProps<SVGSVGElement>) => ReactElement;
   label: string;
 }
@@ -31,6 +33,7 @@ const BOTTOM_NAVIGATION_ITEMS: BottomNavigationItem[] = [
   {
     key: 'home',
     href: ROUTES.HOME,
+    matchPaths: [ROUTES.MAGAZINE],
     icon: HomeIcon,
     label: '홈',
   },
@@ -59,6 +62,9 @@ const BOTTOM_NAVIGATION_ITEMS: BottomNavigationItem[] = [
   },
 ];
 
+const isPathMatched = (pathname: string, path: string) =>
+  pathname === path || pathname.startsWith(`${path}/`);
+
 export const BottomNavigation = ({ className }: BottomNavigationProps) => {
   const pathname = usePathname();
   const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
@@ -76,10 +82,12 @@ export const BottomNavigation = ({ className }: BottomNavigationProps) => {
         )}
       >
         <ul className="flex h-full w-full">
-          {BOTTOM_NAVIGATION_ITEMS.map(({ key, href, icon: Icon, label }) => {
+          {BOTTOM_NAVIGATION_ITEMS.map((item) => {
+            const { key, href, matchPaths = [], icon: Icon, label } = item;
             const isActive =
               href === pathname ||
-              (href !== ROUTES.HOME && pathname.startsWith(`${href}/`));
+              (href !== ROUTES.HOME && pathname.startsWith(`${href}/`)) ||
+              matchPaths.some((path) => isPathMatched(pathname, path));
             const itemClassName = cn(
               'focus-visible:outline-mint-300 flex h-full w-full flex-col items-center justify-center gap-0.5 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2',
               isActive ? 'text-gray-800' : 'text-gray-200',
