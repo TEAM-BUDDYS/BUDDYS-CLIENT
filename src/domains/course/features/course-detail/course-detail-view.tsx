@@ -21,7 +21,7 @@ import { CourseDetailOverviewSection } from './course-detail-overview-section';
 interface CourseDetailViewProps {
   course: CourseDetail;
   initialComments: CommentSectionItem[];
-  viewerUserId: number;
+  viewerUserId: number | null;
 }
 
 export const CourseDetailView = ({
@@ -85,7 +85,7 @@ export const CourseDetailView = ({
 
     const content = comment.trim();
 
-    if (!content) return;
+    if (!content || viewerUserId === null) return;
 
     const nextCommentId =
       comments.reduce(
@@ -155,7 +155,7 @@ export const CourseDetailView = ({
 
       <div className="fixed bottom-0 left-1/2 z-20 w-full max-w-107.5 -translate-x-1/2 border-t border-gray-100 bg-white">
         <BottomActionBar
-          submitDisabled={!comment.trim()}
+          submitDisabled={!comment.trim() || viewerUserId === null}
           value={comment}
           onSubmit={handleCommentSubmit}
           onValueChange={setComment}

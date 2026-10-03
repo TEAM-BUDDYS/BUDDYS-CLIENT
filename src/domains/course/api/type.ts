@@ -7,6 +7,8 @@ export type SearchAirlinesParams = NonNullable<
 export type SearchAirlinesResponse =
   components['schemas']['BaseResponseAirlineListResponse'];
 export type CourseDetail = components['schemas']['CourseDetailResponse'];
+export type GetCourseDetailResponse =
+  components['schemas']['BaseResponseCourseDetailResponse'];
 export type CourseDay = components['schemas']['DayResponse'];
 export type Place = components['schemas']['PlaceResponse'];
 export type BookmarkedPlace = components['schemas']['BookmarkedPlaceResponse'];
