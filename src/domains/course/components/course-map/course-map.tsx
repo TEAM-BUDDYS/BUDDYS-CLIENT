@@ -11,56 +11,14 @@ import type { Place } from '@/domains/course/api/type';
 import { CourseCurrentLocationMarker } from '@/domains/course/components/course-map/course-current-location-marker';
 import { CourseMapCamera } from '@/domains/course/components/course-map/course-map-camera';
 import { CourseMapMarker } from '@/domains/course/components/course-map/course-map-marker';
-import type {
-  CourseMapCameraState,
-  CourseMapCenter,
-} from '@/domains/course/model/course-map';
+import type { CourseMapCenter } from '@/domains/course/model/course-map';
+import type { GoogleMapPoi } from '@/domains/course/model/google-place';
 import { AsyncErrorState } from '@/shared/components/ui';
 
 const FALLBACK_CENTER = {
   lat: 37.5665,
   lng: 126.978,
 };
-
-interface GoogleAddressComponent {
-  longText: string;
-  types: string[];
-}
-
-interface GooglePlaceDetails {
-  addressComponents?: GoogleAddressComponent[];
-  displayName?: string;
-  formattedAddress?: string;
-  googleMapsURI?: string;
-  location?: { toJSON: () => CourseMapCenter };
-  fetchFields: (options: { fields: string[] }) => Promise<unknown>;
-}
-
-interface GooglePlaceConstructor {
-  new (options: { id: string }): GooglePlaceDetails;
-}
-
-interface GoogleMapsApi {
-  importLibrary: (
-    libraryName: 'places',
-  ) => Promise<{ Place: GooglePlaceConstructor }>;
-}
-
-const getAddressComponent = (
-  addressComponents: GoogleAddressComponent[] | undefined,
-  type: string,
-) =>
-  addressComponents?.find((component) => component.types.includes(type))
-    ?.longText ?? null;
-
-const getGoogleMapsApi = () =>
-  (
-    window as typeof window & {
-      google?: {
-        maps?: GoogleMapsApi;
-      };
-    }
-  ).google?.maps;
 
 interface CourseMapProps {
   places: Place[];
@@ -70,9 +28,7 @@ interface CourseMapProps {
   showCurrentLocation?: boolean;
   selectedPlaceId?: string;
   cameraTarget?: CourseMapCenter | null;
-  initialCamera?: CourseMapCameraState | null;
-  onCameraChange?: (camera: CourseMapCameraState) => void;
-  onMapPlaceSelect?: (place: Place) => void;
+  onPoiSelect?: (poi: GoogleMapPoi) => void;
   onPlaceSelect?: (placeId: string) => void;
 }
 
@@ -84,9 +40,7 @@ export const CourseMap = ({
   showCurrentLocation = false,
   selectedPlaceId,
   cameraTarget = null,
-  initialCamera = null,
-  onCameraChange,
-  onMapPlaceSelect,
+  onPoiSelect,
   onPlaceSelect,
 }: CourseMapProps) => {
   const [hasMapLoadError, setHasMapLoadError] = useState(false);
@@ -108,66 +62,13 @@ export const CourseMap = ({
   const center = selectedPlaceCenter ?? currentLocation ?? FALLBACK_CENTER;
   const resolvedCameraTarget = cameraTarget ?? selectedPlaceCenter;
 
-  const handleMapClick = async (event: MapMouseEvent) => {
+  const handleMapClick = (event: MapMouseEvent) => {
     const { latLng, placeId } = event.detail;
 
-    if (!placeId || !onMapPlaceSelect) return;
+    if (!placeId || !onPoiSelect) return;
 
     event.stop();
-
-    try {
-      const googleMapsApi = getGoogleMapsApi();
-
-      if (!googleMapsApi) throw new Error('Google Maps API is not ready.');
-
-      const { Place: GooglePlace } =
-        await googleMapsApi.importLibrary('places');
-      const googlePlace = new GooglePlace({ id: placeId });
-      await googlePlace.fetchFields({
-        fields: [
-          'addressComponents',
-          'displayName',
-          'formattedAddress',
-          'googleMapsURI',
-          'location',
-        ],
-      });
-
-      const position = googlePlace.location?.toJSON() ?? latLng;
-
-      onMapPlaceSelect({
-        placeId,
-        name: googlePlace.displayName ?? null,
-        address: googlePlace.formattedAddress ?? null,
-        latitude: position?.lat ?? null,
-        longitude: position?.lng ?? null,
-        bookmarked: false,
-        photoUrl: `/api/v1/places/${encodeURIComponent(placeId)}/photo?maxWidth=400`,
-        googleMapsUrl:
-          googlePlace.googleMapsURI ??
-          `https://www.google.com/maps/search/?api=1&query_place_id=${encodeURIComponent(placeId)}`,
-        country: getAddressComponent(googlePlace.addressComponents, 'country'),
-        city:
-          getAddressComponent(googlePlace.addressComponents, 'locality') ??
-          getAddressComponent(
-            googlePlace.addressComponents,
-            'administrative_area_level_1',
-          ),
-      });
-    } catch {
-      onMapPlaceSelect({
-        placeId,
-        name: null,
-        address: null,
-        latitude: latLng?.lat ?? null,
-        longitude: latLng?.lng ?? null,
-        bookmarked: false,
-        photoUrl: `/api/v1/places/${encodeURIComponent(placeId)}/photo?maxWidth=400`,
-        googleMapsUrl: `https://www.google.com/maps/search/?api=1&query_place_id=${encodeURIComponent(placeId)}`,
-        country: null,
-        city: null,
-      });
-    }
+    onPoiSelect({ placeId, position: latLng });
   };
 
   if (hasMapLoadError) {
@@ -197,16 +98,13 @@ export const CourseMap = ({
       <APIProvider apiKey={apiKey} onError={() => setHasMapLoadError(true)}>
         <Map
           mapId={mapId}
-          defaultCenter={initialCamera?.center ?? center}
-          defaultZoom={initialCamera?.zoom ?? 15}
+          defaultCenter={center}
+          defaultZoom={15}
           gestureHandling="greedy"
           clickableIcons
           disableDefaultUI
           keyboardShortcuts={false}
           onClick={handleMapClick}
-          onCameraChanged={({ detail }) =>
-            onCameraChange?.({ center: detail.center, zoom: detail.zoom })
-          }
         >
           <CourseMapCamera
             bottomOverlayRatio={bottomOverlayRatio}

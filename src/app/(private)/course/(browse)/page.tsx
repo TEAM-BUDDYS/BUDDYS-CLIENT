@@ -1,15 +1,15 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
 
-import { PLACE_QUERY_OPTIONS } from '@/domains/course/api/query';
-import type { Place } from '@/domains/course/api/type';
 import { CourseBottomSheet } from '@/domains/course/components/course-bottom-sheet/course-bottom-sheet';
 import { CourseMap } from '@/domains/course/components/course-map/course-map';
 import { MapFloatingControls } from '@/domains/course/components/map-floating-controls/map-floating-controls';
 import { useCourseBrowse } from '@/domains/course/features/course-browse/course-browse-provider';
+import { useCoursePlaceSelection } from '@/domains/course/features/course-browse/use-course-place-selection';
+import { useNearbyPlaces } from '@/domains/course/features/course-browse/use-nearby-places';
+import type { CourseMapCategory } from '@/domains/course/model/course-place';
+import type { GoogleMapPoi } from '@/domains/course/model/google-place';
 import { cn } from '@/lib/cn';
 import {
   AccommodationIcon,
@@ -28,15 +28,7 @@ const MAP_CATEGORY_ITEMS = [
   { key: 'accommodation', label: '숙소', icon: AccommodationIcon },
 ] as const;
 
-type MapCategory = (typeof MAP_CATEGORY_ITEMS)[number]['key'];
 const EMPTY_COURSE_ITEMS = [] as const;
-const NEARBY_PLACE_RADIUS_METERS = 1500;
-const API_CATEGORY_BY_MAP_CATEGORY = {
-  sightseeing: 'TOURISM',
-  food: 'RESTAURANT',
-  cafe: 'CAFE',
-  accommodation: 'ACCOMMODATION',
-} as const satisfies Record<MapCategory, string>;
 
 export default function CoursePage() {
   const router = useRouter();
@@ -46,7 +38,6 @@ export default function CoursePage() {
     bottomSheetTab,
     currentLocation,
     currentLocationStatus,
-    getMapCamera,
     isBookmarkActive,
     isLocationActive,
     refetchCurrentLocation,
@@ -56,54 +47,25 @@ export default function CoursePage() {
     setBottomSheetTab,
     setIsBookmarkActive,
     setIsLocationActive,
-    setMapCamera,
     setSearchKeyword,
     setSelectedCategory,
   } = useCourseBrowse();
-  const [restoredMapCamera, setRestoredMapCamera] = useState(getMapCamera);
-  const [selectedPlaceId, setSelectedPlaceId] = useState<string>();
-  const [selectedMapPlace, setSelectedMapPlace] = useState<Place>();
-  const nearbyPlaceParams = currentLocation
-    ? {
-        lat: currentLocation.lat,
-        lng: currentLocation.lng,
-        radius: NEARBY_PLACE_RADIUS_METERS,
-        category: selectedCategory
-          ? API_CATEGORY_BY_MAP_CATEGORY[selectedCategory]
-          : undefined,
-      }
-    : null;
   const {
-    data: nearbyPlaces = [],
-    isError: hasNearbyError,
-    isPending: isNearbyLoading,
+    hasError: hasNearbyError,
+    isLoading: isNearbyLoading,
+    places: nearbyPlaces,
     refetch: refetchNearbyPlaces,
-  } = useQuery(PLACE_QUERY_OPTIONS.NEARBY(nearbyPlaceParams));
-  const nearbyItems = useMemo(() => {
-    const selectedPlace =
-      selectedMapPlace?.placeId === selectedPlaceId
-        ? selectedMapPlace
-        : nearbyPlaces.find(({ placeId }) => placeId === selectedPlaceId);
-    const orderedPlaces = selectedPlace
-      ? [
-          selectedPlace,
-          ...nearbyPlaces.filter(
-            ({ placeId }) => placeId !== selectedPlace.placeId,
-          ),
-        ]
-      : nearbyPlaces;
+  } = useNearbyPlaces({ currentLocation, selectedCategory });
+  const {
+    clearSelectedPlace,
+    nearbyItems,
+    selectedPlaceId,
+    selectGooglePlace,
+    selectNearbyPlace,
+  } = useCoursePlaceSelection({ nearbyPlaces });
 
-    return orderedPlaces.map((place) => ({
-      place,
-      description:
-        [place.country, place.city].filter(Boolean).join(' · ') ||
-        '위치 정보 없음',
-    }));
-  }, [nearbyPlaces, selectedMapPlace, selectedPlaceId]);
-
-  const handleCategoryChange = (category: MapCategory) => {
-    setSelectedPlaceId(undefined);
-    setSelectedMapPlace(undefined);
+  const handleCategoryChange = (category: CourseMapCategory) => {
+    clearSelectedPlace();
     setSelectedCategory((currentCategory) =>
       currentCategory === category ? undefined : category,
     );
@@ -126,30 +88,31 @@ export default function CoursePage() {
       return;
     }
 
-    setBottomSheetPosition('default');
-    setRestoredMapCamera(null);
-    setMapCamera(null);
-    setSelectedPlaceId(undefined);
-    setSelectedMapPlace(undefined);
+    clearSelectedPlace();
     setIsLocationActive(true);
   };
 
-  const handlePlaceSelect = (placeId: string) => {
-    setSelectedPlaceId(placeId);
-    setSelectedMapPlace(undefined);
+  const openSelectedPlace = () => {
     setIsLocationActive(false);
     setIsBookmarkActive(false);
     setBottomSheetTab('nearby');
     setBottomSheetPosition('default');
   };
 
-  const handleMapPlaceSelect = (place: Place) => {
-    setSelectedPlaceId(place.placeId);
-    setSelectedMapPlace(place);
-    setIsLocationActive(false);
-    setIsBookmarkActive(false);
-    setBottomSheetTab('nearby');
-    setBottomSheetPosition('default');
+  const handlePlaceSelect = (placeId: string) => {
+    const place = selectNearbyPlace(placeId);
+
+    if (place) openSelectedPlace();
+  };
+
+  const handlePoiSelect = async (poi: GoogleMapPoi) => {
+    try {
+      const place = await selectGooglePlace(poi);
+
+      if (place) openSelectedPlace();
+    } catch {
+      showToast('장소 정보를 불러오지 못했어요', { variant: 'gray' });
+    }
   };
 
   return (
@@ -186,21 +149,18 @@ export default function CoursePage() {
         </div>
 
         <CourseMap
+          key={currentLocation ? 'current-location' : 'fallback-location'}
           bottomOverlayRatio={
             bottomSheetPosition === 'default' ? 0.59 : undefined
           }
           cameraTarget={isLocationActive ? currentLocation : null}
           currentLocation={currentLocation}
-          initialCamera={restoredMapCamera}
           places={nearbyPlaces}
-          preserveCamera={
-            restoredMapCamera !== null || bottomSheetPosition === 'expanded'
-          }
+          preserveCamera={bottomSheetPosition === 'expanded'}
           selectedPlaceId={selectedPlaceId}
           showCurrentLocation={isLocationActive}
-          onCameraChange={setMapCamera}
-          onMapPlaceSelect={handleMapPlaceSelect}
           onPlaceSelect={handlePlaceSelect}
+          onPoiSelect={(poi) => void handlePoiSelect(poi)}
         />
 
         <div

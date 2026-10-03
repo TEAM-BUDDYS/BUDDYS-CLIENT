@@ -1,11 +1,6 @@
-import type { Place } from '@/domains/course/api/type';
 import { CourseSaveCard } from '@/domains/course/components/course-save-card/course-save-card';
+import type { NearbyCourseItem } from '@/domains/course/model/course-place';
 import { AsyncErrorState, AsyncLoadingState } from '@/shared/components/ui';
-
-export interface NearbyCourseItem {
-  place: Place;
-  description: string;
-}
 
 interface NearbyCourseContentProps {
   hasError?: boolean;

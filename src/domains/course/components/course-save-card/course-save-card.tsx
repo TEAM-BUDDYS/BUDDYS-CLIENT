@@ -3,11 +3,11 @@
 import { useState } from 'react';
 
 import type { Place } from '@/domains/course/api/type';
+import { resolveApiUrl } from '@/shared/api';
 import { BookmarkButton, CommonImage } from '@/shared/components/ui';
 
 interface CourseSaveCardProps {
   place: Place;
-  // TODO: 서버와 description 스키마 논의가 완료되면 Place 필드로 대체
   description: string;
   onBookmarkChange: (placeId: string, nextBookmarked: boolean) => void;
 }
@@ -20,11 +20,7 @@ export const CourseSaveCard = ({
   const [failedPhotoUrl, setFailedPhotoUrl] = useState<string>();
   const { placeId, name, address, bookmarked, photoUrl } = place;
   const displayName = name ?? '이름 없는 장소';
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-  const resolvedPhotoUrl =
-    photoUrl?.startsWith('/') && apiBaseUrl
-      ? new URL(photoUrl, apiBaseUrl).toString()
-      : photoUrl;
+  const resolvedPhotoUrl = resolveApiUrl(photoUrl);
   const hasImageError = failedPhotoUrl === resolvedPhotoUrl;
 
   const handleBookmarkClick = () => {

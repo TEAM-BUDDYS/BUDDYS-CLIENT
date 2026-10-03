@@ -2,13 +2,11 @@ import {
   CourseTab,
   type CourseTabValue,
 } from '@/domains/course/components/course-tab/course-tab';
+import type { NearbyCourseItem } from '@/domains/course/model/course-place';
 import { BottomSheet } from '@/shared/components/ui';
 
 import { BookmarkedPlaceContent } from './bookmarked-place-content';
-import {
-  NearbyCourseContent,
-  type NearbyCourseItem,
-} from './nearby-course-content';
+import { NearbyCourseContent } from './nearby-course-content';
 import { RecommendedCourseContent } from './recommended-course-content/recommended-course-content';
 
 const COLLAPSED_SNAP_POINT = '78px';
