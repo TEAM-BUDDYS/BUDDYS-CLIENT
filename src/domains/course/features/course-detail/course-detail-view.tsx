@@ -17,6 +17,7 @@ import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/
 import { CourseContinuationBanner } from './course-continuation-banner';
 import { CourseDetailDayList } from './course-detail-day-list';
 import { CourseDetailOverviewSection } from './course-detail-overview-section';
+import { useCourseBookmark } from './use-course-bookmark';
 
 interface CourseDetailViewProps {
   course: CourseDetail;
@@ -29,7 +30,6 @@ export const CourseDetailView = ({
   initialComments,
   viewerUserId,
 }: CourseDetailViewProps) => {
-  const [isBookmarked, setIsBookmarked] = useState(course.isBookmarked);
   const [isDayPickerOpen, setIsDayPickerOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
@@ -38,6 +38,10 @@ export const CourseDetailView = ({
   );
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState(initialComments);
+  const { isPending: isBookmarkPending, toggleBookmark } = useCourseBookmark({
+    courseId: course.courseId,
+    isBookmarked: course.isBookmarked,
+  });
   const pendingDayScrollRef = useRef<number | null>(null);
   const dayPickerDays = useMemo(
     () =>
@@ -51,8 +55,6 @@ export const CourseDetailView = ({
   );
   const addedCommentCount = comments.length - initialComments.length;
   const commentCount = course.commentCount + addedCommentCount;
-  const bookmarkCount =
-    course.bookmarkCount + Number(isBookmarked) - Number(course.isBookmarked);
 
   useEffect(() => {
     if (isDayPickerOpen || pendingDayScrollRef.current === null) return;
@@ -133,8 +135,9 @@ export const CourseDetailView = ({
         <div className="px-4 pt-4 pb-6">
           <CourseDetailOverviewSection
             course={course}
-            isBookmarked={isBookmarked}
-            onBookmarkClick={() => setIsBookmarked((current) => !current)}
+            isBookmarkPending={isBookmarkPending}
+            isBookmarked={course.isBookmarked}
+            onBookmarkClick={toggleBookmark}
             onDayPickerOpen={() => setIsDayPickerOpen(true)}
           />
         </div>
@@ -143,7 +146,7 @@ export const CourseDetailView = ({
 
         <div className="flex flex-col gap-6 px-4 py-4">
           <CommentSection
-            bookmarkCount={bookmarkCount}
+            bookmarkCount={course.bookmarkCount}
             commentCount={commentCount}
             comments={comments}
             viewCount={course.viewCount}
