@@ -44,7 +44,7 @@ export const SavedCourseList = () => {
   };
 
   return (
-    <ul className="flex flex-col gap-3">
+    <ul className="flex flex-col gap-5">
       {courses.map(({ courseId, ...course }) => (
         <li key={courseId}>
           <CardList

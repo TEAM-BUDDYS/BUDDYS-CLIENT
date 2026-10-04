@@ -55,7 +55,7 @@ export const SavedPartnerList = () => {
   };
 
   return (
-    <ul className="flex flex-col gap-6">
+    <ul className="flex flex-col gap-5">
       {partners.map((partner) => (
         <li key={partner.postId}>
           <BookmarkContainer
