@@ -1,34 +1,24 @@
 'use client';
 
-import { type SubmitEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import type { CourseDetail } from '@/domains/course/api/type';
 import { CourseDayPickerSheet } from '@/domains/course/components/course-day-picker-sheet/course-day-picker-sheet';
 import { MoreIcon } from '@/shared/components/icons';
 import { Header } from '@/shared/components/layout';
-import {
-  BottomActionBar,
-  CommentSection,
-  type CommentSectionItem,
-  PostMenuBottomSheet,
-} from '@/shared/components/ui';
+import { PostMenuBottomSheet } from '@/shared/components/ui';
 import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
 
 import { CourseContinuationBanner } from './course-continuation-banner';
+import { CourseDetailComments } from './course-detail-comments';
 import { CourseDetailDayList } from './course-detail-day-list';
 import { CourseDetailOverviewSection } from './course-detail-overview-section';
 
 interface CourseDetailViewProps {
   course: CourseDetail;
-  initialComments: CommentSectionItem[];
-  viewerUserId: number | null;
 }
 
-export const CourseDetailView = ({
-  course,
-  initialComments,
-  viewerUserId,
-}: CourseDetailViewProps) => {
+export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
   const [isBookmarked, setIsBookmarked] = useState(course.isBookmarked);
   const [isDayPickerOpen, setIsDayPickerOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -36,8 +26,6 @@ export const CourseDetailView = ({
   const [selectedDayNumber, setSelectedDayNumber] = useState<number | null>(
     null,
   );
-  const [comment, setComment] = useState('');
-  const [comments, setComments] = useState(initialComments);
   const pendingDayScrollRef = useRef<number | null>(null);
   const dayPickerDays = useMemo(
     () =>
@@ -49,8 +37,6 @@ export const CourseDetailView = ({
         })),
     [course.days],
   );
-  const addedCommentCount = comments.length - initialComments.length;
-  const commentCount = course.commentCount + addedCommentCount;
   const bookmarkCount =
     course.bookmarkCount + Number(isBookmarked) - Number(course.isBookmarked);
 
@@ -80,33 +66,6 @@ export const CourseDetailView = ({
     setSelectedDayNumber(dayNumber);
   };
 
-  const handleCommentSubmit = (event: SubmitEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const content = comment.trim();
-
-    if (!content || viewerUserId === null) return;
-
-    const nextCommentId =
-      comments.reduce(
-        (largestId, currentComment) =>
-          Math.max(largestId, currentComment.commentId),
-        0,
-      ) + 1;
-
-    setComments((currentComments) => [
-      ...currentComments,
-      {
-        commentId: nextCommentId,
-        writerId: viewerUserId,
-        writerName: '나',
-        content,
-        timeAgo: '방금 전',
-      },
-    ]);
-    setComment('');
-  };
-
   const handleComingSoonOpen = () => {
     setIsComingSoonOpen(true);
   };
@@ -129,7 +88,7 @@ export const CourseDetailView = ({
         />
       </div>
 
-      <main className="pb-24.5">
+      <main className="pb-6">
         <div className="px-4 pt-4 pb-6">
           <CourseDetailOverviewSection
             course={course}
@@ -142,25 +101,15 @@ export const CourseDetailView = ({
         <CourseDetailDayList days={course.days} preloadFirstImage />
 
         <div className="flex flex-col gap-6 px-4 py-4">
-          <CommentSection
+          <CourseDetailComments
             bookmarkCount={bookmarkCount}
-            commentCount={commentCount}
-            comments={comments}
+            commentCount={course.commentCount}
+            courseId={course.courseId}
             viewCount={course.viewCount}
-            viewerUserId={viewerUserId}
           />
           <CourseContinuationBanner onClick={handleComingSoonOpen} />
         </div>
       </main>
-
-      <div className="fixed bottom-0 left-1/2 z-20 w-full max-w-107.5 -translate-x-1/2 border-t border-gray-100 bg-white">
-        <BottomActionBar
-          submitDisabled={!comment.trim() || viewerUserId === null}
-          value={comment}
-          onSubmit={handleCommentSubmit}
-          onValueChange={setComment}
-        />
-      </div>
 
       <CourseDayPickerSheet
         open={isDayPickerOpen}
