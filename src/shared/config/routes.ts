@@ -36,6 +36,7 @@ export const ROUTES = {
     SETTINGS: '/profile/settings',
     PRIVACY_POLICY: '/profile/settings/privacy-policy',
     TERMS: '/profile/settings/terms',
+    SAVED: '/profile/saved',
     EDIT: '/profile/edit',
   },
 } as const;
