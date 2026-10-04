@@ -1,3 +1,4 @@
+import { SavedContent } from '@/domains/profile/features/saved/saved-content';
 import { Header } from '@/shared/components/layout';
 
 export default function SavedPage() {
@@ -8,6 +9,7 @@ export default function SavedPage() {
         contentAlign="center"
         hasBackButton
       />
+      <SavedContent />
     </main>
   );
 }
