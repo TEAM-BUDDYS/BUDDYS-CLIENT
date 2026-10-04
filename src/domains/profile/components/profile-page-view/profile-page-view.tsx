@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import {
-  BookmarkIcon,
+  BookmarkBoldIcon,
   ProfileBadgeIcon,
   SettingIcon,
 } from '@/shared/components/icons';
@@ -38,7 +38,7 @@ export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
               onClick={() => router.push(ROUTES.PROFILE.SAVED)}
               className="flex size-11 shrink-0 items-center justify-center"
             >
-              <BookmarkIcon className="size-6 text-gray-500" />
+              <BookmarkBoldIcon className="size-6 text-gray-500" />
             </button>
             <button
               aria-label="설정"

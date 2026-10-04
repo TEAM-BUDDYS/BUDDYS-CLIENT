@@ -1,6 +1,7 @@
 export { AccommodationIcon } from './accommodation-icon';
 export { AgeIcon } from './age-icon';
 export { BellIcon } from './bell-icon';
+export { BookmarkBoldIcon } from './bookmark-bold-icon';
 export { BookmarkIcon } from './bookmark-icon';
 export { BuddysLogoIcon } from './buddys-logo-icon';
 export { CafeIcon } from './cafe-icon';
