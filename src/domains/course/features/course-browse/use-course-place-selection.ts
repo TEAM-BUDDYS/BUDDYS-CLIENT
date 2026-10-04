@@ -13,10 +13,12 @@ import {
 
 interface UseCoursePlaceSelectionParams {
   nearbyPlaces: readonly Place[];
+  bookmarkedPlaces?: readonly Place[];
 }
 
 export const useCoursePlaceSelection = ({
   nearbyPlaces,
+  bookmarkedPlaces = [],
 }: UseCoursePlaceSelectionParams) => {
   const [selectedPlace, setSelectedPlace] = useState<Place>();
   const selectionRequestIdRef = useRef(0);
@@ -29,25 +31,36 @@ export const useCoursePlaceSelection = ({
   const selectNearbyPlace = useCallback(
     (placeId: string) => {
       selectionRequestIdRef.current += 1;
-      const place = nearbyPlaces.find((item) => item.placeId === placeId);
+      const place = [...bookmarkedPlaces, ...nearbyPlaces].find(
+        (item) => item.placeId === placeId,
+      );
 
       setSelectedPlace(place);
       return place;
     },
-    [nearbyPlaces],
+    [bookmarkedPlaces, nearbyPlaces],
   );
 
-  const selectGooglePlace = useCallback(async (poi: GoogleMapPoi) => {
-    const requestId = selectionRequestIdRef.current + 1;
-    selectionRequestIdRef.current = requestId;
-    const googlePlace = await getGooglePlaceDetails(poi.placeId);
-    const place = convertGooglePlaceToPlace(googlePlace, poi);
+  const selectGooglePlace = useCallback(
+    async (poi: GoogleMapPoi) => {
+      const requestId = selectionRequestIdRef.current + 1;
+      selectionRequestIdRef.current = requestId;
+      const googlePlace = await getGooglePlaceDetails(poi.placeId);
+      const knownBookmarkedPlace = bookmarkedPlaces.find(
+        (place) => place.placeId === poi.placeId,
+      );
+      const place = {
+        ...convertGooglePlaceToPlace(googlePlace, poi),
+        bookmarked: Boolean(knownBookmarkedPlace),
+      };
 
-    if (selectionRequestIdRef.current !== requestId) return undefined;
+      if (selectionRequestIdRef.current !== requestId) return undefined;
 
-    setSelectedPlace(place);
-    return place;
-  }, []);
+      setSelectedPlace(place);
+      return place;
+    },
+    [bookmarkedPlaces],
+  );
 
   const updateSelectedPlaceBookmark = useCallback(
     (placeId: string, bookmarked: boolean) => {
@@ -60,15 +73,28 @@ export const useCoursePlaceSelection = ({
     [],
   );
 
+  const resolvedSelectedPlace = useMemo(() => {
+    if (
+      !selectedPlace ||
+      selectedPlace.bookmarked ||
+      !bookmarkedPlaces.some((place) => place.placeId === selectedPlace.placeId)
+    ) {
+      return selectedPlace;
+    }
+
+    return { ...selectedPlace, bookmarked: true };
+  }, [bookmarkedPlaces, selectedPlace]);
+
   const nearbyItems = useMemo<NearbyCourseItem[]>(
-    () => getNearbyCourseItems(nearbyPlaces, selectedPlace),
-    [nearbyPlaces, selectedPlace],
+    () => getNearbyCourseItems(nearbyPlaces, resolvedSelectedPlace),
+    [nearbyPlaces, resolvedSelectedPlace],
   );
 
   return {
     clearSelectedPlace,
     nearbyItems,
-    selectedPlaceId: selectedPlace?.placeId,
+    selectedPlace: resolvedSelectedPlace,
+    selectedPlaceId: resolvedSelectedPlace?.placeId,
     selectGooglePlace,
     selectNearbyPlace,
     updateSelectedPlaceBookmark,

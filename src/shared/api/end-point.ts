@@ -34,6 +34,7 @@ export const END_POINT = {
     NEARBY: 'api/v1/places/nearby',
     SEARCH: 'api/v1/places/search',
     BOOKMARKS: 'api/v1/places/bookmarks',
+    BOOKMARK_MARKERS: 'api/v1/places/bookmarks/markers',
     PHOTO: (placeId: string, maxWidth: number) =>
       `api/v1/places/${encodeURIComponent(placeId)}/photo?maxWidth=${maxWidth}`,
   },

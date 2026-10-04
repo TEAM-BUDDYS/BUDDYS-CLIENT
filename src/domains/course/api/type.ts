@@ -41,3 +41,8 @@ export type GetBookmarkedPlacesPageParams = GetBookmarkedPlacesParams &
   Pick<GetBookmarkedPlacesQuery, 'page'>;
 export type GetBookmarkedPlacesResponse =
   components['schemas']['BaseResponseBookmarkedPlaceListResponse'];
+export type GetBookmarkedPlaceMarkersParams = NonNullable<
+  operations['getBookmarkedPlaceMarkers']['parameters']['query']
+>;
+export type GetBookmarkedPlaceMarkersResponse =
+  components['schemas']['BaseResponseBookmarkedPlaceMarkersResponse'];

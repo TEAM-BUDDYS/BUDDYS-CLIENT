@@ -25,14 +25,21 @@ interface CourseBottomSheetProps {
   position: CourseBottomSheetPosition;
   tab: CourseTabValue;
   bookmarkedItems: readonly NearbyCourseItem[];
+  hasBookmarkError?: boolean;
+  hasBookmarkNextPage?: boolean;
   hasNearbyError?: boolean;
   isBookmarkMode: boolean;
+  isBookmarkFetchNextPageError?: boolean;
+  isBookmarkFetchingNextPage?: boolean;
+  isBookmarkLoading?: boolean;
   isNearbyLoading?: boolean;
   nearbyItems: readonly NearbyCourseItem[];
   onClose: () => void;
   onPositionChange: (position: CourseBottomSheetPosition) => void;
   onTabChange: (tab: CourseTabValue) => void;
   onBookmarkChange: (placeId: string, nextBookmarked: boolean) => void;
+  onBookmarkLoadMore?: () => void;
+  onBookmarkRetry?: () => void;
   onExploreClick: () => void;
   onNearbyRetry?: () => void;
   onSuggestedMoreClick: () => void;
@@ -43,14 +50,21 @@ export const CourseBottomSheet = ({
   position,
   tab,
   bookmarkedItems,
+  hasBookmarkError = false,
+  hasBookmarkNextPage = false,
   hasNearbyError = false,
   isBookmarkMode,
+  isBookmarkFetchNextPageError = false,
+  isBookmarkFetchingNextPage = false,
+  isBookmarkLoading = false,
   isNearbyLoading = false,
   nearbyItems,
   onClose,
   onPositionChange,
   onTabChange,
   onBookmarkChange,
+  onBookmarkLoadMore,
+  onBookmarkRetry,
   onExploreClick,
   onNearbyRetry,
   onSuggestedMoreClick,
@@ -97,8 +111,15 @@ export const CourseBottomSheet = ({
         <div className="min-h-0 flex-1 scrollbar-none overflow-x-hidden overflow-y-auto overscroll-contain pb-100 [&::-webkit-scrollbar]:hidden">
           {isBookmarkMode ? (
             <BookmarkedPlaceContent
+              hasError={hasBookmarkError}
+              hasNextPage={hasBookmarkNextPage}
+              isFetchNextPageError={isBookmarkFetchNextPageError}
+              isFetchingNextPage={isBookmarkFetchingNextPage}
+              isLoading={isBookmarkLoading}
               items={bookmarkedItems}
               onBookmarkChange={onBookmarkChange}
+              onLoadMore={onBookmarkLoadMore}
+              onRetry={onBookmarkRetry}
             />
           ) : tab === 'nearby' ? (
             <NearbyCourseContent
