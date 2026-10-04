@@ -62,40 +62,46 @@ export const TagEditSection = ({
 
       {isEditing && (
         <div className="flex flex-col gap-6">
-          {TAG_EDIT_GROUPS.map(({ tagType, title, maxSelectionCount }) => {
-            const selectedTagIds = getSelectedTagIdsByType(
-              selectedTags,
-              tagType,
-            );
+          {TAG_EDIT_GROUPS.map(
+            ({ tagType, title, minSelectionCount, maxSelectionCount }) => {
+              const selectedTagIds = getSelectedTagIdsByType(
+                selectedTags,
+                tagType,
+              );
 
-            return (
-              <div key={tagType} className="flex flex-col gap-4">
-                <p className="text-body-r-14 text-gray-500">
-                  {title} | 1~{maxSelectionCount}개 선택 (
-                  {selectedTagIds.length}/{maxSelectionCount})
-                </p>
+              const handleTagIdsChange = (nextTagIds: number[]) => {
+                if (nextTagIds.length < minSelectionCount) return;
 
-                <ChipGroup
-                  tags={tagOptions[tagType]}
-                  selectedTagIds={selectedTagIds}
-                  maxSelectionCount={maxSelectionCount}
-                  hasToggleButton={false}
-                  rowGap="md"
-                  chipClassName="px-4.5 text-body-m-15"
-                  onChange={(nextTagIds) =>
-                    onChange(
-                      updateSelectedTagsByType(
-                        selectedTags,
-                        tagType,
-                        nextTagIds,
-                        tagOptions[tagType],
-                      ),
-                    )
-                  }
-                />
-              </div>
-            );
-          })}
+                onChange(
+                  updateSelectedTagsByType(
+                    selectedTags,
+                    tagType,
+                    nextTagIds,
+                    tagOptions[tagType],
+                  ),
+                );
+              };
+
+              return (
+                <div key={tagType} className="flex flex-col gap-4">
+                  <p className="text-body-r-14 text-gray-500">
+                    {title} | {minSelectionCount}~{maxSelectionCount}개 선택 (
+                    {selectedTagIds.length}/{maxSelectionCount})
+                  </p>
+
+                  <ChipGroup
+                    tags={tagOptions[tagType]}
+                    selectedTagIds={selectedTagIds}
+                    maxSelectionCount={maxSelectionCount}
+                    hasToggleButton={false}
+                    rowGap="md"
+                    chipClassName="px-4.5 text-body-m-15"
+                    onChange={handleTagIdsChange}
+                  />
+                </div>
+              );
+            },
+          )}
         </div>
       )}
     </section>

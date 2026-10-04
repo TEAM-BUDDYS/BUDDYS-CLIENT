@@ -4,6 +4,7 @@ import type { Tag } from '@/types/tag';
 export interface TagEditGroup {
   tagType: TagType;
   title: string;
+  minSelectionCount: number;
   maxSelectionCount: number;
 }
 
@@ -12,9 +13,24 @@ export interface SelectedTag extends Tag {
 }
 
 export const TAG_EDIT_GROUPS: TagEditGroup[] = [
-  { tagType: 'ACTIVITY', title: '동행 유형', maxSelectionCount: 3 },
-  { tagType: 'INTEREST', title: '관심사', maxSelectionCount: 3 },
-  { tagType: 'TRAVEL_STYLE', title: '동행 스타일', maxSelectionCount: 5 },
+  {
+    tagType: 'ACTIVITY',
+    title: '동행 유형',
+    minSelectionCount: 1,
+    maxSelectionCount: 3,
+  },
+  {
+    tagType: 'INTEREST',
+    title: '관심사',
+    minSelectionCount: 1,
+    maxSelectionCount: 3,
+  },
+  {
+    tagType: 'TRAVEL_STYLE',
+    title: '동행 스타일',
+    minSelectionCount: 1,
+    maxSelectionCount: 5,
+  },
 ];
 
 export const getSelectedTagIdsByType = (
