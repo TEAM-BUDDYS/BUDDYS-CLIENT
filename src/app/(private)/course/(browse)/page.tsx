@@ -1,12 +1,15 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 
 import { CourseBottomSheet } from '@/domains/course/components/course-bottom-sheet/course-bottom-sheet';
 import { CourseMap } from '@/domains/course/components/course-map/course-map';
 import { MapFloatingControls } from '@/domains/course/components/map-floating-controls/map-floating-controls';
 import { useCourseBrowse } from '@/domains/course/features/course-browse/course-browse-provider';
+import { useCoursePlaceSelection } from '@/domains/course/features/course-browse/use-course-place-selection';
+import { useNearbyPlaces } from '@/domains/course/features/course-browse/use-nearby-places';
+import type { CourseMapCategory } from '@/domains/course/model/course-place';
+import type { GoogleMapPoi } from '@/domains/course/model/google-place';
 import { cn } from '@/lib/cn';
 import {
   AccommodationIcon,
@@ -25,7 +28,6 @@ const MAP_CATEGORY_ITEMS = [
   { key: 'accommodation', label: '숙소', icon: AccommodationIcon },
 ] as const;
 
-type MapCategory = (typeof MAP_CATEGORY_ITEMS)[number]['key'];
 const EMPTY_COURSE_ITEMS = [] as const;
 
 export default function CoursePage() {
@@ -36,7 +38,6 @@ export default function CoursePage() {
     bottomSheetTab,
     currentLocation,
     currentLocationStatus,
-    getMapCamera,
     isBookmarkActive,
     isLocationActive,
     refetchCurrentLocation,
@@ -46,13 +47,25 @@ export default function CoursePage() {
     setBottomSheetTab,
     setIsBookmarkActive,
     setIsLocationActive,
-    setMapCamera,
     setSearchKeyword,
     setSelectedCategory,
   } = useCourseBrowse();
-  const [restoredMapCamera, setRestoredMapCamera] = useState(getMapCamera);
+  const {
+    hasError: hasNearbyError,
+    isLoading: isNearbyLoading,
+    places: nearbyPlaces,
+    refetch: refetchNearbyPlaces,
+  } = useNearbyPlaces({ currentLocation, selectedCategory });
+  const {
+    clearSelectedPlace,
+    nearbyItems,
+    selectedPlaceId,
+    selectGooglePlace,
+    selectNearbyPlace,
+  } = useCoursePlaceSelection({ nearbyPlaces });
 
-  const handleCategoryChange = (category: MapCategory) => {
+  const handleCategoryChange = (category: CourseMapCategory) => {
+    clearSelectedPlace();
     setSelectedCategory((currentCategory) =>
       currentCategory === category ? undefined : category,
     );
@@ -75,10 +88,31 @@ export default function CoursePage() {
       return;
     }
 
-    setBottomSheetPosition('default');
-    setRestoredMapCamera(null);
-    setMapCamera(null);
+    clearSelectedPlace();
     setIsLocationActive(true);
+  };
+
+  const openSelectedPlace = () => {
+    setIsLocationActive(false);
+    setIsBookmarkActive(false);
+    setBottomSheetTab('nearby');
+    setBottomSheetPosition('default');
+  };
+
+  const handlePlaceSelect = (placeId: string) => {
+    const place = selectNearbyPlace(placeId);
+
+    if (place) openSelectedPlace();
+  };
+
+  const handlePoiSelect = async (poi: GoogleMapPoi) => {
+    try {
+      const place = await selectGooglePlace(poi);
+
+      if (place) openSelectedPlace();
+    } catch {
+      showToast('장소 정보를 불러오지 못했어요', { variant: 'gray' });
+    }
   };
 
   return (
@@ -115,18 +149,18 @@ export default function CoursePage() {
         </div>
 
         <CourseMap
+          key={currentLocation ? 'current-location' : 'fallback-location'}
           bottomOverlayRatio={
             bottomSheetPosition === 'default' ? 0.59 : undefined
           }
           cameraTarget={isLocationActive ? currentLocation : null}
           currentLocation={currentLocation}
-          initialCamera={restoredMapCamera}
-          places={[]}
-          preserveCamera={
-            restoredMapCamera !== null || bottomSheetPosition === 'expanded'
-          }
+          places={nearbyPlaces}
+          preserveCamera={bottomSheetPosition === 'expanded'}
+          selectedPlaceId={selectedPlaceId}
           showCurrentLocation={isLocationActive}
-          onCameraChange={setMapCamera}
+          onPlaceSelect={handlePlaceSelect}
+          onPoiSelect={(poi) => void handlePoiSelect(poi)}
         />
 
         <div
@@ -150,13 +184,16 @@ export default function CoursePage() {
           position={bottomSheetPosition}
           tab={bottomSheetTab}
           bookmarkedItems={EMPTY_COURSE_ITEMS}
+          hasNearbyError={hasNearbyError}
           isBookmarkMode={isBookmarkActive}
-          nearbyItems={EMPTY_COURSE_ITEMS}
+          isNearbyLoading={isNearbyLoading}
+          nearbyItems={nearbyItems}
           onClose={() => setBottomSheetPosition('collapsed')}
           onPositionChange={setBottomSheetPosition}
           onTabChange={setBottomSheetTab}
           onBookmarkChange={() => {}}
           onExploreClick={() => router.push(ROUTES.COURSE.CUSTOMIZED_EXPLORE)}
+          onNearbyRetry={() => void refetchNearbyPlaces()}
           onSuggestedMoreClick={() =>
             router.push(ROUTES.COURSE.SUGGEST_EXPLORE)
           }
