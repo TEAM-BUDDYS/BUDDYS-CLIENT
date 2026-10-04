@@ -49,6 +49,17 @@ export const useCoursePlaceSelection = ({
     return place;
   }, []);
 
+  const updateSelectedPlaceBookmark = useCallback(
+    (placeId: string, bookmarked: boolean) => {
+      setSelectedPlace((currentPlace) =>
+        currentPlace?.placeId === placeId
+          ? { ...currentPlace, bookmarked }
+          : currentPlace,
+      );
+    },
+    [],
+  );
+
   const nearbyItems = useMemo<NearbyCourseItem[]>(
     () => getNearbyCourseItems(nearbyPlaces, selectedPlace),
     [nearbyPlaces, selectedPlace],
@@ -60,5 +71,6 @@ export const useCoursePlaceSelection = ({
     selectedPlaceId: selectedPlace?.placeId,
     selectGooglePlace,
     selectNearbyPlace,
+    updateSelectedPlaceBookmark,
   };
 };

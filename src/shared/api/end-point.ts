@@ -29,6 +29,8 @@ export const END_POINT = {
     PRESIGNED_URL: 'api/v1/images/presigned-url',
   },
   PLACE: {
+    BOOKMARK: (placeId: string) =>
+      `api/v1/places/${encodeURIComponent(placeId)}/bookmark`,
     NEARBY: 'api/v1/places/nearby',
     SEARCH: 'api/v1/places/search',
     BOOKMARKS: 'api/v1/places/bookmarks',

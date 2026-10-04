@@ -8,6 +8,7 @@ import { MapFloatingControls } from '@/domains/course/components/map-floating-co
 import { useCourseBrowse } from '@/domains/course/features/course-browse/course-browse-provider';
 import { useCoursePlaceSelection } from '@/domains/course/features/course-browse/use-course-place-selection';
 import { useNearbyPlaces } from '@/domains/course/features/course-browse/use-nearby-places';
+import { usePlaceBookmark } from '@/domains/course/features/course-browse/use-place-bookmark';
 import type { CourseMapCategory } from '@/domains/course/model/course-place';
 import type { GoogleMapPoi } from '@/domains/course/model/google-place';
 import { cn } from '@/lib/cn';
@@ -62,7 +63,11 @@ export default function CoursePage() {
     selectedPlaceId,
     selectGooglePlace,
     selectNearbyPlace,
+    updateSelectedPlaceBookmark,
   } = useCoursePlaceSelection({ nearbyPlaces });
+  const { updateBookmark } = usePlaceBookmark({
+    onBookmarkChange: updateSelectedPlaceBookmark,
+  });
 
   const handleCategoryChange = (category: CourseMapCategory) => {
     clearSelectedPlace();
@@ -112,6 +117,22 @@ export default function CoursePage() {
       if (place) openSelectedPlace();
     } catch {
       showToast('장소 정보를 불러오지 못했어요', { variant: 'gray' });
+    }
+  };
+
+  const handleBookmarkChange = async (
+    placeId: string,
+    nextBookmarked: boolean,
+  ) => {
+    try {
+      await updateBookmark({ placeId, nextBookmarked });
+    } catch {
+      showToast(
+        nextBookmarked
+          ? '장소를 저장하지 못했어요'
+          : '장소 저장을 취소하지 못했어요',
+        { variant: 'gray' },
+      );
     }
   };
 
@@ -191,7 +212,9 @@ export default function CoursePage() {
           onClose={() => setBottomSheetPosition('collapsed')}
           onPositionChange={setBottomSheetPosition}
           onTabChange={setBottomSheetTab}
-          onBookmarkChange={() => {}}
+          onBookmarkChange={(placeId, nextBookmarked) =>
+            void handleBookmarkChange(placeId, nextBookmarked)
+          }
           onExploreClick={() => router.push(ROUTES.COURSE.CUSTOMIZED_EXPLORE)}
           onNearbyRetry={() => void refetchNearbyPlaces()}
           onSuggestedMoreClick={() =>

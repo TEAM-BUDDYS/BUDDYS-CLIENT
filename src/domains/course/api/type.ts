@@ -12,6 +12,8 @@ export type GetCourseDetailResponse =
 export type CourseDay = components['schemas']['DayResponse'];
 export type Place = components['schemas']['PlaceResponse'];
 export type BookmarkedPlace = components['schemas']['BookmarkedPlaceResponse'];
+export type UpdatePlaceBookmarkResponse =
+  components['schemas']['BaseResponsePlaceBookmarkResponse'];
 export type GetNearbyPlacesParams = NonNullable<
   operations['getNearbyPlaces']['parameters']['query']
 >;
