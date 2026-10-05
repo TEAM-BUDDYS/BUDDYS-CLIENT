@@ -1,7 +1,7 @@
 import type { City, Country } from '@/shared/api';
 import type { components } from '@/types/schema';
 
-import type { BookmarkedPlace, Place } from '../../api/type';
+import type { BookmarkedPlace, CourseCompanion, Place } from '../../api/type';
 
 type CourseDayRequest = components['schemas']['CourseDayRequest'];
 type CourseFlightRequest = components['schemas']['CourseFlightRequest'];
@@ -12,7 +12,8 @@ export type CourseCreateScreen =
   | 'date'
   | 'duration'
   | 'detail'
-  | 'itinerary';
+  | 'itinerary'
+  | 'companion';
 
 export interface CourseCreateCityOption extends City {
   countryId: number;
@@ -63,4 +64,9 @@ export interface CourseCreateDayFormState {
 
 export interface CourseCreateValue extends CourseCreateBasicInfoValue {
   days: CourseCreateDayFormState[];
+  companionUserIds: NonNullable<
+    components['schemas']['CreateCourseRequest']['companionUserIds']
+  >;
 }
+
+export type CourseCreateCompanion = CourseCompanion;
