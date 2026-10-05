@@ -155,6 +155,9 @@ export const USER_QUERY_KEY = {
     ] as const,
   PROFILE: (userId: number) =>
     [...USER_QUERY_KEY.ALL, 'profile', userId] as const,
+  NICKNAME_CHECK: (
+    params: GetQueryParams<'/api/v1/users/me/nickname-availability'>,
+  ) => [...USER_QUERY_KEY.ALL, 'me', 'nickname-availability', params] as const,
   POSTS: (
     userId: number,
     params?: GetQueryParams<'/api/v1/users/{userId}/posts'>,
