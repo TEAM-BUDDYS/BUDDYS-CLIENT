@@ -19,6 +19,7 @@ import { useCourseCompanionSearch } from './use-course-companion-search';
 
 const COMPANION_SEARCH_RESULT_LIST_ID = 'course-companion-search-result-list';
 const COURSE_INVITE_URL = 'buddys.co.kr';
+const COURSE_CREATE_TOAST_BOTTOM_OFFSET_CLASS_NAME = 'bottom-26.5';
 
 interface CourseCreateCompanionStepProps {
   selectedCompanions: CourseCreateCompanion[];
@@ -49,7 +50,10 @@ export const CourseCreateCompanionStep = ({
     if (selectedCompanions.length >= COURSE_CREATE_MAX_COMPANION_COUNT) {
       showToast(
         `동행은 최대 ${COURSE_CREATE_MAX_COMPANION_COUNT}명까지 추가할 수 있어요`,
-        { variant: 'gray' },
+        {
+          bottomOffsetClassName: COURSE_CREATE_TOAST_BOTTOM_OFFSET_CLASS_NAME,
+          variant: 'gray',
+        },
       );
       return;
     }
@@ -68,14 +72,27 @@ export const CourseCreateCompanionStep = ({
     }
   };
 
-  const handleInviteLinkCopy = () => {
+  const handleInviteLinkCopy = async () => {
     if (!navigator.clipboard) {
+      showToast('초대 링크를 복사하지 못했어요. 다시 시도해 주세요.', {
+        bottomOffsetClassName: COURSE_CREATE_TOAST_BOTTOM_OFFSET_CLASS_NAME,
+        variant: 'gray',
+      });
       return;
     }
 
-    void navigator.clipboard
-      .writeText(COURSE_INVITE_URL)
-      .catch(() => undefined);
+    try {
+      await navigator.clipboard.writeText(COURSE_INVITE_URL);
+      showToast('초대 링크가 복사되었어요.', {
+        bottomOffsetClassName: COURSE_CREATE_TOAST_BOTTOM_OFFSET_CLASS_NAME,
+        variant: 'primary',
+      });
+    } catch {
+      showToast('초대 링크를 복사하지 못했어요. 다시 시도해 주세요.', {
+        bottomOffsetClassName: COURSE_CREATE_TOAST_BOTTOM_OFFSET_CLASS_NAME,
+        variant: 'gray',
+      });
+    }
   };
 
   return (
