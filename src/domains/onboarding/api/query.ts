@@ -6,12 +6,9 @@ import {
   createSearchParams,
   END_POINT,
   RECOMMENDATION_QUERY_KEY,
-  USER_QUERY_KEY,
 } from '@/shared/api';
 
 import type {
-  CheckNicknameParams,
-  CheckNicknameResponse,
   CompleteOnboardingRequest,
   CompleteOnboardingResponse,
   GetRecommendedUsersParams,
@@ -57,23 +54,6 @@ const getRecommendedUsers = async (params?: GetRecommendedUsersParams) => {
     .json<GetRecommendedUsersResponse>();
 };
 
-const checkNickname = async (params: CheckNicknameParams) => {
-  const response = await apiClient
-    .get(END_POINT.USER.NICKNAME_CHECK, {
-      searchParams: params,
-    })
-    .json<CheckNicknameResponse>();
-
-  if (
-    response.success !== true ||
-    typeof response.data?.available !== 'boolean'
-  ) {
-    throw new Error('닉네임 중복 확인 응답이 올바르지 않습니다.');
-  }
-
-  return response.data;
-};
-
 export const ONBOARDING_QUERY_OPTIONS = {
   UNIVERSITY_SEARCH: (countryId: number, keyword: string) =>
     queryOptions({
@@ -84,13 +64,6 @@ export const ONBOARDING_QUERY_OPTIONS = {
     queryOptions({
       queryKey: RECOMMENDATION_QUERY_KEY.USERS(params),
       queryFn: () => getRecommendedUsers(params),
-    }),
-  NICKNAME_CHECK: (params: CheckNicknameParams) =>
-    queryOptions({
-      queryKey: USER_QUERY_KEY.NICKNAME_CHECK(params),
-      queryFn: () => checkNickname(params),
-      staleTime: 0,
-      retry: false,
     }),
 };
 

@@ -15,15 +15,3 @@ export type SearchUniversitiesParams =
   operations['searchUniversities']['parameters']['query'];
 export type SearchUniversitiesResponse =
   components['schemas']['BaseResponseUniversityListResponse'];
-
-export type CheckNicknameParams =
-  operations['checkNicknameAvailability']['parameters']['query'];
-
-export type CheckNicknameResponse = Omit<
-  components['schemas']['BaseResponse'],
-  'data'
-> & {
-  data: {
-    available: boolean;
-  };
-};

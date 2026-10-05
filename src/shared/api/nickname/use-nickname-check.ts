@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useToast } from '@/shared/components/ui';
 import { NICKNAME_MAX_LENGTH } from '@/shared/constants/nickname';
 
-import { ONBOARDING_QUERY_OPTIONS } from '../../api/query';
+import { NICKNAME_QUERY_OPTIONS } from './query';
 
 export const useNicknameCheck = () => {
   const queryClient = useQueryClient();
@@ -68,7 +68,7 @@ export const useNicknameCheck = () => {
 
     try {
       const result = await queryClient.fetchQuery(
-        ONBOARDING_QUERY_OPTIONS.NICKNAME_CHECK({
+        NICKNAME_QUERY_OPTIONS.CHECK({
           nickname: requestedNickname,
         }),
       );

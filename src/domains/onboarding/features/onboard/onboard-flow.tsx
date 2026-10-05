@@ -4,7 +4,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isHTTPError } from 'ky';
 import { useEffect, useState } from 'react';
 
-import { useCitySearch, useCountrySearch } from '@/shared/api';
+import {
+  useCitySearch,
+  useCountrySearch,
+  useNicknameCheck,
+} from '@/shared/api';
 import { TAG_QUERY_OPTIONS } from '@/shared/api';
 import { useImageUpload } from '@/shared/api/image';
 import {
@@ -30,7 +34,6 @@ import { OnboardExchangeInfoStep } from './onboard-exchange-info-step';
 import { OnboardInterestLocationStep } from './onboard-interest-location-step';
 import { OnboardProfileStep } from './onboard-profile-step';
 import { OnboardTagSelectStep } from './onboard-tag-select-step';
-import { useNicknameCheck } from './use-nickname-check';
 import { useOnboardForm } from './use-onboard-form';
 
 const PROGRESS_STEP_BY_STEP = {
