@@ -55,6 +55,7 @@ export const END_POINT = {
     ME_POSTS: 'api/v1/users/me/posts',
     ONBOARDING: 'api/v1/users/onboarding',
     NICKNAME_CHECK: 'api/v1/users/me/nickname-availability',
+    SEARCH: 'api/v1/users/search',
     PROFILE: (userId: number) => `api/v1/users/${userId}`,
     POSTS: (userId: number) => `api/v1/users/${userId}/posts`,
   },

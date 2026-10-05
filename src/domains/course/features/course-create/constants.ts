@@ -11,6 +11,7 @@ export const COURSE_CREATE_MAX_DAY_IMAGE_COUNT = 10;
 export const COURSE_CREATE_MIN_DAY_IMAGE_COUNT = 1;
 export const COURSE_CREATE_MAX_DAY_PLACE_COUNT = 10;
 export const COURSE_CREATE_MAX_FLIGHT_COUNT = 5;
+export const COURSE_CREATE_MAX_COMPANION_COUNT = 8;
 
 export const COURSE_CREATE_PROGRESS_STEP_BY_SCREEN = {
   country: 1,
@@ -19,6 +20,7 @@ export const COURSE_CREATE_PROGRESS_STEP_BY_SCREEN = {
   duration: 3,
   detail: 3,
   itinerary: 4,
+  companion: 5,
 } satisfies Record<CourseCreateScreen, number>;
 
 export const COURSE_CREATE_QUESTION_CONTENT = {
@@ -37,6 +39,10 @@ export const COURSE_CREATE_QUESTION_CONTENT = {
   duration: {
     title: '며칠 코스로 계획하고 계신가요?',
     description: '정확한 일정 대신, 기간만 선택해주세요',
+  },
+  companion: {
+    title: '코스를 함께한 동행을 초대해보세요',
+    description: `최대 ${COURSE_CREATE_MAX_COMPANION_COUNT}명과 함께 코스를 기록할 수 있어요`,
   },
 } satisfies Record<
   Exclude<CourseCreateScreen, 'detail' | 'itinerary'>,

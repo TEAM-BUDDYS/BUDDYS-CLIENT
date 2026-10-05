@@ -20,8 +20,21 @@ export type CourseBookmark = components['schemas']['CourseBookmarkResponse'];
 export type UpdateCourseBookmarkResponse =
   components['schemas']['BaseResponseCourseBookmarkResponse'];
 export type CourseDay = components['schemas']['DayResponse'];
+export type CourseCompanion = components['schemas']['UserSummaryResponse'];
 export type Place = components['schemas']['PlaceResponse'];
 export type BookmarkedPlace = components['schemas']['BookmarkedPlaceResponse'];
+
+export type SearchCourseCompanionsParams = NonNullable<
+  operations['searchUsers']['parameters']['query']
+>;
+export type SearchCourseCompanionsResponse =
+  components['schemas']['BaseResponse'];
+export interface SearchCourseCompanionsPage {
+  users: CourseCompanion[];
+  page: number;
+  size: number;
+  hasNext: boolean;
+}
 
 type SearchPlacesQuery = NonNullable<
   operations['searchPlaces']['parameters']['query']
