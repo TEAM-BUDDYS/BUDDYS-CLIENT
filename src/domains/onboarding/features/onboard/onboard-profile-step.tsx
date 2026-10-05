@@ -129,6 +129,7 @@ export const OnboardProfileStep = ({
             setCurrentNickname(event.target.value);
             setIsBlur(true);
           }}
+          disabled={isUploading}
         />
         <div className="flex flex-col gap-2">
           <FormLabel as="h2" required>

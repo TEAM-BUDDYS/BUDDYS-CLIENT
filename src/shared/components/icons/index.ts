@@ -29,6 +29,7 @@ export { FoodIcon } from './food-icon';
 export { ForbidIcon } from './forbid-icon';
 export { GenderIcon } from './gender-icon';
 export { GoogleIcon } from './google-icon';
+export { HandleIcon } from './handle-icon';
 export { HomeIcon } from './home-icon';
 export { KakaoIcon } from './kakao-icon';
 export { LocationIcon } from './location-icon';
