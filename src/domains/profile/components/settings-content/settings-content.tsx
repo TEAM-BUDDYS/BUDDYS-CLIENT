@@ -3,19 +3,27 @@
 import { useState } from 'react';
 
 import { SettingsMenuItem } from '@/domains/profile/components/settings-menu-item/settings-menu-item';
-import { Button } from '@/shared/components/ui';
-import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
+import {
+  SETTINGS_CONFIRM_MODAL_CONTENT,
+  type SettingsConfirmType,
+} from '@/domains/profile/model/settings';
+import { Button, Modal } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config/routes';
 
 const SETTINGS_MENU_ITEMS = [
-  { label: '프로필 수정' },
-  { label: '알림 설정' },
-  { label: '비밀번호 변경' },
-  { label: '개인정보 처리방침' },
-  { label: '이용약관' },
+  { label: '학교 이메일 인증', href: ROUTES.VERIFICATION.UNIVERSITY_EMAIL },
+  { label: '파견교 서류 인증', href: ROUTES.VERIFICATION.EXCHANGE_DOCUMENT },
+  { label: '개인정보 처리방침', href: ROUTES.PROFILE.PRIVACY_POLICY },
+  { label: '이용약관', href: ROUTES.PROFILE.TERMS },
 ] as const;
 
 export const SettingsContent = () => {
-  const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
+  const [confirmType, setConfirmType] = useState<SettingsConfirmType | null>(
+    null,
+  );
+
+  const confirmContent =
+    confirmType === null ? null : SETTINGS_CONFIRM_MODAL_CONTENT[confirmType];
 
   return (
     <>
@@ -23,33 +31,38 @@ export const SettingsContent = () => {
         <ul className="flex flex-col">
           {SETTINGS_MENU_ITEMS.map((item) => (
             <li key={item.label}>
-              <SettingsMenuItem
-                label={item.label}
-                onClick={() => setIsComingSoonOpen(true)}
-              />
+              <SettingsMenuItem label={item.label} href={item.href} />
             </li>
           ))}
         </ul>
       </nav>
 
       <div className="mt-6 flex flex-col items-center gap-3 px-4">
-        <Button variant="secondary" onClick={() => setIsComingSoonOpen(true)}>
+        <Button variant="secondary" onClick={() => setConfirmType('logout')}>
           로그아웃
         </Button>
 
         <button
           type="button"
           className="text-body-r-14 text-gray-500"
-          onClick={() => setIsComingSoonOpen(true)}
+          onClick={() => setConfirmType('withdraw')}
         >
           회원 탈퇴
         </button>
       </div>
 
-      <ComingSoonModal
-        open={isComingSoonOpen}
-        onClose={() => setIsComingSoonOpen(false)}
-      />
+      {confirmContent && (
+        <Modal
+          type="confirm"
+          open={true}
+          title={confirmContent.title}
+          description={confirmContent.description}
+          cancelLabel="닫기"
+          confirmLabel={confirmContent.confirmLabel}
+          onClose={() => setConfirmType(null)}
+          onConfirm={() => setConfirmType(null)}
+        />
+      )}
     </>
   );
 };

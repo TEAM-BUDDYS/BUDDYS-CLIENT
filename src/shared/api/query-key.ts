@@ -20,6 +20,20 @@ const excludePageParam = <Params extends { page?: unknown }>(
   return restParams;
 };
 
+const excludePageTokenParam = <Params extends { pageToken?: unknown }>(
+  params: Params,
+) => {
+  const { pageToken: _pageToken, ...restParams } = params;
+
+  return restParams;
+};
+
+export const AIRLINE_QUERY_KEY = {
+  ALL: ['airlines'] as const,
+  SEARCH: (params: GetQueryParams<'/api/v1/airlines/search'>) =>
+    [...AIRLINE_QUERY_KEY.ALL, 'search', excludePageParam(params)] as const,
+};
+
 export const CHAT_ROOM_QUERY_KEY = {
   ALL: ['chat-rooms'] as const,
   INFINITE_LIST_ALL: () =>
@@ -60,6 +74,21 @@ export const COUNTRY_QUERY_KEY = {
       'search',
       params,
     ] as const,
+};
+
+export const COURSE_QUERY_KEY = {
+  ALL: ['courses'] as const,
+  DETAIL: (courseId: number) =>
+    [...COURSE_QUERY_KEY.ALL, 'detail', courseId] as const,
+};
+
+export const PLACE_QUERY_KEY = {
+  ALL: ['places'] as const,
+  SEARCH: (params: GetQueryParams<'/api/v1/places/search'>) =>
+    [...PLACE_QUERY_KEY.ALL, 'search', excludePageTokenParam(params)] as const,
+  BOOKMARKS_ALL: () => [...PLACE_QUERY_KEY.ALL, 'bookmarks'] as const,
+  BOOKMARKS: (params?: GetQueryParams<'/api/v1/places/bookmarks'>) =>
+    [...PLACE_QUERY_KEY.BOOKMARKS_ALL(), excludePageParam(params)] as const,
 };
 
 export const POST_QUERY_KEY = {

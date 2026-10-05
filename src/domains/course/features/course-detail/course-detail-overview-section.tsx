@@ -8,7 +8,7 @@ import {
   LocationIcon,
   MyIcon,
 } from '@/shared/components/icons';
-import { Chip, CommonImage, Tag } from '@/shared/components/ui';
+import { BookmarkButton, Chip, CommonImage, Tag } from '@/shared/components/ui';
 import { formatMonthDayWithWeekday } from '@/shared/utils/format-date-range';
 import { formatRelativeTime } from '@/shared/utils/format-relative-time';
 
@@ -25,6 +25,7 @@ type CourseDetailOverviewData = Pick<
   | 'companions'
   | 'days'
   | 'createdAt'
+  | 'isMine'
 >;
 
 type CourseDetailDay = CourseDetail['days'][number];
@@ -32,6 +33,9 @@ type CourseDetailFlight = CourseDetailDay['flights'][number];
 
 interface CourseDetailOverviewSectionProps {
   course: CourseDetailOverviewData;
+  isBookmarked: boolean;
+  onBookmarkClick: () => void;
+  onDayPickerOpen: () => void;
 }
 
 interface CourseDetailMetaItemProps {
@@ -148,6 +152,9 @@ const CourseDetailFlightMetaItem = ({
 
 export const CourseDetailOverviewSection = ({
   course,
+  isBookmarked,
+  onBookmarkClick,
+  onDayPickerOpen,
 }: CourseDetailOverviewSectionProps) => {
   const cityNames = course.cities.map((city) => city.koreanName);
   const cityLabel = cityNames.join(', ');
@@ -170,30 +177,39 @@ export const CourseDetailOverviewSection = ({
       className="flex w-full flex-col gap-10"
     >
       <div className="flex flex-col gap-6">
-        <header className="flex min-w-0 items-center gap-2">
-          <CommonImage
-            src={profileImage}
-            alt=""
-            width={44}
-            height={44}
-            radius="rounded-full"
-            unoptimized={Boolean(course.author.profileImageUrl)}
-            className="size-11 border border-gray-100"
-          />
+        <header className="flex min-w-0 items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-2">
+            <CommonImage
+              src={profileImage}
+              alt=""
+              width={44}
+              height={44}
+              radius="rounded-full"
+              unoptimized={Boolean(course.author.profileImageUrl)}
+              className="size-11 border border-gray-100"
+            />
 
-          <div className="flex min-w-0 flex-col">
-            <div className="flex min-w-0 items-center gap-1">
-              <strong className="text-body-sb-16 truncate text-gray-800">
-                {course.author.nickname ?? '알 수 없는 사용자'}
-              </strong>
-              {primaryCityName ? <Tag value={primaryCityName} /> : null}
+            <div className="flex min-w-0 flex-col">
+              <div className="flex min-w-0 items-center gap-1">
+                <strong className="text-body-sb-16 truncate text-gray-800">
+                  {course.author.nickname ?? '알 수 없는 사용자'}
+                </strong>
+                {primaryCityName ? <Tag value={primaryCityName} /> : null}
+              </div>
+              {authorDescription ? (
+                <p className="text-body-r-14 truncate text-gray-500">
+                  {authorDescription}
+                </p>
+              ) : null}
             </div>
-            {authorDescription ? (
-              <p className="text-body-r-14 truncate text-gray-500">
-                {authorDescription}
-              </p>
-            ) : null}
           </div>
+          {!course.isMine && (
+            <BookmarkButton
+              isBookmarked={isBookmarked}
+              className={isBookmarked ? 'size-11' : 'size-11 text-gray-500'}
+              onClick={onBookmarkClick}
+            />
+          )}
         </header>
 
         <div className="flex flex-col gap-4">
@@ -245,12 +261,14 @@ export const CourseDetailOverviewSection = ({
           </div>
         ) : null}
 
-        <a
-          href="#course-day-section"
-          className="text-body-sb-16 focus-visible:outline-mint-300 active:border-mint-200 active:bg-mint-50 active:text-mint-300 flex h-13 w-full items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid"
+        <button
+          type="button"
+          className="text-body-sb-16 focus-visible:outline-mint-300 active:border-mint-200 active:bg-mint-50 active:text-mint-300 flex h-13 w-full items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid disabled:cursor-not-allowed disabled:text-gray-300"
+          disabled={course.days.length === 0}
+          onClick={onDayPickerOpen}
         >
           날짜 별 코스
-        </a>
+        </button>
       </div>
     </section>
   );

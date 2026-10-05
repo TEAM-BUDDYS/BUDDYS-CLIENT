@@ -19,6 +19,11 @@ export { PostStatusTag, type RecruitmentStatus, Tag } from './card/card-tag';
 export { CardList, CardListSkeleton } from './card-list';
 export { Chip, ChipButton } from './chip/chip';
 export { ChipGroup, type ChipGroupProps } from './chip-group/chip-group';
+export { CommentItem } from './comment-item/comment-item';
+export {
+  CommentSection,
+  type CommentSectionItem,
+} from './comment-section/comment-section';
 export { CommonImage } from './common-image/common-image';
 export { DateRangePickerSheet, type DateRangeTypes } from './date-range-picker';
 export { DateSelectButton } from './date-select-button/date-select-button';
@@ -36,6 +41,7 @@ export { NicknameField } from './nickname-field/nickname-field';
 export { PostMenuBottomSheet } from './post-menu-bottom-sheet/post-menu-bottom-sheet';
 export { ProfileImageInput } from './profile-image-input/profile-image-input';
 export { ProgressBar } from './progress-bar/progress-bar';
+export { SearchOptionField } from './search-option-field/search-option-field';
 export { Searchbar, type SearchbarSize } from './searchbar/searchbar';
 export { SearchbarWithDropdown } from './searchbar/searchbar-with-dropdown';
 export { Skeleton } from './skeleton/skeleton';

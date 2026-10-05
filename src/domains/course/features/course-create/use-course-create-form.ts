@@ -9,6 +9,7 @@ import { formatDateToIsoDate } from '@/shared/utils/format-date-range';
 
 import {
   COURSE_CREATE_MAX_DAY_IMAGE_COUNT,
+  COURSE_CREATE_MAX_FLIGHT_COUNT,
   COURSE_CREATE_MIN_DAY_IMAGE_COUNT,
 } from './constants';
 import type {
@@ -16,6 +17,7 @@ import type {
   CourseCreateCityOption,
   CourseCreateDayFormState,
   CourseCreateDetailFormState,
+  CourseCreateFlightFormState,
   CourseCreateScreen,
   CourseCreateValue,
 } from './model';
@@ -165,6 +167,7 @@ export const useCourseCreateForm = () => {
           images: [],
           memo: '',
           cost: null,
+          flights: [],
         };
       });
     });
@@ -240,6 +243,28 @@ export const useCourseCreateForm = () => {
         day.dayNumber === dayNumber ? { ...day, ...value } : day,
       ),
     );
+  };
+
+  const addDayFlight = (
+    dayNumber: number,
+    flight: CourseCreateFlightFormState,
+  ) => {
+    setDays((prevDays) => {
+      const flightCount = prevDays.reduce(
+        (count, day) => count + day.flights.length,
+        0,
+      );
+
+      if (flightCount >= COURSE_CREATE_MAX_FLIGHT_COUNT) {
+        return prevDays;
+      }
+
+      return prevDays.map((day) =>
+        day.dayNumber === dayNumber
+          ? { ...day, flights: [...day.flights, flight] }
+          : day,
+      );
+    });
   };
 
   const canGoNext = (screen: CourseCreateScreen) => {
@@ -332,6 +357,7 @@ export const useCourseCreateForm = () => {
     addDayImages,
     removeDayImage,
     updateDayMemoCost,
+    addDayFlight,
     canGoNext,
     getCourseCreateValue,
   };
