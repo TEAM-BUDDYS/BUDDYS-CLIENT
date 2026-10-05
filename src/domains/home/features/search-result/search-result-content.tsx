@@ -3,7 +3,6 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { type KeyboardEvent, useState } from 'react';
 
-import { WriteFloatingButton } from '@/domains/home/components/write-floating-button/write-floating-button';
 import { SearchSheet } from '@/domains/home/features/search-sheet/search-sheet';
 import { useSheetScroll } from '@/domains/home/hooks/use-sheet-scroll';
 import {
@@ -108,7 +107,6 @@ export const SearchResultContent = () => {
           />
         </div>
       )}
-      <WriteFloatingButton />
     </>
   );
 };
