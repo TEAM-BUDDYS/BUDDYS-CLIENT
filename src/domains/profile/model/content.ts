@@ -10,3 +10,9 @@ export interface PostItem {
 }
 
 export type ContentTabValue = 'post' | 'course';
+
+export interface CourseItem {
+  id: number;
+  title: string;
+  image: string;
+}

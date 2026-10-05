@@ -6,7 +6,12 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 
 import { cn } from '@/lib/cn';
-import { ArchivePostCard, AsyncBoundary, Tab } from '@/shared/components/ui';
+import {
+  ArchivePostCard,
+  AsyncBoundary,
+  CommonImage,
+  Tab,
+} from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 
@@ -15,9 +20,17 @@ import type { MyPost } from '../api/type';
 import { ContentEmptyState } from '../components/content-empty-state/content-empty-state';
 import {
   type ContentTabValue,
+  type CourseItem,
   MY_POSTS_PAGE_SIZE,
   type PostItem,
 } from '../model/content';
+
+// TODO: 내 코스 목록 API 연동 후 제거
+const MOCK_COURSES: CourseItem[] = Array.from({ length: 7 }, (_, index) => ({
+  id: index + 1,
+  title: `코스 ${index + 1}`,
+  image: `https://picsum.photos/seed/profile-course-${index + 1}/240/240`,
+}));
 
 interface ContentSectionProps {
   onCreateCourseClick: () => void;
@@ -122,16 +135,41 @@ const CourseTabPanel = ({
   onCreateCourseClick,
 }: {
   onCreateCourseClick: () => void;
-}) => (
-  <div className="mt-25">
-    <ContentEmptyState
-      title="아직 기록된 코스가 없어요"
-      description="첫 번째 코스를 공유해보세요"
-      buttonLabel="코스 작성하러 가기"
-      onButtonClick={onCreateCourseClick}
-    />
-  </div>
-);
+}) => {
+  const courses = MOCK_COURSES;
+
+  if (courses.length === 0) {
+    return (
+      <div className="mt-25">
+        <ContentEmptyState
+          title="아직 기록된 코스가 없어요"
+          description="첫 번째 코스를 공유해보세요"
+          buttonLabel="코스 작성하러 가기"
+          onButtonClick={onCreateCourseClick}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <ul className="grid grid-cols-3 gap-x-0.75 gap-y-1 px-1 pt-3">
+      {courses.map((course) => (
+        <li key={course.id}>
+          <Link href={ROUTES.COURSE.DETAIL(course.id)} className="block">
+            <CommonImage
+              src={course.image}
+              alt={course.title}
+              width={120}
+              height={120}
+              radius="rounded-sm"
+              className="aspect-square h-auto w-full"
+            />
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+};
 
 export const ContentSection = ({
   onCreateCourseClick,
