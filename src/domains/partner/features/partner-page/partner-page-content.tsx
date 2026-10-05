@@ -28,6 +28,15 @@ export const PartnerPageContent = () => {
   const isNowNavigationFixed = tab === 'now' && shouldFixTopNavigation;
   const isNowNavigationVisible = isNowNavigationFixed && isScrollingUp;
 
+  const handleTabChange = (nextTab: PartnerTabValue) => {
+    if (nextTab === tab) {
+      return;
+    }
+
+    setTab(nextTab);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  };
+
   return (
     <>
       <div
@@ -57,12 +66,15 @@ export const PartnerPageContent = () => {
               </>
             }
           />
-          <PartnerTab value={tab} onChange={setTab} />
+          <PartnerTab value={tab} onChange={handleTabChange} />
         </div>
       </div>
       <main className="px-4">
         {tab === 'now' && (
-          <PartnerNowTab isTopNavigationVisible={isNowNavigationVisible} />
+          <PartnerNowTab
+            isFilterFixed={isNowNavigationFixed}
+            isTopNavigationVisible={isNowNavigationVisible}
+          />
         )}
         {tab === 'recommend' && <PartnerRecommendTab />}
       </main>

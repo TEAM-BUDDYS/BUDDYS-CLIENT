@@ -117,10 +117,12 @@ const PostList = ({
 };
 
 interface PartnerNowTabProps {
+  isFilterFixed: boolean;
   isTopNavigationVisible: boolean;
 }
 
 export const PartnerNowTab = ({
+  isFilterFixed,
   isTopNavigationVisible,
 }: PartnerNowTabProps) => {
   const [bookmarkedItemIds, setBookmarkedItemIds] = useState<number[]>([]);
@@ -156,37 +158,46 @@ export const PartnerNowTab = ({
       <section className="flex flex-col">
         <div
           className={cn(
-            'sticky z-30 -mx-4 bg-white px-4',
-            isTopNavigationVisible ? 'top-[105px]' : 'top-0',
+            '-mx-4 h-[122px]',
+            !isFilterFixed && 'sticky top-0 z-30',
           )}
         >
-          <div className="flex items-center justify-between pt-6">
-            <h2 className="text-title-b-18 text-gray-800">
-              원하는 조건으로 동행 찾기
-            </h2>
-            {appliedFilterSummary && (
-              <p className="text-body-r-14 text-gray-500">
-                {appliedFilterSummary}
-              </p>
+          <div
+            className={cn(
+              'z-30 h-[122px] bg-white px-4',
+              isFilterFixed &&
+                'fixed left-1/2 w-full max-w-107.5 -translate-x-1/2',
+              isTopNavigationVisible ? 'top-[105px]' : 'top-0',
             )}
-          </div>
+          >
+            <div className="flex items-center justify-between pt-6">
+              <h2 className="text-title-b-18 text-gray-800">
+                원하는 조건으로 동행 찾기
+              </h2>
+              {appliedFilterSummary && (
+                <p className="text-body-r-14 text-gray-500">
+                  {appliedFilterSummary}
+                </p>
+              )}
+            </div>
 
-          <div className="flex scrollbar-none gap-2 overflow-x-auto py-3">
-            {partnerFilterItems.map((filterItem) => (
-              <Filter
-                key={filterItem.key}
-                label={filterItem.label}
-                pressed={appliedFilterKeys.includes(filterItem.key)}
-                onPress={() => handleFilterPress(filterItem.key)}
-              />
-            ))}
-            <div aria-hidden="true" className="w-2 shrink-0" />
-          </div>
+            <div className="flex scrollbar-none gap-2 overflow-x-auto py-3">
+              {partnerFilterItems.map((filterItem) => (
+                <Filter
+                  key={filterItem.key}
+                  label={filterItem.label}
+                  pressed={appliedFilterKeys.includes(filterItem.key)}
+                  onPress={() => handleFilterPress(filterItem.key)}
+                />
+              ))}
+              <div aria-hidden="true" className="w-2 shrink-0" />
+            </div>
 
-          <hr
-            className="-mx-4 h-2 border-0 bg-gray-50 opacity-50"
-            aria-hidden="true"
-          />
+            <hr
+              className="-mx-4 h-2 border-0 bg-gray-50 opacity-50"
+              aria-hidden="true"
+            />
+          </div>
         </div>
 
         <AsyncBoundary

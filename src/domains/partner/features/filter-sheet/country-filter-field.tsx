@@ -20,10 +20,12 @@ export const CountryFilterField = ({
   const trimmedKeyword = keyword.trim();
   const isSelectedCountry = value?.name === trimmedKeyword;
   const isSearchKeywordSynced = debouncedKeyword.trim() === trimmedKeyword;
-  const { countries, loadMoreCountries } = useCountrySearch({
+  const { countries, isError, loadMoreCountries } = useCountrySearch({
     keyword: debouncedKeyword,
     enabled: !isSelectedCountry,
   });
+  const isCountrySearchError =
+    !isSelectedCountry && isSearchKeywordSynced && isError;
   const countryResults = isSearchKeywordSynced ? countries : [];
   const isResultOpen = countryResults.length > 0;
   const listboxId = 'partner-country-filter-results';
@@ -74,6 +76,11 @@ export const CountryFilterField = ({
             />
           ))}
         </OptionList>
+      )}
+      {isCountrySearchError && (
+        <p className="text-caption-r-12 text-error mt-2" role="alert">
+          국가 목록을 불러오지 못했습니다. 다시 검색해 주세요.
+        </p>
       )}
     </div>
   );
