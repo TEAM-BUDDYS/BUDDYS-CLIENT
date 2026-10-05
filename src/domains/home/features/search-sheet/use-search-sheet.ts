@@ -90,13 +90,13 @@ export const useSearchSheet = (onClose?: () => void, initialKeyword = '') => {
     return trimmedKeyword;
   };
 
-  const routeToCustomizedExplore = (keyword: string) => {
+  const routeToSearchResult = (keyword: string) => {
     const searchParams = new URLSearchParams({ keyword });
-    const href = `${ROUTES.CUSTOMIZED_EXPLORE}?${searchParams.toString()}`;
+    const href = `${ROUTES.SEARCH}?${searchParams.toString()}`;
 
     onClose?.();
 
-    if (pathname === ROUTES.CUSTOMIZED_EXPLORE) {
+    if (pathname === ROUTES.SEARCH) {
       router.replace(href);
       return;
     }
@@ -111,7 +111,7 @@ export const useSearchSheet = (onClose?: () => void, initialKeyword = '') => {
       return;
     }
 
-    routeToCustomizedExplore(savedKeyword);
+    routeToSearchResult(savedKeyword);
   };
 
   const handleSearchHistorySelect = (item: SearchHistoryItem) => {
@@ -121,7 +121,7 @@ export const useSearchSheet = (onClose?: () => void, initialKeyword = '') => {
       return;
     }
 
-    routeToCustomizedExplore(savedKeyword);
+    routeToSearchResult(savedKeyword);
   };
 
   const handleSearchHistoryDelete = (id: string) => {

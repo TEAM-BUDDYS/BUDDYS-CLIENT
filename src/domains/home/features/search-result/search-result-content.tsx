@@ -17,9 +17,9 @@ import { BottomNavigation, Header } from '@/shared/components/layout';
 import { AsyncBoundary, Filter, Searchbar } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
-import { CustomizedExplorePostList } from './customized-explore-post-list';
+import { SearchResultPostList } from './search-result-post-list';
 
-export const CustomizedExploreContent = () => {
+export const SearchResultContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [bookmarkedItemIds, setBookmarkedItemIds] = useState<number[]>([]);
@@ -61,7 +61,7 @@ export const CustomizedExploreContent = () => {
   };
 
   const handleSearchKeywordClear = () => {
-    router.replace(ROUTES.CUSTOMIZED_EXPLORE);
+    router.replace(ROUTES.SEARCH);
   };
 
   const handleBookmarkClick = (itemId: number) => {
@@ -110,7 +110,7 @@ export const CustomizedExploreContent = () => {
           resetKeys={[filterValue, keyword]}
           loadingFallback={<div className="min-h-96 py-6" aria-busy="true" />}
         >
-          <CustomizedExplorePostList
+          <SearchResultPostList
             filterValue={filterValue}
             keyword={keyword}
             bookmarkedItemIds={bookmarkedItemIds}

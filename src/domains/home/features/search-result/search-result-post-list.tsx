@@ -14,21 +14,21 @@ import { Card, EmptyState } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 
-const CUSTOMIZED_EXPLORE_SIZE = 10;
+const SEARCH_RESULT_SIZE = 10;
 
-interface CustomizedExplorePostListProps {
+interface SearchResultPostListProps {
   filterValue: FilterSheetValue;
   keyword?: string;
   bookmarkedItemIds: number[];
   onBookmarkClick: (itemId: number) => void;
 }
 
-export const CustomizedExplorePostList = ({
+export const SearchResultPostList = ({
   filterValue,
   keyword,
   bookmarkedItemIds,
   onBookmarkClick,
-}: CustomizedExplorePostListProps) => {
+}: SearchResultPostListProps) => {
   const {
     data,
     fetchNextPage,
@@ -37,7 +37,7 @@ export const CustomizedExplorePostList = ({
     isFetchingNextPage,
   } = useSuspenseInfiniteQuery(
     POST_QUERY_OPTIONS.INFINITE_LIST(
-      getBuddySearchParams(filterValue, CUSTOMIZED_EXPLORE_SIZE, keyword),
+      getBuddySearchParams(filterValue, SEARCH_RESULT_SIZE, keyword),
     ),
   );
 
