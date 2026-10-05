@@ -4,7 +4,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { isHTTPError } from 'ky';
 import { useEffect, useState } from 'react';
 
-import { useCitySearch, useCountrySearch } from '@/shared/api';
+import {
+  useCitySearch,
+  useCountrySearch,
+  useNicknameCheck,
+} from '@/shared/api';
 import { TAG_QUERY_OPTIONS } from '@/shared/api';
 import { useImageUpload } from '@/shared/api/image';
 import {
@@ -82,10 +86,18 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
   const progressStep =
     PROGRESS_STEP_BY_STEP[currentStep as keyof typeof PROGRESS_STEP_BY_STEP];
   const canGoNext = onboardForm.canGoNext(currentStep);
-  const [nicknameError, setNicknameError] = useState<string | null>(null);
-  const [checkedNickname, setCheckedNickname] = useState<string | null>(null);
+
+  const {
+    checkedNickname,
+    nicknameError,
+    isCheckingNickname,
+    checkNickname,
+    resetNicknameCheck,
+    invalidateNicknameCheck,
+  } = useNicknameCheck();
   const [isNicknameCheckModalOpen, setIsNicknameCheckModalOpen] =
     useState(false);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const debouncedInterestCountryKeyword = useDebouncedValue(
     onboardForm.interestCountryKeyword.trim(),
@@ -176,8 +188,9 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
           | undefined;
 
         if (response?.code === 'AUTH-E003') {
-          setCheckedNickname(null);
-          setNicknameError(response.message ?? '이미 사용 중인 닉네임입니다.');
+          invalidateNicknameCheck(
+            response.message ?? '이미 사용 중인 닉네임입니다.',
+          );
           return;
         }
       }
@@ -191,7 +204,7 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
   };
 
   const handleNextClick = () => {
-    if (!canGoNext || isSubmitting) {
+    if (!canGoNext || isSubmitting || isCheckingNickname) {
       return;
     }
 
@@ -314,24 +327,18 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
             nickname={onboardForm.nickname}
             nicknameError={nicknameError}
             checkedNickname={checkedNickname}
-            isCheckingNickname={false}
+            isCheckingNickname={isCheckingNickname}
             gender={onboardForm.gender}
             birthDate={onboardForm.birthDate}
             bio={onboardForm.bio}
             isUploading={isSubmitting}
             profileImageFile={onboardForm.profileImageFile}
             onNicknameChange={(value) => {
-              setNicknameError(null);
-              setCheckedNickname(null);
+              resetNicknameCheck();
               onboardForm.handleNicknameChange(value);
             }}
             onCheckNicknameDuplicate={() => {
-              showToast(
-                '닉네임 중복 확인을 할 수 없어요. 잠시 후 다시 시도해주세요.',
-                {
-                  variant: 'gray',
-                },
-              );
+              void checkNickname(onboardForm.nickname);
             }}
             onGenderChange={onboardForm.handleGenderChange}
             onBirthDateChange={onboardForm.handleBirthDateChange}
@@ -385,7 +392,7 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
       {currentStep !== 'complete' && (
         <div className="flex flex-col gap-4">
           <Button
-            disabled={!canGoNext || isSubmitting}
+            disabled={!canGoNext || isSubmitting || isCheckingNickname}
             onClick={handleNextClick}
           >
             {isSubmitting ? '저장 중...' : '다음'}

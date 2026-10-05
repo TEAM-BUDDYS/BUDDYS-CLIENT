@@ -33,6 +33,7 @@ type CourseDetailFlight = CourseDetailDay['flights'][number];
 
 interface CourseDetailOverviewSectionProps {
   course: CourseDetailOverviewData;
+  isBookmarkPending: boolean;
   isBookmarked: boolean;
   onBookmarkClick: () => void;
   onDayPickerOpen: () => void;
@@ -152,6 +153,7 @@ const CourseDetailFlightMetaItem = ({
 
 export const CourseDetailOverviewSection = ({
   course,
+  isBookmarkPending,
   isBookmarked,
   onBookmarkClick,
   onDayPickerOpen,
@@ -205,6 +207,8 @@ export const CourseDetailOverviewSection = ({
           </div>
           {!course.isMine && (
             <BookmarkButton
+              aria-busy={isBookmarkPending}
+              disabled={isBookmarkPending}
               isBookmarked={isBookmarked}
               className={isBookmarked ? 'size-11' : 'size-11 text-gray-500'}
               onClick={onBookmarkClick}

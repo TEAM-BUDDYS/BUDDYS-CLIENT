@@ -80,6 +80,17 @@ export const COURSE_QUERY_KEY = {
   ALL: ['courses'] as const,
   DETAIL: (courseId: number) =>
     [...COURSE_QUERY_KEY.ALL, 'detail', courseId] as const,
+  COMMENTS_ALL: (courseId: number) =>
+    [...COURSE_QUERY_KEY.ALL, courseId, 'comments'] as const,
+  INFINITE_COMMENTS: (
+    courseId: number,
+    params?: GetQueryParams<'/api/v1/courses/{courseId}/comments'>,
+  ) =>
+    [
+      ...COURSE_QUERY_KEY.COMMENTS_ALL(courseId),
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
 };
 
 export const PLACE_QUERY_KEY = {
@@ -157,6 +168,9 @@ export const USER_QUERY_KEY = {
     ] as const,
   PROFILE: (userId: number) =>
     [...USER_QUERY_KEY.ALL, 'profile', userId] as const,
+  NICKNAME_CHECK: (
+    params: GetQueryParams<'/api/v1/users/me/nickname-availability'>,
+  ) => [...USER_QUERY_KEY.ALL, 'me', 'nickname-availability', params] as const,
   POSTS: (
     userId: number,
     params?: GetQueryParams<'/api/v1/users/{userId}/posts'>,

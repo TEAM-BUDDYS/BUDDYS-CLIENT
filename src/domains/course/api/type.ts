@@ -6,9 +6,19 @@ export type SearchAirlinesParams = NonNullable<
 >;
 export type SearchAirlinesResponse =
   components['schemas']['BaseResponseAirlineListResponse'];
+export type CourseCommentPage =
+  components['schemas']['CourseCommentListResponse'];
 export type CourseDetail = components['schemas']['CourseDetailResponse'];
+export type GetCourseCommentsParams = NonNullable<
+  operations['getComments_1']['parameters']['query']
+>;
+export type GetCourseCommentsResponse =
+  components['schemas']['BaseResponseCourseCommentListResponse'];
 export type GetCourseDetailResponse =
   components['schemas']['BaseResponseCourseDetailResponse'];
+export type CourseBookmark = components['schemas']['CourseBookmarkResponse'];
+export type UpdateCourseBookmarkResponse =
+  components['schemas']['BaseResponseCourseBookmarkResponse'];
 export type CourseDay = components['schemas']['DayResponse'];
 export type CourseCompanion = components['schemas']['UserSummaryResponse'];
 export type Place = components['schemas']['PlaceResponse'];
