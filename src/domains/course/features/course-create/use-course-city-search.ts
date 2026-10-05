@@ -48,9 +48,7 @@ export const useCourseCitySearch = ({
 
             seenCityIds.add(city.id);
             results.push({
-              id: city.id,
-              name: city.name,
-              koreanName: city.koreanName,
+              ...city,
               countryId: country.id,
             });
           });

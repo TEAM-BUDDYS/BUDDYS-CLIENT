@@ -1,9 +1,8 @@
 'use client';
 
 import { type City, getCityDisplayName } from '@/shared/api';
-import { FormLabel } from '@/shared/components/ui';
+import { FormLabel, SearchOptionField } from '@/shared/components/ui';
 
-import { SearchOptionField } from '../../components/search-option-field/search-option-field';
 import type { OnboardLocationOption } from '../../model/onboard';
 
 interface OnboardInterestLocationStepProps {

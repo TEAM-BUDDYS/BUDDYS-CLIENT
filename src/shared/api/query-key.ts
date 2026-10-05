@@ -20,6 +20,20 @@ const excludePageParam = <Params extends { page?: unknown }>(
   return restParams;
 };
 
+const excludePageTokenParam = <Params extends { pageToken?: unknown }>(
+  params: Params,
+) => {
+  const { pageToken: _pageToken, ...restParams } = params;
+
+  return restParams;
+};
+
+export const AIRLINE_QUERY_KEY = {
+  ALL: ['airlines'] as const,
+  SEARCH: (params: GetQueryParams<'/api/v1/airlines/search'>) =>
+    [...AIRLINE_QUERY_KEY.ALL, 'search', excludePageParam(params)] as const,
+};
+
 export const CHAT_ROOM_QUERY_KEY = {
   ALL: ['chat-rooms'] as const,
   INFINITE_LIST_ALL: () =>
@@ -60,6 +74,32 @@ export const COUNTRY_QUERY_KEY = {
       'search',
       params,
     ] as const,
+};
+
+export const COURSE_QUERY_KEY = {
+  ALL: ['courses'] as const,
+  DETAIL: (courseId: number) =>
+    [...COURSE_QUERY_KEY.ALL, 'detail', courseId] as const,
+  COMMENTS_ALL: (courseId: number) =>
+    [...COURSE_QUERY_KEY.ALL, courseId, 'comments'] as const,
+  INFINITE_COMMENTS: (
+    courseId: number,
+    params?: GetQueryParams<'/api/v1/courses/{courseId}/comments'>,
+  ) =>
+    [
+      ...COURSE_QUERY_KEY.COMMENTS_ALL(courseId),
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
+};
+
+export const PLACE_QUERY_KEY = {
+  ALL: ['places'] as const,
+  SEARCH: (params: GetQueryParams<'/api/v1/places/search'>) =>
+    [...PLACE_QUERY_KEY.ALL, 'search', excludePageTokenParam(params)] as const,
+  BOOKMARKS_ALL: () => [...PLACE_QUERY_KEY.ALL, 'bookmarks'] as const,
+  BOOKMARKS: (params?: GetQueryParams<'/api/v1/places/bookmarks'>) =>
+    [...PLACE_QUERY_KEY.BOOKMARKS_ALL(), excludePageParam(params)] as const,
 };
 
 export const POST_QUERY_KEY = {
@@ -114,6 +154,8 @@ export const TAG_QUERY_KEY = {
 export const USER_QUERY_KEY = {
   ALL: ['users'] as const,
   ME: () => [...USER_QUERY_KEY.ALL, 'me'] as const,
+  SEARCH: (params: GetQueryParams<'/api/v1/users/search'>) =>
+    [...USER_QUERY_KEY.ALL, 'search', excludePageParam(params)] as const,
   ME_POSTS: (params?: GetQueryParams<'/api/v1/users/me/posts'>) =>
     [...USER_QUERY_KEY.ALL, 'me', 'posts', params ?? {}] as const,
   ME_POSTS_INFINITE: (params?: GetQueryParams<'/api/v1/users/me/posts'>) =>
@@ -126,6 +168,9 @@ export const USER_QUERY_KEY = {
     ] as const,
   PROFILE: (userId: number) =>
     [...USER_QUERY_KEY.ALL, 'profile', userId] as const,
+  NICKNAME_CHECK: (
+    params: GetQueryParams<'/api/v1/users/me/nickname-availability'>,
+  ) => [...USER_QUERY_KEY.ALL, 'me', 'nickname-availability', params] as const,
   POSTS: (
     userId: number,
     params?: GetQueryParams<'/api/v1/users/{userId}/posts'>,

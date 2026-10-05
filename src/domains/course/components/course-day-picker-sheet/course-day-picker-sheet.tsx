@@ -9,9 +9,14 @@ import {
   formatMonthDayWithWeekday,
 } from '@/shared/utils/format-date-range';
 
+interface CourseDayPickerItem {
+  dayNumber: number;
+  date?: Date | string | null;
+}
+
 interface CourseDayPickerSheetProps {
   open: boolean;
-  dates: Date[];
+  days: readonly CourseDayPickerItem[];
   selectedDayNumber: number | null;
   onClose: () => void;
   onDaySelect: (dayNumber: number) => void;
@@ -19,7 +24,7 @@ interface CourseDayPickerSheetProps {
 
 export const CourseDayPickerSheet = ({
   open,
-  dates,
+  days,
   selectedDayNumber,
   onClose,
   onDaySelect,
@@ -27,13 +32,11 @@ export const CourseDayPickerSheet = ({
   const titleId = useId();
   const hasSelectedDay =
     selectedDayNumber !== null &&
-    Number.isInteger(selectedDayNumber) &&
-    selectedDayNumber >= 1 &&
-    selectedDayNumber <= dates.length;
+    days.some(({ dayNumber }) => dayNumber === selectedDayNumber);
 
   const handleDaySelect = (dayNumber: number) => {
-    onDaySelect(dayNumber);
     onClose();
+    onDaySelect(dayNumber);
   };
 
   if (!open) {
@@ -44,7 +47,7 @@ export const CourseDayPickerSheet = ({
     <BottomSheet
       open
       ariaLabelledBy={titleId}
-      className="flex flex-col"
+      className="flex h-73.25 flex-col"
       onClose={onClose}
     >
       <div className="flex min-h-0 flex-1 flex-col gap-4 px-4 pb-4">
@@ -55,13 +58,15 @@ export const CourseDayPickerSheet = ({
           날짜 선택
         </h2>
 
-        <ul className="flex min-h-0 flex-1 scrollbar-none flex-col overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:hidden">
-          {dates.map((date, index) => {
-            const dayNumber = index + 1;
+        <ul
+          data-vaul-no-drag
+          className="flex min-h-0 flex-1 scrollbar-none flex-col overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:hidden"
+        >
+          {days.map(({ dayNumber, date }) => {
             const isSelected = selectedDayNumber === dayNumber;
 
             return (
-              <li key={dayNumber}>
+              <li key={dayNumber} className="shrink-0">
                 <button
                   type="button"
                   aria-pressed={isSelected}
@@ -73,9 +78,15 @@ export const CourseDayPickerSheet = ({
                   onClick={() => handleDaySelect(dayNumber)}
                 >
                   <span>{`Day ${dayNumber}`}</span>
-                  <time dateTime={formatDateToIsoDate(date)}>
-                    {formatMonthDayWithWeekday(date)}
-                  </time>
+                  {date && (
+                    <time
+                      dateTime={
+                        date instanceof Date ? formatDateToIsoDate(date) : date
+                      }
+                    >
+                      {formatMonthDayWithWeekday(date)}
+                    </time>
+                  )}
                 </button>
               </li>
             );

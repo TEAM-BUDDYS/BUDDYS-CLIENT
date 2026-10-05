@@ -8,14 +8,18 @@ import { getDateRangeDayCount } from '@/shared/components/ui/date-range-picker/d
 import { formatDateToIsoDate } from '@/shared/utils/format-date-range';
 
 import {
+  COURSE_CREATE_MAX_COMPANION_COUNT,
   COURSE_CREATE_MAX_DAY_IMAGE_COUNT,
+  COURSE_CREATE_MAX_FLIGHT_COUNT,
   COURSE_CREATE_MIN_DAY_IMAGE_COUNT,
 } from './constants';
 import type {
   CourseCreateBasicInfoValue,
   CourseCreateCityOption,
+  CourseCreateCompanion,
   CourseCreateDayFormState,
   CourseCreateDetailFormState,
+  CourseCreateFlightFormState,
   CourseCreateScreen,
   CourseCreateValue,
 } from './model';
@@ -69,6 +73,9 @@ export const useCourseCreateForm = () => {
   const [detail, setDetail] =
     useState<CourseCreateDetailFormState>(INITIAL_DETAIL_FORM);
   const [days, setDays] = useState<CourseCreateDayFormState[]>([]);
+  const [selectedCompanions, setSelectedCompanions] = useState<
+    CourseCreateCompanion[]
+  >([]);
   const previewUrlsRef = useRef(new Set<string>());
   const durationDays = dateRange.startDate
     ? getDateRangeDayCount(
@@ -165,6 +172,7 @@ export const useCourseCreateForm = () => {
           images: [],
           memo: '',
           cost: null,
+          flights: [],
         };
       });
     });
@@ -242,6 +250,47 @@ export const useCourseCreateForm = () => {
     );
   };
 
+  const addDayFlight = (
+    dayNumber: number,
+    flight: CourseCreateFlightFormState,
+  ) => {
+    setDays((prevDays) => {
+      const flightCount = prevDays.reduce(
+        (count, day) => count + day.flights.length,
+        0,
+      );
+
+      if (flightCount >= COURSE_CREATE_MAX_FLIGHT_COUNT) {
+        return prevDays;
+      }
+
+      return prevDays.map((day) =>
+        day.dayNumber === dayNumber
+          ? { ...day, flights: [...day.flights, flight] }
+          : day,
+      );
+    });
+  };
+
+  const handleCompanionSelect = (companion: CourseCreateCompanion) => {
+    setSelectedCompanions((prevCompanions) => {
+      if (
+        prevCompanions.length >= COURSE_CREATE_MAX_COMPANION_COUNT ||
+        prevCompanions.some(({ userId }) => userId === companion.userId)
+      ) {
+        return prevCompanions;
+      }
+
+      return [...prevCompanions, companion];
+    });
+  };
+
+  const handleCompanionRemove = (userId: number) => {
+    setSelectedCompanions((prevCompanions) =>
+      prevCompanions.filter((companion) => companion.userId !== userId),
+    );
+  };
+
   const canGoNext = (screen: CourseCreateScreen) => {
     if (screen === 'country') {
       return selectedCountries.length > 0;
@@ -261,6 +310,10 @@ export const useCourseCreateForm = () => {
 
     if (screen === 'itinerary') {
       return isItineraryComplete(days, durationDays);
+    }
+
+    if (screen === 'companion') {
+      return true;
     }
 
     return durationDays !== null && isDetailComplete(detail);
@@ -309,6 +362,7 @@ export const useCourseCreateForm = () => {
     return {
       ...basicInfoValue,
       days,
+      companionUserIds: selectedCompanions.map(({ userId }) => userId),
     };
   };
 
@@ -319,6 +373,7 @@ export const useCourseCreateForm = () => {
     durationDays,
     detail,
     days,
+    selectedCompanions,
     handleCountrySelect,
     handleCountryRemove,
     handleCitySelect,
@@ -332,6 +387,9 @@ export const useCourseCreateForm = () => {
     addDayImages,
     removeDayImage,
     updateDayMemoCost,
+    addDayFlight,
+    handleCompanionSelect,
+    handleCompanionRemove,
     canGoNext,
     getCourseCreateValue,
   };

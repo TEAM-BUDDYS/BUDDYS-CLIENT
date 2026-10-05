@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import type { CourseMapCenter } from '@/domains/course/model/course-map';
 import { cn } from '@/lib/cn';
 import { Header } from '@/shared/components/layout';
 import {
@@ -12,6 +11,7 @@ import {
   ProgressBar,
 } from '@/shared/components/ui';
 
+import { CourseCreateCompanionStep } from './companion/course-create-companion-step';
 import {
   COURSE_CREATE_PROGRESS_STEP_BY_SCREEN,
   COURSE_CREATE_QUESTION_CONTENT,
@@ -23,30 +23,31 @@ import { CourseCreateDateStep } from './course-create-date-step';
 import { CourseCreateDetailStep } from './course-create-detail-step';
 import { CourseCreateDurationStep } from './course-create-duration-step';
 import { CourseCreateQuestionHeader } from './course-create-question-header';
+import { CourseCreateFlightForm } from './flight/course-create-flight-form';
 import { CourseCreateItineraryStep } from './itinerary/course-create-itinerary-step';
-import type {
-  CourseCreateDayFormState,
-  CourseCreateScreen,
-  CourseCreateValue,
-} from './model';
+import type { CourseCreateScreen } from './model';
 import { useCourseCreateForm } from './use-course-create-form';
 
-interface CourseCreateFlowProps {
-  placeMapCenter?: CourseMapCenter | null;
-  recentPlaces?: CourseCreateDayFormState['places'];
-  onComplete?: (value: CourseCreateValue) => void;
-}
-
-export const CourseCreateFlow = ({
-  placeMapCenter = null,
-  recentPlaces = [],
-  onComplete,
-}: CourseCreateFlowProps) => {
+export const CourseCreateFlow = () => {
   const router = useRouter();
   const [currentScreen, setCurrentScreen] =
     useState<CourseCreateScreen>('country');
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [flightDayNumber, setFlightDayNumber] = useState<number | null>(null);
   const courseCreateForm = useCourseCreateForm();
+
+  if (flightDayNumber !== null) {
+    return (
+      <CourseCreateFlightForm
+        onBack={() => setFlightDayNumber(null)}
+        onConfirm={(flight) => {
+          courseCreateForm.addDayFlight(flightDayNumber, flight);
+          setFlightDayNumber(null);
+        }}
+      />
+    );
+  }
+
   const currentProgressStep =
     COURSE_CREATE_PROGRESS_STEP_BY_SCREEN[currentScreen];
   const canGoNext = courseCreateForm.canGoNext(currentScreen);
@@ -71,6 +72,11 @@ export const CourseCreateFlow = ({
 
     if (currentScreen === 'itinerary') {
       setCurrentScreen('detail');
+      return;
+    }
+
+    if (currentScreen === 'companion') {
+      setCurrentScreen('itinerary');
       return;
     }
 
@@ -107,10 +113,8 @@ export const CourseCreateFlow = ({
       return;
     }
 
-    const courseCreateValue = courseCreateForm.getCourseCreateValue();
-
-    if (courseCreateValue) {
-      onComplete?.(courseCreateValue);
+    if (currentScreen === 'itinerary') {
+      setCurrentScreen('companion');
     }
   };
 
@@ -154,7 +158,7 @@ export const CourseCreateFlow = ({
         <div
           className={cn(
             'flex flex-col',
-            currentScreen === 'duration' || currentScreen === 'itinerary'
+            currentScreen === 'duration' || currentScreen === 'companion'
               ? 'gap-10'
               : 'gap-6',
           )}
@@ -212,21 +216,33 @@ export const CourseCreateFlow = ({
           {currentScreen === 'itinerary' && (
             <CourseCreateItineraryStep
               title={courseCreateForm.detail.title}
+              cities={courseCreateForm.selectedCities}
               days={courseCreateForm.days}
-              placeMapCenter={placeMapCenter}
-              recentPlaces={recentPlaces}
               onDayPlacesChange={courseCreateForm.setDayPlaces}
               onDayImagesAdd={courseCreateForm.addDayImages}
               onDayImageRemove={courseCreateForm.removeDayImage}
               onDayMemoCostChange={courseCreateForm.updateDayMemoCost}
+              onFlightDaySelect={setFlightDayNumber}
+            />
+          )}
+
+          {currentScreen === 'companion' && (
+            <CourseCreateCompanionStep
+              selectedCompanions={courseCreateForm.selectedCompanions}
+              onCompanionSelect={courseCreateForm.handleCompanionSelect}
+              onCompanionRemove={courseCreateForm.handleCompanionRemove}
             />
           )}
         </div>
       </section>
 
       <div className="sticky bottom-0 mt-auto flex flex-col gap-4 bg-white px-4 pt-6 pb-8.5">
-        <Button disabled={!canGoNext} onClick={handleNextClick}>
-          다음
+        <Button
+          aria-disabled={currentScreen === 'companion' ? true : undefined}
+          disabled={!canGoNext}
+          onClick={currentScreen === 'companion' ? undefined : handleNextClick}
+        >
+          {currentScreen === 'companion' ? '등록하기' : '다음'}
         </Button>
         {currentScreen === 'date' && (
           <button

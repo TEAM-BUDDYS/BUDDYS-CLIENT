@@ -1,4 +1,7 @@
 export const END_POINT = {
+  AIRLINE: {
+    SEARCH: 'api/v1/airlines/search',
+  },
   AUTH: {
     KAKAO: 'api/v1/auth/kakao',
     GOOGLE: 'api/v1/auth/google',
@@ -19,8 +22,17 @@ export const END_POINT = {
     UNIVERSITY_SEARCH: (countryId: number) =>
       `api/v1/countries/${countryId}/universities/search`,
   },
+  COURSE: {
+    COMMENTS: (courseId: number) => `api/v1/courses/${courseId}/comments`,
+    DETAIL: (courseId: number) => `api/v1/courses/${courseId}`,
+    BOOKMARK: (courseId: number) => `api/v1/courses/${courseId}/bookmark`,
+  },
   IMAGE: {
     PRESIGNED_URL: 'api/v1/images/presigned-url',
+  },
+  PLACE: {
+    SEARCH: 'api/v1/places/search',
+    BOOKMARKS: 'api/v1/places/bookmarks',
   },
   POST: {
     LIST: 'api/v1/posts',
@@ -42,6 +54,8 @@ export const END_POINT = {
     ME: 'api/v1/users/me',
     ME_POSTS: 'api/v1/users/me/posts',
     ONBOARDING: 'api/v1/users/onboarding',
+    NICKNAME_CHECK: 'api/v1/users/me/nickname-availability',
+    SEARCH: 'api/v1/users/search',
     PROFILE: (userId: number) => `api/v1/users/${userId}`,
     POSTS: (userId: number) => `api/v1/users/${userId}/posts`,
   },
