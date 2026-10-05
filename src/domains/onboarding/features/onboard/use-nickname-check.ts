@@ -2,10 +2,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 
 import { useToast } from '@/shared/components/ui';
+import { NICKNAME_MAX_LENGTH } from '@/shared/constants/nickname';
 
 import { ONBOARDING_QUERY_OPTIONS } from '../../api/query';
-
-const NICKNAME_MAX_LENGTH = 14;
 
 export const useNicknameCheck = () => {
   const queryClient = useQueryClient();
@@ -56,7 +55,9 @@ export const useNicknameCheck = () => {
     }
 
     if (inputNickname.length > NICKNAME_MAX_LENGTH) {
-      setNicknameError('닉네임은 14자 이하로 입력해주세요.');
+      setNicknameError(
+        `닉네임은 ${NICKNAME_MAX_LENGTH}자 이하로 입력해주세요.`,
+      );
       return;
     }
 

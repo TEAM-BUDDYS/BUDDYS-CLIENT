@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { type City, getCityDisplayName } from '@/shared/api';
+import { NICKNAME_MAX_LENGTH } from '@/shared/constants/nickname';
 import { useDebouncedValue } from '@/shared/hooks/use-debounced-value';
 import { formatDateInput } from '@/shared/utils/format-date-input';
 import type { GenderType } from '@/types/gender';
@@ -191,7 +192,7 @@ export const useOnboardForm = () => {
   };
 
   const handleNicknameChange = (value: string) => {
-    setNickname(value.slice(0, 14));
+    setNickname(value.slice(0, NICKNAME_MAX_LENGTH));
   };
 
   const handleGenderChange = (value: GenderType) => {
