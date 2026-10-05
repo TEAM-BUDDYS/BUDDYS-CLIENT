@@ -16,6 +16,9 @@ export type GetCourseCommentsResponse =
   components['schemas']['BaseResponseCourseCommentListResponse'];
 export type GetCourseDetailResponse =
   components['schemas']['BaseResponseCourseDetailResponse'];
+export type CourseBookmark = components['schemas']['CourseBookmarkResponse'];
+export type UpdateCourseBookmarkResponse =
+  components['schemas']['BaseResponseCourseBookmarkResponse'];
 export type CourseDay = components['schemas']['DayResponse'];
 export type Place = components['schemas']['PlaceResponse'];
 export type BookmarkedPlace = components['schemas']['BookmarkedPlaceResponse'];

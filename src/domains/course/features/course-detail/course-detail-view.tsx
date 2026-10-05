@@ -13,19 +13,23 @@ import { CourseContinuationBanner } from './course-continuation-banner';
 import { CourseDetailComments } from './course-detail-comments';
 import { CourseDetailDayList } from './course-detail-day-list';
 import { CourseDetailOverviewSection } from './course-detail-overview-section';
+import { useCourseBookmark } from './use-course-bookmark';
 
 interface CourseDetailViewProps {
   course: CourseDetail;
 }
 
 export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
-  const [isBookmarked, setIsBookmarked] = useState(course.isBookmarked);
   const [isDayPickerOpen, setIsDayPickerOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
   const [selectedDayNumber, setSelectedDayNumber] = useState<number | null>(
     null,
   );
+  const { isPending: isBookmarkPending, toggleBookmark } = useCourseBookmark({
+    courseId: course.courseId,
+    isBookmarked: course.isBookmarked,
+  });
   const pendingDayScrollRef = useRef<number | null>(null);
   const dayPickerDays = useMemo(
     () =>
@@ -37,8 +41,6 @@ export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
         })),
     [course.days],
   );
-  const bookmarkCount =
-    course.bookmarkCount + Number(isBookmarked) - Number(course.isBookmarked);
 
   useEffect(() => {
     if (isDayPickerOpen || pendingDayScrollRef.current === null) return;
@@ -92,8 +94,9 @@ export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
         <div className="px-4 pt-4 pb-6">
           <CourseDetailOverviewSection
             course={course}
-            isBookmarked={isBookmarked}
-            onBookmarkClick={() => setIsBookmarked((current) => !current)}
+            isBookmarkPending={isBookmarkPending}
+            isBookmarked={course.isBookmarked}
+            onBookmarkClick={toggleBookmark}
             onDayPickerOpen={() => setIsDayPickerOpen(true)}
           />
         </div>
@@ -102,7 +105,7 @@ export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
 
         <div className="flex flex-col gap-6 px-4 py-4">
           <CourseDetailComments
-            bookmarkCount={bookmarkCount}
+            bookmarkCount={course.bookmarkCount}
             commentCount={course.commentCount}
             courseId={course.courseId}
             viewCount={course.viewCount}

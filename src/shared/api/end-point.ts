@@ -25,6 +25,7 @@ export const END_POINT = {
   COURSE: {
     COMMENTS: (courseId: number) => `api/v1/courses/${courseId}/comments`,
     DETAIL: (courseId: number) => `api/v1/courses/${courseId}`,
+    BOOKMARK: (courseId: number) => `api/v1/courses/${courseId}/bookmark`,
   },
   IMAGE: {
     PRESIGNED_URL: 'api/v1/images/presigned-url',
