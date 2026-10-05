@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-
 import { ListToolbar } from '@/domains/home/components/list-toolbar/list-toolbar';
 import { SearchBuddys } from '@/domains/home/components/search-buddys/search-buddys';
 
@@ -25,18 +23,12 @@ const MOCK_SEARCH_BUDDIES = [
 ];
 
 export const SearchResultBuddyList = () => {
-  const [sort, setSort] = useState('최신순');
-
   // TODO: 채팅방 생성 API 연동 시 채팅 화면으로 이동
   const handleChatClick = () => {};
 
   return (
     <>
-      <ListToolbar
-        count={MOCK_SEARCH_BUDDIES.length}
-        value={sort}
-        onChange={setSort}
-      />
+      <ListToolbar count={MOCK_SEARCH_BUDDIES.length} />
 
       <div className="mt-4 flex flex-col gap-3.5">
         {MOCK_SEARCH_BUDDIES.map(({ userId, ...buddy }) => (
