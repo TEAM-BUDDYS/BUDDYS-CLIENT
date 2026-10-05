@@ -18,7 +18,7 @@ export const ListToolbar = ({
   onChange,
 }: ListToolbarProps) => {
   return (
-    <div className="flex w-full items-center justify-between">
+    <div className="flex min-h-10 w-full items-center justify-between">
       <p className="text-body-r-14 text-gray-800">
         총 <span className="text-mint-300">{count}</span>건
       </p>
