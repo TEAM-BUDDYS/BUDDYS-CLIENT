@@ -160,6 +160,7 @@ export const CourseCreateCompanionStep = ({
         <CourseCompanionInviteTooltip />
 
         <Button
+          align="center"
           className="text-body-m-15 border-gray-100 enabled:active:border-gray-100 enabled:active:bg-gray-50 enabled:active:text-gray-800"
           icon={<LinkIcon />}
           iconSize="lg"
