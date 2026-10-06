@@ -4,11 +4,13 @@ import Link from 'next/link';
 
 import { cn } from '@/lib/cn';
 import { BookmarkButton, CommonImage } from '@/shared/components/ui';
+import { formatFullDate, parseDate } from '@/shared/utils/format-date-range';
 
 interface CourseListCardProps {
   title: string;
   description: string;
   thumbnailImageUrl: string;
+  createdAt: string;
   href: string;
   isBookmarked: boolean;
   onBookmarkClick: () => void;
@@ -19,6 +21,7 @@ export const CourseListCard = ({
   title,
   description,
   thumbnailImageUrl,
+  createdAt,
   href,
   isBookmarked,
   onBookmarkClick,
@@ -39,11 +42,19 @@ export const CourseListCard = ({
           className="size-25 shrink-0"
         />
 
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
           <h3 className="text-body-sb-16 truncate text-gray-800">{title}</h3>
-          <p className="text-caption-m-12 truncate text-gray-500">
-            {description}
-          </p>
+          <div className="flex min-w-0 flex-col gap-1">
+            <p className="text-caption-m-12 truncate text-gray-500">
+              {description}
+            </p>
+            <time
+              dateTime={createdAt}
+              className="text-caption-m-12 text-gray-200"
+            >
+              {formatFullDate(parseDate(createdAt))}
+            </time>
+          </div>
         </div>
       </Link>
 
