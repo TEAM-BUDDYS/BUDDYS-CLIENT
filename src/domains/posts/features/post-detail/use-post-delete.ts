@@ -39,12 +39,10 @@ export const usePostDelete = (postId: number) => {
       router.replace(ROUTES.PROFILE.ROOT);
     },
     onError: () => {
+      isDeleteRequestedRef.current = false;
       showToast('게시글을 삭제하지 못했어요. 다시 시도해 주세요.', {
         variant: 'gray',
       });
-    },
-    onSettled: () => {
-      isDeleteRequestedRef.current = false;
     },
   });
 
