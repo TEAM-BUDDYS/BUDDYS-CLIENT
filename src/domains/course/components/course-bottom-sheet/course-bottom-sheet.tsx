@@ -26,6 +26,7 @@ interface CourseBottomSheetProps {
   tab: CourseTabValue;
   bookmarkedItems: readonly NearbyCourseItem[];
   hasNearbyError?: boolean;
+  hasLocationError?: boolean;
   isBookmarkMode: boolean;
   isNearbyLoading?: boolean;
   nearbyItems: readonly NearbyCourseItem[];
@@ -44,6 +45,7 @@ export const CourseBottomSheet = ({
   tab,
   bookmarkedItems,
   hasNearbyError = false,
+  hasLocationError = false,
   isBookmarkMode,
   isNearbyLoading = false,
   nearbyItems,
@@ -103,6 +105,7 @@ export const CourseBottomSheet = ({
           ) : tab === 'nearby' ? (
             <NearbyCourseContent
               hasError={hasNearbyError}
+              hasLocationError={hasLocationError}
               isLoading={isNearbyLoading}
               items={nearbyItems}
               onBookmarkChange={onBookmarkChange}

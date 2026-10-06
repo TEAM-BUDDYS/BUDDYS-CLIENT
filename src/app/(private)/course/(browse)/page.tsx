@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 import { CourseBottomSheet } from '@/domains/course/components/course-bottom-sheet/course-bottom-sheet';
 import { CourseMap } from '@/domains/course/components/course-map/course-map';
@@ -59,10 +60,21 @@ export default function CoursePage() {
   const {
     clearSelectedPlace,
     nearbyItems,
+    selectedPlace,
     selectedPlaceId,
     selectGooglePlace,
     selectNearbyPlace,
   } = useCoursePlaceSelection({ nearbyPlaces });
+
+  useEffect(() => {
+    if (currentLocationStatus !== 'idle') return;
+
+    void refetchCurrentLocation();
+  }, [currentLocationStatus, refetchCurrentLocation]);
+
+  const isCurrentLocationLoading =
+    currentLocationStatus === 'idle' || currentLocationStatus === 'loading';
+  const hasLocationError = currentLocationStatus === 'error';
 
   const handleCategoryChange = (category: CourseMapCategory) => {
     clearSelectedPlace();
@@ -115,6 +127,15 @@ export default function CoursePage() {
     }
   };
 
+  const handleNearbyRetry = () => {
+    if (hasLocationError) {
+      void refetchCurrentLocation();
+      return;
+    }
+
+    void refetchNearbyPlaces();
+  };
+
   return (
     <>
       <main className="fixed inset-0 mx-auto w-full max-w-107.5 min-w-93.75 pb-14.5">
@@ -157,6 +178,7 @@ export default function CoursePage() {
           currentLocation={currentLocation}
           places={nearbyPlaces}
           preserveCamera={bottomSheetPosition === 'expanded'}
+          selectedPlace={selectedPlace}
           selectedPlaceId={selectedPlaceId}
           showCurrentLocation={isLocationActive}
           onPlaceSelect={handlePlaceSelect}
@@ -185,15 +207,16 @@ export default function CoursePage() {
           tab={bottomSheetTab}
           bookmarkedItems={EMPTY_COURSE_ITEMS}
           hasNearbyError={hasNearbyError}
+          hasLocationError={hasLocationError}
           isBookmarkMode={isBookmarkActive}
-          isNearbyLoading={isNearbyLoading}
+          isNearbyLoading={isCurrentLocationLoading || isNearbyLoading}
           nearbyItems={nearbyItems}
           onClose={() => setBottomSheetPosition('collapsed')}
           onPositionChange={setBottomSheetPosition}
           onTabChange={setBottomSheetTab}
           onBookmarkChange={() => {}}
           onExploreClick={() => router.push(ROUTES.COURSE.CUSTOMIZED_EXPLORE)}
-          onNearbyRetry={() => void refetchNearbyPlaces()}
+          onNearbyRetry={handleNearbyRetry}
           onSuggestedMoreClick={() =>
             router.push(ROUTES.COURSE.SUGGEST_EXPLORE)
           }

@@ -57,6 +57,7 @@ export const useCoursePlaceSelection = ({
   return {
     clearSelectedPlace,
     nearbyItems,
+    selectedPlace,
     selectedPlaceId: selectedPlace?.placeId,
     selectGooglePlace,
     selectNearbyPlace,
