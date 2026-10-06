@@ -119,7 +119,9 @@ export const usePostSubmit = ({ postId }: UsePostSubmitParams) => {
             refetchType: 'none',
           }),
         ]);
-        showToast('게시글이 수정되었어요');
+        showToast('게시글이 수정되었어요', {
+          bottomOffsetClassName: 'bottom-26.5',
+        });
         router.replace(ROUTES.POST.DETAIL(updatedPostId));
         return;
       }
