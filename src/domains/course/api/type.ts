@@ -9,6 +9,10 @@ export type SearchAirlinesResponse =
 export type CourseCommentPage =
   components['schemas']['CourseCommentListResponse'];
 export type CourseDetail = components['schemas']['CourseDetailResponse'];
+export type CreateCourseCommentRequest =
+  components['schemas']['CreateCommentRequest'];
+export type CreateCourseCommentResponse =
+  components['schemas']['BaseResponseCreateCourseCommentResponse'];
 export type GetCourseCommentsParams = NonNullable<
   operations['getComments_1']['parameters']['query']
 >;
