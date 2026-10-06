@@ -189,6 +189,19 @@ export const useCourseCreateForm = () => {
     );
   };
 
+  const removeDayPlace = (dayNumber: number, placeId: string) => {
+    setDays((prevDays) =>
+      prevDays.map((day) =>
+        day.dayNumber === dayNumber
+          ? {
+              ...day,
+              places: day.places.filter((place) => place.placeId !== placeId),
+            }
+          : day,
+      ),
+    );
+  };
+
   const addDayImages = (dayNumber: number, files: File[]) => {
     const currentDay = days.find((day) => day.dayNumber === dayNumber);
 
@@ -384,6 +397,7 @@ export const useCourseCreateForm = () => {
     updateDetail,
     initializeDays,
     setDayPlaces,
+    removeDayPlace,
     addDayImages,
     removeDayImage,
     updateDayMemoCost,
