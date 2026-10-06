@@ -23,6 +23,8 @@ import type {
   GetPostDetailResponse,
   GetPostsParams,
   GetPostsResponse,
+  UpdatePostRequest,
+  UpdatePostResponse,
   UpdatePostStatusRequest,
   UpdatePostStatusResponse,
 } from './type';
@@ -68,6 +70,20 @@ const getPostDetail = async (postId: number): Promise<PostDetail> => {
   }
 
   return response.data as PostDetail;
+};
+
+const updatePost = async (postId: number, body: UpdatePostRequest) => {
+  const response = await apiClient
+    .patch(END_POINT.POST.DETAIL(postId), {
+      json: body,
+    })
+    .json<UpdatePostResponse>();
+
+  if (!response.success || response.data?.postId !== postId) {
+    throw new Error(response.message || '게시글을 수정하지 못했습니다.');
+  }
+
+  return postId;
 };
 
 const updatePostStatus = async (
@@ -165,6 +181,16 @@ export const POST_MUTATION_OPTIONS = {
     mutationOptions({
       mutationKey: POST_MUTATION_KEY.CREATE(),
       mutationFn: (body: CreatePostRequest) => createPost(body),
+    }),
+  UPDATE: () =>
+    mutationOptions({
+      mutationFn: ({
+        postId,
+        body,
+      }: {
+        postId: number;
+        body: UpdatePostRequest;
+      }) => updatePost(postId, body),
     }),
   UPDATE_STATUS: () =>
     mutationOptions({

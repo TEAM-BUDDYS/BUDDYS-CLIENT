@@ -1,20 +1,17 @@
 'use client';
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { POST_MUTATION_OPTIONS } from '@/domains/posts/api/query';
+import type { PostDetail } from '@/domains/posts/model/post-detail';
 import { cn } from '@/lib/cn';
-import { POST_QUERY_KEY, useCitySearch, useCountryList } from '@/shared/api';
-import { useImageUpload, validateImageFile } from '@/shared/api/image';
+import { useCitySearch, useCountryList } from '@/shared/api';
 import { Header } from '@/shared/components/layout';
 import {
   Button,
   type DateRangeTypes,
   ProgressBar,
 } from '@/shared/components/ui';
-import { ROUTES } from '@/shared/config';
 
 import { STEP_CONTENTS, TOTAL_STEP } from './constants';
 import type { PostCreateQuestionStep, PostCreateStep } from './model';
@@ -24,6 +21,7 @@ import { PostCreateDateStep } from './post-create-date-step';
 import { PostCreateDetailStep } from './post-create-detail-step';
 import { PostCreateQuestionHeader } from './post-create-question-header';
 import { usePostCreateForm } from './use-post-create-form';
+import { usePostSubmit } from './use-post-submit';
 
 const PREVIOUS_STEP_BY_STEP = {
   1: 1,
@@ -45,18 +43,17 @@ const isQuestionStep = (
   return step !== TOTAL_STEP;
 };
 
-export const PostCreateFlow = () => {
+interface PostCreateFlowProps {
+  initialPost?: PostDetail;
+}
+
+export const PostCreateFlow = ({ initialPost }: PostCreateFlowProps) => {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState<PostCreateStep>(1);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitErrorMessage, setSubmitErrorMessage] = useState<string | null>(
-    null,
-  );
-  const postCreateForm = usePostCreateForm();
-  const createPostMutation = useMutation(POST_MUTATION_OPTIONS.CREATE());
-  const { uploadImage } = useImageUpload();
+  const postCreateForm = usePostCreateForm(initialPost);
+  const { clearSubmitError, isSubmitting, submitErrorMessage, submitPost } =
+    usePostSubmit({ postId: initialPost?.postId });
   const {
     countryOptions,
     hasMoreCountries,
@@ -71,13 +68,15 @@ export const PostCreateFlow = () => {
 
   const canGoNext = postCreateForm.canGoNext(currentStep);
   const isSubmitStep = currentStep === TOTAL_STEP;
+  const isEditMode = initialPost !== undefined;
+  const submitActionLabel = isEditMode ? '수정' : '작성';
 
   const handleBackClick = () => {
     if (isSubmitting) {
       return;
     }
 
-    setSubmitErrorMessage(null);
+    clearSubmitError();
 
     if (currentStep === 1) {
       router.back();
@@ -87,53 +86,14 @@ export const PostCreateFlow = () => {
     setCurrentStep(PREVIOUS_STEP_BY_STEP[currentStep]);
   };
 
-  const handleCreatePost = async () => {
+  const handleSubmitPost = () => {
     const payload = postCreateForm.getPostFormPayload();
 
     if (!payload) {
       return;
     }
 
-    setIsSubmitting(true);
-    setSubmitErrorMessage(null);
-
-    try {
-      postCreateForm.images.forEach(({ file }) => validateImageFile(file));
-
-      const uploadResults = await Promise.allSettled(
-        postCreateForm.images.map(({ file }) =>
-          uploadImage({ file, imageDomain: 'POST' }),
-        ),
-      );
-      const failedUploadResult = uploadResults.find(
-        (result): result is PromiseRejectedResult =>
-          result.status === 'rejected',
-      );
-
-      if (failedUploadResult) {
-        throw failedUploadResult.reason;
-      }
-
-      const imageUrls = uploadResults.flatMap((result) =>
-        result.status === 'fulfilled' ? [result.value] : [],
-      );
-      const createPostPayload =
-        imageUrls.length > 0 ? { ...payload, imageUrls } : payload;
-      const postId = await createPostMutation.mutateAsync(createPostPayload);
-
-      void queryClient.invalidateQueries({
-        queryKey: POST_QUERY_KEY.ALL,
-      });
-      router.replace(ROUTES.POST.DETAIL(postId));
-    } catch (error) {
-      setSubmitErrorMessage(
-        error instanceof Error
-          ? error.message
-          : '게시글을 작성하지 못했습니다.',
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
+    void submitPost(payload, postCreateForm.images);
   };
 
   const handleNextClick = () => {
@@ -142,7 +102,7 @@ export const PostCreateFlow = () => {
     }
 
     if (currentStep === TOTAL_STEP) {
-      void handleCreatePost();
+      handleSubmitPost();
       return;
     }
 
@@ -164,7 +124,7 @@ export const PostCreateFlow = () => {
         <Header
           content={
             <span className="text-title-b-18 text-gray-800">
-              동행 글 작성하기
+              {`동행 글 ${submitActionLabel}하기`}
             </span>
           }
           contentAlign="center"
@@ -246,7 +206,11 @@ export const PostCreateFlow = () => {
           disabled={!canGoNext || isSubmitting}
           onClick={handleNextClick}
         >
-          {isSubmitStep ? (isSubmitting ? '작성 중...' : '작성하기') : '다음'}
+          {isSubmitStep
+            ? isSubmitting
+              ? `${submitActionLabel} 중...`
+              : `${submitActionLabel}하기`
+            : '다음'}
         </Button>
       </div>
     </main>

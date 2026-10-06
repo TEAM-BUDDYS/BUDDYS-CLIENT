@@ -7,7 +7,7 @@ const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
 
 const DATE_ONLY_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
-const parseDate = (date: Date | string) => {
+export const parseDate = (date: Date | string) => {
   if (date instanceof Date) {
     return date;
   }
