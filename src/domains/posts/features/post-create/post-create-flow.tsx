@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 import type { PostDetail } from '@/domains/posts/model/post-detail';
 import { cn } from '@/lib/cn';
-import { useCitySearch, useCountryList } from '@/shared/api';
+import { useCitySearch } from '@/shared/api';
 import { Header } from '@/shared/components/layout';
 import {
   Button,
@@ -54,12 +54,6 @@ export const PostCreateFlow = ({ initialPost }: PostCreateFlowProps) => {
   const postCreateForm = usePostCreateForm(initialPost);
   const { clearSubmitError, isSubmitting, submitErrorMessage, submitPost } =
     usePostSubmit({ postId: initialPost?.postId });
-  const {
-    countryOptions,
-    hasMoreCountries,
-    isLoadingMoreCountries,
-    loadMoreCountries,
-  } = useCountryList();
   const citySearch = useCitySearch({
     countryId: postCreateForm.selectedCountry?.id,
     keyword: postCreateForm.city,
@@ -147,12 +141,10 @@ export const PostCreateFlow = ({ initialPost }: PostCreateFlowProps) => {
 
           {currentStep === 1 && (
             <PostCreateCountryStep
-              options={countryOptions}
-              value={postCreateForm.selectedCountry}
-              hasMore={hasMoreCountries}
-              isLoadingMore={isLoadingMoreCountries}
-              onChange={postCreateForm.handleCountrySelect}
-              onLoadMore={loadMoreCountries}
+              keyword={postCreateForm.countryKeyword}
+              selectedCountry={postCreateForm.selectedCountry}
+              onKeywordChange={postCreateForm.handleCountryKeywordChange}
+              onSelect={postCreateForm.handleCountrySelect}
             />
           )}
 

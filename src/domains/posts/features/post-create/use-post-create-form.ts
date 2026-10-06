@@ -90,6 +90,9 @@ export const usePostCreateForm = (initialPost?: PostDetail) => {
         koreanName: initialPost.city.koreanName,
       }
     : null;
+  const [countryKeyword, setCountryKeyword] = useState(
+    initialPost?.country.name ?? '',
+  );
   const [selectedCountry, setSelectedCountry] = useState<LocationOption | null>(
     initialPost
       ? {
@@ -131,9 +134,20 @@ export const usePostCreateForm = (initialPost?: PostDetail) => {
     setDetail((prevDetail) => ({ ...prevDetail, ...nextDetail }));
   };
 
+  const handleCountryKeywordChange = (value: string) => {
+    setCountryKeyword(value);
+
+    if (selectedCountry && selectedCountry.name !== value) {
+      setSelectedCountry(null);
+      setCity('');
+      setSelectedCity(null);
+    }
+  };
+
   const handleCountrySelect = (value: LocationOption) => {
     const shouldResetCity = selectedCountry?.id !== value.id;
 
+    setCountryKeyword(value.name);
     setSelectedCountry(value);
 
     if (shouldResetCity) {
@@ -257,12 +271,14 @@ export const usePostCreateForm = (initialPost?: PostDetail) => {
   };
 
   return {
+    countryKeyword,
     selectedCountry,
     city,
     selectedCity,
     dateRange,
     detail,
     images,
+    handleCountryKeywordChange,
     handleCountrySelect,
     setDateRange,
     updateDetail,
