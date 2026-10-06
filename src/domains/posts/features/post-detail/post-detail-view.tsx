@@ -1,3 +1,4 @@
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { StartChatButton } from '@/domains/chat/features/start-chat/start-chat-button';
@@ -9,12 +10,14 @@ import { MoreIcon } from '@/shared/components/icons';
 import { Header } from '@/shared/components/layout';
 import { PostMenuBottomSheet } from '@/shared/components/ui';
 import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
+import { ROUTES } from '@/shared/config';
 
 interface PostDetailViewProps {
   post: PostDetail;
 }
 
 export const PostDetailView = ({ post }: PostDetailViewProps) => {
+  const router = useRouter();
   const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
   const [isMenuBottomSheetOpen, setIsMenuBottomSheetOpen] = useState(false);
 
@@ -62,7 +65,14 @@ export const PostDetailView = ({ post }: PostDetailViewProps) => {
         open={isMenuBottomSheetOpen}
         isMine={post.isMine}
         onClose={() => setIsMenuBottomSheetOpen(false)}
-        onAction={() => setIsComingSoonOpen(true)}
+        onAction={(action) => {
+          if (action === 'edit') {
+            router.push(ROUTES.POST.EDIT(post.postId));
+            return;
+          }
+
+          setIsComingSoonOpen(true);
+        }}
       />
 
       <ComingSoonModal
