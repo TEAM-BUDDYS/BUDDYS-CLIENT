@@ -36,6 +36,7 @@ const BOTTOM_NAVIGATION_ITEMS: BottomNavigationItem[] = [
   },
   {
     key: 'companion',
+    href: ROUTES.PARTNER,
     icon: LocationIcon,
     label: '동행',
   },

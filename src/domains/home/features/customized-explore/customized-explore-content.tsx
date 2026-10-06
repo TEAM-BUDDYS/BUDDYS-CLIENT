@@ -5,17 +5,17 @@ import { type KeyboardEvent, useState } from 'react';
 
 import { WriteFloatingButton } from '@/domains/home/components/write-floating-button/write-floating-button';
 import { FilterSheet } from '@/domains/home/features/filter-sheet/filter-sheet';
-import { SearchSheet } from '@/domains/home/features/search-sheet/search-sheet';
 import { useFilterSheetValue } from '@/domains/home/hooks/use-filter-sheet-value';
-import { useSheetScroll } from '@/domains/home/hooks/use-sheet-scroll';
 import {
   buddyFilterItems,
   type BuddyFilterKey,
 } from '@/domains/home/model/buddy-filter';
 import { cn } from '@/lib/cn';
 import { BottomNavigation, Header } from '@/shared/components/layout';
+import { SearchSheet } from '@/shared/components/search/search-sheet';
 import { AsyncBoundary, Filter, Searchbar } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
+import { useSheetScroll } from '@/shared/hooks/use-sheet-scroll';
 
 import { CustomizedExplorePostList } from './customized-explore-post-list';
 

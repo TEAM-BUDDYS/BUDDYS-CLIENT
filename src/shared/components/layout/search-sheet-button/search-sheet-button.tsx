@@ -2,10 +2,10 @@
 
 import { type KeyboardEvent, useRef, useState } from 'react';
 
-import { SearchSheet } from '@/domains/home/features/search-sheet/search-sheet';
-import { useSheetScroll } from '@/domains/home/hooks/use-sheet-scroll';
 import { cn } from '@/lib/cn';
 import { SearchIcon } from '@/shared/components/icons';
+import { SearchSheet } from '@/shared/components/search/search-sheet';
+import { useSheetScroll } from '@/shared/hooks/use-sheet-scroll';
 
 export const SearchSheetButton = () => {
   const searchButtonRef = useRef<HTMLButtonElement>(null);
