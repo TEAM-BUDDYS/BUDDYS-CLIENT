@@ -1,9 +1,11 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { useAuthSession } from '@/domains/auth/features/auth-session/auth-session-provider';
 import { Header } from '@/shared/components/layout';
 import { Button } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
@@ -43,18 +45,29 @@ export const UniversityEmailVerificationFlow = ({
   const router = useRouter();
   const exchangeDocumentVerificationHref = `${ROUTES.VERIFICATION.EXCHANGE_DOCUMENT}?from=${entryPoint}`;
 
-  const handleBackButtonClick = () => {
+  const { logout } = useAuthSession();
+  const [isLogout, setIsLogout] = useState(false);
+
+  const handleBackButtonClick = async () => {
     if (currentStep === 2) {
       setCurrentStep(1);
       return;
     }
 
     if (entryPoint === 'login') {
-      // TODO: 로그아웃 API를 호출하고 인증 세션을 초기화한 뒤 로그인 페이지로 이동
-      router.replace(ROUTES.AUTH.LOGIN);
+      if (isLogout) return;
+
+      setIsLogout(true);
+
+      try {
+        await logout();
+        router.replace(ROUTES.AUTH.LOGIN);
+      } catch (error) {
+        Sentry.captureException(error);
+        setIsLogout(false);
+      }
       return;
     }
-
     router.back();
   };
 
