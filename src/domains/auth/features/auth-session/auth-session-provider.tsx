@@ -39,6 +39,7 @@ interface AuthSessionContextValue {
   logout: () => Promise<void>;
   markOnboardingCompleted: (options: MarkOnboardingCompletedOptions) => void;
   finishOnboarding: () => void;
+  finishWithdraw: () => void;
 }
 
 interface AuthSessionProviderProps {
@@ -86,6 +87,11 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
 
   const logout = useCallback(async () => {
     await requestLogout();
+    queryClient.clear();
+    clearSession();
+  }, [clearSession, queryClient]);
+
+  const finishWithdraw = useCallback(() => {
     queryClient.clear();
     clearSession();
   }, [clearSession, queryClient]);
@@ -178,6 +184,7 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
       logout,
       markOnboardingCompleted,
       finishOnboarding,
+      finishWithdraw,
     }),
     [
       authenticateWithKakao,
@@ -186,6 +193,7 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
       isOnboardingCompletionVisible,
       logout,
       markOnboardingCompleted,
+      finishWithdraw,
       onboardingCompleted,
       status,
       userId,

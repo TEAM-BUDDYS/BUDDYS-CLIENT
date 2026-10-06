@@ -11,6 +11,8 @@ import {
 import { Button, Modal, useToast } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config/routes';
 
+import { requestWithdraw } from '../../api/query';
+
 const SETTINGS_MENU_ITEMS = [
   { label: '학교 이메일 인증', href: ROUTES.VERIFICATION.UNIVERSITY_EMAIL },
   { label: '파견교 서류 인증', href: ROUTES.VERIFICATION.EXCHANGE_DOCUMENT },
@@ -26,7 +28,7 @@ export const SettingsContent = () => {
   const confirmContent =
     confirmType === null ? null : SETTINGS_CONFIRM_MODAL_CONTENT[confirmType];
 
-  const { logout } = useAuthSession();
+  const { logout, finishWithdraw } = useAuthSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { showToast } = useToast();
 
@@ -39,6 +41,23 @@ export const SettingsContent = () => {
       await logout();
     } catch {
       showToast('로그아웃에 실패했습니다. 잠시 후 다시 시도해 주세요.', {
+        variant: 'gray',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleWithdraw = async () => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    try {
+      await requestWithdraw();
+      finishWithdraw();
+    } catch {
+      showToast('회원 탈퇴에 실패했습니다. 잠시 후 다시 시도해 주세요.', {
         variant: 'gray',
       });
     } finally {
@@ -84,6 +103,11 @@ export const SettingsContent = () => {
           onConfirm={() => {
             if (confirmType === 'logout') {
               void handleLogout();
+              return;
+            }
+
+            if (confirmType === 'withdraw') {
+              void handleWithdraw();
               return;
             }
           }}
