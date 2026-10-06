@@ -22,7 +22,6 @@ import {
 } from '../model/content';
 
 interface ContentSectionProps {
-  onCreateCourseClick: () => void;
   className?: string;
 }
 
@@ -120,11 +119,8 @@ const PostTabPanel = () => {
   );
 };
 
-const CourseTabPanel = ({
-  onCreateCourseClick,
-}: {
-  onCreateCourseClick: () => void;
-}) => {
+const CourseTabPanel = () => {
+  const router = useRouter();
   const courses = MOCK_PROFILE_COURSES;
 
   if (courses.length === 0) {
@@ -134,7 +130,7 @@ const CourseTabPanel = ({
           title="아직 기록된 코스가 없어요"
           description="첫 번째 코스를 공유해보세요"
           buttonLabel="코스 작성하러 가기"
-          onButtonClick={onCreateCourseClick}
+          onButtonClick={() => router.push(ROUTES.COURSE.CREATE)}
         />
       </div>
     );
@@ -143,10 +139,7 @@ const CourseTabPanel = ({
   return <CourseImageGrid courses={courses} className="pt-3" />;
 };
 
-export const ContentSection = ({
-  onCreateCourseClick,
-  className,
-}: ContentSectionProps) => {
+export const ContentSection = ({ className }: ContentSectionProps) => {
   const [tab, setTab] = useState<ContentTabValue>('post');
 
   return (
@@ -165,7 +158,7 @@ export const ContentSection = ({
           <PostTabPanel />
         </AsyncBoundary>
       ) : (
-        <CourseTabPanel onCreateCourseClick={onCreateCourseClick} />
+        <CourseTabPanel />
       )}
     </div>
   );
