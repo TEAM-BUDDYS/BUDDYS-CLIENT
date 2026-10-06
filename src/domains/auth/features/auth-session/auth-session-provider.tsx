@@ -1,5 +1,6 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { usePathname } from 'next/navigation';
 import {
   createContext,
@@ -19,6 +20,7 @@ import {
   loginWithGoogle,
   loginWithKakao,
   reissueAccessToken,
+  requestLogout,
 } from '../../api/query';
 import type { GoogleLoginParams, KakaoLoginParams } from '../../api/type';
 import type { AuthSession, AuthStatusTypes } from '../../model/auth';
@@ -34,6 +36,7 @@ interface AuthSessionContextValue {
   isOnboardingCompletionVisible: boolean;
   authenticateWithKakao: (params: KakaoLoginParams) => Promise<AuthSession>;
   authenticateWithGoogle: (params: GoogleLoginParams) => Promise<AuthSession>;
+  logout: () => Promise<void>;
   markOnboardingCompleted: (options: MarkOnboardingCompletedOptions) => void;
   finishOnboarding: () => void;
 }
@@ -57,6 +60,7 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
   >(null);
   const [isOnboardingCompletionVisible, setIsOnboardingCompletionVisible] =
     useState(false);
+  const queryClient = useQueryClient();
 
   const setAuthenticatedSession = useCallback((loginResponse: AuthSession) => {
     setAccessToken(loginResponse.accessToken);
@@ -79,6 +83,12 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
     setIsOnboardingCompletionVisible(false);
     setStatus('unauthenticated');
   }, []);
+
+  const logout = useCallback(async () => {
+    await requestLogout();
+    queryClient.clear();
+    clearSession();
+  }, [clearSession, queryClient]);
 
   const refreshSession = useCallback(async () => {
     try {
@@ -165,6 +175,7 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
       isOnboardingCompletionVisible,
       authenticateWithKakao,
       authenticateWithGoogle,
+      logout,
       markOnboardingCompleted,
       finishOnboarding,
     }),
@@ -173,6 +184,7 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
       authenticateWithGoogle,
       finishOnboarding,
       isOnboardingCompletionVisible,
+      logout,
       markOnboardingCompleted,
       onboardingCompleted,
       status,

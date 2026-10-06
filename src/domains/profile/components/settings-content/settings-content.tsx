@@ -2,12 +2,13 @@
 
 import { useState } from 'react';
 
+import { useAuthSession } from '@/domains/auth/features/auth-session/auth-session-provider';
 import { SettingsMenuItem } from '@/domains/profile/components/settings-menu-item/settings-menu-item';
 import {
   SETTINGS_CONFIRM_MODAL_CONTENT,
   type SettingsConfirmType,
 } from '@/domains/profile/model/settings';
-import { Button, Modal } from '@/shared/components/ui';
+import { Button, Modal, useToast } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config/routes';
 
 const SETTINGS_MENU_ITEMS = [
@@ -24,6 +25,26 @@ export const SettingsContent = () => {
 
   const confirmContent =
     confirmType === null ? null : SETTINGS_CONFIRM_MODAL_CONTENT[confirmType];
+
+  const { logout } = useAuthSession();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { showToast } = useToast();
+
+  const handleLogout = async () => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    try {
+      await logout();
+    } catch {
+      showToast('로그아웃에 실패했습니다. 잠시 후 다시 시도해 주세요.', {
+        variant: 'gray',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <>
@@ -60,7 +81,12 @@ export const SettingsContent = () => {
           cancelLabel="닫기"
           confirmLabel={confirmContent.confirmLabel}
           onClose={() => setConfirmType(null)}
-          onConfirm={() => setConfirmType(null)}
+          onConfirm={() => {
+            if (confirmType === 'logout') {
+              void handleLogout();
+              return;
+            }
+          }}
         />
       )}
     </>
