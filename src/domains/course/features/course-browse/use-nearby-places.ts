@@ -29,7 +29,7 @@ export const useNearbyPlaces = ({
   return {
     places: query.data ?? EMPTY_PLACES,
     hasError: query.isError,
-    isLoading: query.isPending,
+    isLoading: query.isLoading,
     refetch: query.refetch,
   };
 };

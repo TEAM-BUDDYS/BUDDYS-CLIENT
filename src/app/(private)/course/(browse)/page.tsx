@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { CourseBottomSheet } from '@/domains/course/components/course-bottom-sheet/course-bottom-sheet';
 import { CourseMap } from '@/domains/course/components/course-map/course-map';
@@ -105,6 +105,16 @@ export default function CoursePage() {
     });
   }, []);
 
+  useEffect(() => {
+    if (currentLocationStatus !== 'idle') return;
+
+    void refetchCurrentLocation();
+  }, [currentLocationStatus, refetchCurrentLocation]);
+
+  const isCurrentLocationLoading =
+    currentLocationStatus === 'idle' || currentLocationStatus === 'loading';
+  const hasLocationError = currentLocationStatus === 'error';
+
   const handleCategoryChange = (category: CourseMapCategory) => {
     clearSelectedPlace();
     setSelectedCategory((currentCategory) =>
@@ -151,7 +161,6 @@ export default function CoursePage() {
       setIsBookmarkActive(false);
       setBottomSheetTab('nearby');
     }
-
     setBottomSheetPosition('default');
   };
 
@@ -185,6 +194,15 @@ export default function CoursePage() {
         { variant: 'gray' },
       );
     }
+  };
+
+  const handleNearbyRetry = () => {
+    if (hasLocationError) {
+      void refetchCurrentLocation();
+      return;
+    }
+
+    void refetchNearbyPlaces();
   };
 
   return (
@@ -229,6 +247,7 @@ export default function CoursePage() {
           currentLocation={currentLocation}
           places={mapPlaces}
           preserveCamera={bottomSheetPosition === 'expanded'}
+          selectedPlace={selectedPlace}
           selectedPlaceId={selectedPlaceId}
           showCurrentLocation={isLocationActive}
           onBoundsChange={handleMapBoundsChange}
@@ -260,11 +279,12 @@ export default function CoursePage() {
           hasBookmarkError={bookmarkedList.hasError}
           hasBookmarkNextPage={bookmarkedList.hasNextPage}
           hasNearbyError={hasNearbyError}
+          hasLocationError={hasLocationError}
           isBookmarkMode={isBookmarkActive}
           isBookmarkFetchNextPageError={bookmarkedList.isFetchNextPageError}
           isBookmarkFetchingNextPage={bookmarkedList.isFetchingNextPage}
           isBookmarkLoading={bookmarkedList.isLoading}
-          isNearbyLoading={isNearbyLoading}
+          isNearbyLoading={isCurrentLocationLoading || isNearbyLoading}
           nearbyItems={nearbyItems}
           onClose={() => setBottomSheetPosition('collapsed')}
           onPositionChange={setBottomSheetPosition}
@@ -275,7 +295,7 @@ export default function CoursePage() {
           onBookmarkLoadMore={bookmarkedList.loadMore}
           onBookmarkRetry={() => void bookmarkedList.refetch()}
           onExploreClick={() => router.push(ROUTES.COURSE.CUSTOMIZED_EXPLORE)}
-          onNearbyRetry={() => void refetchNearbyPlaces()}
+          onNearbyRetry={handleNearbyRetry}
           onSuggestedMoreClick={() =>
             router.push(ROUTES.COURSE.SUGGEST_EXPLORE)
           }

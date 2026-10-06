@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import type { Place } from '@/domains/course/api/type';
-import { resolveApiUrl } from '@/shared/api';
+import { getApiResourceUrl } from '@/shared/api';
 import { BookmarkButton, CommonImage } from '@/shared/components/ui';
 
 interface CourseSaveCardProps {
@@ -20,7 +20,7 @@ export const CourseSaveCard = ({
   const [failedPhotoUrl, setFailedPhotoUrl] = useState<string>();
   const { placeId, name, address, bookmarked, photoUrl } = place;
   const displayName = name ?? '이름 없는 장소';
-  const resolvedPhotoUrl = resolveApiUrl(photoUrl);
+  const resolvedPhotoUrl = photoUrl ? getApiResourceUrl(photoUrl) : null;
   const hasImageError = failedPhotoUrl === resolvedPhotoUrl;
 
   const handleBookmarkClick = () => {

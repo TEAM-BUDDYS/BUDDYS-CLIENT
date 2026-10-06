@@ -28,6 +28,7 @@ interface CourseBottomSheetProps {
   hasBookmarkError?: boolean;
   hasBookmarkNextPage?: boolean;
   hasNearbyError?: boolean;
+  hasLocationError?: boolean;
   isBookmarkMode: boolean;
   isBookmarkFetchNextPageError?: boolean;
   isBookmarkFetchingNextPage?: boolean;
@@ -53,6 +54,7 @@ export const CourseBottomSheet = ({
   hasBookmarkError = false,
   hasBookmarkNextPage = false,
   hasNearbyError = false,
+  hasLocationError = false,
   isBookmarkMode,
   isBookmarkFetchNextPageError = false,
   isBookmarkFetchingNextPage = false,
@@ -124,6 +126,7 @@ export const CourseBottomSheet = ({
           ) : tab === 'nearby' ? (
             <NearbyCourseContent
               hasError={hasNearbyError}
+              hasLocationError={hasLocationError}
               isLoading={isNearbyLoading}
               items={nearbyItems}
               onBookmarkChange={onBookmarkChange}

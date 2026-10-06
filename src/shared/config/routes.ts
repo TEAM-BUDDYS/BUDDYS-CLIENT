@@ -14,10 +14,12 @@ export const ROUTES = {
   ONBOARDING: '/onboarding',
   ONBOARDING_INTRO: '/onboarding/intro',
   CUSTOMIZED_EXPLORE: '/customized-explore',
+  MAGAZINE: '/magazine',
   POST: {
     ROOT: '/posts',
     DETAIL: (postId: number) => `/posts/${postId}` as const,
   },
+  PARTNER: '/partner',
   COURSE: {
     ROOT: '/course',
     CREATE: '/course/post',

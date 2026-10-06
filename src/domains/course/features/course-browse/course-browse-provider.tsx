@@ -70,7 +70,7 @@ export const CourseBrowseProvider = ({
     currentLocation,
     status: currentLocationStatus,
     refetchCurrentLocation,
-  } = useCurrentLocation({ requestOnMount: true });
+  } = useCurrentLocation({ requestOnMount: false });
 
   const value = useMemo(
     () => ({

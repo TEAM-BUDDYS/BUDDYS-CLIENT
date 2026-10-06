@@ -4,6 +4,7 @@ import { AsyncErrorState, AsyncLoadingState } from '@/shared/components/ui';
 
 interface NearbyCourseContentProps {
   hasError?: boolean;
+  hasLocationError?: boolean;
   isLoading?: boolean;
   items: readonly NearbyCourseItem[];
   onBookmarkChange: (placeId: string, nextBookmarked: boolean) => void;
@@ -12,6 +13,7 @@ interface NearbyCourseContentProps {
 
 export const NearbyCourseContent = ({
   hasError = false,
+  hasLocationError = false,
   isLoading = false,
   items,
   onBookmarkChange,
@@ -26,11 +28,21 @@ export const NearbyCourseContent = ({
     );
   }
 
-  if (hasError && onRetry) {
+  if ((hasLocationError || hasError) && onRetry) {
     return (
       <AsyncErrorState
         className="min-h-60"
-        title="근처 장소를 불러오지 못했어요"
+        title={
+          hasLocationError
+            ? '현재 위치를 불러오지 못했어요'
+            : '근처 장소를 불러오지 못했어요'
+        }
+        description={
+          hasLocationError
+            ? '위치 권한을 확인한 뒤 다시 시도해 주세요.'
+            : undefined
+        }
+        retryLabel={hasLocationError ? '위치 다시 불러오기' : undefined}
         onRetry={onRetry}
       />
     );

@@ -1,5 +1,6 @@
 import type { BookmarkedPlace, Place } from '@/domains/course/api/type';
 import { cn } from '@/lib/cn';
+import { XCircleIcon } from '@/shared/components/icons';
 
 type SharedPlaceFields =
   | 'placeId'
@@ -71,11 +72,13 @@ const formatPlaceLocation = (place: CoursePlaceTimelineItem) => {
 
 interface CoursePlaceTimelineProps {
   places: CoursePlaceTimelineItem[];
+  onPlaceRemove?: (placeId: string) => void;
   tone?: 'accent' | 'neutral';
 }
 
 export const CoursePlaceTimeline = ({
   places,
+  onPlaceRemove,
   tone = 'neutral',
 }: CoursePlaceTimelineProps) => {
   if (places.length === 0) {
@@ -130,7 +133,12 @@ export const CoursePlaceTimeline = ({
               )}
             </div>
 
-            <div className="flex min-h-18.5 min-w-0 flex-col justify-center rounded-xl border border-gray-100 px-4 py-4">
+            <div
+              className={cn(
+                'relative flex min-h-18.5 min-w-0 flex-col justify-center rounded-xl border border-gray-100 py-4 pl-4',
+                onPlaceRemove ? 'pr-14' : 'pr-4',
+              )}
+            >
               <p className="text-body-sb-15 truncate text-gray-800">
                 {place.name ?? '이름 없는 장소'}
               </p>
@@ -139,6 +147,16 @@ export const CoursePlaceTimeline = ({
               </p>
               {distanceLabel && (
                 <span className="sr-only">{distanceLabel}</span>
+              )}
+              {onPlaceRemove && (
+                <button
+                  aria-label={`${place.name ?? '이름 없는 장소'} 장소 삭제`}
+                  className="focus-visible:outline-mint-300 absolute top-1/2 right-0 flex size-11 -translate-y-1/2 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2"
+                  type="button"
+                  onClick={() => onPlaceRemove(place.placeId)}
+                >
+                  <XCircleIcon className="size-6 text-gray-100" />
+                </button>
               )}
             </div>
           </li>

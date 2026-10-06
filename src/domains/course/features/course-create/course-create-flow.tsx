@@ -11,6 +11,7 @@ import {
   ProgressBar,
 } from '@/shared/components/ui';
 
+import { CourseCreateCompanionStep } from './companion/course-create-companion-step';
 import {
   COURSE_CREATE_PROGRESS_STEP_BY_SCREEN,
   COURSE_CREATE_QUESTION_CONTENT,
@@ -24,14 +25,10 @@ import { CourseCreateDurationStep } from './course-create-duration-step';
 import { CourseCreateQuestionHeader } from './course-create-question-header';
 import { CourseCreateFlightForm } from './flight/course-create-flight-form';
 import { CourseCreateItineraryStep } from './itinerary/course-create-itinerary-step';
-import type { CourseCreateScreen, CourseCreateValue } from './model';
+import type { CourseCreateScreen } from './model';
 import { useCourseCreateForm } from './use-course-create-form';
 
-interface CourseCreateFlowProps {
-  onComplete?: (value: CourseCreateValue) => void;
-}
-
-export const CourseCreateFlow = ({ onComplete }: CourseCreateFlowProps) => {
+export const CourseCreateFlow = () => {
   const router = useRouter();
   const [currentScreen, setCurrentScreen] =
     useState<CourseCreateScreen>('country');
@@ -78,6 +75,11 @@ export const CourseCreateFlow = ({ onComplete }: CourseCreateFlowProps) => {
       return;
     }
 
+    if (currentScreen === 'companion') {
+      setCurrentScreen('itinerary');
+      return;
+    }
+
     setCurrentScreen(
       currentScreen === 'detail' && !courseCreateForm.dateRange.startDate
         ? 'duration'
@@ -111,10 +113,8 @@ export const CourseCreateFlow = ({ onComplete }: CourseCreateFlowProps) => {
       return;
     }
 
-    const courseCreateValue = courseCreateForm.getCourseCreateValue();
-
-    if (courseCreateValue) {
-      onComplete?.(courseCreateValue);
+    if (currentScreen === 'itinerary') {
+      setCurrentScreen('companion');
     }
   };
 
@@ -158,7 +158,9 @@ export const CourseCreateFlow = ({ onComplete }: CourseCreateFlowProps) => {
         <div
           className={cn(
             'flex flex-col',
-            currentScreen === 'duration' ? 'gap-10' : 'gap-6',
+            currentScreen === 'duration' || currentScreen === 'companion'
+              ? 'gap-10'
+              : 'gap-6',
           )}
         >
           {isQuestionScreen && (
@@ -217,18 +219,31 @@ export const CourseCreateFlow = ({ onComplete }: CourseCreateFlowProps) => {
               cities={courseCreateForm.selectedCities}
               days={courseCreateForm.days}
               onDayPlacesChange={courseCreateForm.setDayPlaces}
+              onDayPlaceRemove={courseCreateForm.removeDayPlace}
               onDayImagesAdd={courseCreateForm.addDayImages}
               onDayImageRemove={courseCreateForm.removeDayImage}
               onDayMemoCostChange={courseCreateForm.updateDayMemoCost}
               onFlightDaySelect={setFlightDayNumber}
             />
           )}
+
+          {currentScreen === 'companion' && (
+            <CourseCreateCompanionStep
+              selectedCompanions={courseCreateForm.selectedCompanions}
+              onCompanionSelect={courseCreateForm.handleCompanionSelect}
+              onCompanionRemove={courseCreateForm.handleCompanionRemove}
+            />
+          )}
         </div>
       </section>
 
       <div className="sticky bottom-0 mt-auto flex flex-col gap-4 bg-white px-4 pt-6 pb-8.5">
-        <Button disabled={!canGoNext} onClick={handleNextClick}>
-          다음
+        <Button
+          aria-disabled={currentScreen === 'companion' ? true : undefined}
+          disabled={!canGoNext}
+          onClick={currentScreen === 'companion' ? undefined : handleNextClick}
+        >
+          {currentScreen === 'companion' ? '등록하기' : '다음'}
         </Button>
         {currentScreen === 'date' && (
           <button
