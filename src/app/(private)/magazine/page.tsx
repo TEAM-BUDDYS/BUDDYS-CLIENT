@@ -1,8 +1,10 @@
-import { NotificationBellButton } from '@/domains/home/components/notification-bell-button/notification-bell-button';
-import { SearchSheetButton } from '@/domains/home/components/search-sheet-button/search-sheet-button';
 import { MagazineContent } from '@/domains/home/features/magazine/magazine-content';
 import { BuddysLogoIcon } from '@/shared/components/icons';
-import { Header } from '@/shared/components/layout';
+import {
+  Header,
+  NotificationBellButton,
+  SearchSheetButton,
+} from '@/shared/components/layout';
 
 export default function MagazinePage() {
   return (

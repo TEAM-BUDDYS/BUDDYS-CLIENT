@@ -2,13 +2,11 @@ import {
   CourseTab,
   type CourseTabValue,
 } from '@/domains/course/components/course-tab/course-tab';
+import type { NearbyCourseItem } from '@/domains/course/model/course-place';
 import { BottomSheet } from '@/shared/components/ui';
 
 import { BookmarkedPlaceContent } from './bookmarked-place-content';
-import {
-  NearbyCourseContent,
-  type NearbyCourseItem,
-} from './nearby-course-content';
+import { NearbyCourseContent } from './nearby-course-content';
 import { RecommendedCourseContent } from './recommended-course-content/recommended-course-content';
 
 const COLLAPSED_SNAP_POINT = '78px';
@@ -27,13 +25,17 @@ interface CourseBottomSheetProps {
   position: CourseBottomSheetPosition;
   tab: CourseTabValue;
   bookmarkedItems: readonly NearbyCourseItem[];
+  hasNearbyError?: boolean;
+  hasLocationError?: boolean;
   isBookmarkMode: boolean;
+  isNearbyLoading?: boolean;
   nearbyItems: readonly NearbyCourseItem[];
   onClose: () => void;
   onPositionChange: (position: CourseBottomSheetPosition) => void;
   onTabChange: (tab: CourseTabValue) => void;
   onBookmarkChange: (placeId: string, nextBookmarked: boolean) => void;
   onExploreClick: () => void;
+  onNearbyRetry?: () => void;
   onSuggestedMoreClick: () => void;
 }
 
@@ -42,13 +44,17 @@ export const CourseBottomSheet = ({
   position,
   tab,
   bookmarkedItems,
+  hasNearbyError = false,
+  hasLocationError = false,
   isBookmarkMode,
+  isNearbyLoading = false,
   nearbyItems,
   onClose,
   onPositionChange,
   onTabChange,
   onBookmarkChange,
   onExploreClick,
+  onNearbyRetry,
   onSuggestedMoreClick,
 }: CourseBottomSheetProps) => {
   const handleSnapPointChange = (snapPoint: number | string | null) => {
@@ -98,8 +104,12 @@ export const CourseBottomSheet = ({
             />
           ) : tab === 'nearby' ? (
             <NearbyCourseContent
+              hasError={hasNearbyError}
+              hasLocationError={hasLocationError}
+              isLoading={isNearbyLoading}
               items={nearbyItems}
               onBookmarkChange={onBookmarkChange}
+              onRetry={onNearbyRetry}
             />
           ) : (
             <RecommendedCourseContent

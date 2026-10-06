@@ -73,13 +73,14 @@ const createPresignedUrl = async (body: CreatePresignedUrlRequest) => {
     }
 
     const uploadUrl = response.data?.uploadUrl;
+    const fields = response.data?.fields;
     const imageUrl = response.data?.imageUrl;
 
-    if (!uploadUrl || !imageUrl) {
+    if (!uploadUrl || !fields || !imageUrl) {
       throw new Error('이미지 업로드 URL 응답 형식이 올바르지 않습니다.');
     }
 
-    return { imageUrl, uploadUrl };
+    return { fields, imageUrl, uploadUrl };
   } catch (error) {
     if (!isKyError(error)) {
       throw error;
@@ -89,16 +90,23 @@ const createPresignedUrl = async (body: CreatePresignedUrlRequest) => {
   }
 };
 
-const uploadImageToStorage = async (uploadUrl: string, file: File) => {
+const uploadImageToStorage = async (
+  uploadUrl: string,
+  fields: Record<string, string>,
+  file: File,
+) => {
   let response: Response;
+  const formData = new FormData();
+
+  Object.entries(fields).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
+  formData.append('file', file);
 
   try {
     response = await fetch(uploadUrl, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': file.type,
-      },
-      body: file,
+      method: 'POST',
+      body: formData,
     });
   } catch {
     throw new Error('네트워크 연결을 확인한 뒤 다시 시도해 주세요.');
@@ -115,13 +123,13 @@ const uploadImage = async ({
 }: UploadImageVariables): Promise<string> => {
   const contentType = validateImageFile(file);
 
-  const { imageUrl, uploadUrl } = await createPresignedUrl({
+  const { fields, imageUrl, uploadUrl } = await createPresignedUrl({
     imageDomain,
     contentType,
     fileSize: file.size,
   });
 
-  await uploadImageToStorage(uploadUrl, file);
+  await uploadImageToStorage(uploadUrl, fields, file);
 
   return imageUrl;
 };

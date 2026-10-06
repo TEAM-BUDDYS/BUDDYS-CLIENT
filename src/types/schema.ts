@@ -170,7 +170,7 @@ export interface paths {
     };
     /**
      * 동행 게시글 목록 조회
-     * @description 모집중인 동행 게시글 목록을 조건에 따라 조회합니다.
+     * @description 모집중인 삭제되지 않은 동행 게시글 목록을 조건에 따라 조회합니다. totalElements는 페이지 번호·크기와 무관한 검색·필터 조건에 일치하는 전체 게시글 수입니다.
      */
     get: operations['getPosts'];
     put?: never;
@@ -879,7 +879,7 @@ export interface paths {
     };
     /**
      * 통합 검색
-     * @description 검색어로 코스, 사용자, 모집 중 동행 게시글을 동시에 검색합니다. 각 영역에 동일한 페이지 번호와 크기를 적용합니다.
+     * @description 검색어로 코스, 사용자, 모집 중 동행 게시글을 동시에 검색합니다. 각 영역에 동일한 페이지 번호와 크기를 적용합니다. posts.totalElements는 페이지 번호·크기와 무관하게 검색어에 일치하는 삭제되지 않은 모집 중 게시글의 전체 수입니다.
      */
     get: operations['search'];
     put?: never;
@@ -999,7 +999,7 @@ export interface paths {
     };
     /**
      * 저장한 게시글 목록 조회
-     * @description 로그인한 사용자가 저장한 게시글 목록을 최신 저장순으로 조회합니다.
+     * @description 로그인한 사용자가 저장한 게시글 목록을 최신 저장순으로 조회합니다. totalElements는 모집 상태와 무관하게 해당 사용자가 저장한 삭제되지 않은 전체 게시글 수입니다.
      */
     get: operations['getBookmarkedPosts'];
     put?: never;
@@ -2687,6 +2687,12 @@ export interface components {
        * @example true
        */
       hasNext?: boolean;
+      /**
+       * Format: int64
+       * @description 페이지 번호·크기와 무관한 조회 조건에 일치하는 전체 게시글 수. 저장 목록은 해당 사용자가 저장한 삭제되지 않은 게시글 수입니다.
+       * @example 42
+       */
+      totalElements?: number;
     };
     PostSummaryCountryResponse: {
       /**

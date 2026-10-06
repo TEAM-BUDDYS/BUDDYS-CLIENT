@@ -16,7 +16,7 @@ interface PartnerTabProps {
 export const PartnerTab = ({ value, onChange }: PartnerTabProps) => {
   return (
     <div
-      className="flex h-11 w-full border-b border-gray-100 px-4"
+      className="flex h-[45px] w-full border-b border-gray-100 px-4"
       role="tablist"
     >
       {PARTNER_TAB_ITEMS.map((item) => {

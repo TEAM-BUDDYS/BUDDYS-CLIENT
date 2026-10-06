@@ -219,6 +219,7 @@ export const CourseCreateFlow = () => {
               cities={courseCreateForm.selectedCities}
               days={courseCreateForm.days}
               onDayPlacesChange={courseCreateForm.setDayPlaces}
+              onDayPlaceRemove={courseCreateForm.removeDayPlace}
               onDayImagesAdd={courseCreateForm.addDayImages}
               onDayImageRemove={courseCreateForm.removeDayImage}
               onDayMemoCostChange={courseCreateForm.updateDayMemoCost}
