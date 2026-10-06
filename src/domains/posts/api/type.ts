@@ -10,6 +10,9 @@ export type CreatePostResponse =
   components['schemas']['BaseResponseCreatePostResponse'];
 export type PostErrorResponse = components['schemas']['BaseResponse'];
 
+export type DeletePostResponse =
+  components['schemas']['BaseResponseDeletePostResponse'];
+
 export type GetPostDetailResponse =
   components['schemas']['BaseResponsePostDetailResponse'];
 

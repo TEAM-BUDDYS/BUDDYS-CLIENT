@@ -22,6 +22,7 @@ interface CourseCreateItineraryStepProps {
     dayNumber: number,
     places: CourseCreateDayFormState['places'],
   ) => void;
+  onDayPlaceRemove: (dayNumber: number, placeId: string) => void;
   onDayImagesAdd: (dayNumber: number, files: File[]) => void;
   onDayImageRemove: (dayNumber: number, previewUrl: string) => void;
   onDayMemoCostChange: (
@@ -36,6 +37,7 @@ export const CourseCreateItineraryStep = ({
   cities,
   days,
   onDayPlacesChange,
+  onDayPlaceRemove,
   onDayImagesAdd,
   onDayImageRemove,
   onDayMemoCostChange,
@@ -96,6 +98,7 @@ export const CourseCreateItineraryStep = ({
               isFirst={index === 0}
               isLast={index === days.length - 1}
               onPlaceAdd={setPlacePickerDayNumber}
+              onPlaceRemove={onDayPlaceRemove}
               onImagesAdd={onDayImagesAdd}
               onImageRemove={onDayImageRemove}
               onMemoCostChange={onDayMemoCostChange}

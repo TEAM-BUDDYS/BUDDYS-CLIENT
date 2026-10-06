@@ -18,6 +18,7 @@ import type {
   CreateCommentResponse,
   CreatePostRequest,
   CreatePostResponse,
+  DeletePostResponse,
   GetCommentsParams,
   GetCommentsResponse,
   GetPostDetailResponse,
@@ -55,6 +56,18 @@ const createPost = async (body: CreatePostRequest) => {
     throw new Error(
       response.message || '게시글 작성 응답이 올바르지 않습니다.',
     );
+  }
+
+  return postId;
+};
+
+const deletePost = async (postId: number) => {
+  const response = await apiClient
+    .delete(END_POINT.POST.DETAIL(postId))
+    .json<DeletePostResponse>();
+
+  if (!response.success || response.data?.postId !== postId) {
+    throw new Error(response.message || '게시글을 삭제하지 못했습니다.');
   }
 
   return postId;
@@ -191,6 +204,10 @@ export const POST_MUTATION_OPTIONS = {
         postId: number;
         body: UpdatePostRequest;
       }) => updatePost(postId, body),
+    }),
+  DELETE: () =>
+    mutationOptions({
+      mutationFn: (postId: number) => deletePost(postId),
     }),
   UPDATE_STATUS: () =>
     mutationOptions({

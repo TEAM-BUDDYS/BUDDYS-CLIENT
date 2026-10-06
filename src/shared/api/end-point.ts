@@ -31,8 +31,11 @@ export const END_POINT = {
     PRESIGNED_URL: 'api/v1/images/presigned-url',
   },
   PLACE: {
+    NEARBY: 'api/v1/places/nearby',
     SEARCH: 'api/v1/places/search',
     BOOKMARKS: 'api/v1/places/bookmarks',
+    PHOTO: (placeId: string, maxWidth: number) =>
+      `api/v1/places/${encodeURIComponent(placeId)}/photo?maxWidth=${maxWidth}`,
   },
   POST: {
     LIST: 'api/v1/posts',

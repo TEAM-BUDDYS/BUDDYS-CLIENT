@@ -90,7 +90,7 @@ export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
         />
       </div>
 
-      <main className="pb-6">
+      <main className="pb-24.5">
         <div className="px-4 pt-4 pb-6">
           <CourseDetailOverviewSection
             course={course}

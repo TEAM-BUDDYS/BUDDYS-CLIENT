@@ -1,7 +1,6 @@
 import Link from 'next/link';
 
 import { defaultProfileImage } from '@/shared/assets/illustrations';
-import { Tag } from '@/shared/components/ui/card/card-tag';
 import { CommonImage } from '@/shared/components/ui/common-image/common-image';
 import { ROUTES } from '@/shared/config';
 
@@ -50,7 +49,9 @@ export const ProfileCard = ({
             {profileDescription}
           </p>
         </div>
-        <Tag value={`매칭 ${matchingPercentage}%`} />
+        <span className="text-caption-m-10 inline-flex w-fit rounded bg-gray-800 px-2 py-0.75 whitespace-nowrap text-white">
+          매칭 {matchingPercentage}%
+        </span>
       </Link>
     </article>
   );
