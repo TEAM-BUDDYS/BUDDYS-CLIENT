@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 import { POST_MUTATION_OPTIONS } from '@/domains/posts/api/query';
 import { cn } from '@/lib/cn';
-import { POST_QUERY_KEY, useCitySearch, useCountryList } from '@/shared/api';
+import { POST_QUERY_KEY, useCitySearch } from '@/shared/api';
 import { useImageUpload, validateImageFile } from '@/shared/api/image';
 import { Header } from '@/shared/components/layout';
 import {
@@ -57,12 +57,6 @@ export const PostCreateFlow = () => {
   const postCreateForm = usePostCreateForm();
   const createPostMutation = useMutation(POST_MUTATION_OPTIONS.CREATE());
   const { uploadImage } = useImageUpload();
-  const {
-    countryOptions,
-    hasMoreCountries,
-    isLoadingMoreCountries,
-    loadMoreCountries,
-  } = useCountryList();
   const citySearch = useCitySearch({
     countryId: postCreateForm.selectedCountry?.id,
     keyword: postCreateForm.city,
@@ -187,12 +181,10 @@ export const PostCreateFlow = () => {
 
           {currentStep === 1 && (
             <PostCreateCountryStep
-              options={countryOptions}
-              value={postCreateForm.selectedCountry}
-              hasMore={hasMoreCountries}
-              isLoadingMore={isLoadingMoreCountries}
-              onChange={postCreateForm.handleCountrySelect}
-              onLoadMore={loadMoreCountries}
+              keyword={postCreateForm.countryKeyword}
+              selectedCountry={postCreateForm.selectedCountry}
+              onKeywordChange={postCreateForm.handleCountryKeywordChange}
+              onSelect={postCreateForm.handleCountrySelect}
             />
           )}
 

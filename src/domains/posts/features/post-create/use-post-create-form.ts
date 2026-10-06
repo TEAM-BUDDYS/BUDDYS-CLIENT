@@ -53,6 +53,7 @@ const isRequiredDetailComplete = (
 };
 
 export const usePostCreateForm = () => {
+  const [countryKeyword, setCountryKeyword] = useState('');
   const [selectedCountry, setSelectedCountry] = useState<LocationOption | null>(
     null,
   );
@@ -80,9 +81,20 @@ export const usePostCreateForm = () => {
     setDetail((prevDetail) => ({ ...prevDetail, ...nextDetail }));
   };
 
+  const handleCountryKeywordChange = (value: string) => {
+    setCountryKeyword(value);
+
+    if (selectedCountry && selectedCountry.name !== value) {
+      setSelectedCountry(null);
+      setCity('');
+      setSelectedCity(null);
+    }
+  };
+
   const handleCountrySelect = (value: LocationOption) => {
     const shouldResetCity = selectedCountry?.id !== value.id;
 
+    setCountryKeyword(value.name);
     setSelectedCountry(value);
 
     if (shouldResetCity) {
@@ -199,12 +211,14 @@ export const usePostCreateForm = () => {
   };
 
   return {
+    countryKeyword,
     selectedCountry,
     city,
     selectedCity,
     dateRange,
     detail,
     images,
+    handleCountryKeywordChange,
     handleCountrySelect,
     setDateRange,
     updateDetail,
