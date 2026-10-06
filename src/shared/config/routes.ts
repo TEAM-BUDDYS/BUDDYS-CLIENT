@@ -18,6 +18,7 @@ export const ROUTES = {
   POST: {
     ROOT: '/posts',
     DETAIL: (postId: number) => `/posts/${postId}` as const,
+    EDIT: (postId: number) => `/posts/${postId}/edit` as const,
   },
   PARTNER: '/partner',
   COURSE: {

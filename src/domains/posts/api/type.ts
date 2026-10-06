@@ -8,12 +8,17 @@ export type PostSummary = components['schemas']['PostSummaryResponse'];
 export type CreatePostRequest = components['schemas']['CreatePostRequest'];
 export type CreatePostResponse =
   components['schemas']['BaseResponseCreatePostResponse'];
+export type PostErrorResponse = components['schemas']['BaseResponse'];
 
 export type DeletePostResponse =
   components['schemas']['BaseResponseDeletePostResponse'];
 
 export type GetPostDetailResponse =
   components['schemas']['BaseResponsePostDetailResponse'];
+
+export type UpdatePostRequest = components['schemas']['UpdatePostRequest'];
+export type UpdatePostResponse =
+  components['schemas']['BaseResponseUpdatePostResponse'];
 
 export type UpdatePostStatusRequest =
   components['schemas']['UpdatePostStatusRequest'];

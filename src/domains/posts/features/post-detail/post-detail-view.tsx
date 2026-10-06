@@ -1,3 +1,4 @@
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { StartChatButton } from '@/domains/chat/features/start-chat/start-chat-button';
@@ -9,6 +10,7 @@ import { MoreIcon } from '@/shared/components/icons';
 import { Header } from '@/shared/components/layout';
 import { Modal, PostMenuBottomSheet } from '@/shared/components/ui';
 import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
+import { ROUTES } from '@/shared/config';
 
 import { usePostDelete } from './use-post-delete';
 
@@ -17,6 +19,7 @@ interface PostDetailViewProps {
 }
 
 export const PostDetailView = ({ post }: PostDetailViewProps) => {
+  const router = useRouter();
   const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
   const [isMenuBottomSheetOpen, setIsMenuBottomSheetOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -75,6 +78,11 @@ export const PostDetailView = ({ post }: PostDetailViewProps) => {
         isMine={post.isMine}
         onClose={() => setIsMenuBottomSheetOpen(false)}
         onAction={(action) => {
+          if (action === 'edit') {
+            router.push(ROUTES.POST.EDIT(post.postId));
+            return;
+          }
+
           if (action === 'delete') {
             setIsDeleteModalOpen(true);
             return;
