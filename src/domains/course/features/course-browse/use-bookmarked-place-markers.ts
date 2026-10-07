@@ -23,8 +23,9 @@ export const useBookmarkedPlaceMarkers = ({
 
   return {
     dataUpdatedAt: query.dataUpdatedAt,
+    hasError: query.isError,
     isLoading: bounds === null || query.isFetching || query.isPlaceholderData,
     places,
-    truncated: query.data?.truncated ?? false,
+    refetch: query.refetch,
   };
 };

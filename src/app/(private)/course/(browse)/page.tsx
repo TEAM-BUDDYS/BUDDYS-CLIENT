@@ -219,6 +219,16 @@ export default function CoursePage() {
     void refetchNearbyPlaces();
   };
 
+  const handleBookmarkRetry = () => {
+    if (bookmarkedList.hasError) {
+      void bookmarkedList.refetch();
+    }
+
+    if (bookmarkedMarkers.hasError) {
+      void bookmarkedMarkers.refetch();
+    }
+  };
+
   return (
     <>
       <main className="fixed inset-0 mx-auto w-full max-w-107.5 min-w-93.75 pb-14.5">
@@ -290,7 +300,9 @@ export default function CoursePage() {
           position={bottomSheetPosition}
           tab={bottomSheetTab}
           bookmarkedItems={bookmarkedList.items}
-          hasBookmarkError={bookmarkedList.hasError}
+          hasBookmarkError={
+            bookmarkedList.hasError || bookmarkedMarkers.hasError
+          }
           hasBookmarkNextPage={bookmarkedList.hasNextPage}
           hasNearbyError={hasNearbyError}
           hasLocationError={hasLocationError}
@@ -309,7 +321,7 @@ export default function CoursePage() {
             void handleBookmarkChange(placeId, nextBookmarked)
           }
           onBookmarkLoadMore={bookmarkedList.loadMore}
-          onBookmarkRetry={() => void bookmarkedList.refetch()}
+          onBookmarkRetry={handleBookmarkRetry}
           onExploreClick={() => router.push(ROUTES.COURSE.CUSTOMIZED_EXPLORE)}
           onNearbyRetry={handleNearbyRetry}
           onSuggestedMoreClick={() =>

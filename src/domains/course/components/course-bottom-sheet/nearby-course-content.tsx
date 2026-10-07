@@ -59,17 +59,17 @@ export const NearbyCourseContent = ({
   }
 
   return (
-    <div className="flex flex-col gap-6 divide-y-1 divide-gray-50">
+    <ul className="flex flex-col gap-6 divide-y-1 divide-gray-50">
       {items.map(({ place, description }) => (
-        <div key={place.placeId} className="pb-6">
+        <li key={place.placeId} className="pb-6">
           <CourseSaveCard
             place={place}
             description={description}
             isBookmarkPending={pendingBookmarkPlaceIds?.has(place.placeId)}
             onBookmarkChange={onBookmarkChange}
           />
-        </div>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 };

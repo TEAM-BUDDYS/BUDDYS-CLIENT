@@ -1,10 +1,9 @@
 'use client';
 
+import { CourseSaveCard } from '@/domains/course/components/course-save-card/course-save-card';
 import type { NearbyCourseItem } from '@/domains/course/model/course-place';
 import { AsyncErrorState, AsyncLoadingState } from '@/shared/components/ui';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
-
-import { NearbyCourseContent } from './nearby-course-content';
 
 interface BookmarkedPlaceContentProps {
   hasError?: boolean;
@@ -71,11 +70,18 @@ export const BookmarkedPlaceContent = ({
 
   return (
     <>
-      <NearbyCourseContent
-        items={items}
-        pendingBookmarkPlaceIds={pendingBookmarkPlaceIds}
-        onBookmarkChange={onBookmarkChange}
-      />
+      <ul className="flex flex-col gap-6 divide-y-1 divide-gray-50">
+        {items.map(({ place, description }) => (
+          <li key={place.placeId} className="pb-6">
+            <CourseSaveCard
+              place={place}
+              description={description}
+              isBookmarkPending={pendingBookmarkPlaceIds?.has(place.placeId)}
+              onBookmarkChange={onBookmarkChange}
+            />
+          </li>
+        ))}
+      </ul>
       <div ref={loadMoreRef} aria-hidden className="h-1" />
       {isFetchNextPageError && onLoadMore ? (
         <button
