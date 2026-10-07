@@ -13,7 +13,7 @@ export const ROUTES = {
   },
   ONBOARDING: '/onboarding',
   ONBOARDING_INTRO: '/onboarding/intro',
-  CUSTOMIZED_EXPLORE: '/customized-explore',
+  SEARCH: '/search',
   MAGAZINE: '/magazine',
   POST: {
     ROOT: '/posts',

@@ -201,6 +201,10 @@ const getUserPosts = async (userId: number, params?: GetUserPostsParams) => {
     .json<GetUserPostsResponse>();
 };
 
+export const requestWithdraw = async () => {
+  await apiClient.delete(END_POINT.USER.ME);
+};
+
 const getBookmarkedPosts = async (params?: GetBookmarkedPostsParams) => {
   const response = await apiClient
     .get(END_POINT.POST.BOOKMARKS, {
