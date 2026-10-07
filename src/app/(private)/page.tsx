@@ -1,8 +1,10 @@
+import { PostCreateBanner } from '@/domains/home/components/post-create-banner/post-create-banner';
 import { WriteFloatingButton } from '@/domains/home/components/write-floating-button/write-floating-button';
 import { PwaInstallPromptClient } from '@/domains/home/features/pwa/pwa-install-prompt-client';
-import { BuddySearchSection } from '@/domains/home/sections/buddy-search-section';
-import { PreferenceBuddySection } from '@/domains/home/sections/preference-buddy-section';
-import { SameCountryBuddySection } from '@/domains/home/sections/same-country-buddy-section';
+import { BuddysMagazineSection } from '@/domains/home/sections/buddys-magazine-section';
+import { ClosingSoonBuddySection } from '@/domains/home/sections/closing-soon-buddy-section';
+import { ExchangeCountryCourseSection } from '@/domains/home/sections/exchange-country-course-section';
+import { InterestCountryCourseSection } from '@/domains/home/sections/interest-country-course-section';
 import { TodayBuddySection } from '@/domains/home/sections/today-buddy-section';
 import { BuddysLogoIcon } from '@/shared/components/icons';
 import {
@@ -31,23 +33,15 @@ export default function Home() {
           </>
         }
       />
-      <main className="px-4 pb-33">
+      <main className="px-4 pt-2 pb-33">
+        <PostCreateBanner />
         <TodayBuddySection />
-        <hr
-          className="-mx-4 my-6 h-2 border-0 bg-gray-50 opacity-50"
-          aria-hidden="true"
-        />
-        <BuddySearchSection />
-        <hr
-          className="-mx-4 my-6 h-2 border-0 bg-gray-50 opacity-50"
-          aria-hidden="true"
-        />
-        <SameCountryBuddySection />
-        <hr
-          className="-mx-4 my-6 h-2 border-0 bg-gray-50 opacity-50"
-          aria-hidden="true"
-        />
-        <PreferenceBuddySection />
+        <div className="mt-6 flex flex-col gap-15">
+          <ClosingSoonBuddySection />
+          <BuddysMagazineSection />
+          <InterestCountryCourseSection />
+          <ExchangeCountryCourseSection />
+        </div>
       </main>
       <WriteFloatingButton />
       <BottomNavigation className="fixed right-0 bottom-0 left-0 z-20 mx-auto max-w-107.5" />
