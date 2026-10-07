@@ -3,7 +3,6 @@ import type { ClosingSoonPostSummary } from '@/domains/posts/api/type';
 export type DisplayableClosingSoonPost = ClosingSoonPostSummary & {
   postId: number;
   title: string;
-  content: string;
   startDate: string;
   endDate: string;
   country: {
@@ -17,7 +16,6 @@ export const isDisplayableClosingSoonPost = (
   return Boolean(
     post.postId &&
     post.title &&
-    post.content !== undefined &&
     post.startDate &&
     post.endDate &&
     post.country?.name,
