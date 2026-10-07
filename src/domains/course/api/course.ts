@@ -172,6 +172,20 @@ export const COURSE_QUERY_OPTIONS = {
       queryKey: COURSE_QUERY_KEY.LIST(params),
       queryFn: ({ signal }) => getCourses(params, signal),
     }),
+  INFINITE_LIST: (params: GetCoursesParams) =>
+    infiniteQueryOptions({
+      queryKey: COURSE_QUERY_KEY.INFINITE_LIST(params),
+      queryFn: ({ pageParam, signal }) =>
+        getCourses({ ...params, page: pageParam }, signal),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        if (!lastPage.hasNext || typeof lastPage.page !== 'number') {
+          return undefined;
+        }
+
+        return lastPage.page + 1;
+      },
+    }),
   BOOKMARKS: (params: GetBookmarkedCoursesParams) =>
     queryOptions({
       queryKey: COURSE_QUERY_KEY.BOOKMARKS(params),

@@ -18,6 +18,7 @@ import {
 } from '@/domains/course/hook/use-current-location';
 import type { CourseMapCenter } from '@/domains/course/model/course-map';
 import type { CourseMapCategory } from '@/domains/course/model/course-place';
+import { COURSE_CATEGORIES } from '@/domains/course/model/recommended-course';
 
 interface CourseBrowseContextValue {
   bottomSheetPosition: CourseBottomSheetPosition;
@@ -29,7 +30,7 @@ interface CourseBrowseContextValue {
   refetchCurrentLocation: () => Promise<CourseMapCenter | null>;
   searchKeyword: string;
   selectedCategory?: CourseMapCategory;
-  selectedRecommendedCategoryId?: number;
+  selectedRecommendedCategoryId: number;
   selectedRecommendedCountryId?: number;
   setBottomSheetPosition: Dispatch<SetStateAction<CourseBottomSheetPosition>>;
   setBottomSheetTab: Dispatch<SetStateAction<CourseTabValue>>;
@@ -37,9 +38,7 @@ interface CourseBrowseContextValue {
   setIsLocationActive: Dispatch<SetStateAction<boolean>>;
   setSearchKeyword: Dispatch<SetStateAction<string>>;
   setSelectedCategory: Dispatch<SetStateAction<CourseMapCategory | undefined>>;
-  setSelectedRecommendedCategoryId: Dispatch<
-    SetStateAction<number | undefined>
-  >;
+  setSelectedRecommendedCategoryId: Dispatch<SetStateAction<number>>;
   setSelectedRecommendedCountryId: Dispatch<SetStateAction<number | undefined>>;
 }
 
@@ -63,7 +62,7 @@ export const CourseBrowseProvider = ({
   const [searchKeyword, setSearchKeyword] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<CourseMapCategory>();
   const [selectedRecommendedCategoryId, setSelectedRecommendedCategoryId] =
-    useState<number>();
+    useState<number>(COURSE_CATEGORIES[0].id);
   const [selectedRecommendedCountryId, setSelectedRecommendedCountryId] =
     useState<number>();
   const {

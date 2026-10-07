@@ -81,6 +81,12 @@ export const COURSE_QUERY_KEY = {
   LISTS_ALL: () => [...COURSE_QUERY_KEY.ALL, 'list'] as const,
   LIST: (params?: GetQueryParams<'/api/v1/courses'>) =>
     [...COURSE_QUERY_KEY.LISTS_ALL(), params ?? {}] as const,
+  INFINITE_LISTS_ALL: () => [...COURSE_QUERY_KEY.ALL, 'infinite-list'] as const,
+  INFINITE_LIST: (params?: GetQueryParams<'/api/v1/courses'>) =>
+    [
+      ...COURSE_QUERY_KEY.INFINITE_LISTS_ALL(),
+      excludePageParam(params),
+    ] as const,
   BOOKMARKS_ALL: () => [...COURSE_QUERY_KEY.ALL, 'bookmarks'] as const,
   BOOKMARKS: (params?: GetQueryParams<'/api/v1/courses/bookmarks'>) =>
     [...COURSE_QUERY_KEY.BOOKMARKS_ALL(), params ?? {}] as const,
