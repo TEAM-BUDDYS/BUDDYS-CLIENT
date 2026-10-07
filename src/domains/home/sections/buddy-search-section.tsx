@@ -7,7 +7,6 @@ import { BookmarkContainer } from '@/domains/home/components/bookmark-container/
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
 import { FilterSheet } from '@/domains/home/features/filter-sheet/filter-sheet';
 import { useFilterSheetValue } from '@/domains/home/hooks/use-filter-sheet-value';
-import { useSheetScroll } from '@/domains/home/hooks/use-sheet-scroll';
 import {
   buddyFilterItems,
   type BuddyFilterKey,
@@ -27,6 +26,7 @@ import {
   Filter,
 } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
+import { useSheetScroll } from '@/shared/hooks/use-sheet-scroll';
 
 import type { FilterSheetValue } from '../features/filter-sheet/use-filter-sheet';
 

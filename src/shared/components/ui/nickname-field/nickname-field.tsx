@@ -1,5 +1,7 @@
 import type { ChangeEvent } from 'react';
 
+import { NICKNAME_MAX_LENGTH } from '@/shared/constants/nickname';
+
 import { TextField, type TextFieldProps } from '../text-field/text-field';
 import { NicknameCheckButton } from './nickname-check-button';
 
@@ -16,7 +18,6 @@ interface NicknameFieldProps extends Pick<
 }
 
 const DUPLICATE_CHECK_SUCCESS_MESSAGE = '사용 가능한 닉네임입니다.';
-const NICKNAME_MAX_LENGTH = 14;
 
 export const NicknameField = ({
   value,

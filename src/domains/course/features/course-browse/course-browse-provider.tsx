@@ -5,10 +5,8 @@ import {
   type Dispatch,
   type ReactNode,
   type SetStateAction,
-  useCallback,
   useContext,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 
@@ -18,23 +16,14 @@ import {
   type CurrentLocationStatus,
   useCurrentLocation,
 } from '@/domains/course/hook/use-current-location';
-import type {
-  CourseMapCameraState,
-  CourseMapCenter,
-} from '@/domains/course/model/course-map';
-
-export type CourseMapCategory =
-  | 'sightseeing'
-  | 'food'
-  | 'cafe'
-  | 'accommodation';
+import type { CourseMapCenter } from '@/domains/course/model/course-map';
+import type { CourseMapCategory } from '@/domains/course/model/course-place';
 
 interface CourseBrowseContextValue {
   bottomSheetPosition: CourseBottomSheetPosition;
   bottomSheetTab: CourseTabValue;
   currentLocation: CourseMapCenter | null;
   currentLocationStatus: CurrentLocationStatus;
-  getMapCamera: () => CourseMapCameraState | null;
   isBookmarkActive: boolean;
   isLocationActive: boolean;
   refetchCurrentLocation: () => Promise<CourseMapCenter | null>;
@@ -46,7 +35,6 @@ interface CourseBrowseContextValue {
   setBottomSheetTab: Dispatch<SetStateAction<CourseTabValue>>;
   setIsBookmarkActive: Dispatch<SetStateAction<boolean>>;
   setIsLocationActive: Dispatch<SetStateAction<boolean>>;
-  setMapCamera: (camera: CourseMapCameraState | null) => void;
   setSearchKeyword: Dispatch<SetStateAction<string>>;
   setSelectedCategory: Dispatch<SetStateAction<CourseMapCategory | undefined>>;
   setSelectedRecommendedCategoryId: Dispatch<
@@ -78,17 +66,11 @@ export const CourseBrowseProvider = ({
     useState<number>();
   const [selectedRecommendedCountryId, setSelectedRecommendedCountryId] =
     useState<number>();
-  const mapCameraRef = useRef<CourseMapCameraState | null>(null);
   const {
     currentLocation,
     status: currentLocationStatus,
     refetchCurrentLocation,
   } = useCurrentLocation({ requestOnMount: false });
-
-  const getMapCamera = useCallback(() => mapCameraRef.current, []);
-  const setMapCamera = useCallback((camera: CourseMapCameraState | null) => {
-    mapCameraRef.current = camera;
-  }, []);
 
   const value = useMemo(
     () => ({
@@ -96,7 +78,6 @@ export const CourseBrowseProvider = ({
       bottomSheetTab,
       currentLocation,
       currentLocationStatus,
-      getMapCamera,
       isBookmarkActive,
       isLocationActive,
       refetchCurrentLocation,
@@ -108,7 +89,6 @@ export const CourseBrowseProvider = ({
       setBottomSheetTab,
       setIsBookmarkActive,
       setIsLocationActive,
-      setMapCamera,
       setSearchKeyword,
       setSelectedCategory,
       setSelectedRecommendedCategoryId,
@@ -119,7 +99,6 @@ export const CourseBrowseProvider = ({
       bottomSheetTab,
       currentLocation,
       currentLocationStatus,
-      getMapCamera,
       isBookmarkActive,
       isLocationActive,
       refetchCurrentLocation,
@@ -127,7 +106,6 @@ export const CourseBrowseProvider = ({
       selectedCategory,
       selectedRecommendedCategoryId,
       selectedRecommendedCountryId,
-      setMapCamera,
     ],
   );
 

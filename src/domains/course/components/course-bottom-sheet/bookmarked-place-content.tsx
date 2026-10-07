@@ -1,7 +1,6 @@
-import {
-  NearbyCourseContent,
-  type NearbyCourseItem,
-} from './nearby-course-content';
+import type { NearbyCourseItem } from '@/domains/course/model/course-place';
+
+import { NearbyCourseContent } from './nearby-course-content';
 
 interface BookmarkedPlaceContentProps {
   items: readonly NearbyCourseItem[];

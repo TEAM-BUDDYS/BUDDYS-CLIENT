@@ -1,3 +1,4 @@
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { StartChatButton } from '@/domains/chat/features/start-chat/start-chat-button';
@@ -7,16 +8,30 @@ import { PostDetailConditionSection } from '@/domains/posts/sections/post-detail
 import { PostDetailContentSection } from '@/domains/posts/sections/post-detail-content-section';
 import { MoreIcon } from '@/shared/components/icons';
 import { Header } from '@/shared/components/layout';
-import { PostMenuBottomSheet } from '@/shared/components/ui';
+import { Modal, PostMenuBottomSheet } from '@/shared/components/ui';
 import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
+import { ROUTES } from '@/shared/config';
+
+import { usePostDelete } from './use-post-delete';
 
 interface PostDetailViewProps {
   post: PostDetail;
 }
 
 export const PostDetailView = ({ post }: PostDetailViewProps) => {
+  const router = useRouter();
   const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
   const [isMenuBottomSheetOpen, setIsMenuBottomSheetOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const { deletePost, isPending: isDeleting } = usePostDelete(post.postId);
+
+  const handleDeleteModalClose = () => {
+    if (isDeleting) {
+      return;
+    }
+
+    setIsDeleteModalOpen(false);
+  };
 
   return (
     <div className="min-h-dvh bg-white">
@@ -62,7 +77,29 @@ export const PostDetailView = ({ post }: PostDetailViewProps) => {
         open={isMenuBottomSheetOpen}
         isMine={post.isMine}
         onClose={() => setIsMenuBottomSheetOpen(false)}
-        onAction={() => setIsComingSoonOpen(true)}
+        onAction={(action) => {
+          if (action === 'edit') {
+            router.push(ROUTES.POST.EDIT(post.postId));
+            return;
+          }
+
+          if (action === 'delete') {
+            setIsDeleteModalOpen(true);
+            return;
+          }
+
+          setIsComingSoonOpen(true);
+        }}
+      />
+
+      <Modal
+        open={isDeleteModalOpen}
+        title="게시글을 삭제할까요?"
+        description="삭제한 게시글은 복구할 수 없어요."
+        cancelLabel="취소"
+        confirmLabel={isDeleting ? '삭제 중...' : '삭제하기'}
+        onClose={handleDeleteModalClose}
+        onConfirm={deletePost}
       />
 
       <ComingSoonModal

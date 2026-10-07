@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import type { SearchHistoryItem } from '@/domains/home/components/search-history/search-history';
+import type { SearchHistoryItem } from '@/shared/components/search/search-history';
 import { ROUTES } from '@/shared/config';
 
 const SEARCH_HISTORY_STORAGE_KEY = 'buddys-search-history';

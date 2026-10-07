@@ -3,16 +3,16 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { type KeyboardEvent, useState } from 'react';
 
-import { SearchSheet } from '@/domains/home/features/search-sheet/search-sheet';
-import { useSheetScroll } from '@/domains/home/hooks/use-sheet-scroll';
 import {
   type SearchCategory,
   searchCategoryItems,
 } from '@/domains/home/model/search-category';
 import { cn } from '@/lib/cn';
 import { BottomNavigation, Header } from '@/shared/components/layout';
+import { SearchSheet } from '@/shared/components/search/search-sheet';
 import { AsyncBoundary, Filter, Searchbar } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
+import { useSheetScroll } from '@/shared/hooks/use-sheet-scroll';
 
 import { SearchResultBuddyList } from './search-result-buddy-list';
 import { SearchResultCourseList } from './search-result-course-list';

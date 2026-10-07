@@ -1,37 +1,50 @@
 'use client';
 
-import { Dropdown } from '@/shared/components/ui';
+import { SearchOptionField } from '@/shared/components/ui';
 
 import type { LocationOption } from './model';
+import { usePostCountrySearch } from './use-post-country-search';
 
 interface PostCreateCountryStepProps {
-  options: LocationOption[];
-  value: LocationOption | null;
-  hasMore: boolean;
-  isLoadingMore: boolean;
-  onChange: (value: LocationOption) => void;
-  onLoadMore: () => void;
+  keyword: string;
+  selectedCountry: LocationOption | null;
+  onKeywordChange: (value: string) => void;
+  onSelect: (value: LocationOption) => void;
 }
 
 export const PostCreateCountryStep = ({
-  options,
-  value,
-  hasMore,
-  isLoadingMore,
-  onChange,
-  onLoadMore,
+  keyword,
+  selectedCountry,
+  onKeywordChange,
+  onSelect,
 }: PostCreateCountryStepProps) => {
+  const countrySearch = usePostCountrySearch({
+    keyword,
+    enabled: selectedCountry === null,
+  });
+
   return (
-    <Dropdown
-      options={options}
-      placeholder="국가를 선택해주세요"
-      value={value}
-      hasMore={hasMore}
-      isLoadingMore={isLoadingMore}
-      getOptionLabel={(country) => country.name}
-      getOptionKey={(country) => country.id}
-      onChange={onChange}
-      onLoadMore={onLoadMore}
-    />
+    <div className="flex flex-col gap-2">
+      <SearchOptionField
+        id="post-country"
+        label="국가 검색"
+        placeholder="국가를 검색해주세요."
+        value={keyword}
+        selectedOption={selectedCountry}
+        results={countrySearch.countries}
+        isLoading={countrySearch.isSearching}
+        getOptionLabel={(country) => country.name}
+        getOptionKey={(country) => country.id}
+        onChange={onKeywordChange}
+        onSelect={onSelect}
+        onEndReached={countrySearch.loadMoreCountries}
+      />
+
+      {countrySearch.isError && (
+        <p className="text-caption-r-12 text-error" role="alert">
+          국가 목록을 불러오지 못했습니다. 다시 검색해주세요.
+        </p>
+      )}
+    </div>
   );
 };

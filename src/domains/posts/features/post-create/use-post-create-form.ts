@@ -3,9 +3,13 @@
 import { useEffect, useRef, useState } from 'react';
 
 import type { CreatePostRequest } from '@/domains/posts/api/type';
+import type { PostDetail } from '@/domains/posts/model/post-detail';
 import { type City, getCityDisplayName } from '@/shared/api';
 import type { DateRangeTypes } from '@/shared/components/ui';
-import { formatDateToIsoDate } from '@/shared/utils/format-date-range';
+import {
+  formatDateToIsoDate,
+  parseDate,
+} from '@/shared/utils/format-date-range';
 
 import { MAX_IMAGE_COUNT } from './constants';
 import type {
@@ -26,6 +30,32 @@ const INITIAL_DETAIL_FORM: PostCreateDetailFormState = {
   activityTagIds: [],
   interestTagIds: [],
   companionStyleTagIds: [],
+};
+
+const getInitialDetailForm = (
+  initialPost?: PostDetail,
+): PostCreateDetailFormState => {
+  if (!initialPost) {
+    return INITIAL_DETAIL_FORM;
+  }
+
+  return {
+    title: initialPost.title,
+    content: initialPost.content,
+    ageConditions: initialPost.conditions.ageConditions,
+    genderConditions: initialPost.conditions.genderConditions,
+    companionType: initialPost.conditions.travelType,
+    recruitmentCountType: initialPost.recruitmentCountType,
+    activityTagIds: initialPost.conditions.activityTags.map(
+      ({ tagId }) => tagId,
+    ),
+    interestTagIds: initialPost.conditions.interestTags.map(
+      ({ tagId }) => tagId,
+    ),
+    companionStyleTagIds: initialPost.conditions.travelStyleTags.map(
+      ({ tagId }) => tagId,
+    ),
+  };
 };
 
 const isRequiredDetailComplete = (
@@ -52,19 +82,43 @@ const isRequiredDetailComplete = (
   );
 };
 
-export const usePostCreateForm = () => {
-  const [selectedCountry, setSelectedCountry] = useState<LocationOption | null>(
-    null,
+export const usePostCreateForm = (initialPost?: PostDetail) => {
+  const initialCity: City | null = initialPost
+    ? {
+        id: initialPost.city.cityId,
+        name: initialPost.city.name,
+        koreanName: initialPost.city.koreanName,
+      }
+    : null;
+  const [countryKeyword, setCountryKeyword] = useState(
+    initialPost?.country.name ?? '',
   );
-  const [city, setCity] = useState('');
-  const [selectedCity, setSelectedCity] = useState<City | null>(null);
+  const [selectedCountry, setSelectedCountry] = useState<LocationOption | null>(
+    initialPost
+      ? {
+          id: initialPost.country.countryId,
+          name: initialPost.country.name,
+        }
+      : null,
+  );
+  const [city, setCity] = useState(() => getCityDisplayName(initialCity));
+  const [selectedCity, setSelectedCity] = useState<City | null>(initialCity);
   const [dateRange, setDateRange] = useState<DateRangeTypes>({
-    startDate: null,
-    endDate: null,
+    startDate: initialPost ? parseDate(initialPost.startDate) : null,
+    endDate: initialPost ? parseDate(initialPost.endDate) : null,
   });
-  const [detail, setDetail] =
-    useState<PostCreateDetailFormState>(INITIAL_DETAIL_FORM);
-  const [images, setImages] = useState<PostCreateImage[]>([]);
+  const [detail, setDetail] = useState<PostCreateDetailFormState>(() =>
+    getInitialDetailForm(initialPost),
+  );
+  const [images, setImages] = useState<PostCreateImage[]>(() =>
+    initialPost
+      ? initialPost.imageUrls.map((imageUrl) => ({
+          type: 'existing' as const,
+          imageUrl,
+          previewUrl: imageUrl,
+        }))
+      : [],
+  );
   const previewUrlsRef = useRef(new Set<string>());
 
   useEffect(() => {
@@ -80,9 +134,20 @@ export const usePostCreateForm = () => {
     setDetail((prevDetail) => ({ ...prevDetail, ...nextDetail }));
   };
 
+  const handleCountryKeywordChange = (value: string) => {
+    setCountryKeyword(value);
+
+    if (selectedCountry && selectedCountry.name !== value) {
+      setSelectedCountry(null);
+      setCity('');
+      setSelectedCity(null);
+    }
+  };
+
   const handleCountrySelect = (value: LocationOption) => {
     const shouldResetCity = selectedCountry?.id !== value.id;
 
+    setCountryKeyword(value.name);
     setSelectedCountry(value);
 
     if (shouldResetCity) {
@@ -111,7 +176,7 @@ export const usePostCreateForm = () => {
 
       previewUrlsRef.current.add(previewUrl);
 
-      return { file, previewUrl };
+      return { type: 'new' as const, file, previewUrl };
     });
 
     if (nextImages.length > 0) {
@@ -120,8 +185,15 @@ export const usePostCreateForm = () => {
   };
 
   const removeImage = (previewUrl: string) => {
-    URL.revokeObjectURL(previewUrl);
-    previewUrlsRef.current.delete(previewUrl);
+    const removedImage = images.find(
+      (image) => image.previewUrl === previewUrl,
+    );
+
+    if (removedImage?.type === 'new') {
+      URL.revokeObjectURL(previewUrl);
+      previewUrlsRef.current.delete(previewUrl);
+    }
+
     setImages((prevImages) =>
       prevImages.filter((image) => image.previewUrl !== previewUrl),
     );
@@ -199,12 +271,14 @@ export const usePostCreateForm = () => {
   };
 
   return {
+    countryKeyword,
     selectedCountry,
     city,
     selectedCity,
     dateRange,
     detail,
     images,
+    handleCountryKeywordChange,
     handleCountrySelect,
     setDateRange,
     updateDetail,

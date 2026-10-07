@@ -18,7 +18,9 @@ export const ROUTES = {
   POST: {
     ROOT: '/posts',
     DETAIL: (postId: number) => `/posts/${postId}` as const,
+    EDIT: (postId: number) => `/posts/${postId}/edit` as const,
   },
+  PARTNER: '/partner',
   COURSE: {
     ROOT: '/course',
     CREATE: '/course/post',
@@ -36,6 +38,7 @@ export const ROUTES = {
     SETTINGS: '/profile/settings',
     PRIVACY_POLICY: '/profile/settings/privacy-policy',
     TERMS: '/profile/settings/terms',
+    SAVED: '/profile/saved',
     EDIT: '/profile/edit',
   },
 } as const;

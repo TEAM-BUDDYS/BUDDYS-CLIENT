@@ -2,10 +2,10 @@
 
 import type { FormEvent } from 'react';
 
-import { SearchHistory } from '@/domains/home/components/search-history/search-history';
-import { useSearchSheet } from '@/domains/home/features/search-sheet/use-search-sheet';
 import { Header } from '@/shared/components/layout';
+import { SearchHistory } from '@/shared/components/search/search-history';
 import { FormLabel, Searchbar } from '@/shared/components/ui';
+import { useSearchSheet } from '@/shared/hooks/use-search-sheet';
 
 interface SearchSheetProps {
   onClose?: () => void;
