@@ -1,5 +1,8 @@
+'use client';
+
 import { MagazineCard } from '@/domains/home/components/magazine-card';
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
+import { useCurrentMonth } from '@/domains/home/hooks/use-current-month';
 import { ROUTES } from '@/shared/config';
 
 // TODO: 매거진 목록 API 연동 시 응답 데이터로 교체
@@ -21,13 +24,12 @@ const MOCK_HOME_MAGAZINES = [
 ];
 
 export const BuddysMagazineSection = () => {
-  // TODO: 정적 렌더링 시 빌드 시점의 월로 고정되므로 API 연동 시 응답 기준 월로 교체
-  const month = new Date().getMonth() + 1;
+  const month = useCurrentMonth();
 
   return (
     <section className="flex flex-col gap-5">
       <SectionHeader
-        title={`${month}월 버디즈 매거진`}
+        title={month ? `${month}월 버디즈 매거진` : '버디즈 매거진'}
         moreHref={ROUTES.MAGAZINE}
       />
       <div className="flex flex-col gap-5">
