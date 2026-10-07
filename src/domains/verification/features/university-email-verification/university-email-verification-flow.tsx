@@ -7,7 +7,7 @@ import { useState } from 'react';
 
 import { useAuthSession } from '@/domains/auth/features/auth-session/auth-session-provider';
 import { Header } from '@/shared/components/layout';
-import { Button } from '@/shared/components/ui';
+import { Button, useToast } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
 import { VerificationHeader } from '../../components/verification-header/verification-header';
@@ -48,6 +48,8 @@ export const UniversityEmailVerificationFlow = ({
   const { logout } = useAuthSession();
   const [isLogout, setIsLogout] = useState(false);
 
+  const { showToast } = useToast();
+
   const handleBackButtonClick = async () => {
     if (currentStep === 2) {
       setCurrentStep(1);
@@ -65,6 +67,10 @@ export const UniversityEmailVerificationFlow = ({
       } catch (error) {
         Sentry.captureException(error);
         setIsLogout(false);
+
+        showToast('로그아웃에 실패했어요. 잠시 후 다시 시도해 주세요.', {
+          variant: 'gray',
+        });
       }
       return;
     }

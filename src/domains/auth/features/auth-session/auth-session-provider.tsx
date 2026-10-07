@@ -78,23 +78,23 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
   }, []);
 
   const clearSession = useCallback(() => {
+    queryClient.clear();
+
     setAccessToken(null);
     setUserId(null);
     setOnboardingCompleted(null);
     setIsOnboardingCompletionVisible(false);
     setStatus('unauthenticated');
-  }, []);
+  }, [queryClient]);
 
   const logout = useCallback(async () => {
     await requestLogout();
-    queryClient.clear();
     clearSession();
-  }, [clearSession, queryClient]);
+  }, [clearSession]);
 
   const finishWithdraw = useCallback(() => {
-    queryClient.clear();
     clearSession();
-  }, [clearSession, queryClient]);
+  }, [clearSession]);
 
   const refreshSession = useCallback(async () => {
     try {
