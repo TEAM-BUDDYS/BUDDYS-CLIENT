@@ -879,7 +879,7 @@ export interface paths {
     };
     /**
      * 통합 검색
-     * @description 검색어로 코스, 사용자, 모집 중 동행 게시글을 동시에 검색합니다. 각 영역에 동일한 페이지 번호와 크기를 적용합니다. posts.totalElements는 페이지 번호·크기와 무관하게 검색어에 일치하는 삭제되지 않은 모집 중 게시글의 전체 수입니다.
+     * @description 검색어로 코스, 사용자, 모집 중 동행 게시글을 동시에 검색합니다. type을 생략하면 세 영역을 모두 조회하고 반환하며, POST/COURSE/USER를 지정하면 해당 영역만 조회하고 반환합니다. 선택하지 않은 영역은 응답 필드에서 제외됩니다. 잘못된 type은 400(GLB-E001)을 반환합니다. 각 영역에 동일한 페이지 번호와 크기를 적용합니다. courses.totalElements와 users.totalElements는 page=0에서만 전체 건수를 제공하며 page>0에서는 건수를 조회하지 않고 명시적으로 null을 반환합니다. posts.totalElements는 페이지 번호·크기와 무관하게 검색어에 일치하는 삭제되지 않은 모집 중 게시글의 전체 수입니다.
      */
     get: operations['search'];
     put?: never;
@@ -2407,14 +2407,15 @@ export interface components {
        */
       bio: string;
       /**
-       * @description 프로필에 표시할 인증 뱃지
-       * @example SOCIAL_LOGIN
-       * @enum {string}
+       * @description 학교 이메일 인증 여부
+       * @example true
        */
-      verificationBadge:
-        | 'SOCIAL_LOGIN'
-        | 'UNIVERSITY_VERIFIED'
-        | 'EXCHANGE_VERIFIED';
+      universityEmailVerified: boolean;
+      /**
+       * @description 파견교 서류 인증 여부
+       * @example true
+       */
+      exchangeDocumentVerified: boolean;
       /** @description 사용자가 지정한 순서의 상위 3개 대표 취향 태그 */
       representativeTags: components['schemas']['OrderedTagResponse'][];
       /**
@@ -2554,14 +2555,15 @@ export interface components {
        */
       bio: string;
       /**
-       * @description 프로필에 표시할 인증 뱃지
-       * @example SOCIAL_LOGIN
-       * @enum {string}
+       * @description 학교 이메일 인증 여부
+       * @example true
        */
-      verificationBadge:
-        | 'SOCIAL_LOGIN'
-        | 'UNIVERSITY_VERIFIED'
-        | 'EXCHANGE_VERIFIED';
+      universityEmailVerified: boolean;
+      /**
+       * @description 파견교 서류 인증 여부
+       * @example true
+       */
+      exchangeDocumentVerified: boolean;
       /** @description 사용자가 지정한 순서대로 정렬된 전체 취향 태그 */
       orderedTags: components['schemas']['OrderedTagResponse'][];
     };
@@ -2606,24 +2608,30 @@ export interface components {
       message?: string;
       data?: components['schemas']['SearchResponse'];
     };
-    CourseListResponse: {
-      /** @description 코스 목록 */
+    CourseSearchResponse: {
+      /** @description 코스 검색 결과 */
       content: components['schemas']['CourseSummaryResponse'][];
       /**
        * Format: int32
-       * @description 현재 페이지 번호. 0부터 시작합니다.
+       * @description 현재 페이지 번호
        * @example 0
        */
       page: number;
       /**
        * Format: int32
        * @description 페이지 크기
-       * @example 20
+       * @example 5
        */
       size: number;
       /**
+       * Format: int64
+       * @description 검색 조건에 일치하는 전체 코스 수. page=0에서만 제공하며 page>0에서는 null입니다.
+       * @example 12
+       */
+      totalElements: number | null;
+      /**
        * @description 다음 페이지 존재 여부
-       * @example true
+       * @example false
        */
       hasNext: boolean;
     };
@@ -2703,7 +2711,7 @@ export interface components {
       countryId?: number;
       /**
        * @description 국가 이름
-       * @example France
+       * @example 프랑스
        */
       name?: string;
     };
@@ -2762,12 +2770,12 @@ export interface components {
       isBookmarked?: boolean;
     };
     SearchResponse: {
-      /** @description 코스 검색 결과 */
-      courses: components['schemas']['CourseListResponse'];
-      /** @description 사용자 검색 결과 */
-      users: components['schemas']['UserSearchResponse'];
-      /** @description 동행 게시글 검색 결과 */
-      posts: components['schemas']['PostListResponse'];
+      /** @description 코스 검색 결과. type 생략 또는 COURSE 지정 시에만 포함 */
+      courses?: components['schemas']['CourseSearchResponse'];
+      /** @description 사용자 검색 결과. type 생략 또는 USER 지정 시에만 포함 */
+      users?: components['schemas']['UserSearchResponse'];
+      /** @description 동행 게시글 검색 결과. type 생략 또는 POST 지정 시에만 포함 */
+      posts?: components['schemas']['PostListResponse'];
     };
     UserSearchResponse: {
       /** @description 사용자 검색 결과 */
@@ -2784,6 +2792,12 @@ export interface components {
        * @example 5
        */
       size: number;
+      /**
+       * Format: int64
+       * @description 검색 조건에 일치하는 전체 사용자 수. page=0에서만 제공하며 page>0에서는 null입니다.
+       * @example 12
+       */
+      totalElements: number | null;
       /**
        * @description 다음 페이지 존재 여부
        * @example false
@@ -3651,6 +3665,27 @@ export interface components {
       code?: string;
       message?: string;
       data?: components['schemas']['CourseListResponse'];
+    };
+    CourseListResponse: {
+      /** @description 코스 목록 */
+      content: components['schemas']['CourseSummaryResponse'][];
+      /**
+       * Format: int32
+       * @description 현재 페이지 번호. 0부터 시작합니다.
+       * @example 0
+       */
+      page: number;
+      /**
+       * Format: int32
+       * @description 페이지 크기
+       * @example 20
+       */
+      size: number;
+      /**
+       * @description 다음 페이지 존재 여부
+       * @example true
+       */
+      hasNext: boolean;
     };
     BaseResponseCourseDetailResponse: {
       success?: boolean;
@@ -5273,6 +5308,8 @@ export interface operations {
          * @example 1
          */
         tagId?: number;
+        /** @description 작성자 인증 조건 목록. 허용값: UNIVERSITY(대학 인증), EXCHANGE(파견교 인증). 복수 선택은 authorVerifications=UNIVERSITY&authorVerifications=EXCHANGE 또는 authorVerifications=UNIVERSITY,EXCHANGE로 전달합니다. 둘 다 선택하면 AND로 적용하며, 미선택 시 인증 상태로 필터링하지 않습니다. */
+        authorVerifications?: ('UNIVERSITY' | 'EXCHANGE')[];
         /**
          * @description 페이지 번호. 0 이상입니다.
          * @example 0
@@ -8933,6 +8970,8 @@ export interface operations {
          * @example 5
          */
         size?: number;
+        /** @description 검색 영역. 생략하면 모든 영역을 조회하고 반환합니다. 지정하면 해당 영역만 조회하고 반환합니다. 잘못된 값은 400(GLB-E001)을 반환합니다. */
+        type?: 'POST' | 'COURSE' | 'USER';
       };
       header?: never;
       path?: never;

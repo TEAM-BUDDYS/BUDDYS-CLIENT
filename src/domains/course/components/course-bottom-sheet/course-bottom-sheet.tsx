@@ -1,3 +1,4 @@
+import { CourseSaveCardSkeleton } from '@/domains/course/components/course-save-card/course-save-card-skeleton';
 import {
   CourseTab,
   type CourseTabValue,
@@ -34,6 +35,7 @@ interface CourseBottomSheetProps {
   isBookmarkFetchingNextPage?: boolean;
   isBookmarkLoading?: boolean;
   isNearbyLoading?: boolean;
+  isPlaceSelectionLoading?: boolean;
   nearbyItems: readonly NearbyCourseItem[];
   onClose: () => void;
   onPositionChange: (position: CourseBottomSheetPosition) => void;
@@ -60,6 +62,7 @@ export const CourseBottomSheet = ({
   isBookmarkFetchingNextPage = false,
   isBookmarkLoading = false,
   isNearbyLoading = false,
+  isPlaceSelectionLoading = false,
   nearbyItems,
   onClose,
   onPositionChange,
@@ -111,7 +114,11 @@ export const CourseBottomSheet = ({
         ) : null}
 
         <div className="min-h-0 flex-1 scrollbar-none overflow-x-hidden overflow-y-auto overscroll-contain pb-100 [&::-webkit-scrollbar]:hidden">
-          {isBookmarkMode ? (
+          {isPlaceSelectionLoading ? (
+            <div className="border-b border-gray-50 pb-6">
+              <CourseSaveCardSkeleton />
+            </div>
+          ) : isBookmarkMode ? (
             <BookmarkedPlaceContent
               hasError={hasBookmarkError}
               hasNextPage={hasBookmarkNextPage}

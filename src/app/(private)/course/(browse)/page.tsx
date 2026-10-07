@@ -40,6 +40,8 @@ export default function CoursePage() {
   const router = useRouter();
   const { showToast } = useToast();
   const [mapBounds, setMapBounds] = useState<CourseMapBounds | null>(null);
+  const [bookmarkMarkerDataUpdatedAtAtClick, setBookmarkMarkerDataUpdatedAt] =
+    useState<number | null>(null);
   const {
     bottomSheetPosition,
     bottomSheetTab,
@@ -114,6 +116,10 @@ export default function CoursePage() {
   const isCurrentLocationLoading =
     currentLocationStatus === 'idle' || currentLocationStatus === 'loading';
   const hasLocationError = currentLocationStatus === 'error';
+  const isWaitingForBookmarkMarkers =
+    bookmarkMarkerDataUpdatedAtAtClick !== null &&
+    bookmarkedMarkers.isLoading &&
+    bookmarkedMarkers.dataUpdatedAt === bookmarkMarkerDataUpdatedAtAtClick;
 
   const handleCategoryChange = (category: CourseMapCategory) => {
     clearSelectedPlace();
@@ -171,11 +177,18 @@ export default function CoursePage() {
   };
 
   const handlePoiSelect = async (poi: GoogleMapPoi) => {
+    setBookmarkMarkerDataUpdatedAt(
+      bookmarkedMarkers.isLoading ? bookmarkedMarkers.dataUpdatedAt : null,
+    );
+    setIsLocationActive(false);
+    setBottomSheetPosition('default');
+
     try {
       const place = await selectGooglePlace(poi);
 
       if (place) openSelectedPlace(isBookmarkActive && place.bookmarked);
     } catch {
+      setBookmarkMarkerDataUpdatedAt(null);
       showToast('장소 정보를 불러오지 못했어요', { variant: 'gray' });
     }
   };
@@ -285,6 +298,7 @@ export default function CoursePage() {
           isBookmarkFetchingNextPage={bookmarkedList.isFetchingNextPage}
           isBookmarkLoading={bookmarkedList.isLoading}
           isNearbyLoading={isCurrentLocationLoading || isNearbyLoading}
+          isPlaceSelectionLoading={isWaitingForBookmarkMarkers}
           nearbyItems={nearbyItems}
           onClose={() => setBottomSheetPosition('collapsed')}
           onPositionChange={setBottomSheetPosition}
