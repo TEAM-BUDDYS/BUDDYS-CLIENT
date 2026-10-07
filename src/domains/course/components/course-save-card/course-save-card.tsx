@@ -9,12 +9,14 @@ import { BookmarkButton, CommonImage } from '@/shared/components/ui';
 interface CourseSaveCardProps {
   place: Place;
   description: string;
+  isBookmarkPending?: boolean;
   onBookmarkChange: (placeId: string, nextBookmarked: boolean) => void;
 }
 
 export const CourseSaveCard = ({
   place,
   description,
+  isBookmarkPending = false,
   onBookmarkChange,
 }: CourseSaveCardProps) => {
   const [failedPhotoUrl, setFailedPhotoUrl] = useState<string>();
@@ -61,10 +63,12 @@ export const CourseSaveCard = ({
 
         <BookmarkButton
           isBookmarked={bookmarked}
+          aria-busy={isBookmarkPending}
           aria-label={
             bookmarked ? `${displayName} 저장 해제` : `${displayName} 저장`
           }
           className="size-6 rounded-sm"
+          disabled={isBookmarkPending}
           onClick={handleBookmarkClick}
         />
       </div>

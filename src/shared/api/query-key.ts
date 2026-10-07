@@ -103,9 +103,11 @@ export const PLACE_QUERY_KEY = {
   BOOKMARKS_ALL: () => [...PLACE_QUERY_KEY.ALL, 'bookmarks'] as const,
   BOOKMARKS: (params?: GetQueryParams<'/api/v1/places/bookmarks'>) =>
     [...PLACE_QUERY_KEY.BOOKMARKS_ALL(), excludePageParam(params)] as const,
+  BOOKMARK_MARKERS_ALL: () =>
+    [...PLACE_QUERY_KEY.BOOKMARKS_ALL(), 'markers'] as const,
   BOOKMARK_MARKERS: (
     params: GetQueryParams<'/api/v1/places/bookmarks/markers'> | null,
-  ) => [...PLACE_QUERY_KEY.BOOKMARKS_ALL(), 'markers', params] as const,
+  ) => [...PLACE_QUERY_KEY.BOOKMARK_MARKERS_ALL(), params] as const,
 };
 
 export const POST_QUERY_KEY = {

@@ -47,14 +47,14 @@ export default function CoursePage() {
     bottomSheetTab,
     currentLocation,
     currentLocationStatus,
-    isBookmarkActive,
+    isBookmarkMode,
     isLocationActive,
     refetchCurrentLocation,
     searchKeyword,
     selectedCategory,
     setBottomSheetPosition,
     setBottomSheetTab,
-    setIsBookmarkActive,
+    setIsBookmarkMode,
     setIsLocationActive,
     setSearchKeyword,
     setSelectedCategory,
@@ -78,18 +78,19 @@ export default function CoursePage() {
     nearbyPlaces,
     bookmarkedPlaces: bookmarkedMarkers.places,
   });
-  const { updateBookmark } = usePlaceBookmark({
-    onBookmarkChange: updateSelectedPlaceBookmark,
-  });
-  const bookmarkedList = useBookmarkedPlaces({ enabled: isBookmarkActive });
+  const { pendingPlaceIds: pendingBookmarkPlaceIds, updateBookmark } =
+    usePlaceBookmark({
+      onBookmarkChange: updateSelectedPlaceBookmark,
+    });
+  const bookmarkedList = useBookmarkedPlaces({ enabled: isBookmarkMode });
   const mapPlaces = useMemo(
     () =>
       mergeCoursePlaces(
-        isBookmarkActive ? [] : nearbyPlaces,
+        isBookmarkMode ? [] : nearbyPlaces,
         bookmarkedMarkers.places,
         selectedPlace?.bookmarked ? [selectedPlace] : [],
       ),
-    [bookmarkedMarkers.places, isBookmarkActive, nearbyPlaces, selectedPlace],
+    [bookmarkedMarkers.places, isBookmarkMode, nearbyPlaces, selectedPlace],
   );
 
   const handleMapBoundsChange = useCallback((bounds: CourseMapBounds) => {
@@ -150,11 +151,11 @@ export default function CoursePage() {
   };
 
   const handleBookmarkModeClick = () => {
-    const nextBookmarkActive = !isBookmarkActive;
+    const nextBookmarkMode = !isBookmarkMode;
 
-    setIsBookmarkActive(nextBookmarkActive);
+    setIsBookmarkMode(nextBookmarkMode);
 
-    if (nextBookmarkActive) {
+    if (nextBookmarkMode) {
       setIsLocationActive(false);
       setBottomSheetPosition('default');
     }
@@ -164,7 +165,7 @@ export default function CoursePage() {
     setIsLocationActive(false);
 
     if (!preserveBookmarkMode) {
-      setIsBookmarkActive(false);
+      setIsBookmarkMode(false);
       setBottomSheetTab('nearby');
     }
     setBottomSheetPosition('default');
@@ -173,7 +174,7 @@ export default function CoursePage() {
   const handlePlaceSelect = (placeId: string) => {
     const place = selectNearbyPlace(placeId);
 
-    if (place) openSelectedPlace(isBookmarkActive && place.bookmarked);
+    if (place) openSelectedPlace(isBookmarkMode && place.bookmarked);
   };
 
   const handlePoiSelect = async (poi: GoogleMapPoi) => {
@@ -186,7 +187,7 @@ export default function CoursePage() {
     try {
       const place = await selectGooglePlace(poi);
 
-      if (place) openSelectedPlace(isBookmarkActive && place.bookmarked);
+      if (place) openSelectedPlace(isBookmarkMode && place.bookmarked);
     } catch {
       setBookmarkMarkerDataUpdatedAt(null);
       showToast('장소 정보를 불러오지 못했어요', { variant: 'gray' });
@@ -277,7 +278,7 @@ export default function CoursePage() {
           )}
         >
           <MapFloatingControls
-            isBookmarkActive={isBookmarkActive}
+            isBookmarkMode={isBookmarkMode}
             isLocationActive={isLocationActive}
             onBookmarkClick={handleBookmarkModeClick}
             onLocationClick={handleLocationClick}
@@ -293,13 +294,14 @@ export default function CoursePage() {
           hasBookmarkNextPage={bookmarkedList.hasNextPage}
           hasNearbyError={hasNearbyError}
           hasLocationError={hasLocationError}
-          isBookmarkMode={isBookmarkActive}
+          isBookmarkMode={isBookmarkMode}
           isBookmarkFetchNextPageError={bookmarkedList.isFetchNextPageError}
           isBookmarkFetchingNextPage={bookmarkedList.isFetchingNextPage}
           isBookmarkLoading={bookmarkedList.isLoading}
           isNearbyLoading={isCurrentLocationLoading || isNearbyLoading}
           isPlaceSelectionLoading={isWaitingForBookmarkMarkers}
           nearbyItems={nearbyItems}
+          pendingBookmarkPlaceIds={pendingBookmarkPlaceIds}
           onClose={() => setBottomSheetPosition('collapsed')}
           onPositionChange={setBottomSheetPosition}
           onTabChange={setBottomSheetTab}

@@ -30,7 +30,7 @@ import type {
   UpdatePlaceBookmarkResponse,
 } from './type';
 
-interface UpdatePlaceBookmarkVariables {
+export interface UpdatePlaceBookmarkVariables {
   placeId: string;
   nextBookmarked: boolean;
 }

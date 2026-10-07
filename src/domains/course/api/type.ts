@@ -73,3 +73,5 @@ export type GetBookmarkedPlaceMarkersParams = NonNullable<
 >;
 export type GetBookmarkedPlaceMarkersResponse =
   components['schemas']['BaseResponseBookmarkedPlaceMarkersResponse'];
+export type BookmarkedPlaceMarkers =
+  components['schemas']['BookmarkedPlaceMarkersResponse'];

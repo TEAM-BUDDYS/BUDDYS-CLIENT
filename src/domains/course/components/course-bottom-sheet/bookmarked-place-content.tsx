@@ -13,6 +13,7 @@ interface BookmarkedPlaceContentProps {
   isFetchingNextPage?: boolean;
   isLoading?: boolean;
   items: readonly NearbyCourseItem[];
+  pendingBookmarkPlaceIds?: ReadonlySet<string>;
   onBookmarkChange: (placeId: string, nextBookmarked: boolean) => void;
   onLoadMore?: () => void;
   onRetry?: () => void;
@@ -25,6 +26,7 @@ export const BookmarkedPlaceContent = ({
   isFetchingNextPage = false,
   isLoading = false,
   items,
+  pendingBookmarkPlaceIds,
   onBookmarkChange,
   onLoadMore,
   onRetry,
@@ -69,7 +71,11 @@ export const BookmarkedPlaceContent = ({
 
   return (
     <>
-      <NearbyCourseContent items={items} onBookmarkChange={onBookmarkChange} />
+      <NearbyCourseContent
+        items={items}
+        pendingBookmarkPlaceIds={pendingBookmarkPlaceIds}
+        onBookmarkChange={onBookmarkChange}
+      />
       <div ref={loadMoreRef} aria-hidden className="h-1" />
       {isFetchNextPageError && onLoadMore ? (
         <button

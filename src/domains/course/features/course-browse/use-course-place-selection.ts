@@ -31,9 +31,16 @@ export const useCoursePlaceSelection = ({
   const selectNearbyPlace = useCallback(
     (placeId: string) => {
       selectionRequestIdRef.current += 1;
-      const place = [...bookmarkedPlaces, ...nearbyPlaces].find(
+      const nearbyPlace = nearbyPlaces.find((item) => item.placeId === placeId);
+      const bookmarkedPlace = bookmarkedPlaces.find(
         (item) => item.placeId === placeId,
       );
+      const place = nearbyPlace
+        ? {
+            ...nearbyPlace,
+            bookmarked: nearbyPlace.bookmarked || Boolean(bookmarkedPlace),
+          }
+        : bookmarkedPlace;
 
       setSelectedPlace(place);
       return place;

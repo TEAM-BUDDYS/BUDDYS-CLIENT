@@ -37,6 +37,7 @@ interface CourseBottomSheetProps {
   isNearbyLoading?: boolean;
   isPlaceSelectionLoading?: boolean;
   nearbyItems: readonly NearbyCourseItem[];
+  pendingBookmarkPlaceIds?: ReadonlySet<string>;
   onClose: () => void;
   onPositionChange: (position: CourseBottomSheetPosition) => void;
   onTabChange: (tab: CourseTabValue) => void;
@@ -64,6 +65,7 @@ export const CourseBottomSheet = ({
   isNearbyLoading = false,
   isPlaceSelectionLoading = false,
   nearbyItems,
+  pendingBookmarkPlaceIds,
   onClose,
   onPositionChange,
   onTabChange,
@@ -126,6 +128,7 @@ export const CourseBottomSheet = ({
               isFetchingNextPage={isBookmarkFetchingNextPage}
               isLoading={isBookmarkLoading}
               items={bookmarkedItems}
+              pendingBookmarkPlaceIds={pendingBookmarkPlaceIds}
               onBookmarkChange={onBookmarkChange}
               onLoadMore={onBookmarkLoadMore}
               onRetry={onBookmarkRetry}
@@ -136,6 +139,7 @@ export const CourseBottomSheet = ({
               hasLocationError={hasLocationError}
               isLoading={isNearbyLoading}
               items={nearbyItems}
+              pendingBookmarkPlaceIds={pendingBookmarkPlaceIds}
               onBookmarkChange={onBookmarkChange}
               onRetry={onNearbyRetry}
             />

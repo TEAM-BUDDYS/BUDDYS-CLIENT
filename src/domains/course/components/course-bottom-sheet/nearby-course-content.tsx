@@ -7,6 +7,7 @@ interface NearbyCourseContentProps {
   hasLocationError?: boolean;
   isLoading?: boolean;
   items: readonly NearbyCourseItem[];
+  pendingBookmarkPlaceIds?: ReadonlySet<string>;
   onBookmarkChange: (placeId: string, nextBookmarked: boolean) => void;
   onRetry?: () => void;
 }
@@ -16,6 +17,7 @@ export const NearbyCourseContent = ({
   hasLocationError = false,
   isLoading = false,
   items,
+  pendingBookmarkPlaceIds,
   onBookmarkChange,
   onRetry,
 }: NearbyCourseContentProps) => {
@@ -63,6 +65,7 @@ export const NearbyCourseContent = ({
           <CourseSaveCard
             place={place}
             description={description}
+            isBookmarkPending={pendingBookmarkPlaceIds?.has(place.placeId)}
             onBookmarkChange={onBookmarkChange}
           />
         </div>
