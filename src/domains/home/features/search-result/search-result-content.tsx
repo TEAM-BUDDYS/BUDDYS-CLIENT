@@ -55,6 +55,7 @@ export const SearchResultContent = () => {
         content={
           <Searchbar
             size="small"
+            aria-label="검색어"
             value={searchKeyword}
             readOnly
             onFocus={handleSearchSheetOpen}
