@@ -3,13 +3,11 @@
 import * as Sentry from '@sentry/nextjs';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 
 import { CHAT_MUTATION_OPTIONS } from '@/domains/chat/api/query';
 import { ProfileBadgeIcon } from '@/shared/components/icons';
-import { Header } from '@/shared/components/layout';
+import { BottomNavigation, Header } from '@/shared/components/layout';
 import { useToast } from '@/shared/components/ui';
-import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
 import { ROUTES } from '@/shared/config';
 
 import type { OtherProfile } from '../../model/profile';
@@ -27,7 +25,6 @@ export const OtherProfilePageView = ({
   userId,
   profile,
 }: OtherProfilePageViewProps) => {
-  const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
   const router = useRouter();
   const { showToast } = useToast();
 
@@ -67,15 +64,9 @@ export const OtherProfilePageView = ({
     );
   };
 
-  const handleCourseTabClick = () => {
-    setIsComingSoonOpen(true);
-  };
-
-  const handleModalClose = () => setIsComingSoonOpen(false);
-
   return (
     <div className="flex h-dvh flex-col">
-      <Header hasBackButton content={profile.nickname} />
+      <Header hasBackButton />
 
       <main className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto pt-9 pb-9">
         <UserProfile
@@ -113,15 +104,11 @@ export const OtherProfilePageView = ({
         )}
 
         {!profile.isWithdrawn && (
-          <OtherContentSection
-            userId={userId}
-            onCourseTabClick={handleCourseTabClick}
-            className="mt-3"
-          />
+          <OtherContentSection userId={userId} className="mt-3" />
         )}
       </main>
 
-      <ComingSoonModal open={isComingSoonOpen} onClose={handleModalClose} />
+      <BottomNavigation />
     </div>
   );
 };

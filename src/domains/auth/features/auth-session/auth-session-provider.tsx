@@ -1,5 +1,6 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { usePathname } from 'next/navigation';
 import {
   createContext,
@@ -19,6 +20,7 @@ import {
   loginWithGoogle,
   loginWithKakao,
   reissueAccessToken,
+  requestLogout,
 } from '../../api/query';
 import type { GoogleLoginParams, KakaoLoginParams } from '../../api/type';
 import type { AuthSession, AuthStatusTypes } from '../../model/auth';
@@ -34,8 +36,10 @@ interface AuthSessionContextValue {
   isOnboardingCompletionVisible: boolean;
   authenticateWithKakao: (params: KakaoLoginParams) => Promise<AuthSession>;
   authenticateWithGoogle: (params: GoogleLoginParams) => Promise<AuthSession>;
+  logout: () => Promise<void>;
   markOnboardingCompleted: (options: MarkOnboardingCompletedOptions) => void;
   finishOnboarding: () => void;
+  finishWithdraw: () => void;
 }
 
 interface AuthSessionProviderProps {
@@ -57,6 +61,7 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
   >(null);
   const [isOnboardingCompletionVisible, setIsOnboardingCompletionVisible] =
     useState(false);
+  const queryClient = useQueryClient();
 
   const setAuthenticatedSession = useCallback((loginResponse: AuthSession) => {
     setAccessToken(loginResponse.accessToken);
@@ -73,12 +78,23 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
   }, []);
 
   const clearSession = useCallback(() => {
+    queryClient.clear();
+
     setAccessToken(null);
     setUserId(null);
     setOnboardingCompleted(null);
     setIsOnboardingCompletionVisible(false);
     setStatus('unauthenticated');
-  }, []);
+  }, [queryClient]);
+
+  const logout = useCallback(async () => {
+    await requestLogout();
+    clearSession();
+  }, [clearSession]);
+
+  const finishWithdraw = useCallback(() => {
+    clearSession();
+  }, [clearSession]);
 
   const refreshSession = useCallback(async () => {
     try {
@@ -165,15 +181,19 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
       isOnboardingCompletionVisible,
       authenticateWithKakao,
       authenticateWithGoogle,
+      logout,
       markOnboardingCompleted,
       finishOnboarding,
+      finishWithdraw,
     }),
     [
       authenticateWithKakao,
       authenticateWithGoogle,
       finishOnboarding,
       isOnboardingCompletionVisible,
+      logout,
       markOnboardingCompleted,
+      finishWithdraw,
       onboardingCompleted,
       status,
       userId,

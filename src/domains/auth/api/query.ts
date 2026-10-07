@@ -100,6 +100,10 @@ export const reissueAccessToken = async () =>
       .json<ReissueResponse>(),
   );
 
+export const requestLogout = async () => {
+  await apiClient.post(END_POINT.AUTH.LOGOUT);
+};
+
 export const AUTH_MUTATION_OPTIONS = {
   KAKAO_LOGIN: () =>
     mutationOptions({
