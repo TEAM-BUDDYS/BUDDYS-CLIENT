@@ -142,6 +142,7 @@ const CourseTabPanel = ({ userId }: { userId: number }) => {
     data,
     fetchNextPage,
     hasNextPage,
+    isFetching,
     isFetchNextPageError,
     isFetchingNextPage,
   } = useSuspenseInfiniteQuery(
@@ -158,8 +159,7 @@ const CourseTabPanel = ({ userId }: { userId: number }) => {
     fetchNextPage();
   }, [fetchNextPage]);
   const loadMoreRef = useInfiniteScroll<HTMLDivElement>({
-    enabled:
-      Boolean(hasNextPage) && !isFetchingNextPage && !isFetchNextPageError,
+    enabled: Boolean(hasNextPage) && !isFetching && !isFetchNextPageError,
     onIntersect: handleIntersect,
   });
 
