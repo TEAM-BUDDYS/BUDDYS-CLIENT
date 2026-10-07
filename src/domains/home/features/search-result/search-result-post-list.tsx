@@ -60,7 +60,7 @@ export const SearchResultPostList = ({
     );
   };
 
-  if (posts.length === 0) {
+  if (posts.length === 0 && !hasNextPage) {
     return (
       <EmptyState
         title="검색 결과가 없어요"
