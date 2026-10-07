@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { type ChangeEvent, useState } from 'react';
 
 import firstProfileImage from '@/shared/assets/icons/profile.svg';
 import {
@@ -8,10 +8,9 @@ import {
   ProfileImageInput,
   TextField,
 } from '@/shared/components/ui';
+import { GENDER_OPTIONS } from '@/shared/constants/gender';
+import { PROFILE_BIO_MAX_LENGTH } from '@/shared/utils/profile-input';
 import type { GenderType } from '@/types/gender';
-
-import { isValidDate } from '../../utils/is-valid-date';
-import { GENDER_OPTIONS } from './constant';
 
 interface OnboardProfileStepProps {
   nickname: string;
@@ -22,13 +21,16 @@ interface OnboardProfileStepProps {
   birthDate: string;
   bio: string;
   isUploading: boolean;
-  profileImageFile: File | null;
+  profileImagePreviewUrl: string | null;
+  imageError: string | null;
+  birthDateError: string | undefined;
+  onBirthDateBlur: () => void;
   onNicknameChange: (value: string) => void;
   onCheckNicknameDuplicate: () => void;
   onGenderChange: (value: GenderType) => void;
   onBirthDateChange: (value: string) => void;
   onBioChange: (value: string) => void;
-  onProfileImageChange: (file: File | null) => void;
+  onProfileImageChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const OnboardProfileStep = ({
@@ -40,7 +42,10 @@ export const OnboardProfileStep = ({
   birthDate,
   bio,
   isUploading,
-  profileImageFile,
+  profileImagePreviewUrl,
+  imageError,
+  birthDateError,
+  onBirthDateBlur,
   onNicknameChange,
   onCheckNicknameDuplicate,
   onGenderChange,
@@ -53,13 +58,6 @@ export const OnboardProfileStep = ({
   const genderLabels = GENDER_OPTIONS.map((option) => option.label);
   const [isBlur, setIsBlur] = useState(false);
   const [currentNickname, setCurrentNickname] = useState('');
-  const [isBirthDateTouched, setIsBirthDateTouched] = useState(false);
-
-  const birthDateError =
-    isBirthDateTouched && birthDate.trim() && !isValidDate(birthDate)
-      ? '올바르지 않은 형식입니다.'
-      : undefined;
-
   const handleGenderChange = (label: string) => {
     const selectedGender = GENDER_OPTIONS.find(
       (option) => option.label === label,
@@ -69,28 +67,6 @@ export const OnboardProfileStep = ({
       onGenderChange(selectedGender.value);
     }
   };
-
-  const handleProfileImageChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    onProfileImageChange(event.target.files?.[0] ?? null);
-  };
-
-  const profileImagePreviewUrl = useMemo(() => {
-    if (!profileImageFile) {
-      return null;
-    }
-
-    return URL.createObjectURL(profileImageFile);
-  }, [profileImageFile]);
-
-  useEffect(() => {
-    return () => {
-      if (profileImagePreviewUrl) {
-        URL.revokeObjectURL(profileImagePreviewUrl);
-      }
-    };
-  }, [profileImagePreviewUrl]);
 
   const profileImageSrc = profileImagePreviewUrl ?? firstProfileImage;
 
@@ -105,8 +81,13 @@ export const OnboardProfileStep = ({
             disabled={isUploading}
             label="프로필 이미지 등록"
             src={profileImageSrc}
-            onChange={handleProfileImageChange}
+            onChange={onProfileImageChange}
           />
+          {imageError && (
+            <p role="alert" className="text-caption-r-12 text-error">
+              {imageError}
+            </p>
+          )}
           <p className="text-body-m-15 text-gray-800">
             {isBlur && currentNickname.length > 0 ? currentNickname : '닉네임'}
           </p>
@@ -149,12 +130,12 @@ export const OnboardProfileStep = ({
           value={birthDate}
           status={birthDateError ? 'error' : 'default'}
           message={birthDateError}
-          onBlur={() => setIsBirthDateTouched(true)}
+          onBlur={onBirthDateBlur}
           onChange={(event) => onBirthDateChange(event.target.value)}
         />
         <TextField
           label="소개"
-          maxLength={30}
+          maxLength={PROFILE_BIO_MAX_LENGTH}
           placeholder="한 줄로 나를 소개해보세요"
           value={bio}
           onChange={(event) => onBioChange(event.target.value)}

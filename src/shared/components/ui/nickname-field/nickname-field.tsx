@@ -12,7 +12,7 @@ interface NicknameFieldProps extends Pick<
   value: string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   initialNickname: string;
-  onCheckDuplicate: () => void;
+  onCheckDuplicate?: () => void;
   isChecking?: boolean;
   checkedNickname?: string | null;
 }
@@ -39,6 +39,7 @@ export const NicknameField = ({
     checkedNickname !== null && checkedNickname === value;
   const isCheckButtonDisabled =
     disabled ||
+    !onCheckDuplicate ||
     trimmedLength === 0 ||
     trimmedLength > NICKNAME_MAX_LENGTH ||
     isNicknameUnchanged ||
