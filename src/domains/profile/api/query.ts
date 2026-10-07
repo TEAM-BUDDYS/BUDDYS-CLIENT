@@ -3,6 +3,7 @@ import { isHTTPError } from 'ky';
 
 import {
   apiClient,
+  COURSE_QUERY_KEY,
   createSearchParams,
   END_POINT,
   POST_QUERY_KEY,
@@ -11,6 +12,8 @@ import {
 
 import type { MyProfile, OtherProfile } from '../model/profile';
 import type {
+  GetBookmarkedCoursesParams,
+  GetBookmarkedCoursesResponse,
   GetBookmarkedPostsParams,
   GetBookmarkedPostsResponse,
   GetMyPostsParams,
@@ -214,6 +217,22 @@ const getBookmarkedPosts = async (params?: GetBookmarkedPostsParams) => {
   return response;
 };
 
+const getBookmarkedCourses = async (params?: GetBookmarkedCoursesParams) => {
+  const response = await apiClient
+    .get(END_POINT.COURSE.BOOKMARKS, {
+      searchParams: createSearchParams(params),
+    })
+    .json<GetBookmarkedCoursesResponse>();
+
+  if (response.success === false) {
+    throw new Error(
+      response.message || '저장한 코스 목록을 불러오지 못했습니다.',
+    );
+  }
+
+  return response;
+};
+
 export const PROFILE_QUERY_OPTIONS = {
   ME: () =>
     queryOptions({
@@ -269,6 +288,22 @@ export const PROFILE_QUERY_OPTIONS = {
       queryKey: POST_QUERY_KEY.BOOKMARKS_INFINITE(params),
       queryFn: ({ pageParam }) =>
         getBookmarkedPosts({ ...params, page: pageParam }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        const page = lastPage.data?.page;
+
+        if (!lastPage.data?.hasNext || typeof page !== 'number') {
+          return undefined;
+        }
+
+        return page + 1;
+      },
+    }),
+  BOOKMARKED_COURSES_INFINITE: (params?: GetBookmarkedCoursesParams) =>
+    infiniteQueryOptions({
+      queryKey: COURSE_QUERY_KEY.BOOKMARKS_INFINITE(params),
+      queryFn: ({ pageParam }) =>
+        getBookmarkedCourses({ ...params, page: pageParam }),
       initialPageParam: 0,
       getNextPageParam: (lastPage) => {
         const page = lastPage.data?.page;
