@@ -7,6 +7,12 @@ export const END_POINT = {
     GOOGLE: 'api/v1/auth/google',
     REISSUE: 'api/v1/auth/reissue',
   },
+  VERIFICATION: {
+    UNIVERSITY_EMAIL: 'api/v1/verifications/university/email',
+    UNIVERSITY_EMAIL_CONFIRM: 'api/v1/verifications/university/email/confirm',
+    EXCHANGE: 'api/v1/verifications/exchange',
+    EXCHANGE_UPLOAD_URL: 'api/v1/verifications/exchange/upload-url',
+  },
   CHAT_ROOM: {
     LIST: 'api/v1/chat-rooms',
     CREATE: 'api/v1/chat-rooms',
