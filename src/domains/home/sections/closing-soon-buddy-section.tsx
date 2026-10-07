@@ -50,7 +50,7 @@ export const ClosingSoonBuddySection = () => {
     <section className="flex flex-col gap-6">
       <SectionHeader
         title="곧 마감임박!"
-        description="오늘 바로 동행 버디를 찾아보세요"
+        description="오늘 바로 동행할 버디를 찾아보세요"
       />
       <div className="flex flex-col gap-5">
         {MOCK_CLOSING_SOON_POSTS.map((post) => (

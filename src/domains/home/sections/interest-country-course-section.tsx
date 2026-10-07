@@ -39,7 +39,7 @@ export const InterestCountryCourseSection = () => {
         moreHref={ROUTES.COURSE.CUSTOMIZED_EXPLORE}
       />
       <div className="-mx-4 scrollbar-none overflow-x-auto px-4">
-        <div className="flex gap-3">
+        <div className="flex gap-5">
           {MOCK_INTEREST_COUNTRY_COURSES.map((course) => (
             <CourseTileCard
               key={course.courseId}

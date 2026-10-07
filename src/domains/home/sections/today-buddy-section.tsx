@@ -38,7 +38,7 @@ const TodayBuddyPostList = () => {
 
 export const TodayBuddySection = () => {
   return (
-    <section className="pt-5" aria-label="오늘의 추천 동행">
+    <section className="pt-3" aria-label="오늘의 추천 동행">
       <AsyncBoundary className="py-8">
         <TodayBuddyPostList />
       </AsyncBoundary>

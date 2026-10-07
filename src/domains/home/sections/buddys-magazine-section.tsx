@@ -30,7 +30,7 @@ export const BuddysMagazineSection = () => {
         title={`${month}월 버디즈 매거진`}
         moreHref={ROUTES.MAGAZINE}
       />
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-5">
         {MOCK_HOME_MAGAZINES.map((magazine) => (
           <MagazineCard
             key={magazine.magazineId}
