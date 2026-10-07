@@ -21,12 +21,12 @@ Vercel Environment Variable
 
 GA4의 자동 페이지 조회를 사용하지 않고 App Router의 pathname 변경을 기준으로 `page_view`를 직접 전송합니다. 실제 화면 전환은 각각 집계하되 보고서에 내부 식별자나 검색어가 남지 않도록 보고용 경로를 정규화합니다.
 
-| Browser path                  | Analytics path        |
-| ----------------------------- | --------------------- |
-| `/posts/123`                  | `/posts/:postId`      |
-| `/profile/123`                | `/profile/:userId`    |
-| `/chat/123`                   | `/chat/:roomId`       |
-| `/customized-explore?keyword` | `/customized-explore` |
+| Browser path      | Analytics path     |
+| ----------------- | ------------------ |
+| `/posts/123`      | `/posts/:postId`   |
+| `/profile/123`    | `/profile/:userId` |
+| `/chat/123`       | `/chat/:roomId`    |
+| `/search?keyword` | `/search`          |
 
 `/auth/kakao/callback` 최초 진입에서는 Analytics script를 로드하지 않으며 페이지 조회에서도 제외합니다. URL query string은 Analytics의 `page_location`과 `page_referrer`에 포함하지 않습니다.
 

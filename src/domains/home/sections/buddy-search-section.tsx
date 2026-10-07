@@ -118,7 +118,7 @@ export const BuddySearchSection = () => {
           title="원하는 조건의 동행을 찾아보세요"
           rightSlot={<ChevronRightIcon className="size-6 text-gray-500" />}
           rightSlotLabel="맞춤 탐색 더보기"
-          href={ROUTES.CUSTOMIZED_EXPLORE}
+          href={ROUTES.SEARCH}
         />
         <div className="-mx-4 scrollbar-none overflow-x-auto border-b border-gray-100 px-4 py-3">
           <div className="flex gap-2">
