@@ -1,29 +1,86 @@
-import { LocationListItem } from '@/domains/profile/components/location-list-item/location-list-item';
+'use client';
 
-// TODO: 저장한 장소 목록 API 연동 및 장소 상세 경로 확정 시 교체
-const MOCK_SAVED_PLACES = [
-  {
-    placeId: 1,
-    title: '오르세 미술관',
-    description: 'Esplanade Valéry Giscard dEstaing, 75007 Paris, 프랑스',
-    href: '#',
-  },
-  {
-    placeId: 2,
-    title: '오르세 미술관',
-    description: 'Esplanade Valéry Giscard dEstaing, 75007 Paris, 프랑스',
-    href: '#',
-  },
-];
+import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
+import { useCallback } from 'react';
+
+import { PLACE_QUERY_OPTIONS } from '@/domains/course/api/query';
+import { LocationListItem } from '@/domains/profile/components/location-list-item/location-list-item';
+import { AsyncBoundary, EmptyState } from '@/shared/components/ui';
+import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
+
+const SAVED_PLACES_PAGE_SIZE = 20;
+
+const SavedPlaceItems = () => {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchNextPageError,
+    isFetchingNextPage,
+  } = useSuspenseInfiniteQuery(
+    PLACE_QUERY_OPTIONS.BOOKMARKS({ size: SAVED_PLACES_PAGE_SIZE }),
+  );
+
+  const places = data.pages.flatMap((page) => page.places);
+
+  const handleIntersect = useCallback(() => {
+    void fetchNextPage();
+  }, [fetchNextPage]);
+  const loadMoreRef = useInfiniteScroll<HTMLDivElement>({
+    enabled:
+      Boolean(hasNextPage) && !isFetchingNextPage && !isFetchNextPageError,
+    onIntersect: handleIntersect,
+  });
+
+  if (places.length === 0 && !hasNextPage) {
+    return (
+      <EmptyState
+        title="장소 정보를 찾을 수 없어요"
+        description="내 장소를 저장해 보세요"
+        className="pt-25.25"
+      />
+    );
+  }
+
+  return (
+    <>
+      <ul className="-mx-4">
+        {places.map((place) => (
+          <li key={place.placeId}>
+            <LocationListItem
+              title={place.name}
+              description={place.address ?? ''}
+              href={place.googleMapsUrl}
+            />
+          </li>
+        ))}
+      </ul>
+      <div ref={loadMoreRef} className="h-1" aria-hidden="true" />
+      {isFetchingNextPage && (
+        <p className="text-caption-m-12 py-4 text-center text-gray-500">
+          장소를 불러오는 중이에요
+        </p>
+      )}
+      {isFetchNextPageError && (
+        <button
+          type="button"
+          className="text-caption-m-12 text-mint-400 mx-auto block py-4"
+          onClick={() => fetchNextPage()}
+        >
+          다시 불러오기
+        </button>
+      )}
+    </>
+  );
+};
 
 export const SavedPlaceList = () => {
   return (
-    <ul className="-mx-4">
-      {MOCK_SAVED_PLACES.map(({ placeId, ...place }) => (
-        <li key={placeId}>
-          <LocationListItem {...place} />
-        </li>
-      ))}
-    </ul>
+    <AsyncBoundary
+      className="py-8"
+      loadingFallback={<div className="min-h-96" aria-busy="true" />}
+    >
+      <SavedPlaceItems />
+    </AsyncBoundary>
   );
 };
