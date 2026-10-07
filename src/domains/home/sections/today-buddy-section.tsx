@@ -2,7 +2,6 @@
 
 import { useSuspenseQuery } from '@tanstack/react-query';
 
-import { SectionHeader } from '@/domains/home/components/section-header/section-header';
 import { RECOMMENDATION_QUERY_OPTIONS } from '@/shared/api';
 import { AsyncBoundary, EmptyState } from '@/shared/components/ui';
 
@@ -39,11 +38,7 @@ const TodayBuddyPostList = () => {
 
 export const TodayBuddySection = () => {
   return (
-    <section className="flex flex-col gap-5 pt-5">
-      <SectionHeader
-        label="오늘의 추천 동행"
-        title="함께 떠날 버디를 찾아보세요"
-      />
+    <section className="pt-3" aria-label="오늘의 추천 동행">
       <AsyncBoundary className="py-8">
         <TodayBuddyPostList />
       </AsyncBoundary>
