@@ -16,11 +16,15 @@ import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 
 import { PROFILE_QUERY_OPTIONS } from '../api/query';
 import type { UserPost } from '../api/type';
-import type { ContentTabValue, PostItem } from '../model/content';
+import { CourseImageGrid } from '../components/course-image-grid/course-image-grid';
+import {
+  type ContentTabValue,
+  MOCK_PROFILE_COURSES,
+  type PostItem,
+} from '../model/content';
 
 interface OtherContentSectionProps {
   userId: number;
-  onCourseTabClick: () => void;
   className?: string;
 }
 
@@ -124,35 +128,45 @@ const PostTabPanel = ({ userId }: { userId: number }) => {
   );
 };
 
+const CourseTabPanel = () => {
+  const courses = MOCK_PROFILE_COURSES;
+
+  if (courses.length === 0) {
+    return (
+      <EmptyState
+        title="아직 기록된 코스가 없어요"
+        description="코스가 등록되면 이곳에서 볼 수 있어요"
+        className="mt-25"
+      />
+    );
+  }
+
+  return <CourseImageGrid courses={courses} className="pt-3" />;
+};
+
 export const OtherContentSection = ({
   userId,
-  onCourseTabClick,
   className,
 }: OtherContentSectionProps) => {
   const [tab, setTab] = useState<ContentTabValue>('post');
 
-  const handleTabChange = (value: string) => {
-    const nextTab = value as ContentTabValue;
-
-    if (nextTab === 'course') {
-      onCourseTabClick();
-      return;
-    }
-
-    setTab(nextTab);
-  };
-
   return (
     <div className={cn('flex w-full flex-col', className)}>
-      <Tab items={TAB_ITEMS} value={tab} onChange={handleTabChange} />
+      <Tab
+        items={TAB_ITEMS}
+        value={tab}
+        onChange={(value) => setTab(value as ContentTabValue)}
+      />
 
-      {tab === 'post' && (
+      {tab === 'post' ? (
         <AsyncBoundary
           className="py-20"
           loadingFallback={<div className="min-h-72" aria-busy="true" />}
         >
           <PostTabPanel userId={userId} />
         </AsyncBoundary>
+      ) : (
+        <CourseTabPanel />
       )}
     </div>
   );
