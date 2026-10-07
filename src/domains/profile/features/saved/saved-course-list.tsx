@@ -51,7 +51,6 @@ const SavedCourseItems = () => {
       <EmptyState
         title="저장한 코스가 없어요"
         description="마음에 드는 코스를 저장해보세요"
-        // 목록 영역의 mt-6(24px)과 합쳐 필터바와 125px 간격
         className="pt-25.25"
       />
     );
