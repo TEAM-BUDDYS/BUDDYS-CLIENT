@@ -22,6 +22,11 @@ export type GetCourseCommentsResponse =
   components['schemas']['BaseResponseCourseCommentListResponse'];
 export type GetCourseDetailResponse =
   components['schemas']['BaseResponseCourseDetailResponse'];
+export type GetCoursesParams = NonNullable<
+  operations['getCourses']['parameters']['query']
+>;
+export type GetCoursesResponse =
+  components['schemas']['BaseResponseCourseListResponse'];
 export type GetBookmarkedCoursesParams = NonNullable<
   operations['getBookmarkedCourses']['parameters']['query']
 >;

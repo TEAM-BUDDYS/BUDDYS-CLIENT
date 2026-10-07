@@ -18,15 +18,3 @@ export const COURSE_CATEGORIES = [
   { id: 5, name: '문화생활' },
   { id: 6, name: '일상생활' },
 ] as const;
-
-export const COURSE_CITIES = [
-  '파리',
-  '바르셀로나',
-  '뉴욕',
-  '밴쿠버',
-  '로마',
-  '취리히',
-  '런던',
-  '베를린',
-  '프라하',
-] as const;

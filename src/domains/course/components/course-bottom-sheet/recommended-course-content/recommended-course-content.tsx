@@ -1,7 +1,6 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
 
 import {
   COURSE_MUTATION_OPTIONS,
@@ -10,56 +9,25 @@ import {
 import type {
   CourseListPage,
   GetBookmarkedCoursesParams,
+  GetCoursesParams,
 } from '@/domains/course/api/type';
 import { useCourseBrowse } from '@/domains/course/features/course-browse/course-browse-provider';
 import {
   COURSE_CATEGORIES,
-  COURSE_CITIES,
   COURSE_FILTER_COUNTRIES,
 } from '@/domains/course/model/recommended-course';
 import { COURSE_QUERY_KEY } from '@/shared/api';
 import { useToast } from '@/shared/components/ui';
 
-import {
-  CourseFilterSection,
-  type FilteredCourseItem,
-} from './course-filter-section';
+import { CourseFilterSection } from './course-filter-section';
 import { SavedCourseSection } from './saved-course-section';
 import { SuggestedCourseSection } from './suggested-course-section';
-
-const COURSE_IMAGES = [
-  '/images/og_image.png',
-  '/icons/buddys-pwa-logo-192.png',
-  '/icons/buddys-pwa-logo-512.png',
-  '/apple-icon.png',
-] as const;
 
 const DEFAULT_VISIBLE_COURSE_COUNT = 4;
 const SAVED_COURSE_QUERY_PARAMS = {
   page: 0,
   size: 3,
 } satisfies GetBookmarkedCoursesParams;
-const INITIAL_COURSES: readonly FilteredCourseItem[] =
-  COURSE_FILTER_COUNTRIES.map((country, index) => ({
-    id: index + 1,
-    countryIds: [country.id],
-    tagIds: [COURSE_CATEGORIES[index % COURSE_CATEGORIES.length].id],
-    title: `${country.name} 추천 코스`,
-    description: `${country.name} · ${COURSE_CITIES[index]}`,
-    images: COURSE_IMAGES,
-    isBookmarked: false,
-  }));
-
-const INITIAL_SUGGESTED_COURSES: readonly FilteredCourseItem[] =
-  COURSE_CATEGORIES.map((category, index) => ({
-    id: index + 101,
-    countryIds: [COURSE_FILTER_COUNTRIES[index].id],
-    tagIds: [category.id],
-    title: `${category.name} 추천 코스`,
-    description: `${COURSE_FILTER_COUNTRIES[index].name} · ${COURSE_CITIES[index]}`,
-    images: COURSE_IMAGES,
-    isBookmarked: false,
-  }));
 
 interface RecommendedCourseContentProps {
   onExploreClick: () => void;
@@ -78,16 +46,43 @@ export const RecommendedCourseContent = ({
     setSelectedRecommendedCategoryId,
     setSelectedRecommendedCountryId,
   } = useCourseBrowse();
-  const [courses, setCourses] = useState(INITIAL_COURSES);
-  const [suggestedCourses, setSuggestedCourses] = useState(
-    INITIAL_SUGGESTED_COURSES,
+  const activeRecommendedCategoryId =
+    selectedRecommendedCategoryId ?? COURSE_CATEGORIES[0].id;
+  const courseQueryParams = {
+    page: 0,
+    size: DEFAULT_VISIBLE_COURSE_COUNT,
+    ...(selectedRecommendedCountryId === undefined
+      ? {}
+      : { countryId: selectedRecommendedCountryId }),
+  } satisfies GetCoursesParams;
+  const suggestedCourseQueryParams = {
+    page: 0,
+    size: DEFAULT_VISIBLE_COURSE_COUNT,
+    tagId: activeRecommendedCategoryId,
+  } satisfies GetCoursesParams;
+  const coursesQuery = useQuery(COURSE_QUERY_OPTIONS.LIST(courseQueryParams));
+  const suggestedCoursesQuery = useQuery(
+    COURSE_QUERY_OPTIONS.LIST(suggestedCourseQueryParams),
   );
   const savedCoursesQuery = useQuery(
     COURSE_QUERY_OPTIONS.BOOKMARKS(SAVED_COURSE_QUERY_PARAMS),
   );
-  const savedCourseBookmarkMutation = useMutation({
+  const courseBookmarkMutation = useMutation({
     ...COURSE_MUTATION_OPTIONS.UPDATE_BOOKMARK(),
     onSuccess: ({ courseId, bookmarked }) => {
+      queryClient.setQueriesData<CourseListPage>(
+        { queryKey: COURSE_QUERY_KEY.LISTS_ALL() },
+        (coursePage) =>
+          coursePage && {
+            ...coursePage,
+            content: coursePage.content.map((course) =>
+              course.courseId === courseId
+                ? { ...course, isBookmarked: bookmarked }
+                : course,
+            ),
+          },
+      );
+
       if (!bookmarked) {
         queryClient.setQueriesData<CourseListPage>(
           { queryKey: COURSE_QUERY_KEY.BOOKMARKS_ALL() },
@@ -104,6 +99,9 @@ export const RecommendedCourseContent = ({
       void queryClient.invalidateQueries({
         queryKey: COURSE_QUERY_KEY.BOOKMARKS_ALL(),
       });
+      void queryClient.invalidateQueries({
+        queryKey: COURSE_QUERY_KEY.DETAIL(courseId),
+      });
     },
     onError: () => {
       showToast('북마크를 변경하지 못했어요. 다시 시도해 주세요.', {
@@ -111,18 +109,9 @@ export const RecommendedCourseContent = ({
       });
     },
   });
+  const courses = coursesQuery.data?.content ?? [];
+  const suggestedCourses = suggestedCoursesQuery.data?.content ?? [];
   const savedCourses = savedCoursesQuery.data?.content ?? [];
-  const activeRecommendedCategoryId =
-    selectedRecommendedCategoryId ?? COURSE_CATEGORIES[0].id;
-  const filteredCourses =
-    selectedRecommendedCountryId === undefined
-      ? courses.slice(0, DEFAULT_VISIBLE_COURSE_COUNT)
-      : courses.filter((course) =>
-          course.countryIds.includes(selectedRecommendedCountryId),
-        );
-  const filteredSuggestedCourses = suggestedCourses.filter((course) =>
-    course.tagIds.includes(activeRecommendedCategoryId),
-  );
 
   const handleCountryChange = (countryId: number) => {
     setSelectedRecommendedCountryId((currentCountryId) =>
@@ -138,35 +127,9 @@ export const RecommendedCourseContent = ({
     courseId: number,
     nextBookmarked: boolean,
   ) => {
-    setCourses((currentCourses) =>
-      currentCourses.map((course) =>
-        course.id === courseId
-          ? { ...course, isBookmarked: nextBookmarked }
-          : course,
-      ),
-    );
-  };
+    if (courseBookmarkMutation.isPending) return;
 
-  const handleSuggestedCourseBookmarkChange = (
-    courseId: number,
-    nextBookmarked: boolean,
-  ) => {
-    setSuggestedCourses((currentCourses) =>
-      currentCourses.map((course) =>
-        course.id === courseId
-          ? { ...course, isBookmarked: nextBookmarked }
-          : course,
-      ),
-    );
-  };
-
-  const handleSavedCourseBookmarkChange = (
-    courseId: number,
-    nextBookmarked: boolean,
-  ) => {
-    if (savedCourseBookmarkMutation.isPending) return;
-
-    savedCourseBookmarkMutation.mutate({
+    courseBookmarkMutation.mutate({
       courseId,
       bookmarked: nextBookmarked,
     });
@@ -176,11 +139,15 @@ export const RecommendedCourseContent = ({
     <div className="mb-25">
       <CourseFilterSection
         countries={COURSE_FILTER_COUNTRIES}
-        courses={filteredCourses}
+        courses={courses}
+        hasError={coursesQuery.isError}
+        isBookmarkPending={courseBookmarkMutation.isPending}
+        isLoading={coursesQuery.isPending}
         selectedCountryId={selectedRecommendedCountryId}
         onCountryChange={handleCountryChange}
         onCourseBookmarkChange={handleCourseBookmarkChange}
         onExploreClick={onExploreClick}
+        onRetry={() => void coursesQuery.refetch()}
       />
 
       <hr
@@ -190,11 +157,15 @@ export const RecommendedCourseContent = ({
 
       <SuggestedCourseSection
         categories={COURSE_CATEGORIES}
-        courses={filteredSuggestedCourses}
+        courses={suggestedCourses}
+        hasError={suggestedCoursesQuery.isError}
+        isBookmarkPending={courseBookmarkMutation.isPending}
+        isLoading={suggestedCoursesQuery.isPending}
         selectedCategoryId={activeRecommendedCategoryId}
         onCategoryChange={handleCategoryChange}
-        onCourseBookmarkChange={handleSuggestedCourseBookmarkChange}
+        onCourseBookmarkChange={handleCourseBookmarkChange}
         onMoreClick={onSuggestedMoreClick}
+        onRetry={() => void suggestedCoursesQuery.refetch()}
       />
 
       <hr
@@ -205,9 +176,9 @@ export const RecommendedCourseContent = ({
       <SavedCourseSection
         courses={savedCourses}
         hasError={savedCoursesQuery.isError}
-        isBookmarkPending={savedCourseBookmarkMutation.isPending}
+        isBookmarkPending={courseBookmarkMutation.isPending}
         isLoading={savedCoursesQuery.isPending}
-        onCourseBookmarkChange={handleSavedCourseBookmarkChange}
+        onCourseBookmarkChange={handleCourseBookmarkChange}
         onRetry={() => void savedCoursesQuery.refetch()}
       />
     </div>

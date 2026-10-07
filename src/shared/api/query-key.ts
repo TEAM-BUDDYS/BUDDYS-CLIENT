@@ -78,6 +78,9 @@ export const COUNTRY_QUERY_KEY = {
 
 export const COURSE_QUERY_KEY = {
   ALL: ['courses'] as const,
+  LISTS_ALL: () => [...COURSE_QUERY_KEY.ALL, 'list'] as const,
+  LIST: (params?: GetQueryParams<'/api/v1/courses'>) =>
+    [...COURSE_QUERY_KEY.LISTS_ALL(), params ?? {}] as const,
   BOOKMARKS_ALL: () => [...COURSE_QUERY_KEY.ALL, 'bookmarks'] as const,
   BOOKMARKS: (params?: GetQueryParams<'/api/v1/courses/bookmarks'>) =>
     [...COURSE_QUERY_KEY.BOOKMARKS_ALL(), params ?? {}] as const,

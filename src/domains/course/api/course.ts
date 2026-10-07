@@ -23,6 +23,8 @@ import type {
   GetCourseCommentsParams,
   GetCourseCommentsResponse,
   GetCourseDetailResponse,
+  GetCoursesParams,
+  GetCoursesResponse,
   UpdateCourseBookmarkResponse,
 } from './type';
 
@@ -35,6 +37,28 @@ interface UpdateCourseBookmarkVariables {
   courseId: number;
   bookmarked: boolean;
 }
+
+const getCourses = async (
+  params: GetCoursesParams,
+  signal?: AbortSignal,
+): Promise<CourseListPage> => {
+  const response = await apiClient
+    .get(END_POINT.COURSE.LIST, {
+      searchParams: createSearchParams(params),
+      signal,
+    })
+    .json<GetCoursesResponse>();
+
+  if (
+    response.success !== true ||
+    !response.data ||
+    !Array.isArray(response.data.content)
+  ) {
+    throw new Error(response.message || '코스 목록을 불러오지 못했습니다.');
+  }
+
+  return response.data;
+};
 
 const getBookmarkedCourses = async (
   params: GetBookmarkedCoursesParams,
@@ -143,6 +167,11 @@ const updateCourseBookmark = async ({
 };
 
 export const COURSE_QUERY_OPTIONS = {
+  LIST: (params: GetCoursesParams) =>
+    queryOptions({
+      queryKey: COURSE_QUERY_KEY.LIST(params),
+      queryFn: ({ signal }) => getCourses(params, signal),
+    }),
   BOOKMARKS: (params: GetBookmarkedCoursesParams) =>
     queryOptions({
       queryKey: COURSE_QUERY_KEY.BOOKMARKS(params),
