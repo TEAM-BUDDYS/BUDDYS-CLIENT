@@ -51,8 +51,8 @@ const SavedPartnerItems = () => {
   if (partners.length === 0 && !hasNextPage) {
     return (
       <EmptyState
-        title="저장한 동행 게시물이 없어요"
-        description="마음에 드는 동행 게시물을 저장해보세요"
+        title="게시물을 찾을 수 없어요"
+        description="동행 게시물을 저장해 보세요"
         className="pt-25.25"
       />
     );
