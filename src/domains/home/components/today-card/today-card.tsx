@@ -7,10 +7,10 @@ import { cn } from '@/lib/cn';
 import { BookmarkButton, CommonImage, Tag } from '@/shared/components/ui';
 import { formatFullDate } from '@/shared/utils/format-date-range';
 
-import { DisplayablePostSummary } from '../../model/buddy-search';
+import type { DisplayableClosingSoonPost } from '../../model/closing-soon';
 
 interface TodayCardProps {
-  post: DisplayablePostSummary;
+  post: DisplayableClosingSoonPost;
 }
 
 export const TodayCard = ({ post }: TodayCardProps) => {

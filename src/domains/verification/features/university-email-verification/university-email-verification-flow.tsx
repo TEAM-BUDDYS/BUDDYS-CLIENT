@@ -1,11 +1,13 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import { useQueryClient } from '@tanstack/react-query';
 import { isHTTPError } from 'ky';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { useAuthSession } from '@/domains/auth/features/auth-session/auth-session-provider';
 import { USER_QUERY_KEY } from '@/shared/api';
 import { Header } from '@/shared/components/layout';
 import { Button, useToast } from '@/shared/components/ui';
@@ -52,19 +54,33 @@ export const UniversityEmailVerificationFlow = ({
   const queryClient = useQueryClient();
 
   const { showToast } = useToast();
+  const { logout } = useAuthSession();
+  const [isLogout, setIsLogout] = useState(false);
 
-  const handleBackButtonClick = () => {
+  const handleBackButtonClick = async () => {
     if (currentStep === 2) {
       setCurrentStep(1);
       return;
     }
 
     if (entryPoint === 'login') {
-      // TODO: 로그아웃 API를 호출하고 인증 세션을 초기화한 뒤 로그인 페이지로 이동
-      router.replace(ROUTES.AUTH.LOGIN);
+      if (isLogout) return;
+
+      setIsLogout(true);
+
+      try {
+        await logout();
+        router.replace(ROUTES.AUTH.LOGIN);
+      } catch (error) {
+        Sentry.captureException(error);
+        setIsLogout(false);
+
+        showToast('로그아웃에 실패했어요. 잠시 후 다시 시도해 주세요.', {
+          variant: 'gray',
+        });
+      }
       return;
     }
-
     router.back();
   };
 

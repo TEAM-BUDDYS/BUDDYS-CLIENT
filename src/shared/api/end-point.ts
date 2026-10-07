@@ -6,6 +6,7 @@ export const END_POINT = {
     KAKAO: 'api/v1/auth/kakao',
     GOOGLE: 'api/v1/auth/google',
     REISSUE: 'api/v1/auth/reissue',
+    LOGOUT: 'api/v1/auth/logout',
   },
   VERIFICATION: {
     UNIVERSITY_EMAIL: 'api/v1/verifications/university/email',
@@ -32,13 +33,17 @@ export const END_POINT = {
     COMMENTS: (courseId: number) => `api/v1/courses/${courseId}/comments`,
     DETAIL: (courseId: number) => `api/v1/courses/${courseId}`,
     BOOKMARK: (courseId: number) => `api/v1/courses/${courseId}/bookmark`,
+    BOOKMARKS: 'api/v1/courses/bookmarks',
   },
   IMAGE: {
     PRESIGNED_URL: 'api/v1/images/presigned-url',
   },
   PLACE: {
+    NEARBY: 'api/v1/places/nearby',
     SEARCH: 'api/v1/places/search',
     BOOKMARKS: 'api/v1/places/bookmarks',
+    PHOTO: (placeId: string, maxWidth: number) =>
+      `api/v1/places/${encodeURIComponent(placeId)}/photo?maxWidth=${maxWidth}`,
   },
   POST: {
     LIST: 'api/v1/posts',
@@ -46,6 +51,7 @@ export const END_POINT = {
     DETAIL: (postId: number) => `api/v1/posts/${postId}`,
     STATUS: (postId: number) => `api/v1/posts/${postId}/status`,
     COMMENTS: (postId: number) => `api/v1/posts/${postId}/comments`,
+    BOOKMARKS: 'api/v1/posts/bookmarks',
   },
   RECOMMENDATION: {
     USERS: 'api/v1/recommendations/users',

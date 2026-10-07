@@ -16,6 +16,7 @@ interface CourseCreateDaySectionProps {
   isFirst: boolean;
   isLast: boolean;
   onPlaceAdd: (dayNumber: number) => void;
+  onPlaceRemove: (dayNumber: number, placeId: string) => void;
   onImagesAdd: (dayNumber: number, files: File[]) => void;
   onImageRemove: (dayNumber: number, previewUrl: string) => void;
   onMemoCostChange: (
@@ -29,6 +30,7 @@ export const CourseCreateDaySection = ({
   isFirst,
   isLast,
   onPlaceAdd,
+  onPlaceRemove,
   onImagesAdd,
   onImageRemove,
   onMemoCostChange,
@@ -77,7 +79,11 @@ export const CourseCreateDaySection = ({
         onImageRemove={onImageRemove}
       />
 
-      <CoursePlaceTimeline places={day.places} tone="accent" />
+      <CoursePlaceTimeline
+        places={day.places}
+        tone="accent"
+        onPlaceRemove={(placeId) => onPlaceRemove(day.dayNumber, placeId)}
+      />
 
       <CourseDayMemoCost memo={day.memo || null} cost={day.cost} />
 

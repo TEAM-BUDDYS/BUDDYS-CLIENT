@@ -15,11 +15,18 @@ import type {
   CourseBookmark,
   CourseCommentPage,
   CourseDetail,
+  CreateCourseCommentRequest,
+  CreateCourseCommentResponse,
   GetCourseCommentsParams,
   GetCourseCommentsResponse,
   GetCourseDetailResponse,
   UpdateCourseBookmarkResponse,
 } from './type';
+
+interface CreateCourseCommentVariables {
+  courseId: number;
+  body: CreateCourseCommentRequest;
+}
 
 interface UpdateCourseBookmarkVariables {
   courseId: number;
@@ -62,6 +69,30 @@ const getCourseDetail = async (
   }
 
   return response.data;
+};
+
+const createCourseComment = async ({
+  courseId,
+  body,
+}: CreateCourseCommentVariables) => {
+  const response = await apiClient
+    .post(END_POINT.COURSE.COMMENTS(courseId), {
+      json: body,
+    })
+    .json<CreateCourseCommentResponse>();
+
+  const commentId = response.data?.commentId;
+
+  if (
+    response.success !== true ||
+    typeof commentId !== 'number' ||
+    !Number.isSafeInteger(commentId) ||
+    commentId <= 0
+  ) {
+    throw new Error(response.message || '댓글을 등록하지 못했습니다.');
+  }
+
+  return commentId;
 };
 
 const updateCourseBookmark = async ({
@@ -109,6 +140,10 @@ export const COURSE_QUERY_OPTIONS = {
 };
 
 export const COURSE_MUTATION_OPTIONS = {
+  CREATE_COMMENT: () =>
+    mutationOptions({
+      mutationFn: createCourseComment,
+    }),
   UPDATE_BOOKMARK: () =>
     mutationOptions({
       mutationFn: updateCourseBookmark,

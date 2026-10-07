@@ -91,10 +91,19 @@ export const COURSE_QUERY_KEY = {
       'infinite-list',
       excludePageParam(params),
     ] as const,
+  BOOKMARKS_ALL: () => [...COURSE_QUERY_KEY.ALL, 'bookmarks'] as const,
+  BOOKMARKS_INFINITE: (params?: GetQueryParams<'/api/v1/courses/bookmarks'>) =>
+    [
+      ...COURSE_QUERY_KEY.BOOKMARKS_ALL(),
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
 };
 
 export const PLACE_QUERY_KEY = {
   ALL: ['places'] as const,
+  NEARBY: (params: GetQueryParams<'/api/v1/places/nearby'> | null) =>
+    [...PLACE_QUERY_KEY.ALL, 'nearby', params] as const,
   SEARCH: (params: GetQueryParams<'/api/v1/places/search'>) =>
     [...PLACE_QUERY_KEY.ALL, 'search', excludePageTokenParam(params)] as const,
   BOOKMARKS_ALL: () => [...PLACE_QUERY_KEY.ALL, 'bookmarks'] as const,
@@ -122,6 +131,13 @@ export const POST_QUERY_KEY = {
   ) =>
     [
       ...POST_QUERY_KEY.COMMENTS_ALL(postId),
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
+  BOOKMARKS_ALL: () => [...POST_QUERY_KEY.ALL, 'bookmarks'] as const,
+  BOOKMARKS_INFINITE: (params?: GetQueryParams<'/api/v1/posts/bookmarks'>) =>
+    [
+      ...POST_QUERY_KEY.BOOKMARKS_ALL(),
       'infinite-list',
       excludePageParam(params),
     ] as const,

@@ -3,9 +3,13 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
+import { ChevronRightIcon } from '@/shared/components/icons';
+
 interface SectionHeaderProps {
-  label: string;
+  label?: string;
   title: string;
+  description?: string;
+  moreHref?: string;
   rightSlot?: ReactNode;
   rightSlotLabel?: string;
   href?: string;
@@ -15,6 +19,8 @@ interface SectionHeaderProps {
 export const SectionHeader = ({
   label,
   title,
+  description,
+  moreHref,
   rightSlot,
   rightSlotLabel,
   href,
@@ -23,9 +29,22 @@ export const SectionHeader = ({
   return (
     <header className="flex items-center justify-between">
       <div className="flex flex-col">
-        <span className="text-body-m-15 text-gray-500">{label}</span>
+        {label && <span className="text-body-m-15 text-gray-500">{label}</span>}
         <h2 className="text-title-b-18 text-gray-800">{title}</h2>
+        {description && (
+          <p className="text-body-r-14 text-gray-700">{description}</p>
+        )}
       </div>
+      {moreHref && (
+        <Link
+          href={moreHref}
+          className="text-caption-m-12 flex shrink-0 items-center gap-0.5 py-2.75 pr-1.5 text-gray-500"
+          aria-label={`${title} 더보기`}
+        >
+          더보기
+          <ChevronRightIcon className="size-3" />
+        </Link>
+      )}
       {rightSlot &&
         (href ? (
           <Link
