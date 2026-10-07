@@ -158,7 +158,7 @@ export const ExchangeDocumentVerification = ({
 
       <div className="mt-auto mb-8.5 flex flex-col gap-4 px-4">
         <Button disabled={!canSubmit || isSubmitting} onClick={handleSubmit}>
-          {isSubmitting ? '제출 중...' : '제출하기'}
+          제출하기
         </Button>
 
         {entryPoint === 'login' && (
