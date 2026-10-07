@@ -23,6 +23,7 @@ export const END_POINT = {
       `api/v1/countries/${countryId}/universities/search`,
   },
   COURSE: {
+    BOOKMARKS: 'api/v1/courses/bookmarks',
     COMMENTS: (courseId: number) => `api/v1/courses/${courseId}/comments`,
     DETAIL: (courseId: number) => `api/v1/courses/${courseId}`,
     BOOKMARK: (courseId: number) => `api/v1/courses/${courseId}/bookmark`,

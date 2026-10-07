@@ -7,16 +7,10 @@ import { Header } from '@/shared/components/layout';
 import { CardList, ChipButton } from '@/shared/components/ui';
 
 const COURSE_IMAGES = [
-  { src: '/images/og_image.png', alt: '프라하 코스 장소 이미지 1' },
-  {
-    src: '/icons/buddys-pwa-logo-192.png',
-    alt: '프라하 코스 장소 이미지 2',
-  },
-  {
-    src: '/icons/buddys-pwa-logo-512.png',
-    alt: '프라하 코스 장소 이미지 3',
-  },
-  { src: '/apple-icon.png', alt: '프라하 코스 장소 이미지 4' },
+  '/images/og_image.png',
+  '/icons/buddys-pwa-logo-192.png',
+  '/icons/buddys-pwa-logo-512.png',
+  '/apple-icon.png',
 ];
 const INITIAL_COURSES = COURSE_CATEGORIES.map((category) => ({
   id: category.id,

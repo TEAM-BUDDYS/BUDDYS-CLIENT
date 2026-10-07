@@ -15,8 +15,11 @@ import type {
   CourseBookmark,
   CourseCommentPage,
   CourseDetail,
+  CourseListPage,
   CreateCourseCommentRequest,
   CreateCourseCommentResponse,
+  GetBookmarkedCoursesParams,
+  GetBookmarkedCoursesResponse,
   GetCourseCommentsParams,
   GetCourseCommentsResponse,
   GetCourseDetailResponse,
@@ -32,6 +35,28 @@ interface UpdateCourseBookmarkVariables {
   courseId: number;
   bookmarked: boolean;
 }
+
+const getBookmarkedCourses = async (
+  params: GetBookmarkedCoursesParams,
+  signal?: AbortSignal,
+): Promise<CourseListPage> => {
+  const response = await apiClient
+    .get(END_POINT.COURSE.BOOKMARKS, {
+      searchParams: createSearchParams(params),
+      signal,
+    })
+    .json<GetBookmarkedCoursesResponse>();
+
+  if (
+    response.success !== true ||
+    !response.data ||
+    !Array.isArray(response.data.content)
+  ) {
+    throw new Error(response.message || '저장한 코스를 불러오지 못했습니다.');
+  }
+
+  return response.data;
+};
 
 const getCourseComments = async (
   courseId: number,
@@ -118,6 +143,11 @@ const updateCourseBookmark = async ({
 };
 
 export const COURSE_QUERY_OPTIONS = {
+  BOOKMARKS: (params: GetBookmarkedCoursesParams) =>
+    queryOptions({
+      queryKey: COURSE_QUERY_KEY.BOOKMARKS(params),
+      queryFn: ({ signal }) => getBookmarkedCourses(params, signal),
+    }),
   INFINITE_COMMENTS: (courseId: number, params?: GetCourseCommentsParams) =>
     infiniteQueryOptions({
       queryKey: COURSE_QUERY_KEY.INFINITE_COMMENTS(courseId, params),

@@ -12,10 +12,7 @@ export interface FilteredCourseItem {
   tagIds: readonly number[];
   title: string;
   description: string;
-  images: {
-    src: string;
-    alt: string;
-  }[];
+  images: readonly string[];
   isBookmarked: boolean;
 }
 
