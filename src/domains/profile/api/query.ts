@@ -195,6 +195,10 @@ const getUserPosts = async (userId: number, params?: GetUserPostsParams) => {
     .json<GetUserPostsResponse>();
 };
 
+export const requestWithdraw = async () => {
+  await apiClient.delete(END_POINT.USER.ME);
+};
+
 export const PROFILE_QUERY_OPTIONS = {
   ME: () =>
     queryOptions({
