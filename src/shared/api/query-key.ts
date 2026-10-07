@@ -100,6 +100,19 @@ export const COURSE_QUERY_KEY = {
     ] as const,
 };
 
+export const MAGAZINE_QUERY_KEY = {
+  ALL: ['magazines'] as const,
+  BOOKMARKS_ALL: () => [...MAGAZINE_QUERY_KEY.ALL, 'bookmarks'] as const,
+  BOOKMARKS_INFINITE: (
+    params?: GetQueryParams<'/api/v1/magazines/bookmarks'>,
+  ) =>
+    [
+      ...MAGAZINE_QUERY_KEY.BOOKMARKS_ALL(),
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
+};
+
 export const PLACE_QUERY_KEY = {
   ALL: ['places'] as const,
   NEARBY: (params: GetQueryParams<'/api/v1/places/nearby'> | null) =>

@@ -1,54 +1,108 @@
 'use client';
 
-import { useState } from 'react';
+import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
+import { useCallback, useState } from 'react';
 
 import { MagazineListCard } from '@/domains/home/components/magazine-list-card/magazine-list-card';
+import { PROFILE_QUERY_OPTIONS } from '@/domains/profile/api/query';
+import { AsyncBoundary, EmptyState } from '@/shared/components/ui';
+import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 
-// TODO: 저장한 매거진 목록 API 연동 시 응답 데이터로 교체
-const MOCK_SAVED_MAGAZINES = [
-  {
-    magazineId: 1,
-    title: '유럽 교환학생이라면 루프트한자 학생 혜택부터!',
-    summary: '유럽 교환학생을 준비하고 있다면 꼭 확인해야 할 혜택을 소개해요.',
-    thumbnailImageUrl: 'https://picsum.photos/seed/magazine-1/200/200',
-    publishedAt: '2026-08-20',
-    externalUrl: 'https://www.instagram.com/p/ABC123/',
-    isBookmarked: true,
-  },
-  {
-    magazineId: 2,
-    title: '교환학생 첫 달 생활비, 이렇게 아껴보세요',
-    summary: '현지 교통 패스부터 장보기 팁까지 한 번에 정리했어요.',
-    thumbnailImageUrl: 'https://picsum.photos/seed/magazine-2/200/200',
-    publishedAt: '2026-10-03',
-    externalUrl: 'https://www.instagram.com/p/DEF456/',
-    isBookmarked: true,
-  },
-];
+const SAVED_MAGAZINES_PAGE_SIZE = 20;
 
-export const SavedMagazineList = () => {
-  const [magazines, setMagazines] = useState(MOCK_SAVED_MAGAZINES);
+const SavedMagazineItems = () => {
+  // TODO: 매거진 저장 해제 API 연동 시 mutation으로 교체
+  const [unbookmarkedMagazineIds, setUnbookmarkedMagazineIds] = useState<
+    number[]
+  >([]);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchNextPageError,
+    isFetchingNextPage,
+  } = useSuspenseInfiniteQuery(
+    PROFILE_QUERY_OPTIONS.BOOKMARKED_MAGAZINES_INFINITE({
+      size: SAVED_MAGAZINES_PAGE_SIZE,
+    }),
+  );
+
+  const magazines = data.pages.flatMap((page) => page.data?.magazines ?? []);
+
+  const handleIntersect = useCallback(() => {
+    void fetchNextPage();
+  }, [fetchNextPage]);
+  const loadMoreRef = useInfiniteScroll<HTMLDivElement>({
+    enabled:
+      Boolean(hasNextPage) && !isFetchingNextPage && !isFetchNextPageError,
+    onIntersect: handleIntersect,
+  });
 
   const handleBookmarkClick = (magazineId: number) => {
-    setMagazines((prevMagazines) =>
-      prevMagazines.map((magazine) =>
-        magazine.magazineId === magazineId
-          ? { ...magazine, isBookmarked: !magazine.isBookmarked }
-          : magazine,
-      ),
+    setUnbookmarkedMagazineIds((prevMagazineIds) =>
+      prevMagazineIds.includes(magazineId)
+        ? prevMagazineIds.filter(
+            (prevMagazineId) => prevMagazineId !== magazineId,
+          )
+        : [...prevMagazineIds, magazineId],
     );
   };
 
+  if (magazines.length === 0 && !hasNextPage) {
+    return (
+      <EmptyState
+        title="게시물을 찾을 수 없어요"
+        description="매거진을 저장해 보세요"
+        className="pt-25.25"
+      />
+    );
+  }
+
   return (
-    <ul className="flex flex-col gap-5">
-      {magazines.map(({ magazineId, ...magazine }) => (
-        <li key={magazineId}>
-          <MagazineListCard
-            {...magazine}
-            onBookmarkClick={() => handleBookmarkClick(magazineId)}
-          />
-        </li>
-      ))}
-    </ul>
+    <>
+      <ul className="flex flex-col gap-5">
+        {magazines.map((magazine) => (
+          <li key={magazine.magazineId}>
+            <MagazineListCard
+              title={magazine.title}
+              summary={magazine.summary}
+              thumbnailImageUrl={magazine.thumbnailImageUrl}
+              publishedAt={magazine.publishedAt}
+              externalUrl={magazine.externalUrl}
+              isBookmarked={
+                !unbookmarkedMagazineIds.includes(magazine.magazineId)
+              }
+              onBookmarkClick={() => handleBookmarkClick(magazine.magazineId)}
+            />
+          </li>
+        ))}
+      </ul>
+      <div ref={loadMoreRef} className="h-1" aria-hidden="true" />
+      {isFetchingNextPage && (
+        <p className="text-caption-m-12 py-4 text-center text-gray-500">
+          매거진을 불러오는 중이에요
+        </p>
+      )}
+      {isFetchNextPageError && (
+        <button
+          type="button"
+          className="text-caption-m-12 text-mint-400 mx-auto block py-4"
+          onClick={() => fetchNextPage()}
+        >
+          다시 불러오기
+        </button>
+      )}
+    </>
+  );
+};
+
+export const SavedMagazineList = () => {
+  return (
+    <AsyncBoundary
+      className="py-8"
+      loadingFallback={<div className="min-h-96" aria-busy="true" />}
+    >
+      <SavedMagazineItems />
+    </AsyncBoundary>
   );
 };
