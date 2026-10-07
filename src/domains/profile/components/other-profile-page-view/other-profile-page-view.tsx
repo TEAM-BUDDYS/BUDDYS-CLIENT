@@ -66,7 +66,7 @@ export const OtherProfilePageView = ({
 
   return (
     <div className="flex h-dvh flex-col">
-      <Header hasBackButton content={profile.nickname} />
+      <Header hasBackButton />
 
       <main className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto pt-9 pb-9">
         <UserProfile
