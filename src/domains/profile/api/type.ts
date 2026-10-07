@@ -18,3 +18,8 @@ export type GetUserPostsResponse =
   components['schemas']['BaseResponseUserPostsResponse'];
 
 export type UserPost = components['schemas']['PostResponse'];
+
+export type GetBookmarkedPostsParams =
+  operations['getBookmarkedPosts']['parameters']['query'];
+export type GetBookmarkedPostsResponse =
+  components['schemas']['BaseResponsePostListResponse'];

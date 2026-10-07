@@ -5,11 +5,14 @@ import {
   apiClient,
   createSearchParams,
   END_POINT,
+  POST_QUERY_KEY,
   USER_QUERY_KEY,
 } from '@/shared/api';
 
 import type { MyProfile, OtherProfile } from '../model/profile';
 import type {
+  GetBookmarkedPostsParams,
+  GetBookmarkedPostsResponse,
   GetMyPostsParams,
   GetMyPostsResponse,
   GetMyProfileResponse,
@@ -195,6 +198,22 @@ const getUserPosts = async (userId: number, params?: GetUserPostsParams) => {
     .json<GetUserPostsResponse>();
 };
 
+const getBookmarkedPosts = async (params?: GetBookmarkedPostsParams) => {
+  const response = await apiClient
+    .get(END_POINT.POST.BOOKMARKS, {
+      searchParams: createSearchParams(params),
+    })
+    .json<GetBookmarkedPostsResponse>();
+
+  if (response.success === false) {
+    throw new Error(
+      response.message || '저장한 동행 목록을 불러오지 못했습니다.',
+    );
+  }
+
+  return response;
+};
+
 export const PROFILE_QUERY_OPTIONS = {
   ME: () =>
     queryOptions({
@@ -234,6 +253,22 @@ export const PROFILE_QUERY_OPTIONS = {
       queryKey: USER_QUERY_KEY.POSTS_INFINITE(userId, params),
       queryFn: ({ pageParam }) =>
         getUserPosts(userId, { ...params, page: pageParam }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        const page = lastPage.data?.page;
+
+        if (!lastPage.data?.hasNext || typeof page !== 'number') {
+          return undefined;
+        }
+
+        return page + 1;
+      },
+    }),
+  BOOKMARKED_POSTS_INFINITE: (params?: GetBookmarkedPostsParams) =>
+    infiniteQueryOptions({
+      queryKey: POST_QUERY_KEY.BOOKMARKS_INFINITE(params),
+      queryFn: ({ pageParam }) =>
+        getBookmarkedPosts({ ...params, page: pageParam }),
       initialPageParam: 0,
       getNextPageParam: (lastPage) => {
         const page = lastPage.data?.page;
