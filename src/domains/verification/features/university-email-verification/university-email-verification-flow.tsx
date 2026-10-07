@@ -1,10 +1,12 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { isHTTPError } from 'ky';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { USER_QUERY_KEY } from '@/shared/api';
 import { Header } from '@/shared/components/layout';
 import { Button, useToast } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
@@ -47,6 +49,8 @@ export const UniversityEmailVerificationFlow = ({
   const router = useRouter();
   const exchangeDocumentVerificationHref = `${ROUTES.VERIFICATION.EXCHANGE_DOCUMENT}?from=${entryPoint}`;
 
+  const queryClient = useQueryClient();
+
   const { showToast } = useToast();
 
   const handleBackButtonClick = () => {
@@ -64,8 +68,10 @@ export const UniversityEmailVerificationFlow = ({
     router.back();
   };
 
-  const handleSendVerificationCode = async () => {
-    if (!isValidEmail || isSending) return;
+  const requestVerificationCode = async () => {
+    if (!isValidEmail || isSending) {
+      return false;
+    }
 
     setIsSending(true);
 
@@ -73,8 +79,8 @@ export const UniversityEmailVerificationFlow = ({
       await sendUniversityEmail({
         email: email.trim(),
       });
-      setVerificationCode('');
-      setCurrentStep(2);
+
+      return true;
     } catch (error) {
       const message =
         isHTTPError(error) && error.response.status === 404
@@ -85,9 +91,35 @@ export const UniversityEmailVerificationFlow = ({
         bottomOffsetClassName: 'bottom-24.5',
         variant: 'gray',
       });
+
+      return false;
     } finally {
       setIsSending(false);
     }
+  };
+
+  const handleSendVerificationCode = async () => {
+    const isSuccess = await requestVerificationCode();
+
+    if (!isSuccess) {
+      return;
+    }
+
+    setVerificationCode('');
+    setCurrentStep(2);
+  };
+
+  const handleResendVerificationCode = async () => {
+    const isSuccess = await requestVerificationCode();
+
+    if (!isSuccess) {
+      return;
+    }
+
+    setVerificationCode('');
+    showToast('인증번호를 다시 전송했습니다.', {
+      bottomOffsetClassName: 'bottom-24.5',
+    });
   };
 
   const handleConfirmVerificationCode = async () => {
@@ -104,6 +136,11 @@ export const UniversityEmailVerificationFlow = ({
         router.replace(exchangeDocumentVerificationHref);
         return;
       }
+
+      await queryClient.invalidateQueries({
+        queryKey: USER_QUERY_KEY.ME(),
+      });
+
       router.back();
     } catch (error) {
       const status = isHTTPError(error) ? error.response.status : undefined;
@@ -184,7 +221,8 @@ export const UniversityEmailVerificationFlow = ({
               <button
                 className="text-body-sb-14 text-gray-800"
                 type="button"
-                onClick={handleSendVerificationCode}
+                disabled={isSending}
+                onClick={handleResendVerificationCode}
               >
                 다시 보내기
               </button>
