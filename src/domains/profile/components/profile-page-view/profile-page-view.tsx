@@ -78,10 +78,7 @@ export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
           className="mt-5.25 px-4"
         />
 
-        <ContentSection
-          onCreateCourseClick={() => setIsComingSoonOpen(true)}
-          className="mt-6"
-        />
+        <ContentSection className="mt-6" />
       </main>
 
       <BottomNavigation />
