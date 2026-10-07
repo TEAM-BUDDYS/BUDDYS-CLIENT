@@ -1,16 +1,16 @@
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
 import { TodayCard } from '@/domains/home/components/today-card/today-card';
-import type { DisplayablePostSummary } from '@/domains/home/model/buddy-search';
+import type { DisplayableClosingSoonPost } from '@/domains/home/model/closing-soon';
 
 // TODO: 마감 임박 동행 게시물 API 연동 시 응답 데이터로 교체
-const MOCK_CLOSING_SOON_POSTS: DisplayablePostSummary[] = [
+const MOCK_CLOSING_SOON_POSTS: DisplayableClosingSoonPost[] = [
   {
     postId: 1,
     title: '바르셀로나 가우디 투어 같이 가요',
     content: '사그라다 파밀리아랑 구엘 공원 함께 둘러봐요',
     startDate: '2026-10-08',
     endDate: '2026-10-08',
-    recruitmentStatus: 'RECRUITING',
+    isSaved: false,
     country: { name: '스페인' },
     thumbnailImageUrl: 'https://picsum.photos/seed/closing-soon-1/200/200',
   },
@@ -20,7 +20,7 @@ const MOCK_CLOSING_SOON_POSTS: DisplayablePostSummary[] = [
     content: '오전 일찍 입장해서 천천히 관람할 분 찾아요',
     startDate: '2026-10-09',
     endDate: '2026-10-10',
-    recruitmentStatus: 'RECRUITING',
+    isSaved: false,
     country: { name: '프랑스' },
   },
   {
@@ -29,7 +29,7 @@ const MOCK_CLOSING_SOON_POSTS: DisplayablePostSummary[] = [
     content: '웨스트엔드 뮤지컬 저녁 공연 함께 봐요',
     startDate: '2026-10-08',
     endDate: '2026-10-08',
-    recruitmentStatus: 'RECRUITING',
+    isSaved: false,
     country: { name: '영국' },
     thumbnailImageUrl: 'https://picsum.photos/seed/closing-soon-3/200/200',
   },
@@ -39,7 +39,7 @@ const MOCK_CLOSING_SOON_POSTS: DisplayablePostSummary[] = [
     content: '까를교부터 프라하성까지 야경 보러 가요',
     startDate: '2026-10-09',
     endDate: '2026-10-09',
-    recruitmentStatus: 'RECRUITING',
+    isSaved: false,
     country: { name: '체코' },
     thumbnailImageUrl: 'https://picsum.photos/seed/closing-soon-4/200/200',
   },
