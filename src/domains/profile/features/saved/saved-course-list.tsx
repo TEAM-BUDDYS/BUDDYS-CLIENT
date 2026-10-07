@@ -49,8 +49,8 @@ const SavedCourseItems = () => {
   if (courses.length === 0 && !hasNextPage) {
     return (
       <EmptyState
-        title="저장한 코스가 없어요"
-        description="마음에 드는 코스를 저장해보세요"
+        title="게시물을 찾을 수 없어요"
+        description="코스 게시물을 저장해 보세요"
         className="pt-25.25"
       />
     );
