@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 import { CHAT_MUTATION_OPTIONS } from '@/domains/chat/api/query';
 import { ProfileBadgeIcon } from '@/shared/components/icons';
-import { Header } from '@/shared/components/layout';
+import { BottomNavigation, Header } from '@/shared/components/layout';
 import { useToast } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
@@ -107,6 +107,8 @@ export const OtherProfilePageView = ({
           <OtherContentSection userId={userId} className="mt-3" />
         )}
       </main>
+
+      <BottomNavigation />
     </div>
   );
 };
