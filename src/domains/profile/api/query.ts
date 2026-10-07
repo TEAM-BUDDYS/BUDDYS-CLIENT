@@ -6,6 +6,7 @@ import {
   COURSE_QUERY_KEY,
   createSearchParams,
   END_POINT,
+  MAGAZINE_QUERY_KEY,
   POST_QUERY_KEY,
   USER_QUERY_KEY,
 } from '@/shared/api';
@@ -14,6 +15,8 @@ import type { MyProfile, OtherProfile } from '../model/profile';
 import type {
   GetBookmarkedCoursesParams,
   GetBookmarkedCoursesResponse,
+  GetBookmarkedMagazinesParams,
+  GetBookmarkedMagazinesResponse,
   GetBookmarkedPostsParams,
   GetBookmarkedPostsResponse,
   GetMyPostsParams,
@@ -233,6 +236,24 @@ const getBookmarkedCourses = async (params?: GetBookmarkedCoursesParams) => {
   return response;
 };
 
+const getBookmarkedMagazines = async (
+  params?: GetBookmarkedMagazinesParams,
+) => {
+  const response = await apiClient
+    .get(END_POINT.MAGAZINE.BOOKMARKS, {
+      searchParams: createSearchParams(params),
+    })
+    .json<GetBookmarkedMagazinesResponse>();
+
+  if (response.success === false) {
+    throw new Error(
+      response.message || '저장한 매거진 목록을 불러오지 못했습니다.',
+    );
+  }
+
+  return response;
+};
+
 export const PROFILE_QUERY_OPTIONS = {
   ME: () =>
     queryOptions({
@@ -304,6 +325,22 @@ export const PROFILE_QUERY_OPTIONS = {
       queryKey: COURSE_QUERY_KEY.BOOKMARKS_INFINITE(params),
       queryFn: ({ pageParam }) =>
         getBookmarkedCourses({ ...params, page: pageParam }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        const page = lastPage.data?.page;
+
+        if (!lastPage.data?.hasNext || typeof page !== 'number') {
+          return undefined;
+        }
+
+        return page + 1;
+      },
+    }),
+  BOOKMARKED_MAGAZINES_INFINITE: (params?: GetBookmarkedMagazinesParams) =>
+    infiniteQueryOptions({
+      queryKey: MAGAZINE_QUERY_KEY.BOOKMARKS_INFINITE(params),
+      queryFn: ({ pageParam }) =>
+        getBookmarkedMagazines({ ...params, page: pageParam }),
       initialPageParam: 0,
       getNextPageParam: (lastPage) => {
         const page = lastPage.data?.page;

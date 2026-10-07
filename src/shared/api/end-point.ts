@@ -31,6 +31,9 @@ export const END_POINT = {
   IMAGE: {
     PRESIGNED_URL: 'api/v1/images/presigned-url',
   },
+  MAGAZINE: {
+    BOOKMARKS: 'api/v1/magazines/bookmarks',
+  },
   PLACE: {
     NEARBY: 'api/v1/places/nearby',
     SEARCH: 'api/v1/places/search',

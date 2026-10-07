@@ -28,3 +28,8 @@ export type GetBookmarkedCoursesParams =
   operations['getBookmarkedCourses']['parameters']['query'];
 export type GetBookmarkedCoursesResponse =
   components['schemas']['BaseResponseCourseListResponse'];
+
+export type GetBookmarkedMagazinesParams =
+  operations['getBookmarkedMagazines']['parameters']['query'];
+export type GetBookmarkedMagazinesResponse =
+  components['schemas']['BaseResponseBookmarkedMagazineListResponse'];
