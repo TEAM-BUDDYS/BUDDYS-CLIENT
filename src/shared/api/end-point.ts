@@ -67,5 +67,6 @@ export const END_POINT = {
     SEARCH: 'api/v1/users/search',
     PROFILE: (userId: number) => `api/v1/users/${userId}`,
     POSTS: (userId: number) => `api/v1/users/${userId}/posts`,
+    COURSES: (userId: number) => `api/v1/users/${userId}/courses`,
   },
 } as const;
