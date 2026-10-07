@@ -8,12 +8,14 @@ import {
   ProfileImageInput,
   TextField,
 } from '@/shared/components/ui';
-import { GENDER_OPTIONS } from '@/shared/constants/gender';
+import {
+  GENDER_OPTIONS,
+  PROFILE_BIO_MAX_LENGTH,
+} from '@/shared/constants/profile';
 import {
   type ProfileFormValues,
   useProfileForm,
 } from '@/shared/hooks/use-profile-form';
-import { PROFILE_BIO_MAX_LENGTH } from '@/shared/utils/profile-input';
 
 interface EditProfileProps {
   initialValues?: ProfileFormValues;

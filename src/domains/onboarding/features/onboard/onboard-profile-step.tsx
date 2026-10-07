@@ -8,8 +8,10 @@ import {
   ProfileImageInput,
   TextField,
 } from '@/shared/components/ui';
-import { GENDER_OPTIONS } from '@/shared/constants/gender';
-import { PROFILE_BIO_MAX_LENGTH } from '@/shared/utils/profile-input';
+import {
+  GENDER_OPTIONS,
+  PROFILE_BIO_MAX_LENGTH,
+} from '@/shared/constants/profile';
 import type { GenderType } from '@/types/gender';
 
 interface OnboardProfileStepProps {
