@@ -127,6 +127,13 @@ export const POST_QUERY_KEY = {
       'infinite-list',
       excludePageParam(params),
     ] as const,
+  BOOKMARKS_ALL: () => [...POST_QUERY_KEY.ALL, 'bookmarks'] as const,
+  BOOKMARKS_INFINITE: (params?: GetQueryParams<'/api/v1/posts/bookmarks'>) =>
+    [
+      ...POST_QUERY_KEY.BOOKMARKS_ALL(),
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
 };
 
 export const RECOMMENDATION_QUERY_KEY = {
