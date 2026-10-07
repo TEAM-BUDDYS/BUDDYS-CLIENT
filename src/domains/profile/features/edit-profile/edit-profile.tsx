@@ -3,12 +3,13 @@
 import { useSuspenseQueries } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { TAG_QUERY_OPTIONS } from '@/shared/api';
+import { TAG_QUERY_OPTIONS, useNicknameCheck } from '@/shared/api';
 import defaultProfileImage from '@/shared/assets/icons/profile.svg';
 import {
   Button,
   Dropdown,
   FormLabel,
+  Modal,
   NicknameField,
   ProfileImageInput,
   TextField,
@@ -39,8 +40,29 @@ export const EditProfile = ({ initialValues }: EditProfileProps) => {
     ],
   });
   const form = useProfileForm(initialValues);
+
+  const {
+    checkedNickname,
+    nicknameError,
+    isCheckingNickname,
+    checkNickname,
+    resetNicknameCheck,
+  } = useNicknameCheck();
+  const [isNicknameCheckModalOpen, setIsNicknameCheckModalOpen] =
+    useState(false);
+  const isNicknameValid =
+    form.nickname === form.initialNickname || checkedNickname === form.nickname;
   const selectedGender =
     GENDER_OPTIONS.find((option) => option.value === form.gender) ?? null;
+
+  const handleSaveClick = () => {
+    if (!form.isValid || isCheckingNickname) return;
+
+    if (!isNicknameValid) {
+      setIsNicknameCheckModalOpen(true);
+      return;
+    }
+  };
 
   return (
     <div className="mb-5.5 flex flex-col gap-11.75">
@@ -67,7 +89,17 @@ export const EditProfile = ({ initialValues }: EditProfileProps) => {
           label="닉네임"
           initialNickname={form.initialNickname}
           value={form.nickname}
-          onChange={(event) => form.handleNicknameChange(event.target.value)}
+          checkedNickname={checkedNickname}
+          isChecking={isCheckingNickname}
+          status={nicknameError ? 'error' : 'default'}
+          message={nicknameError}
+          onChange={(event) => {
+            resetNicknameCheck();
+            form.handleNicknameChange(event.target.value);
+          }}
+          onCheckDuplicate={() => {
+            void checkNickname(form.nickname);
+          }}
           required
         />
         <div className="flex flex-col gap-2">
@@ -111,7 +143,21 @@ export const EditProfile = ({ initialValues }: EditProfileProps) => {
           onChange={setSelectedTags}
         />
       </div>
-      <Button disabled={!form.isValid}>저장</Button>
+      <Button
+        disabled={!form.isValid || isCheckingNickname}
+        onClick={handleSaveClick}
+      >
+        저장
+      </Button>
+      <Modal
+        type="alert"
+        buttonVariant="primary"
+        cancelLabel="확인"
+        open={isNicknameCheckModalOpen}
+        title="닉네임 중복확인 안내"
+        description="중복확인 후 다시 시도해 주세요."
+        onClose={() => setIsNicknameCheckModalOpen(false)}
+      />
     </div>
   );
 };
