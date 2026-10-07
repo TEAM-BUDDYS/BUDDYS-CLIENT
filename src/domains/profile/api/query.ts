@@ -206,6 +206,35 @@ const getUserPosts = async (userId: number, params?: GetUserPostsParams) => {
     .json<GetUserPostsResponse>();
 };
 
+type UserCoursesData = NonNullable<GetUserCoursesResponse['data']>;
+
+const isValidCourse = (course: unknown) => {
+  if (typeof course !== 'object' || course === null) {
+    return false;
+  }
+
+  const { courseId, thumbnailImageUrl } = course as Partial<
+    UserCoursesData['courses'][number]
+  >;
+
+  return typeof courseId === 'number' && isNullableString(thumbnailImageUrl);
+};
+
+const isValidUserCoursesData = (data: unknown): data is UserCoursesData => {
+  if (typeof data !== 'object' || data === null) {
+    return false;
+  }
+
+  const { courses, page, hasNext } = data as Partial<UserCoursesData>;
+
+  return (
+    Array.isArray(courses) &&
+    courses.every(isValidCourse) &&
+    typeof page === 'number' &&
+    typeof hasNext === 'boolean'
+  );
+};
+
 const getUserCourses = async (
   userId: number,
   params?: GetUserCoursesParams,
@@ -218,6 +247,10 @@ const getUserCourses = async (
 
   if (response.success === false) {
     throw new Error(response.message || '코스를 불러오지 못했습니다.');
+  }
+
+  if (!isValidUserCoursesData(response.data)) {
+    throw new Error('코스 응답 형식이 올바르지 않습니다.');
   }
 
   return response;
