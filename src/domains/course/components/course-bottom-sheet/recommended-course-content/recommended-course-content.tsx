@@ -90,18 +90,17 @@ export const RecommendedCourseContent = ({
     INITIAL_SUGGESTED_COURSES,
   );
   const [savedCourses, setSavedCourses] = useState(INITIAL_SAVED_COURSES);
+  const activeRecommendedCategoryId =
+    selectedRecommendedCategoryId ?? COURSE_CATEGORIES[0].id;
   const filteredCourses =
     selectedRecommendedCountryId === undefined
       ? courses.slice(0, DEFAULT_VISIBLE_COURSE_COUNT)
       : courses.filter((course) =>
           course.countryIds.includes(selectedRecommendedCountryId),
         );
-  const filteredSuggestedCourses =
-    selectedRecommendedCategoryId === undefined
-      ? suggestedCourses.slice(0, DEFAULT_VISIBLE_COURSE_COUNT)
-      : suggestedCourses.filter((course) =>
-          course.tagIds.includes(selectedRecommendedCategoryId),
-        );
+  const filteredSuggestedCourses = suggestedCourses.filter((course) =>
+    course.tagIds.includes(activeRecommendedCategoryId),
+  );
 
   const handleCountryChange = (countryId: number) => {
     setSelectedRecommendedCountryId((currentCountryId) =>
@@ -110,9 +109,7 @@ export const RecommendedCourseContent = ({
   };
 
   const handleCategoryChange = (categoryId: number) => {
-    setSelectedRecommendedCategoryId((currentCategoryId) =>
-      currentCategoryId === categoryId ? undefined : categoryId,
-    );
+    setSelectedRecommendedCategoryId(categoryId);
   };
 
   const handleCourseBookmarkChange = (
@@ -153,7 +150,7 @@ export const RecommendedCourseContent = ({
   };
 
   return (
-    <div>
+    <div className="mb-25">
       <CourseFilterSection
         countries={COURSE_FILTER_COUNTRIES}
         courses={filteredCourses}
@@ -171,7 +168,7 @@ export const RecommendedCourseContent = ({
       <SuggestedCourseSection
         categories={COURSE_CATEGORIES}
         courses={filteredSuggestedCourses}
-        selectedCategoryId={selectedRecommendedCategoryId}
+        selectedCategoryId={activeRecommendedCategoryId}
         onCategoryChange={handleCategoryChange}
         onCourseBookmarkChange={handleSuggestedCourseBookmarkChange}
         onMoreClick={onSuggestedMoreClick}
