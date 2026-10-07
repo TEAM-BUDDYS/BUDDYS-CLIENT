@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  type InfiniteData,
   useInfiniteQuery,
   useMutation,
   useQueryClient,
@@ -11,7 +12,10 @@ import {
   COURSE_MUTATION_OPTIONS,
   COURSE_QUERY_OPTIONS,
 } from '@/domains/course/api/course';
-import type { GetCoursesParams } from '@/domains/course/api/type';
+import type {
+  CourseListPage,
+  GetCoursesParams,
+} from '@/domains/course/api/type';
 import { useCourseBrowse } from '@/domains/course/features/course-browse/course-browse-provider';
 import { COURSE_CATEGORIES } from '@/domains/course/model/recommended-course';
 import { COURSE_QUERY_KEY } from '@/shared/api';
@@ -49,7 +53,23 @@ export const SuggestExplore = () => {
   } = useInfiniteQuery(COURSE_QUERY_OPTIONS.INFINITE_LIST(queryParams));
   const courseBookmarkMutation = useMutation({
     ...COURSE_MUTATION_OPTIONS.UPDATE_BOOKMARK(),
-    onSuccess: ({ courseId }) => {
+    onSuccess: ({ courseId, bookmarked }) => {
+      queryClient.setQueryData<InfiniteData<CourseListPage>>(
+        COURSE_QUERY_KEY.INFINITE_LIST(queryParams),
+        (coursePages) =>
+          coursePages && {
+            ...coursePages,
+            pages: coursePages.pages.map((coursePage) => ({
+              ...coursePage,
+              content: coursePage.content.map((course) =>
+                course.courseId === courseId
+                  ? { ...course, isBookmarked: bookmarked }
+                  : course,
+              ),
+            })),
+          },
+      );
+
       void queryClient.invalidateQueries({
         queryKey: COURSE_QUERY_KEY.INFINITE_LISTS_ALL(),
       });

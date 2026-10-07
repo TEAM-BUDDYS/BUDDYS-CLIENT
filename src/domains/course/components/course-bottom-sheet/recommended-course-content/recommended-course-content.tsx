@@ -1,6 +1,11 @@
 'use client';
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  type InfiniteData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 
 import {
   COURSE_MUTATION_OPTIONS,
@@ -80,6 +85,21 @@ export const RecommendedCourseContent = ({
                 ? { ...course, isBookmarked: bookmarked }
                 : course,
             ),
+          },
+      );
+      queryClient.setQueriesData<InfiniteData<CourseListPage>>(
+        { queryKey: COURSE_QUERY_KEY.INFINITE_LISTS_ALL() },
+        (coursePages) =>
+          coursePages && {
+            ...coursePages,
+            pages: coursePages.pages.map((coursePage) => ({
+              ...coursePage,
+              content: coursePage.content.map((course) =>
+                course.courseId === courseId
+                  ? { ...course, isBookmarked: bookmarked }
+                  : course,
+              ),
+            })),
           },
       );
 
