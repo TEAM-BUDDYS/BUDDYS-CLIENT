@@ -48,7 +48,7 @@ const SavedPartnerItems = () => {
     );
   };
 
-  if (partners.length === 0) {
+  if (partners.length === 0 && !hasNextPage) {
     return (
       <EmptyState
         title="저장한 동행 게시물이 없어요"
