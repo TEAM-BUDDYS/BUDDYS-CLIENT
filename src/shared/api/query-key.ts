@@ -195,6 +195,14 @@ export const USER_QUERY_KEY = {
       'infinite-list',
       excludePageParam(params),
     ] as const,
+  ME_COURSES_INFINITE: (params?: GetQueryParams<'/api/v1/users/me/courses'>) =>
+    [
+      ...USER_QUERY_KEY.ALL,
+      'me',
+      'courses',
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
   PROFILE: (userId: number) =>
     [...USER_QUERY_KEY.ALL, 'profile', userId] as const,
   NICKNAME_CHECK: (

@@ -9,6 +9,13 @@ export type GetMyPostsResponse =
 
 export type MyPost = components['schemas']['PostResponse'];
 
+export type GetMyCoursesParams =
+  operations['getMyCourses']['parameters']['query'];
+export type GetMyCoursesResponse =
+  components['schemas']['BaseResponseUserCoursesResponse'];
+
+export type MyCourse = components['schemas']['CourseResponse'];
+
 export type GetUserProfileResponse =
   components['schemas']['BaseResponseUserPublicProfileResponse'];
 

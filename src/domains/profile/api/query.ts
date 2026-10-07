@@ -19,6 +19,8 @@ import type {
   GetBookmarkedMagazinesResponse,
   GetBookmarkedPostsParams,
   GetBookmarkedPostsResponse,
+  GetMyCoursesParams,
+  GetMyCoursesResponse,
   GetMyPostsParams,
   GetMyPostsResponse,
   GetMyProfileResponse,
@@ -154,6 +156,22 @@ const getMyPosts = async (
   return response;
 };
 
+const getMyCourses = async (
+  params?: GetMyCoursesParams,
+): Promise<GetMyCoursesResponse> => {
+  const response = await apiClient
+    .get(END_POINT.USER.ME_COURSES, {
+      searchParams: createSearchParams(params),
+    })
+    .json<GetMyCoursesResponse>();
+
+  if (response.success === false) {
+    throw new Error(response.message || '코스를 불러오지 못했습니다.');
+  }
+
+  return response;
+};
+
 const getUserProfile = async (userId: number): Promise<OtherProfile | null> => {
   let response: GetUserProfileResponse;
 
@@ -280,6 +298,21 @@ export const PROFILE_QUERY_OPTIONS = {
         }
 
         return (lastPage.data.page ?? 0) + 1;
+      },
+    }),
+  ME_COURSES_INFINITE: (params?: GetMyCoursesParams) =>
+    infiniteQueryOptions({
+      queryKey: USER_QUERY_KEY.ME_COURSES_INFINITE(params),
+      queryFn: ({ pageParam }) => getMyCourses({ ...params, page: pageParam }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        const page = lastPage.data?.page;
+
+        if (!lastPage.data?.hasNext || typeof page !== 'number') {
+          return undefined;
+        }
+
+        return page + 1;
       },
     }),
   USER_PROFILE: (userId: number) =>

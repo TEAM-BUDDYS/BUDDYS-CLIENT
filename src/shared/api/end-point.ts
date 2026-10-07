@@ -62,6 +62,7 @@ export const END_POINT = {
   USER: {
     ME: 'api/v1/users/me',
     ME_POSTS: 'api/v1/users/me/posts',
+    ME_COURSES: 'api/v1/users/me/courses',
     ONBOARDING: 'api/v1/users/onboarding',
     NICKNAME_CHECK: 'api/v1/users/me/nickname-availability',
     SEARCH: 'api/v1/users/search',
