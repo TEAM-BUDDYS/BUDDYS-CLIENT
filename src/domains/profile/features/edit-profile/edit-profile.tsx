@@ -1,7 +1,12 @@
 'use client';
 
+import { useSuspenseQueries } from '@tanstack/react-query';
+import { useState } from 'react';
+
+import { TAG_QUERY_OPTIONS } from '@/shared/api';
 import defaultProfileImage from '@/shared/assets/icons/profile.svg';
 import {
+  Button,
   Dropdown,
   FormLabel,
   NicknameField,
@@ -17,17 +22,28 @@ import {
   useProfileForm,
 } from '@/shared/hooks/use-profile-form';
 
+import type { SelectedTag } from '../../model/tag-edit';
+import { TagEditSection } from '../../sections/tag-edit-section';
+
 interface EditProfileProps {
   initialValues?: ProfileFormValues;
 }
 
 export const EditProfile = ({ initialValues }: EditProfileProps) => {
+  const [selectedTags, setSelectedTags] = useState<SelectedTag[]>([]);
+  const [activityQuery, interestQuery, travelStyleQuery] = useSuspenseQueries({
+    queries: [
+      TAG_QUERY_OPTIONS.LIST('ACTIVITY'),
+      TAG_QUERY_OPTIONS.LIST('INTEREST'),
+      TAG_QUERY_OPTIONS.LIST('TRAVEL_STYLE'),
+    ],
+  });
   const form = useProfileForm(initialValues);
   const selectedGender =
     GENDER_OPTIONS.find((option) => option.value === form.gender) ?? null;
 
   return (
-    <div className="flex flex-col gap-7">
+    <div className="mb-5.5 flex flex-col gap-11.75">
       <div className="flex flex-col items-center gap-3">
         <ProfileImageInput
           accept="image/jpeg,image/png,image/webp"
@@ -85,7 +101,17 @@ export const EditProfile = ({ initialValues }: EditProfileProps) => {
           maxLength={PROFILE_BIO_MAX_LENGTH}
           onChange={(event) => form.handleBioChange(event.target.value)}
         />
+        <TagEditSection
+          tagOptions={{
+            ACTIVITY: activityQuery.data,
+            INTEREST: interestQuery.data,
+            TRAVEL_STYLE: travelStyleQuery.data,
+          }}
+          selectedTags={selectedTags}
+          onChange={setSelectedTags}
+        />
       </div>
+      <Button disabled={!form.isValid}>저장</Button>
     </div>
   );
 };
