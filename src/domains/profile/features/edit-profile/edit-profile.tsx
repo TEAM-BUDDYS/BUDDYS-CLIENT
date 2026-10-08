@@ -137,7 +137,7 @@ export const EditProfile = () => {
         queryClient.invalidateQueries({ queryKey: COURSE_QUERY_KEY.ALL }),
       ]);
       showToast('프로필을 수정했어요.');
-      router.back();
+      router.replace('/profile');
     } catch {
       showToast('프로필을 수정하지 못했어요. 잠시 후 다시 시도해주세요.');
     } finally {
