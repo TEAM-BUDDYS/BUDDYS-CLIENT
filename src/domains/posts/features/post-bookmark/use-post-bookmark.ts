@@ -21,7 +21,7 @@ export const usePostBookmark = ({
   const mutation = useMutation({
     ...POST_MUTATION_OPTIONS.UPDATE_BOOKMARK(),
     onSuccess: () => {
-      void queryClient.invalidateQueries({
+      return queryClient.invalidateQueries({
         queryKey: POST_QUERY_KEY.ALL,
       });
     },
@@ -34,7 +34,7 @@ export const usePostBookmark = ({
 
   const displayedIsBookmarked = mutation.isPending
     ? (mutation.variables?.nextBookmarked ?? isBookmarked)
-    : (mutation.data?.isBookmarked ?? isBookmarked);
+    : isBookmarked;
 
   const toggleBookmark = () => {
     if (mutation.isPending) return;
