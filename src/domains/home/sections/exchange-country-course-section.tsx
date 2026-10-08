@@ -1,71 +1,82 @@
 'use client';
 
-import { useState } from 'react';
+import { useSuspenseQuery } from '@tanstack/react-query';
 
+import { COURSE_QUERY_OPTIONS } from '@/domains/course/api/course';
 import { CourseListCard } from '@/domains/home/components/course-list-card/course-list-card';
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
+import { useCountryCourseBookmark } from '@/domains/home/hooks/use-country-course-bookmark';
+import { toDisplayableCountryCourses } from '@/domains/home/model/country-course';
+import { PROFILE_QUERY_OPTIONS } from '@/domains/profile/api/query';
+import { AsyncBoundary, EmptyState } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
-// TODO: 파견 국가 코스 API 연동 시 응답 데이터로 교체
-const MOCK_EXCHANGE_COUNTRY = '프랑스';
+const EXCHANGE_COUNTRY_COURSE_SIZE = 3;
 
-const MOCK_EXCHANGE_COUNTRY_COURSES = [
-  {
-    courseId: 11,
-    createdAt: '2026-01-12T10:30:00',
-    title: '파리 하루 코스',
-    description: '에펠탑부터 몽마르뜨 언덕까지 하루 만에 둘러봐요',
-    isBookmarked: false,
-  },
-  {
-    courseId: 12,
-    createdAt: '2025-12-28T18:05:00',
-    title: '니스 해변 산책',
-    description: '프랑스 · 1박 2일',
-    isBookmarked: false,
-  },
-  {
-    courseId: 13,
-    createdAt: '2025-11-03T09:00:00',
-    title: '리옹 미식 투어',
-    description: '부숑 맛집과 구시가지 골목 탐방',
-    isBookmarked: false,
-  },
-].map((course) => ({
-  ...course,
-  thumbnailImageUrl: `https://picsum.photos/seed/exchange-course-${course.courseId}/200/200`,
-}));
+const ExchangeCountryCourseList = ({ countryId }: { countryId: number }) => {
+  const params = { countryId, size: EXCHANGE_COUNTRY_COURSE_SIZE };
+  const { data } = useSuspenseQuery(COURSE_QUERY_OPTIONS.LIST(params));
+  const { toggleBookmark } = useCountryCourseBookmark(params);
 
-export const ExchangeCountryCourseSection = () => {
-  const [courses, setCourses] = useState(MOCK_EXCHANGE_COUNTRY_COURSES);
+  const courses = toDisplayableCountryCourses(data.content);
 
-  const handleBookmarkClick = (courseId: number) => {
-    setCourses((prevCourses) =>
-      prevCourses.map((course) =>
-        course.courseId === courseId
-          ? { ...course, isBookmarked: !course.isBookmarked }
-          : course,
-      ),
+  if (courses.length === 0) {
+    return (
+      <EmptyState
+        title="아직 기록된 코스가 없어요"
+        description="첫 번째 코스를 공유해보세요"
+        className="py-8"
+      />
     );
-  };
+  }
+
+  return (
+    <ul className="flex flex-col gap-5">
+      {courses.map((course) => (
+        <li key={course.courseId}>
+          <CourseListCard
+            title={course.title}
+            description={course.description}
+            thumbnailImageUrl={course.thumbnailImageUrl}
+            href={ROUTES.COURSE.DETAIL(course.courseId)}
+            isBookmarked={course.isBookmarked}
+            onBookmarkClick={() =>
+              toggleBookmark(course.courseId, course.isBookmarked)
+            }
+          />
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+const ExchangeCountryCourseContent = () => {
+  const {
+    data: { exchangeCountry },
+  } = useSuspenseQuery(PROFILE_QUERY_OPTIONS.ME_COUNTRIES());
+
+  // 온보딩에서 파견 정보를 건너뛴 사용자는 섹션을 노출하지 않음
+  if (!exchangeCountry) {
+    return null;
+  }
 
   return (
     <section className="flex flex-col gap-5">
       <SectionHeader
-        title={`${MOCK_EXCHANGE_COUNTRY}의 코스를 둘러보세요`}
+        title={`${exchangeCountry.name}의 코스를 둘러보세요`}
         moreHref={ROUTES.COURSE.SUGGEST_EXPLORE}
       />
-      <ul className="flex flex-col gap-5">
-        {courses.map(({ courseId, ...course }) => (
-          <li key={courseId}>
-            <CourseListCard
-              {...course}
-              href={ROUTES.COURSE.DETAIL(courseId)}
-              onBookmarkClick={() => handleBookmarkClick(courseId)}
-            />
-          </li>
-        ))}
-      </ul>
+      <AsyncBoundary className="py-8">
+        <ExchangeCountryCourseList countryId={exchangeCountry.id} />
+      </AsyncBoundary>
     </section>
+  );
+};
+
+export const ExchangeCountryCourseSection = () => {
+  return (
+    <AsyncBoundary className="py-8">
+      <ExchangeCountryCourseContent />
+    </AsyncBoundary>
   );
 };
