@@ -17,6 +17,8 @@ import type {
   CourseDetail,
   CreateCourseCommentRequest,
   CreateCourseCommentResponse,
+  CreateCourseRequest,
+  CreateCourseResponse,
   GetCourseCommentsParams,
   GetCourseCommentsResponse,
   GetCourseDetailResponse,
@@ -32,6 +34,26 @@ interface UpdateCourseBookmarkVariables {
   courseId: number;
   bookmarked: boolean;
 }
+
+const createCourse = async (body: CreateCourseRequest) => {
+  const response = await apiClient
+    .post(END_POINT.COURSE.CREATE, {
+      json: body,
+    })
+    .json<CreateCourseResponse>();
+  const courseId = response.data?.courseId;
+
+  if (
+    response.success !== true ||
+    typeof courseId !== 'number' ||
+    !Number.isSafeInteger(courseId) ||
+    courseId <= 0
+  ) {
+    throw new Error(response.message || '코스 작성 응답이 올바르지 않습니다.');
+  }
+
+  return courseId;
+};
 
 const getCourseComments = async (
   courseId: number,
@@ -140,6 +162,10 @@ export const COURSE_QUERY_OPTIONS = {
 };
 
 export const COURSE_MUTATION_OPTIONS = {
+  CREATE: () =>
+    mutationOptions({
+      mutationFn: createCourse,
+    }),
   CREATE_COMMENT: () =>
     mutationOptions({
       mutationFn: createCourseComment,
