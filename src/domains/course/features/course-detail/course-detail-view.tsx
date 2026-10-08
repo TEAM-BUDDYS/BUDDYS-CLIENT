@@ -75,6 +75,15 @@ export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
     setIsComingSoonOpen(true);
   };
 
+  const handleMenuAction = (action: 'share' | 'edit' | 'delete') => {
+    if (action === 'edit') {
+      router.push(ROUTES.COURSE.EDIT(course.courseId));
+      return;
+    }
+
+    handleComingSoonOpen();
+  };
+
   const handleCourseCreateClick = () => {
     router.push(ROUTES.COURSE.CREATE);
   };
@@ -134,7 +143,7 @@ export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
         isMine={course.isMine}
         ariaLabel="코스 메뉴"
         onClose={() => setIsMenuOpen(false)}
-        onAction={handleComingSoonOpen}
+        onAction={handleMenuAction}
       />
 
       <ComingSoonModal
