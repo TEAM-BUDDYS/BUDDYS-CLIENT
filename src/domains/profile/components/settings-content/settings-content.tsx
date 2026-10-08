@@ -20,22 +20,27 @@ const POLICY_MENU_ITEMS = [
 ] as const;
 
 export const SettingsContent = () => {
-  const { data: profile } = useQuery(PROFILE_QUERY_OPTIONS.ME());
+  const {
+    data: profile,
+    isFetching,
+    isError,
+  } = useQuery(PROFILE_QUERY_OPTIONS.ME());
 
-  const verificationMenuItems = profile
-    ? [
-        {
-          label: '학교 이메일 인증',
-          href: ROUTES.VERIFICATION.UNIVERSITY_EMAIL,
-          isVisible: !profile.isUniversityEmailVerified,
-        },
-        {
-          label: '파견교 서류 인증',
-          href: ROUTES.VERIFICATION.EXCHANGE_DOCUMENT,
-          isVisible: !profile.isExchangeDocumentVerified,
-        },
-      ].filter((item) => item.isVisible)
-    : [];
+  const verificationMenuItems =
+    profile && !isFetching && !isError
+      ? [
+          {
+            label: '학교 이메일 인증',
+            href: ROUTES.VERIFICATION.UNIVERSITY_EMAIL,
+            isVisible: !profile.isUniversityEmailVerified,
+          },
+          {
+            label: '파견교 서류 인증',
+            href: ROUTES.VERIFICATION.EXCHANGE_DOCUMENT,
+            isVisible: !profile.isExchangeDocumentVerified,
+          },
+        ].filter((item) => item.isVisible)
+      : [];
 
   const menuItems = [...verificationMenuItems, ...POLICY_MENU_ITEMS];
 
