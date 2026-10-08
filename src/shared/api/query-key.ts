@@ -203,6 +203,8 @@ export const RECOMMENDATION_QUERY_KEY = {
 
 export const SEARCH_QUERY_KEY = {
   ALL: ['search'] as const,
+  SUGGESTIONS: (params: GetQueryParams<'/api/v1/search/suggestions'>) =>
+    [...SEARCH_QUERY_KEY.ALL, 'suggestions', params] as const,
   INFINITE: (params: GetQueryParams<'/api/v1/search'>) =>
     [
       ...SEARCH_QUERY_KEY.ALL,
