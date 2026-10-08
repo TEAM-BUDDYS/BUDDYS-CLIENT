@@ -201,6 +201,7 @@ export const ContentSection = ({ className }: ContentSectionProps) => {
 
       {tab === 'post' ? (
         <AsyncBoundary
+          key="post"
           className="py-20"
           loadingFallback={<div className="min-h-72" aria-busy="true" />}
         >
@@ -208,6 +209,7 @@ export const ContentSection = ({ className }: ContentSectionProps) => {
         </AsyncBoundary>
       ) : (
         <AsyncBoundary
+          key="course"
           className="py-20"
           loadingFallback={<div className="min-h-72" aria-busy="true" />}
         >
