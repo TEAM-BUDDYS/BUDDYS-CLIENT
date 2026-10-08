@@ -9,6 +9,8 @@ export type SearchAirlinesResponse =
 export type CourseCommentPage =
   components['schemas']['CourseCommentListResponse'];
 export type CourseDetail = components['schemas']['CourseDetailResponse'];
+export type CourseListPage = components['schemas']['CourseListResponse'];
+export type CourseSummary = components['schemas']['CourseSummaryResponse'];
 export type CreateCourseRequest = components['schemas']['CreateCourseRequest'];
 export type CreateCourseResponse =
   components['schemas']['BaseResponseCreateCourseResponse'];
@@ -24,6 +26,16 @@ export type GetCourseCommentsResponse =
   components['schemas']['BaseResponseCourseCommentListResponse'];
 export type GetCourseDetailResponse =
   components['schemas']['BaseResponseCourseDetailResponse'];
+export type GetCoursesParams = NonNullable<
+  operations['getCourses']['parameters']['query']
+>;
+export type GetCoursesResponse =
+  components['schemas']['BaseResponseCourseListResponse'];
+export type GetBookmarkedCoursesParams = NonNullable<
+  operations['getBookmarkedCourses']['parameters']['query']
+>;
+export type GetBookmarkedCoursesResponse =
+  components['schemas']['BaseResponseCourseListResponse'];
 export type CourseBookmark = components['schemas']['CourseBookmarkResponse'];
 export type UpdateCourseBookmarkResponse =
   components['schemas']['BaseResponseCourseBookmarkResponse'];

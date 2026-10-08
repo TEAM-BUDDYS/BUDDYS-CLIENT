@@ -78,6 +78,18 @@ export const COUNTRY_QUERY_KEY = {
 
 export const COURSE_QUERY_KEY = {
   ALL: ['courses'] as const,
+  LISTS_ALL: () => [...COURSE_QUERY_KEY.ALL, 'list'] as const,
+  LIST: (params?: GetQueryParams<'/api/v1/courses'>) =>
+    [...COURSE_QUERY_KEY.LISTS_ALL(), params ?? {}] as const,
+  INFINITE_LISTS_ALL: () => [...COURSE_QUERY_KEY.ALL, 'infinite-list'] as const,
+  INFINITE_LIST: (params?: GetQueryParams<'/api/v1/courses'>) =>
+    [
+      ...COURSE_QUERY_KEY.INFINITE_LISTS_ALL(),
+      excludePageParam(params),
+    ] as const,
+  BOOKMARKS_ALL: () => [...COURSE_QUERY_KEY.ALL, 'bookmarks'] as const,
+  BOOKMARKS: (params?: GetQueryParams<'/api/v1/courses/bookmarks'>) =>
+    [...COURSE_QUERY_KEY.BOOKMARKS_ALL(), params ?? {}] as const,
   DETAIL: (courseId: number) =>
     [...COURSE_QUERY_KEY.ALL, 'detail', courseId] as const,
   COMMENTS_ALL: (courseId: number) =>
@@ -91,7 +103,6 @@ export const COURSE_QUERY_KEY = {
       'infinite-list',
       excludePageParam(params),
     ] as const,
-  BOOKMARKS_ALL: () => [...COURSE_QUERY_KEY.ALL, 'bookmarks'] as const,
   BOOKMARKS_INFINITE: (params?: GetQueryParams<'/api/v1/courses/bookmarks'>) =>
     [
       ...COURSE_QUERY_KEY.BOOKMARKS_ALL(),
@@ -190,6 +201,7 @@ export const TAG_QUERY_KEY = {
 export const USER_QUERY_KEY = {
   ALL: ['users'] as const,
   ME: () => [...USER_QUERY_KEY.ALL, 'me'] as const,
+  ME_EDIT: () => [...USER_QUERY_KEY.ALL, 'me', 'edit'] as const,
   SEARCH: (params: GetQueryParams<'/api/v1/users/search'>) =>
     [...USER_QUERY_KEY.ALL, 'search', excludePageParam(params)] as const,
   ME_POSTS: (params?: GetQueryParams<'/api/v1/users/me/posts'>) =>
@@ -199,6 +211,14 @@ export const USER_QUERY_KEY = {
       ...USER_QUERY_KEY.ALL,
       'me',
       'posts',
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
+  ME_COURSES_INFINITE: (params?: GetQueryParams<'/api/v1/users/me/courses'>) =>
+    [
+      ...USER_QUERY_KEY.ALL,
+      'me',
+      'courses',
       'infinite-list',
       excludePageParam(params),
     ] as const,
