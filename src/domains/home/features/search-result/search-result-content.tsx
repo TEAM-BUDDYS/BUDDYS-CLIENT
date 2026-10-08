@@ -10,7 +10,12 @@ import {
 import { cn } from '@/lib/cn';
 import { BottomNavigation, Header } from '@/shared/components/layout';
 import { SearchSheet } from '@/shared/components/search/search-sheet';
-import { AsyncBoundary, Filter, Searchbar } from '@/shared/components/ui';
+import {
+  AsyncBoundary,
+  EmptyState,
+  Filter,
+  Searchbar,
+} from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 import { useSheetScroll } from '@/shared/hooks/use-sheet-scroll';
 
@@ -76,17 +81,29 @@ export const SearchResultContent = () => {
         </div>
 
         <div className="mt-6">
-          {category === 'PARTNER' && (
+          {searchKeyword ? (
             <AsyncBoundary
               className="py-20"
-              resetKeys={[keyword]}
+              resetKeys={[searchKeyword, category]}
               loadingFallback={<div className="min-h-96" aria-busy="true" />}
             >
-              <SearchResultPostList keyword={keyword} />
+              {category === 'PARTNER' && (
+                <SearchResultPostList keyword={searchKeyword} />
+              )}
+              {category === 'COURSE' && (
+                <SearchResultCourseList keyword={searchKeyword} />
+              )}
+              {category === 'BUDDY' && (
+                <SearchResultBuddyList keyword={searchKeyword} />
+              )}
             </AsyncBoundary>
+          ) : (
+            <EmptyState
+              title="검색어를 입력해 주세요"
+              description="동행, 코스, 버디를 검색할 수 있어요"
+              className="py-20"
+            />
           )}
-          {category === 'COURSE' && <SearchResultCourseList />}
-          {category === 'BUDDY' && <SearchResultBuddyList />}
         </div>
       </main>
       <BottomNavigation className="fixed right-0 bottom-0 left-0 z-20 mx-auto max-w-107.5" />

@@ -1,10 +1,14 @@
 'use client';
 
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
 import { BookmarkContainer } from '@/domains/home/components/bookmark-container/bookmark-container';
-import { hasPartnerCardFields } from '@/domains/partner/model/partner-search';
+import {
+  type DisplayablePartnerPost,
+  hasPartnerCardFields,
+} from '@/domains/partner/model/partner-search';
+import { usePostBookmark } from '@/domains/posts/features/post-bookmark/use-post-bookmark';
 import { PROFILE_QUERY_OPTIONS } from '@/domains/profile/api/query';
 import { AsyncBoundary, Card, EmptyState } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
@@ -12,9 +16,38 @@ import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 
 const SAVED_PARTNERS_PAGE_SIZE = 20;
 
+interface SavedPartnerItemProps {
+  partner: DisplayablePartnerPost;
+}
+
+const SavedPartnerItem = ({ partner }: SavedPartnerItemProps) => {
+  const bookmark = usePostBookmark({
+    postId: partner.postId,
+    isBookmarked: partner.isBookmarked ?? true,
+  });
+
+  return (
+    <BookmarkContainer
+      isBookmarked={bookmark.isBookmarked}
+      isBookmarkPending={bookmark.isPending}
+      variant="card"
+      onBookmarkClick={bookmark.toggleBookmark}
+    >
+      <Card
+        href={ROUTES.POST.DETAIL(partner.postId)}
+        title={partner.title}
+        content={partner.content}
+        postStatus={partner.recruitmentStatus}
+        tagValue={partner.country.name}
+        startDate={partner.startDate}
+        endDate={partner.endDate}
+        image={partner.thumbnailImageUrl}
+      />
+    </BookmarkContainer>
+  );
+};
+
 const SavedPartnerItems = () => {
-  // TODO: 게시글 저장 해제 API 연동 시 mutation으로 교체
-  const [unbookmarkedPostIds, setUnbookmarkedPostIds] = useState<number[]>([]);
   const {
     data,
     fetchNextPage,
@@ -40,14 +73,6 @@ const SavedPartnerItems = () => {
     onIntersect: handleIntersect,
   });
 
-  const handleBookmarkClick = (postId: number) => {
-    setUnbookmarkedPostIds((prevPostIds) =>
-      prevPostIds.includes(postId)
-        ? prevPostIds.filter((prevPostId) => prevPostId !== postId)
-        : [...prevPostIds, postId],
-    );
-  };
-
   if (partners.length === 0 && !hasNextPage) {
     return (
       <EmptyState
@@ -63,22 +88,7 @@ const SavedPartnerItems = () => {
       <ul className="flex flex-col gap-5">
         {partners.map((partner) => (
           <li key={partner.postId}>
-            <BookmarkContainer
-              isBookmarked={!unbookmarkedPostIds.includes(partner.postId)}
-              variant="card"
-              onBookmarkClick={() => handleBookmarkClick(partner.postId)}
-            >
-              <Card
-                href={ROUTES.POST.DETAIL(partner.postId)}
-                title={partner.title}
-                content={partner.content}
-                postStatus={partner.recruitmentStatus}
-                tagValue={partner.country.name}
-                startDate={partner.startDate}
-                endDate={partner.endDate}
-                image={partner.thumbnailImageUrl}
-              />
-            </BookmarkContainer>
+            <SavedPartnerItem partner={partner} />
           </li>
         ))}
       </ul>

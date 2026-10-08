@@ -2,7 +2,7 @@
 
 import { useSuspenseQuery } from '@tanstack/react-query';
 
-import { PROFILE_QUERY_OPTIONS } from '@/domains/profile/api/query';
+import { USER_QUERY_OPTIONS } from '@/shared/api';
 import { Header } from '@/shared/components/layout';
 import { EmptyState } from '@/shared/components/ui';
 
@@ -16,7 +16,7 @@ export const OtherProfileContainer = ({
   userId,
 }: OtherProfileContainerProps) => {
   const { data: profile } = useSuspenseQuery(
-    PROFILE_QUERY_OPTIONS.USER_PROFILE(userId),
+    USER_QUERY_OPTIONS.PROFILE(userId),
   );
 
   if (!profile) {

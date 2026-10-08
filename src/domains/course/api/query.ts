@@ -24,6 +24,7 @@ import type {
   Place,
   SearchAirlinesParams,
   SearchAirlinesResponse,
+  SearchPlacesPage,
   SearchPlacesPageParams,
   SearchPlacesParams,
   SearchPlacesResponse,
@@ -153,7 +154,7 @@ const isBookmarkedPlace = (value: unknown): value is BookmarkedPlace => {
 const searchPlaces = async (
   params: SearchPlacesPageParams,
   signal?: AbortSignal,
-) => {
+): Promise<SearchPlacesPage> => {
   const response = await apiClient
     .get(END_POINT.PLACE.SEARCH, {
       searchParams: createSearchParams(params),

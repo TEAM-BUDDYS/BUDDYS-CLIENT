@@ -38,3 +38,6 @@ export type CreateCommentRequest =
   components['schemas']['CreateCommentRequest'];
 export type CreateCommentResponse =
   components['schemas']['BaseResponseCreateCommentResponse'];
+
+export type UpdatePostBookmarkResponse =
+  components['schemas']['BaseResponsePostBookmarkResponse'];
