@@ -275,7 +275,7 @@ export const CourseCreateFlow = ({ initialCourse }: CourseCreateFlowProps) => {
         </div>
       </section>
 
-      <div className="sticky bottom-0 mt-auto flex flex-col gap-4 bg-white px-4 pt-6 pb-8.5">
+      <div className="sticky bottom-0 z-30 mt-auto flex flex-col gap-4 bg-white px-4 pt-6 pb-8.5">
         {isSubmitScreen && submitErrorMessage && (
           <p className="text-caption-r-12 text-error text-center" role="alert">
             {submitErrorMessage}
