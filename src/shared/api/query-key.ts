@@ -115,13 +115,19 @@ export const MAGAZINE_QUERY_KEY = {
 
 export const PLACE_QUERY_KEY = {
   ALL: ['places'] as const,
+  NEARBY_ALL: () => [...PLACE_QUERY_KEY.ALL, 'nearby'] as const,
   NEARBY: (params: GetQueryParams<'/api/v1/places/nearby'> | null) =>
-    [...PLACE_QUERY_KEY.ALL, 'nearby', params] as const,
+    [...PLACE_QUERY_KEY.NEARBY_ALL(), params] as const,
   SEARCH: (params: GetQueryParams<'/api/v1/places/search'>) =>
     [...PLACE_QUERY_KEY.ALL, 'search', excludePageTokenParam(params)] as const,
   BOOKMARKS_ALL: () => [...PLACE_QUERY_KEY.ALL, 'bookmarks'] as const,
   BOOKMARKS: (params?: GetQueryParams<'/api/v1/places/bookmarks'>) =>
     [...PLACE_QUERY_KEY.BOOKMARKS_ALL(), excludePageParam(params)] as const,
+  BOOKMARK_MARKERS_ALL: () =>
+    [...PLACE_QUERY_KEY.BOOKMARKS_ALL(), 'markers'] as const,
+  BOOKMARK_MARKERS: (
+    params: GetQueryParams<'/api/v1/places/bookmarks/markers'> | null,
+  ) => [...PLACE_QUERY_KEY.BOOKMARK_MARKERS_ALL(), params] as const,
 };
 
 export const POST_QUERY_KEY = {

@@ -27,6 +27,8 @@ export type CourseDay = components['schemas']['DayResponse'];
 export type CourseCompanion = components['schemas']['UserSummaryResponse'];
 export type Place = components['schemas']['PlaceResponse'];
 export type BookmarkedPlace = components['schemas']['BookmarkedPlaceResponse'];
+export type UpdatePlaceBookmarkResponse =
+  components['schemas']['BaseResponsePlaceBookmarkResponse'];
 export type GetNearbyPlacesParams = NonNullable<
   operations['getNearbyPlaces']['parameters']['query']
 >;
@@ -66,3 +68,10 @@ export type GetBookmarkedPlacesPageParams = GetBookmarkedPlacesParams &
   Pick<GetBookmarkedPlacesQuery, 'page'>;
 export type GetBookmarkedPlacesResponse =
   components['schemas']['BaseResponseBookmarkedPlaceListResponse'];
+export type GetBookmarkedPlaceMarkersParams = NonNullable<
+  operations['getBookmarkedPlaceMarkers']['parameters']['query']
+>;
+export type GetBookmarkedPlaceMarkersResponse =
+  components['schemas']['BaseResponseBookmarkedPlaceMarkersResponse'];
+export type BookmarkedPlaceMarkers =
+  components['schemas']['BookmarkedPlaceMarkersResponse'];
