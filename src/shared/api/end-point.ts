@@ -43,6 +43,7 @@ export const END_POINT = {
     PRESIGNED_URL: 'api/v1/images/presigned-url',
   },
   MAGAZINE: {
+    LIST: 'api/v1/magazines',
     BOOKMARKS: 'api/v1/magazines/bookmarks',
   },
   PLACE: {
