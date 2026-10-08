@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 
 import { useToast } from '@/shared/components/ui';
-import { NICKNAME_MAX_LENGTH } from '@/shared/constants/nickname';
+import { NICKNAME_MAX_LENGTH } from '@/shared/constants/profile';
 
 import { NICKNAME_QUERY_OPTIONS } from './query';
 
