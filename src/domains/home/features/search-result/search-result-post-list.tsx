@@ -75,7 +75,7 @@ export const SearchResultPostList = ({
     return (
       <EmptyState
         title="검색 결과가 없어요"
-        description="다른 검색어로 동행 게시물을 찾아보세요"
+        description="다른 검색어로 동행을 찾아보세요"
         className="py-20"
       />
     );
