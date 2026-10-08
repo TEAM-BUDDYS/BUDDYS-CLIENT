@@ -10,6 +10,7 @@ import {
   Searchbar,
   useToast,
 } from '@/shared/components/ui';
+import { useContentShare } from '@/shared/hooks/use-content-share';
 
 import { COURSE_CREATE_MAX_COMPANION_COUNT } from '../constants';
 import type { CourseCreateCompanion } from '../model';
@@ -18,21 +19,24 @@ import { CourseCreateSelectedCompanionList } from './course-create-selected-comp
 import { useCourseCompanionSearch } from './use-course-companion-search';
 
 const COMPANION_SEARCH_RESULT_LIST_ID = 'course-companion-search-result-list';
-const COURSE_INVITE_URL = 'buddys.co.kr';
+const COURSE_INVITE_URL = 'https://buddys.co.kr';
 const COURSE_CREATE_TOAST_BOTTOM_OFFSET_CLASS_NAME = 'bottom-26.5';
 
 interface CourseCreateCompanionStepProps {
+  isSubmitting: boolean;
   selectedCompanions: CourseCreateCompanion[];
   onCompanionSelect: (companion: CourseCreateCompanion) => void;
   onCompanionRemove: (userId: number) => void;
 }
 
 export const CourseCreateCompanionStep = ({
+  isSubmitting,
   selectedCompanions,
   onCompanionSelect,
   onCompanionRemove,
 }: CourseCreateCompanionStepProps) => {
   const { showToast } = useToast();
+  const { shareContent } = useContentShare();
   const [keyword, setKeyword] = useState('');
   const companionSearch = useCourseCompanionSearch({ keyword });
   const isResultOpen = companionSearch.hasKeyword;
@@ -72,31 +76,19 @@ export const CourseCreateCompanionStep = ({
     }
   };
 
-  const handleInviteLinkCopy = async () => {
-    if (!navigator.clipboard) {
-      showToast('초대 링크를 복사하지 못했어요. 다시 시도해 주세요.', {
-        bottomOffsetClassName: COURSE_CREATE_TOAST_BOTTOM_OFFSET_CLASS_NAME,
-        variant: 'gray',
-      });
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(COURSE_INVITE_URL);
-      showToast('초대 링크가 복사되었어요.', {
-        bottomOffsetClassName: COURSE_CREATE_TOAST_BOTTOM_OFFSET_CLASS_NAME,
-        variant: 'primary',
-      });
-    } catch {
-      showToast('초대 링크를 복사하지 못했어요. 다시 시도해 주세요.', {
-        bottomOffsetClassName: COURSE_CREATE_TOAST_BOTTOM_OFFSET_CLASS_NAME,
-        variant: 'gray',
-      });
-    }
+  const handleInviteLinkShare = () => {
+    void shareContent({
+      title: '버디즈 동행 초대',
+      url: COURSE_INVITE_URL,
+    });
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <fieldset
+      aria-busy={isSubmitting}
+      className="flex min-w-0 flex-col gap-6 border-0 p-0"
+      disabled={isSubmitting}
+    >
       <div className="relative w-full">
         <Searchbar
           aria-autocomplete="list"
@@ -182,11 +174,11 @@ export const CourseCreateCompanionStep = ({
           icon={<LinkIcon />}
           iconSize="lg"
           variant="secondary"
-          onClick={handleInviteLinkCopy}
+          onClick={handleInviteLinkShare}
         >
           초대 링크 복사하기
         </Button>
       </div>
-    </div>
+    </fieldset>
   );
 };

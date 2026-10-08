@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   agentRules: false,
 
   images: {
+    unoptimized: process.env.NODE_ENV === 'development',
     remotePatterns: [
       // TODO: example 도메인 및 picsum 도메인 삭제
       {

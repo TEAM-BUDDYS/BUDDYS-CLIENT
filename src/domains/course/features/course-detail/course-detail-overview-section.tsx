@@ -75,19 +75,11 @@ const getFlights = (days: CourseDetailDay[]) => {
     .flatMap((day) => day.flights);
 };
 
-const getFlightTime = (dateTime: string) => {
-  const time = dateTime.split('T')[1];
-
-  return time?.slice(0, 5) ?? '';
-};
-
 const getFlightLabel = (flight: CourseDetailFlight) => {
-  const departureTime = getFlightTime(flight.departureAt);
-  const arrivalTime = getFlightTime(flight.arrivalAt);
-  const departureLabel = [flight.departureAirport, departureTime]
+  const departureLabel = [flight.departureAirport, flight.departureTime]
     .filter(Boolean)
     .join(' ');
-  const arrivalLabel = [flight.arrivalAirport, arrivalTime]
+  const arrivalLabel = [flight.arrivalAirport, flight.arrivalTime]
     .filter(Boolean)
     .join(' ');
   const flightIdentifier = flight.flightNumber?.trim() || flight.airline;
@@ -100,9 +92,9 @@ const getFlightKey = (flight: CourseDetailFlight) => {
     flight.airline,
     flight.flightNumber,
     flight.departureAirport,
-    flight.departureAt,
+    flight.departureTime,
     flight.arrivalAirport,
-    flight.arrivalAt,
+    flight.arrivalTime,
   ].join('|');
 };
 

@@ -8,12 +8,20 @@ export const END_POINT = {
     REISSUE: 'api/v1/auth/reissue',
     LOGOUT: 'api/v1/auth/logout',
   },
+  VERIFICATION: {
+    UNIVERSITY_EMAIL: 'api/v1/verifications/university/email',
+    UNIVERSITY_EMAIL_CONFIRM: 'api/v1/verifications/university/email/confirm',
+    EXCHANGE: 'api/v1/verifications/exchange',
+    EXCHANGE_UPLOAD_URL: 'api/v1/verifications/exchange/upload-url',
+  },
   CHAT_ROOM: {
     LIST: 'api/v1/chat-rooms',
     CREATE: 'api/v1/chat-rooms',
     DETAIL: (chatRoomId: number) => `api/v1/chat-rooms/${chatRoomId}`,
     MESSAGES: (chatRoomId: number) =>
       `api/v1/chat-rooms/${chatRoomId}/messages`,
+    REPORT: (chatRoomId: number) => `api/v1/chat-rooms/${chatRoomId}/report`,
+    BLOCK: (chatRoomId: number) => `api/v1/chat-rooms/${chatRoomId}/block`,
   },
   COUNTRY: {
     LIST: 'api/v1/countries',
@@ -24,6 +32,8 @@ export const END_POINT = {
       `api/v1/countries/${countryId}/universities/search`,
   },
   COURSE: {
+    LIST: 'api/v1/courses',
+    CREATE: 'api/v1/courses',
     COMMENTS: (courseId: number) => `api/v1/courses/${courseId}/comments`,
     DETAIL: (courseId: number) => `api/v1/courses/${courseId}`,
     BOOKMARK: (courseId: number) => `api/v1/courses/${courseId}/bookmark`,
@@ -36,15 +46,19 @@ export const END_POINT = {
     BOOKMARKS: 'api/v1/magazines/bookmarks',
   },
   PLACE: {
+    BOOKMARK: (placeId: string) =>
+      `api/v1/places/${encodeURIComponent(placeId)}/bookmark`,
     NEARBY: 'api/v1/places/nearby',
     SEARCH: 'api/v1/places/search',
     BOOKMARKS: 'api/v1/places/bookmarks',
+    BOOKMARK_MARKERS: 'api/v1/places/bookmarks/markers',
     PHOTO: (placeId: string, maxWidth: number) =>
       `api/v1/places/${encodeURIComponent(placeId)}/photo?maxWidth=${maxWidth}`,
   },
   POST: {
     LIST: 'api/v1/posts',
     CREATE: 'api/v1/posts',
+    CLOSING_SOON: 'api/v1/posts/closing-soon',
     DETAIL: (postId: number) => `api/v1/posts/${postId}`,
     STATUS: (postId: number) => `api/v1/posts/${postId}/status`,
     COMMENTS: (postId: number) => `api/v1/posts/${postId}/comments`,
@@ -61,7 +75,9 @@ export const END_POINT = {
   },
   USER: {
     ME: 'api/v1/users/me',
+    ME_EDIT: 'api/v1/users/me/edit',
     ME_POSTS: 'api/v1/users/me/posts',
+    ME_COURSES: 'api/v1/users/me/courses',
     ONBOARDING: 'api/v1/users/onboarding',
     NICKNAME_CHECK: 'api/v1/users/me/nickname-availability',
     SEARCH: 'api/v1/users/search',

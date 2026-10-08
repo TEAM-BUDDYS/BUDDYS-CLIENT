@@ -2,14 +2,14 @@ import { BookmarkIcon, LocationIcon } from '@/shared/components/icons';
 import { IconButton } from '@/shared/components/ui';
 
 interface MapFloatingControlsProps {
-  isBookmarkActive: boolean;
+  isBookmarkMode: boolean;
   isLocationActive: boolean;
   onBookmarkClick: () => void;
   onLocationClick: () => void;
 }
 
 export const MapFloatingControls = ({
-  isBookmarkActive,
+  isBookmarkMode,
   isLocationActive,
   onBookmarkClick,
   onLocationClick,
@@ -17,10 +17,12 @@ export const MapFloatingControls = ({
   return (
     <div className="flex flex-col gap-2">
       <IconButton
-        aria-label={isBookmarkActive ? '북마크 표시 해제' : '북마크 표시'}
-        aria-pressed={isBookmarkActive}
+        aria-label={
+          isBookmarkMode ? '근처 장소 함께 보기' : '저장한 장소만 보기'
+        }
+        aria-pressed={isBookmarkMode}
         className={
-          isBookmarkActive
+          isBookmarkMode
             ? 'text-mint-300 size-9 bg-gray-100 shadow-[0_2px_6px_0_rgba(0,0,0,0.22)] enabled:active:bg-gray-100'
             : 'text-mint-300 size-9 bg-white shadow-[0_2px_6px_0_rgba(0,0,0,0.22)] enabled:active:bg-white'
         }

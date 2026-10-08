@@ -1,16 +1,63 @@
-import type { NearbyCourseItem } from '@/domains/course/model/course-place';
+'use client';
 
-import { NearbyCourseContent } from './nearby-course-content';
+import { CourseSaveCard } from '@/domains/course/components/course-save-card/course-save-card';
+import type { NearbyCourseItem } from '@/domains/course/model/course-place';
+import { AsyncErrorState, AsyncLoadingState } from '@/shared/components/ui';
+import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 
 interface BookmarkedPlaceContentProps {
+  hasError?: boolean;
+  hasNextPage?: boolean;
+  isFetchNextPageError?: boolean;
+  isFetchingNextPage?: boolean;
+  isLoading?: boolean;
   items: readonly NearbyCourseItem[];
+  pendingBookmarkPlaceIds?: ReadonlySet<string>;
   onBookmarkChange: (placeId: string, nextBookmarked: boolean) => void;
+  onLoadMore?: () => void;
+  onRetry?: () => void;
 }
 
 export const BookmarkedPlaceContent = ({
+  hasError = false,
+  hasNextPage = false,
+  isFetchNextPageError = false,
+  isFetchingNextPage = false,
+  isLoading = false,
   items,
+  pendingBookmarkPlaceIds,
   onBookmarkChange,
+  onLoadMore,
+  onRetry,
 }: BookmarkedPlaceContentProps) => {
+  const loadMoreRef = useInfiniteScroll<HTMLDivElement>({
+    enabled:
+      hasNextPage &&
+      !isFetchingNextPage &&
+      !isFetchNextPageError &&
+      Boolean(onLoadMore),
+    onIntersect: () => onLoadMore?.(),
+  });
+
+  if (isLoading) {
+    return (
+      <AsyncLoadingState
+        className="min-h-60"
+        title="저장한 장소를 불러오고 있어요"
+      />
+    );
+  }
+
+  if (hasError && onRetry) {
+    return (
+      <AsyncErrorState
+        className="min-h-60"
+        title="저장한 장소를 불러오지 못했어요"
+        onRetry={onRetry}
+      />
+    );
+  }
+
   if (items.length === 0) {
     return (
       <div className="flex min-h-full justify-center pt-22.5 text-center">
@@ -22,6 +69,29 @@ export const BookmarkedPlaceContent = ({
   }
 
   return (
-    <NearbyCourseContent items={items} onBookmarkChange={onBookmarkChange} />
+    <>
+      <ul className="flex flex-col gap-6 divide-y-1 divide-gray-50">
+        {items.map(({ place, description }) => (
+          <li key={place.placeId} className="pb-6">
+            <CourseSaveCard
+              place={place}
+              description={description}
+              isBookmarkPending={pendingBookmarkPlaceIds?.has(place.placeId)}
+              onBookmarkChange={onBookmarkChange}
+            />
+          </li>
+        ))}
+      </ul>
+      <div ref={loadMoreRef} aria-hidden className="h-1" />
+      {isFetchNextPageError && onLoadMore ? (
+        <button
+          className="text-caption-m-12 text-mint-400 mx-auto block py-4"
+          type="button"
+          onClick={onLoadMore}
+        >
+          다시 불러오기
+        </button>
+      ) : null}
+    </>
   );
 };

@@ -78,6 +78,18 @@ export const COUNTRY_QUERY_KEY = {
 
 export const COURSE_QUERY_KEY = {
   ALL: ['courses'] as const,
+  LISTS_ALL: () => [...COURSE_QUERY_KEY.ALL, 'list'] as const,
+  LIST: (params?: GetQueryParams<'/api/v1/courses'>) =>
+    [...COURSE_QUERY_KEY.LISTS_ALL(), params ?? {}] as const,
+  INFINITE_LISTS_ALL: () => [...COURSE_QUERY_KEY.ALL, 'infinite-list'] as const,
+  INFINITE_LIST: (params?: GetQueryParams<'/api/v1/courses'>) =>
+    [
+      ...COURSE_QUERY_KEY.INFINITE_LISTS_ALL(),
+      excludePageParam(params),
+    ] as const,
+  BOOKMARKS_ALL: () => [...COURSE_QUERY_KEY.ALL, 'bookmarks'] as const,
+  BOOKMARKS: (params?: GetQueryParams<'/api/v1/courses/bookmarks'>) =>
+    [...COURSE_QUERY_KEY.BOOKMARKS_ALL(), params ?? {}] as const,
   DETAIL: (courseId: number) =>
     [...COURSE_QUERY_KEY.ALL, 'detail', courseId] as const,
   COMMENTS_ALL: (courseId: number) =>
@@ -91,7 +103,6 @@ export const COURSE_QUERY_KEY = {
       'infinite-list',
       excludePageParam(params),
     ] as const,
-  BOOKMARKS_ALL: () => [...COURSE_QUERY_KEY.ALL, 'bookmarks'] as const,
   BOOKMARKS_INFINITE: (params?: GetQueryParams<'/api/v1/courses/bookmarks'>) =>
     [
       ...COURSE_QUERY_KEY.BOOKMARKS_ALL(),
@@ -115,13 +126,19 @@ export const MAGAZINE_QUERY_KEY = {
 
 export const PLACE_QUERY_KEY = {
   ALL: ['places'] as const,
+  NEARBY_ALL: () => [...PLACE_QUERY_KEY.ALL, 'nearby'] as const,
   NEARBY: (params: GetQueryParams<'/api/v1/places/nearby'> | null) =>
-    [...PLACE_QUERY_KEY.ALL, 'nearby', params] as const,
+    [...PLACE_QUERY_KEY.NEARBY_ALL(), params] as const,
   SEARCH: (params: GetQueryParams<'/api/v1/places/search'>) =>
     [...PLACE_QUERY_KEY.ALL, 'search', excludePageTokenParam(params)] as const,
   BOOKMARKS_ALL: () => [...PLACE_QUERY_KEY.ALL, 'bookmarks'] as const,
   BOOKMARKS: (params?: GetQueryParams<'/api/v1/places/bookmarks'>) =>
     [...PLACE_QUERY_KEY.BOOKMARKS_ALL(), excludePageParam(params)] as const,
+  BOOKMARK_MARKERS_ALL: () =>
+    [...PLACE_QUERY_KEY.BOOKMARKS_ALL(), 'markers'] as const,
+  BOOKMARK_MARKERS: (
+    params: GetQueryParams<'/api/v1/places/bookmarks/markers'> | null,
+  ) => [...PLACE_QUERY_KEY.BOOKMARK_MARKERS_ALL(), params] as const,
 };
 
 export const POST_QUERY_KEY = {
@@ -130,6 +147,7 @@ export const POST_QUERY_KEY = {
     [...POST_QUERY_KEY.ALL, 'list', params ?? {}] as const,
   INFINITE_LIST: (params?: GetQueryParams<'/api/v1/posts'>) =>
     [...POST_QUERY_KEY.ALL, 'infinite-list', excludePageParam(params)] as const,
+  CLOSING_SOON: () => [...POST_QUERY_KEY.ALL, 'closing-soon'] as const,
   DETAIL: (postId: number) =>
     [...POST_QUERY_KEY.ALL, 'detail', postId] as const,
   COMMENTS_ALL: (postId: number) =>
@@ -183,6 +201,7 @@ export const TAG_QUERY_KEY = {
 export const USER_QUERY_KEY = {
   ALL: ['users'] as const,
   ME: () => [...USER_QUERY_KEY.ALL, 'me'] as const,
+  ME_EDIT: () => [...USER_QUERY_KEY.ALL, 'me', 'edit'] as const,
   SEARCH: (params: GetQueryParams<'/api/v1/users/search'>) =>
     [...USER_QUERY_KEY.ALL, 'search', excludePageParam(params)] as const,
   ME_POSTS: (params?: GetQueryParams<'/api/v1/users/me/posts'>) =>
@@ -192,6 +211,14 @@ export const USER_QUERY_KEY = {
       ...USER_QUERY_KEY.ALL,
       'me',
       'posts',
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
+  ME_COURSES_INFINITE: (params?: GetQueryParams<'/api/v1/users/me/courses'>) =>
+    [
+      ...USER_QUERY_KEY.ALL,
+      'me',
+      'courses',
       'infinite-list',
       excludePageParam(params),
     ] as const,

@@ -67,10 +67,7 @@ const SavedCourseItems = () => {
                 course.content ||
                 [course.countries, course.cities].filter(Boolean).join(' · ')
               }
-              images={course.images.map((src, index) => ({
-                src,
-                alt: `${course.title} 이미지 ${index + 1}`,
-              }))}
+              images={course.images}
               isBookmarked={!unbookmarkedCourseIds.includes(course.courseId)}
               href={ROUTES.COURSE.DETAIL(course.courseId)}
               className="[&_h3]:text-body-sb-15"

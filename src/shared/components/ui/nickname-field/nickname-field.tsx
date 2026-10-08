@@ -1,6 +1,6 @@
 import type { ChangeEvent } from 'react';
 
-import { NICKNAME_MAX_LENGTH } from '@/shared/constants/nickname';
+import { NICKNAME_MAX_LENGTH } from '@/shared/constants/profile';
 
 import { TextField, type TextFieldProps } from '../text-field/text-field';
 import { NicknameCheckButton } from './nickname-check-button';

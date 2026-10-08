@@ -4,6 +4,8 @@ export interface MyProfile {
   imageUrl?: string | null;
   nickname: string;
   isVerified: boolean;
+  isUniversityEmailVerified: boolean;
+  isExchangeDocumentVerified: boolean;
   tags: Tag[];
   bio?: string | null;
 }
