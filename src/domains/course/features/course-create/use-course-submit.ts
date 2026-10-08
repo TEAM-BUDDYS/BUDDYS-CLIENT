@@ -7,7 +7,7 @@ import { useState } from 'react';
 
 import { COURSE_MUTATION_OPTIONS } from '@/domains/course/api/course';
 import type { CourseErrorResponse } from '@/domains/course/api/type';
-import { COURSE_QUERY_KEY } from '@/shared/api';
+import { COURSE_QUERY_KEY, USER_QUERY_KEY } from '@/shared/api';
 import { useImageUpload, validateImageFile } from '@/shared/api/image';
 import { useToast } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
@@ -130,6 +130,20 @@ export const useCourseSubmit = ({ courseId }: UseCourseSubmitParams = {}) => {
       const payload = convertCourseCreateValueToRequest(value, dayImageUrls);
       const createdCourseId = await createCourseMutation.mutateAsync(payload);
 
+      void Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: COURSE_QUERY_KEY.LISTS_ALL(),
+          refetchType: 'none',
+        }),
+        queryClient.invalidateQueries({
+          queryKey: COURSE_QUERY_KEY.INFINITE_LISTS_ALL(),
+          refetchType: 'none',
+        }),
+        queryClient.invalidateQueries({
+          queryKey: USER_QUERY_KEY.ME_COURSES_ALL(),
+          refetchType: 'none',
+        }),
+      ]);
       router.replace(ROUTES.COURSE.DETAIL(createdCourseId));
     } catch (error) {
       setSubmitErrorMessage(getCourseSubmitErrorMessage(error, isEditMode));
