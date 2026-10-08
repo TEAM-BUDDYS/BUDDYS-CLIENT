@@ -5,6 +5,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useCallback, useRef, useState } from 'react';
 
 import { HOME_MUTATION_OPTIONS } from '@/domains/home/api/query';
 import type { GetMagazinesResponse } from '@/domains/home/api/type';
@@ -15,8 +16,12 @@ import { useToast } from '@/shared/components/ui';
 export const useMagazineBookmarkMutation = () => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
+  const pendingMagazineIdsRef = useRef(new Set<number>());
+  const [pendingMagazineIds, setPendingMagazineIds] = useState<
+    ReadonlySet<number>
+  >(() => new Set());
 
-  return useMutation({
+  const mutation = useMutation({
     ...HOME_MUTATION_OPTIONS.UPDATE_MAGAZINE_BOOKMARK(),
     onSuccess: ({ magazineId, isBookmarked }) => {
       const updateList = (
@@ -78,5 +83,22 @@ export const useMagazineBookmarkMutation = () => {
         variant: 'gray',
       });
     },
+    onSettled: (_data, _error, { magazineId }) => {
+      pendingMagazineIdsRef.current.delete(magazineId);
+      setPendingMagazineIds(new Set(pendingMagazineIdsRef.current));
+    },
   });
+  const { mutate } = mutation;
+  const updateBookmark = useCallback(
+    (variables: Parameters<typeof mutate>[0]) => {
+      if (pendingMagazineIdsRef.current.has(variables.magazineId)) return;
+
+      pendingMagazineIdsRef.current.add(variables.magazineId);
+      setPendingMagazineIds(new Set(pendingMagazineIdsRef.current));
+      mutate(variables);
+    },
+    [mutate],
+  );
+
+  return { mutate: updateBookmark, pendingMagazineIds };
 };

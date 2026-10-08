@@ -53,7 +53,6 @@ const MagazineList = ({ category, sort, onSortChange }: MagazineListProps) => {
   });
 
   const handleBookmarkClick = (magazineId: number, isBookmarked: boolean) => {
-    if (bookmarkMutation.isPending) return;
     bookmarkMutation.mutate({ magazineId, isBookmarked });
   };
 
@@ -78,7 +77,9 @@ const MagazineList = ({ category, sort, onSortChange }: MagazineListProps) => {
           <li key={magazineId}>
             <MagazineListCard
               {...magazine}
-              isBookmarkPending={bookmarkMutation.isPending}
+              isBookmarkPending={bookmarkMutation.pendingMagazineIds.has(
+                magazineId,
+              )}
               onBookmarkClick={() =>
                 handleBookmarkClick(magazineId, !magazine.isBookmarked)
               }

@@ -37,7 +37,6 @@ const SavedMagazineItems = () => {
   });
 
   const handleBookmarkClick = (magazineId: number) => {
-    if (bookmarkMutation.isPending) return;
     bookmarkMutation.mutate({ magazineId, isBookmarked: false });
   };
 
@@ -63,7 +62,9 @@ const SavedMagazineItems = () => {
               publishedAt={magazine.publishedAt}
               externalUrl={magazine.externalUrl}
               isBookmarked={magazine.isBookmarked}
-              isBookmarkPending={bookmarkMutation.isPending}
+              isBookmarkPending={bookmarkMutation.pendingMagazineIds.has(
+                magazine.magazineId,
+              )}
               onBookmarkClick={() => handleBookmarkClick(magazine.magazineId)}
             />
           </li>
