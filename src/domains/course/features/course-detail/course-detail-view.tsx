@@ -10,6 +10,7 @@ import { Header } from '@/shared/components/layout';
 import { PostMenuBottomSheet } from '@/shared/components/ui';
 import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
 import { ROUTES } from '@/shared/config';
+import { useContentShare } from '@/shared/hooks/use-content-share';
 
 import { CourseContinuationBanner } from './course-continuation-banner';
 import { CourseDetailComments } from './course-detail-comments';
@@ -33,6 +34,7 @@ export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
     courseId: course.courseId,
     isBookmarked: course.isBookmarked,
   });
+  const { shareContent } = useContentShare();
   const pendingDayScrollRef = useRef<number | null>(null);
   const dayPickerDays = useMemo(
     () =>
@@ -134,7 +136,17 @@ export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
         isMine={course.isMine}
         ariaLabel="코스 메뉴"
         onClose={() => setIsMenuOpen(false)}
-        onAction={handleComingSoonOpen}
+        onAction={(action) => {
+          if (action === 'share') {
+            void shareContent({
+              title: course.title,
+              url: ROUTES.COURSE.DETAIL(course.courseId),
+            });
+            return;
+          }
+
+          handleComingSoonOpen();
+        }}
       />
 
       <ComingSoonModal
