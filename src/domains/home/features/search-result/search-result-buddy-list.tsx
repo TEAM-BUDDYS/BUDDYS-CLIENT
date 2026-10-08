@@ -7,6 +7,7 @@ import { SEARCH_QUERY_OPTIONS } from '@/domains/home/api/query';
 import { ListToolbar } from '@/domains/home/components/list-toolbar/list-toolbar';
 import { SearchBuddys } from '@/domains/home/components/search-buddys/search-buddys';
 import { EmptyState } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 
 const SEARCH_RESULT_SIZE = 10;
@@ -66,6 +67,7 @@ export const SearchResultBuddyList = ({
             key={userId}
             nickname={nickname}
             profileImageUrl={profileImageUrl}
+            href={ROUTES.PROFILE.DETAIL(userId)}
             onChatClick={handleChatClick}
           />
         ))}
