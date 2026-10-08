@@ -75,6 +75,13 @@ export type SearchPlacesPageParams = SearchPlacesParams &
 export type SearchPlacesResponse =
   components['schemas']['BaseResponsePlaceSearchResponse'];
 
+type SearchPlacesData = NonNullable<SearchPlacesResponse['data']>;
+
+export interface SearchPlacesPage {
+  places: NonNullable<SearchPlacesData['places']>;
+  nextPageToken: Exclude<SearchPlacesData['nextPageToken'], undefined>;
+}
+
 type GetBookmarkedPlacesQuery = NonNullable<
   operations['getBookmarkedPlaces']['parameters']['query']
 >;

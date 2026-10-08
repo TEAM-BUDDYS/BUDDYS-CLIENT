@@ -129,8 +129,9 @@ export const PLACE_QUERY_KEY = {
   NEARBY_ALL: () => [...PLACE_QUERY_KEY.ALL, 'nearby'] as const,
   NEARBY: (params: GetQueryParams<'/api/v1/places/nearby'> | null) =>
     [...PLACE_QUERY_KEY.NEARBY_ALL(), params] as const,
+  SEARCH_ALL: () => [...PLACE_QUERY_KEY.ALL, 'search'] as const,
   SEARCH: (params: GetQueryParams<'/api/v1/places/search'>) =>
-    [...PLACE_QUERY_KEY.ALL, 'search', excludePageTokenParam(params)] as const,
+    [...PLACE_QUERY_KEY.SEARCH_ALL(), excludePageTokenParam(params)] as const,
   BOOKMARKS_ALL: () => [...PLACE_QUERY_KEY.ALL, 'bookmarks'] as const,
   BOOKMARKS: (params?: GetQueryParams<'/api/v1/places/bookmarks'>) =>
     [...PLACE_QUERY_KEY.BOOKMARKS_ALL(), excludePageParam(params)] as const,

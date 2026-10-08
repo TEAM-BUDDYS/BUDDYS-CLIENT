@@ -29,12 +29,16 @@ interface CourseBottomSheetProps {
   hasBookmarkError?: boolean;
   hasBookmarkNextPage?: boolean;
   hasNearbyError?: boolean;
+  hasNearbyNextPage?: boolean;
   hasLocationError?: boolean;
   isBookmarkMode: boolean;
   isBookmarkFetchNextPageError?: boolean;
   isBookmarkFetchingNextPage?: boolean;
   isBookmarkLoading?: boolean;
   isNearbyLoading?: boolean;
+  isNearbySearchMode?: boolean;
+  isNearbyFetchNextPageError?: boolean;
+  isNearbyFetchingNextPage?: boolean;
   isPlaceSelectionLoading?: boolean;
   nearbyItems: readonly NearbyCourseItem[];
   pendingBookmarkPlaceIds?: ReadonlySet<string>;
@@ -46,6 +50,7 @@ interface CourseBottomSheetProps {
   onBookmarkRetry?: () => void;
   onExploreClick: () => void;
   onNearbyRetry?: () => void;
+  onNearbyLoadMore?: () => void;
   onSuggestedMoreClick: () => void;
 }
 
@@ -57,12 +62,16 @@ export const CourseBottomSheet = ({
   hasBookmarkError = false,
   hasBookmarkNextPage = false,
   hasNearbyError = false,
+  hasNearbyNextPage = false,
   hasLocationError = false,
   isBookmarkMode,
   isBookmarkFetchNextPageError = false,
   isBookmarkFetchingNextPage = false,
   isBookmarkLoading = false,
   isNearbyLoading = false,
+  isNearbySearchMode = false,
+  isNearbyFetchNextPageError = false,
+  isNearbyFetchingNextPage = false,
   isPlaceSelectionLoading = false,
   nearbyItems,
   pendingBookmarkPlaceIds,
@@ -74,6 +83,7 @@ export const CourseBottomSheet = ({
   onBookmarkRetry,
   onExploreClick,
   onNearbyRetry,
+  onNearbyLoadMore,
   onSuggestedMoreClick,
 }: CourseBottomSheetProps) => {
   const handleSnapPointChange = (snapPoint: number | string | null) => {
@@ -137,10 +147,15 @@ export const CourseBottomSheet = ({
             <NearbyCourseContent
               hasError={hasNearbyError}
               hasLocationError={hasLocationError}
+              hasNextPage={hasNearbyNextPage}
+              isFetchNextPageError={isNearbyFetchNextPageError}
+              isFetchingNextPage={isNearbyFetchingNextPage}
               isLoading={isNearbyLoading}
+              isSearchMode={isNearbySearchMode}
               items={nearbyItems}
               pendingBookmarkPlaceIds={pendingBookmarkPlaceIds}
               onBookmarkChange={onBookmarkChange}
+              onLoadMore={onNearbyLoadMore}
               onRetry={onNearbyRetry}
             />
           ) : (
