@@ -5,11 +5,13 @@ import {
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
 } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAuthSession } from '@/domains/auth/features/auth-session/auth-session-provider';
 import { Header } from '@/shared/components/layout';
 import { BottomActionBar, Button } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config/routes';
 
 import { CHAT_QUERY_OPTIONS } from '../../api/query';
 import {
@@ -28,10 +30,9 @@ interface ChatRoomProps {
 }
 
 export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
+  const router = useRouter();
   const { userId: currentUserId } = useAuthSession();
   const [message, setMessage] = useState('');
-  // 실제 서버 응답 필드에 맞춰 수정 예정
-  const isInputDisabled = false;
   const [realtimeMessages, setRealtimeMessages] = useState<ChatMessageData[]>(
     [],
   );
@@ -48,6 +49,8 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
   const { data: chatRoomData } = useSuspenseQuery(
     CHAT_QUERY_OPTIONS.DETAIL(chatRoomId),
   );
+
+  const isInputDisabled = !chatRoomData.canSendMessage;
 
   const {
     data: messagePages,
@@ -179,6 +182,17 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
     }
   };
 
+  const handleCourseCreateClick = () => {
+    const companionUserId = chatRoomData.participantUserId;
+
+    if (companionUserId === null) {
+      router.push(ROUTES.COURSE.CREATE);
+      return;
+    }
+
+    router.push(`${ROUTES.COURSE.CREATE}?companionUserId=${companionUserId}`);
+  };
+
   if (currentUserId === null) {
     return null;
   }
@@ -189,7 +203,13 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
         content={chatRoomData.participantNickname}
         hasBackButton
         contentAlign="center"
-        right={<ChatRoomMenu />}
+        right={
+          <ChatRoomMenu
+            chatRoomId={chatRoomId}
+            hasBlocked={chatRoomData.hasBlocked}
+            hasReported={chatRoomData.hasReported}
+          />
+        }
       />
       <main className="flex min-h-0 flex-1 flex-col">
         <ChatMessageList
@@ -200,9 +220,14 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
           isFetchPreviousMessagesError={isFetchNextPageError}
           onLoadPreviousMessages={fetchNextPage}
         />
-        <div className="mx-4 my-4">
-          <Button>코스 기록 바로가기</Button>
-        </div>
+        {!isInputDisabled && (
+          <div className="mx-4 mb-4">
+            <Button onClick={handleCourseCreateClick}>
+              코스 기록 바로가기
+            </Button>
+          </div>
+        )}
+
         <BottomActionBar
           className="border-t border-t-gray-100"
           value={message}

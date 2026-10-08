@@ -22,6 +22,8 @@ export interface paths {
      *     모든 필드를 요청에 포함해야 합니다.
      *     태그는 전달된 orderedTagIds로 전체 교체되며,
      *     bio를 null로 전달하면 기존 자기소개가 삭제됩니다.
+     *     profileImageUrl을 null로 전달하면 기존 프로필 이미지가 삭제됩니다.
+     *     profileImageUrl은 이미지 업로드 API(imageDomain=PROFILE)로 발급받은 URL이거나 현재 설정된 값이어야 합니다.
      *     태그 배열의 앞 3개가 대표 태그입니다.
      */
     put: operations['updateMyProfile'];
@@ -389,7 +391,7 @@ export interface paths {
     };
     /**
      * 채팅방 목록 조회
-     * @description 로그인한 사용자가 참여 중인 채팅방 목록을 조회합니다.
+     * @description 로그인한 사용자가 참여 중인 채팅방 목록을 조회합니다. 내가 상대방을 차단했거나 신고한 경우, 그 이후 상대방이 보낸 메시지는 마지막 메시지와 읽지 않은 메시지 수에 반영되지 않습니다.
      */
     get: operations['getChatRooms'];
     put?: never;
@@ -420,7 +422,9 @@ export interface paths {
      *     - 신고 사유(reason)는 선택 입력이며, 생략하면 사유 없이 즉시 접수됩니다.
      *     - 신고 접수 시 신고자·신고 대상자 정보(및 입력된 사유)를 포함한 메일이 운영팀으로 발송됩니다.
      *     - 메일 발송에 실패해도 신고 접수 자체는 성공으로 처리됩니다.
-     *     - 신고 접수 이후에는 별도의 차단 없이도 양쪽 모두 해당 상대방과 서로 메시지를 보낼 수 없습니다.
+     *     - 신고 접수 이후에는 별도의 차단 없이도 내가 상대방에게 메시지를 보낼 수 없습니다.
+     *     - 상대방은 신고 사실을 알 수 없으며, 기존과 같이 메시지를 보낼 수 있습니다.
+     *     - 신고 이후 상대방이 보낸 메시지는 저장되지만, 나의 메시지 목록·채팅방 목록·실시간 수신에는 표시되지 않습니다.
      */
     post: operations['reportChatPartner'];
     delete?: never;
@@ -442,7 +446,9 @@ export interface paths {
      * 채팅 상대방 차단
      * @description 해당 채팅방의 상대방을 차단합니다.
      *
-     *     - 차단 후에는 양쪽 모두 해당 상대방과 서로 메시지를 보낼 수 없습니다.
+     *     - 차단 후에는 내가 상대방에게 메시지를 보낼 수 없습니다.
+     *     - 상대방은 차단 사실을 알 수 없으며, 기존과 같이 메시지를 보낼 수 있습니다.
+     *     - 차단 이후 상대방이 보낸 메시지는 저장되지만, 나의 메시지 목록·채팅방 목록·실시간 수신에는 표시되지 않습니다.
      *     - 기존 채팅 내역은 삭제되지 않고 그대로 유지됩니다.
      *     - 이미 차단한 상대방을 다시 차단해도 오류 없이 처리됩니다(멱등).
      */
@@ -830,6 +836,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/users/me/countries': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 내 관심 국가 및 파견 국가 조회
+     * @description 로그인한 사용자가 설정한 관심 국가와 파견 국가의 ID, 이름, 영문 이름, ISO 코드를 조회합니다. 설정하지 않은 국가는 null로 반환합니다.
+     */
+    get: operations['getMyCountries'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/tags': {
     parameters: {
       query?: never;
@@ -879,7 +905,7 @@ export interface paths {
     };
     /**
      * 통합 검색
-     * @description 검색어로 코스, 사용자, 모집 중 동행 게시글을 동시에 검색합니다. type을 생략하면 세 영역을 모두 조회하고 반환하며, POST/COURSE/USER를 지정하면 해당 영역만 조회하고 반환합니다. 선택하지 않은 영역은 응답 필드에서 제외됩니다. 잘못된 type은 400(GLB-E001)을 반환합니다. 각 영역에 동일한 페이지 번호와 크기를 적용합니다. courses.totalElements와 users.totalElements는 page=0에서만 전체 건수를 제공하며 page>0에서는 건수를 조회하지 않고 명시적으로 null을 반환합니다. posts.totalElements는 페이지 번호·크기와 무관하게 검색어에 일치하는 삭제되지 않은 모집 중 게시글의 전체 수입니다.
+     * @description 검색어로 코스, 사용자, 모집 중 동행 게시글을 동시에 검색합니다. type을 생략하면 세 영역을 모두 조회하고 반환하며, POST/COURSE/USER를 지정하면 해당 영역만 조회하고 반환합니다. 선택하지 않은 영역은 응답 필드에서 제외됩니다. 잘못된 type은 400(GLB-E001)을 반환합니다. sort=LATEST(최신순, 기본값) 또는 BOOKMARK(전체 사용자의 저장 수 순)를 지원합니다. USER는 항상 최신순입니다. 잘못된 sort는 400(GLB-E001)을 반환합니다. 각 영역에 동일한 페이지 번호와 크기를 적용합니다. courses.totalElements와 users.totalElements는 page=0에서만 전체 건수를 제공하며 page>0에서는 건수를 조회하지 않고 명시적으로 null을 반환합니다. posts.totalElements는 페이지 번호·크기와 무관하게 검색어에 일치하는 삭제되지 않은 모집 중 게시글의 전체 수입니다.
      */
     get: operations['search'];
     put?: never;
@@ -1244,7 +1270,7 @@ export interface paths {
     };
     /**
      * 국가 검색
-     * @description 검색 키워드에 해당하는 국가를 검색합니다.
+     * @description 검색 키워드가 한글 국가명 또는 영문 국가명에 포함된 국가를 검색합니다. 영문은 대소문자를 구분하지 않으며, 결과는 한글 국가명의 ㄱㄴㄷ순으로 각 국가의 한글명(name)과 영문명(englishName)을 함께 반환합니다.
      */
     get: operations['searchCountries'];
     put?: never;
@@ -1264,7 +1290,7 @@ export interface paths {
     };
     /**
      * 채팅방 상세 조회
-     * @description 채팅방 ID로 채팅방 기본 정보와 상대방 정보를 조회합니다. 나 또는 상대방이 서로를 차단했거나 신고한 경우 canSendMessage가 false로 응답됩니다.
+     * @description 채팅방 ID로 채팅방 기본 정보와 상대방 정보를 조회합니다. 내가 상대방을 차단했거나 신고한 경우 canSendMessage가 false로 응답되며, hasBlocked와 hasReported로 그 이유를 구분할 수 있습니다. 상대방이 나를 차단했거나 신고한 경우에는 영향을 받지 않습니다.
      */
     get: operations['getChatRoom'];
     put?: never;
@@ -1284,7 +1310,7 @@ export interface paths {
     };
     /**
      * 채팅 메시지 목록 조회
-     * @description 채팅방의 메시지 목록을 커서 기반으로 조회합니다.
+     * @description 채팅방의 메시지 목록을 커서 기반으로 조회합니다. 내가 상대방을 차단했거나 신고한 경우, 그 이후 상대방이 보낸 메시지는 목록에서 제외됩니다.
      */
     get: operations['getMessages'];
     put?: never;
@@ -1387,6 +1413,11 @@ export interface components {
        */
       bio: string | null;
       /**
+       * @description 프로필 이미지 URL. 최대 512자. 이미지 업로드 API(imageDomain=PROFILE)로 발급받은 URL 또는 현재 설정된 값만 허용합니다. null이면 기존 프로필 이미지를 삭제합니다.
+       * @example https://example.com/profile.png
+       */
+      profileImageUrl: string | null;
+      /**
        * @description 드래그앤드롭으로 정렬한 전체 선택 태그 ID 목록입니다.
        *     카테고리와 무관하게 상위 3개가 대표 태그로 노출됩니다.
        *     서버에서 활동 1~3개, 관심사 1~3개, 여행 스타일 1~5개인지 검증합니다.
@@ -1460,22 +1491,20 @@ export interface components {
        */
       departureAirport: string;
       /**
-       * Format: date-time
-       * @description 출발일시
-       * @example 2026-09-01T13:00:00
+       * @description 출발 시간 (HH:mm)
+       * @example 13:00
        */
-      departureAt: string;
+      departureTime: string;
       /**
        * @description 도착 공항
        * @example CDG
        */
       arrivalAirport: string;
       /**
-       * Format: date-time
-       * @description 도착일시
-       * @example 2026-09-01T18:30:00
+       * @description 도착 시간 (HH:mm)
+       * @example 18:30
        */
-      arrivalAt: string;
+      arrivalTime: string;
     };
     CoursePlaceRequest: {
       /**
@@ -2063,10 +2092,20 @@ export interface components {
       /** @description 상대방 사용자 정보 */
       participant?: components['schemas']['ChatParticipantResponse'];
       /**
-       * @description 상대방에게 메시지를 보낼 수 있는지 여부. 나 또는 상대방이 서로를 차단했거나 신고한 경우 false입니다.
+       * @description 상대방에게 메시지를 보낼 수 있는지 여부. 내가 상대방을 차단했거나 신고한 경우 false입니다.
        * @example true
        */
       canSendMessage?: boolean;
+      /**
+       * @description 내가 상대방을 차단했는지 여부. 상대방이 나를 차단한 경우는 반영되지 않습니다.
+       * @example false
+       */
+      hasBlocked?: boolean;
+      /**
+       * @description 내가 상대방을 신고했는지 여부. 상대방이 나를 신고한 경우는 반영되지 않습니다.
+       * @example false
+       */
+      hasReported?: boolean;
     };
     ReportChatPartnerRequest: {
       /**
@@ -2175,7 +2214,7 @@ export interface components {
        */
       bio?: string | null;
       /**
-       * @description 프로필 이미지 URL
+       * @description 프로필 이미지 URL. 이미지 업로드 API(imageDomain=PROFILE)로 발급받은 URL 또는 현재 설정된 값만 허용합니다.
        * @example https://example.com/profile.png
        */
       profileImageUrl?: string | null;
@@ -3878,22 +3917,20 @@ export interface components {
        */
       departureAirport: string;
       /**
-       * Format: date-time
-       * @description 출발일시
-       * @example 2026-09-01T13:00:00
+       * @description 출발 시간 (HH:mm)
+       * @example 13:00
        */
-      departureAt: string;
+      departureTime: string;
       /**
        * @description 도착 공항
        * @example CDG
        */
       arrivalAirport: string;
       /**
-       * Format: date-time
-       * @description 도착일시
-       * @example 2026-09-01T18:30:00
+       * @description 도착 시간 (HH:mm)
+       * @example 18:30
        */
-      arrivalAt: string;
+      arrivalTime: string;
     };
     BaseResponseCourseCommentListResponse: {
       success?: boolean;
@@ -3988,6 +4025,11 @@ export interface components {
        * @example 대한민국
        */
       name?: string;
+      /**
+       * @description 영문 국가 이름. 영문명이 없는 국가는 null입니다.
+       * @example South Korea
+       */
+      englishName?: string | null;
       /**
        * @description 국가 코드
        * @example KR
@@ -4509,6 +4551,7 @@ export interface operations {
            *         "gender": "FEMALE",
            *         "birthDate": "2004-10-24",
            *         "bio": "안녕하세요 김버디입니다~~",
+           *         "profileImageUrl": "https://example.com/profile.png",
            *         "orderedTags": [
            *           {
            *             "id": 27,
@@ -8717,6 +8760,7 @@ export interface operations {
            *         "gender": "FEMALE",
            *         "birthDate": "2004-10-24",
            *         "bio": "안녕하세요 김버디입니다~~",
+           *         "profileImageUrl": "https://example.com/profile.png",
            *         "orderedTags": [
            *           {
            *             "id": 27,
@@ -8897,6 +8941,77 @@ export interface operations {
       };
     };
   };
+  getMyCountries: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 국가 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 사용자 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "USER-E001",
+           *       "message": "사용자를 찾을 수 없습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
   getAllTags: {
     parameters: {
       query?: never;
@@ -8972,6 +9087,11 @@ export interface operations {
         size?: number;
         /** @description 검색 영역. 생략하면 모든 영역을 조회하고 반환합니다. 지정하면 해당 영역만 조회하고 반환합니다. 잘못된 값은 400(GLB-E001)을 반환합니다. */
         type?: 'POST' | 'COURSE' | 'USER';
+        /**
+         * @description 정렬 기준. LATEST: 최신순, BOOKMARK: 전체 사용자의 저장 수 순. 생략 시 LATEST. USER는 항상 최신순입니다.
+         * @example LATEST
+         */
+        sort?: 'LATEST' | 'BOOKMARK';
       };
       header?: never;
       path?: never;
@@ -10542,7 +10662,7 @@ export interface operations {
     parameters: {
       query: {
         /**
-         * @description 검색 키워드
+         * @description 검색 키워드. 한글 또는 영문 국가명의 일부를 입력합니다.
          * @example 대한민국
          */
         keyword: string;

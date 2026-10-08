@@ -20,6 +20,8 @@ export const END_POINT = {
     DETAIL: (chatRoomId: number) => `api/v1/chat-rooms/${chatRoomId}`,
     MESSAGES: (chatRoomId: number) =>
       `api/v1/chat-rooms/${chatRoomId}/messages`,
+    REPORT: (chatRoomId: number) => `api/v1/chat-rooms/${chatRoomId}/report`,
+    BLOCK: (chatRoomId: number) => `api/v1/chat-rooms/${chatRoomId}/block`,
   },
   COUNTRY: {
     LIST: 'api/v1/countries',
@@ -30,6 +32,8 @@ export const END_POINT = {
       `api/v1/countries/${countryId}/universities/search`,
   },
   COURSE: {
+    LIST: 'api/v1/courses',
+    CREATE: 'api/v1/courses',
     COMMENTS: (courseId: number) => `api/v1/courses/${courseId}/comments`,
     DETAIL: (courseId: number) => `api/v1/courses/${courseId}`,
     BOOKMARK: (courseId: number) => `api/v1/courses/${courseId}/bookmark`,
@@ -66,17 +70,23 @@ export const END_POINT = {
     USERS_BY_EXCHANGE_COUNTRY: 'api/v1/recommendations/users/exchange-country',
     POSTS: 'api/v1/recommendations/posts',
   },
+  SEARCH: {
+    INTEGRATED: 'api/v1/search',
+  },
   TAG: {
     LIST: (type: 'ACTIVITY' | 'INTEREST' | 'TRAVEL_STYLE') =>
       `api/v1/tags/${type}`,
   },
   USER: {
     ME: 'api/v1/users/me',
+    ME_EDIT: 'api/v1/users/me/edit',
     ME_POSTS: 'api/v1/users/me/posts',
+    ME_COURSES: 'api/v1/users/me/courses',
     ONBOARDING: 'api/v1/users/onboarding',
     NICKNAME_CHECK: 'api/v1/users/me/nickname-availability',
     SEARCH: 'api/v1/users/search',
     PROFILE: (userId: number) => `api/v1/users/${userId}`,
     POSTS: (userId: number) => `api/v1/users/${userId}/posts`,
+    COURSES: (userId: number) => `api/v1/users/${userId}/courses`,
   },
 } as const;

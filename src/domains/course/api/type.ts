@@ -9,10 +9,17 @@ export type SearchAirlinesResponse =
 export type CourseCommentPage =
   components['schemas']['CourseCommentListResponse'];
 export type CourseDetail = components['schemas']['CourseDetailResponse'];
+export type CourseListPage = components['schemas']['CourseListResponse'];
+export type CourseSummary = components['schemas']['CourseSummaryResponse'];
+export type CreateCourseRequest = components['schemas']['CreateCourseRequest'];
+export type CreateCourseResponse =
+  components['schemas']['BaseResponseCreateCourseResponse'];
+export type CourseErrorResponse = components['schemas']['BaseResponse'];
 export type CreateCourseCommentRequest =
   components['schemas']['CreateCommentRequest'];
 export type CreateCourseCommentResponse =
   components['schemas']['BaseResponseCreateCourseCommentResponse'];
+export type DeleteCourseResponse = components['schemas']['BaseResponseVoid'];
 export type GetCourseCommentsParams = NonNullable<
   operations['getComments_1']['parameters']['query']
 >;
@@ -20,6 +27,16 @@ export type GetCourseCommentsResponse =
   components['schemas']['BaseResponseCourseCommentListResponse'];
 export type GetCourseDetailResponse =
   components['schemas']['BaseResponseCourseDetailResponse'];
+export type GetCoursesParams = NonNullable<
+  operations['getCourses']['parameters']['query']
+>;
+export type GetCoursesResponse =
+  components['schemas']['BaseResponseCourseListResponse'];
+export type GetBookmarkedCoursesParams = NonNullable<
+  operations['getBookmarkedCourses']['parameters']['query']
+>;
+export type GetBookmarkedCoursesResponse =
+  components['schemas']['BaseResponseCourseListResponse'];
 export type CourseBookmark = components['schemas']['CourseBookmarkResponse'];
 export type UpdateCourseBookmarkResponse =
   components['schemas']['BaseResponseCourseBookmarkResponse'];
@@ -58,6 +75,13 @@ export type SearchPlacesPageParams = SearchPlacesParams &
   Pick<SearchPlacesQuery, 'pageToken'>;
 export type SearchPlacesResponse =
   components['schemas']['BaseResponsePlaceSearchResponse'];
+
+type SearchPlacesData = NonNullable<SearchPlacesResponse['data']>;
+
+export interface SearchPlacesPage {
+  places: NonNullable<SearchPlacesData['places']>;
+  nextPageToken: Exclude<SearchPlacesData['nextPageToken'], undefined>;
+}
 
 type GetBookmarkedPlacesQuery = NonNullable<
   operations['getBookmarkedPlaces']['parameters']['query']

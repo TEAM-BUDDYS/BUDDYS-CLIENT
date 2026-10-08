@@ -9,7 +9,7 @@ import {
   NoticeIcon,
   TrashIcon,
 } from '@/shared/components/icons';
-import { BottomSheet, Button, Modal } from '@/shared/components/ui';
+import { BottomSheet, Button, Modal, useToast } from '@/shared/components/ui';
 import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
 
 import { CHAT_CONFIRM_MODAL_CONTENT } from '../../model/chat-room-menu';
@@ -24,6 +24,8 @@ export type ChatBottomSheetAction =
 interface BottomSheetChatProps {
   open: boolean;
   isNotificationOn?: boolean;
+  hasBlocked: boolean;
+  hasReported: boolean;
   onClose: () => void;
   onAction?: (action: ChatBottomSheetAction) => void;
 }
@@ -31,11 +33,14 @@ interface BottomSheetChatProps {
 export const BottomSheetChat = ({
   open,
   isNotificationOn = true,
+  hasBlocked,
+  hasReported,
   onClose,
   onAction,
 }: BottomSheetChatProps) => {
   const [confirmType, setConfirmType] = useState<ConfirmType>(null);
   const [isComingSoonModalOpen, setIsComingSoonModalOpen] = useState(false);
+  const { showToast } = useToast();
 
   const confirmContent =
     confirmType === null ? null : CHAT_CONFIRM_MODAL_CONTENT[confirmType];
@@ -47,12 +52,26 @@ export const BottomSheetChat = ({
   // 차단 메뉴 선택
   const handleBlockClick = () => {
     onClose();
+
+    if (hasBlocked) {
+      showToast('이미 차단한 사용자입니다.', {
+        bottomOffsetClassName: 'bottom-[114px]',
+      });
+      return;
+    }
+
     setConfirmType('block');
   };
 
   // 신고 메뉴 선택
   const handleReportClick = () => {
     onClose();
+
+    if (hasReported) {
+      showToast('이미 신고한 사용자입니다.');
+      return;
+    }
+
     setConfirmType('report');
   };
 

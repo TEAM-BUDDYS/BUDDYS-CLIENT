@@ -1,9 +1,11 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { cn } from '@/lib/cn';
+import { USER_QUERY_OPTIONS } from '@/shared/api';
 import { Header } from '@/shared/components/layout';
 import {
   Button,
@@ -27,14 +29,41 @@ import { CourseCreateFlightForm } from './flight/course-create-flight-form';
 import { CourseCreateItineraryStep } from './itinerary/course-create-itinerary-step';
 import type { CourseCreateScreen } from './model';
 import { useCourseCreateForm } from './use-course-create-form';
+import { useCourseSubmit } from './use-course-submit';
 
-export const CourseCreateFlow = () => {
+interface CourseCreateFlowProps {
+  companionUserId?: number;
+}
+
+export const CourseCreateFlow = ({
+  companionUserId,
+}: CourseCreateFlowProps) => {
   const router = useRouter();
   const [currentScreen, setCurrentScreen] =
     useState<CourseCreateScreen>('country');
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [flightDayNumber, setFlightDayNumber] = useState<number | null>(null);
-  const courseCreateForm = useCourseCreateForm();
+  const { data: companionProfile } = useQuery({
+    ...USER_QUERY_OPTIONS.PROFILE(companionUserId ?? 0),
+    enabled: companionUserId !== undefined,
+    retry: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    throwOnError: false,
+  });
+  const courseCreateForm = useCourseCreateForm(
+    companionUserId !== undefined &&
+      companionProfile &&
+      !companionProfile.isWithdrawn
+      ? {
+          userId: companionUserId,
+          nickname: companionProfile.nickname,
+          profileImageUrl: companionProfile.imageUrl ?? null,
+        }
+      : undefined,
+  );
+  const { clearSubmitError, isSubmitting, submitCourse, submitErrorMessage } =
+    useCourseSubmit();
 
   if (flightDayNumber !== null) {
     return (
@@ -55,6 +84,12 @@ export const CourseCreateFlow = () => {
     currentScreen !== 'detail' && currentScreen !== 'itinerary';
 
   const handleBackClick = () => {
+    if (isSubmitting) {
+      return;
+    }
+
+    clearSubmitError();
+
     if (currentScreen === 'country') {
       router.back();
       return;
@@ -88,7 +123,16 @@ export const CourseCreateFlow = () => {
   };
 
   const handleNextClick = () => {
-    if (!canGoNext) {
+    if (!canGoNext || isSubmitting) {
+      return;
+    }
+
+    if (currentScreen === 'companion') {
+      const value = courseCreateForm.getCourseCreateValue();
+
+      if (value) {
+        void submitCourse(value);
+      }
       return;
     }
 
@@ -229,6 +273,7 @@ export const CourseCreateFlow = () => {
 
           {currentScreen === 'companion' && (
             <CourseCreateCompanionStep
+              isSubmitting={isSubmitting}
               selectedCompanions={courseCreateForm.selectedCompanions}
               onCompanionSelect={courseCreateForm.handleCompanionSelect}
               onCompanionRemove={courseCreateForm.handleCompanionRemove}
@@ -238,10 +283,15 @@ export const CourseCreateFlow = () => {
       </section>
 
       <div className="sticky bottom-0 mt-auto flex flex-col gap-4 bg-white px-4 pt-6 pb-8.5">
+        {currentScreen === 'companion' && submitErrorMessage && (
+          <p className="text-caption-r-12 text-error text-center" role="alert">
+            {submitErrorMessage}
+          </p>
+        )}
         <Button
-          aria-disabled={currentScreen === 'companion' ? true : undefined}
-          disabled={!canGoNext}
-          onClick={currentScreen === 'companion' ? undefined : handleNextClick}
+          aria-busy={isSubmitting}
+          disabled={!canGoNext || isSubmitting}
+          onClick={handleNextClick}
         >
           {currentScreen === 'companion' ? '등록하기' : '다음'}
         </Button>
