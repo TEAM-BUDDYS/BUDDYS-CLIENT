@@ -843,7 +843,7 @@ export interface paths {
     };
     /**
      * 내 관심 국가 및 파견 국가 조회
-     * @description 로그인한 사용자가 설정한 관심 국가와 파견 국가의 ID, 이름, ISO 코드를 조회합니다. 설정하지 않은 국가는 null로 반환합니다.
+     * @description 로그인한 사용자가 설정한 관심 국가와 파견 국가의 ID, 이름, 영문 이름, ISO 코드를 조회합니다. 설정하지 않은 국가는 null로 반환합니다.
      */
     get: operations['getMyCountries'];
     put?: never;
@@ -1268,7 +1268,7 @@ export interface paths {
     };
     /**
      * 국가 검색
-     * @description 검색 키워드에 해당하는 국가를 검색합니다.
+     * @description 검색 키워드가 한글 국가명 또는 영문 국가명에 포함된 국가를 검색합니다. 영문은 대소문자를 구분하지 않으며, 결과는 한글 국가명의 ㄱㄴㄷ순으로 각 국가의 한글명(name)과 영문명(englishName)을 함께 반환합니다.
      */
     get: operations['searchCountries'];
     put?: never;
@@ -1288,7 +1288,7 @@ export interface paths {
     };
     /**
      * 채팅방 상세 조회
-     * @description 채팅방 ID로 채팅방 기본 정보와 상대방 정보를 조회합니다. 내가 상대방을 차단했거나 신고한 경우 canSendMessage가 false로 응답됩니다. 상대방이 나를 차단했거나 신고한 경우에는 영향을 받지 않습니다.
+     * @description 채팅방 ID로 채팅방 기본 정보와 상대방 정보를 조회합니다. 내가 상대방을 차단했거나 신고한 경우 canSendMessage가 false로 응답되며, hasBlocked와 hasReported로 그 이유를 구분할 수 있습니다. 상대방이 나를 차단했거나 신고한 경우에는 영향을 받지 않습니다.
      */
     get: operations['getChatRoom'];
     put?: never;
@@ -2089,6 +2089,16 @@ export interface components {
        * @example true
        */
       canSendMessage?: boolean;
+      /**
+       * @description 내가 상대방을 차단했는지 여부. 상대방이 나를 차단한 경우는 반영되지 않습니다.
+       * @example false
+       */
+      hasBlocked?: boolean;
+      /**
+       * @description 내가 상대방을 신고했는지 여부. 상대방이 나를 신고한 경우는 반영되지 않습니다.
+       * @example false
+       */
+      hasReported?: boolean;
     };
     ReportChatPartnerRequest: {
       /**
@@ -4008,6 +4018,11 @@ export interface components {
        * @example 대한민국
        */
       name?: string;
+      /**
+       * @description 영문 국가 이름. 영문명이 없는 국가는 null입니다.
+       * @example South Korea
+       */
+      englishName?: string | null;
       /**
        * @description 국가 코드
        * @example KR
@@ -10638,7 +10653,7 @@ export interface operations {
     parameters: {
       query: {
         /**
-         * @description 검색 키워드
+         * @description 검색 키워드. 한글 또는 영문 국가명의 일부를 입력합니다.
          * @example 대한민국
          */
         keyword: string;

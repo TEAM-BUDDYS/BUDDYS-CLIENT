@@ -134,6 +134,8 @@ const getMyProfile = async (): Promise<MyProfile> => {
     imageUrl: profileImageUrl || null,
     nickname,
     isVerified: universityEmailVerified || exchangeDocumentVerified,
+    isUniversityEmailVerified: universityEmailVerified,
+    isExchangeDocumentVerified: exchangeDocumentVerified,
     tags: toProfileTags(orderedTags),
     bio: bio ?? null,
   };
