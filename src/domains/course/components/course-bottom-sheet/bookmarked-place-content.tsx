@@ -83,6 +83,14 @@ export const BookmarkedPlaceContent = ({
         ))}
       </ul>
       <div ref={loadMoreRef} aria-hidden className="h-1" />
+      {isFetchingNextPage ? (
+        <p
+          role="status"
+          className="text-caption-m-12 py-4 text-center text-gray-500"
+        >
+          저장한 장소를 불러오는 중이에요
+        </p>
+      ) : null}
       {isFetchNextPageError && onLoadMore ? (
         <button
           className="text-caption-m-12 text-mint-400 mx-auto block py-4"

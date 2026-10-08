@@ -142,7 +142,12 @@ export default function CoursePage() {
     clearSelectedPlace();
     setIsBookmarkMode(false);
     setBottomSheetTab('nearby');
-    setBottomSheetPosition('default');
+    if (
+      keyword.trim() &&
+      (!searchKeyword.trim() || isBookmarkMode || bottomSheetTab !== 'nearby')
+    ) {
+      setBottomSheetPosition('default');
+    }
     setSearchKeyword(keyword);
   };
 

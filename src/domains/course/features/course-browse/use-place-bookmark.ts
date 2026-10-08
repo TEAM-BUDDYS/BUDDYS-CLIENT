@@ -9,16 +9,15 @@ import {
   PLACE_MUTATION_OPTIONS,
   type UpdatePlaceBookmarkVariables,
 } from '@/domains/course/api/query';
-import type { BookmarkedPlaceMarkers, Place } from '@/domains/course/api/type';
+import type {
+  BookmarkedPlaceMarkers,
+  Place,
+  SearchPlacesPage,
+} from '@/domains/course/api/type';
 import { PLACE_QUERY_KEY } from '@/shared/api';
 
 interface UsePlaceBookmarkParams {
   onBookmarkChange: (placeId: string, bookmarked: boolean) => void;
-}
-
-interface PlaceSearchPage {
-  places: Place[];
-  nextPageToken: string | null;
 }
 
 export const usePlaceBookmark = ({
@@ -39,7 +38,7 @@ export const usePlaceBookmark = ({
             place.placeId === placeId ? { ...place, bookmarked } : place,
           ),
       );
-      queryClient.setQueriesData<InfiniteData<PlaceSearchPage>>(
+      queryClient.setQueriesData<InfiniteData<SearchPlacesPage>>(
         { queryKey: PLACE_QUERY_KEY.SEARCH_ALL() },
         (data) =>
           data && {
