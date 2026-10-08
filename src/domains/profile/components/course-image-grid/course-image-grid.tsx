@@ -16,11 +16,11 @@ export const CourseImageGrid = ({
   className,
 }: CourseImageGridProps) => (
   <ul className={cn('grid grid-cols-3 gap-x-0.75 gap-y-1 px-1', className)}>
-    {courses.map((course) => (
+    {courses.map((course, index) => (
       <li key={course.id}>
         <Link
           href={ROUTES.COURSE.DETAIL(course.id)}
-          aria-label="코스 상세 보기"
+          aria-label={`코스 ${index + 1} 상세 보기`}
           className="block"
         >
           {course.image ? (
