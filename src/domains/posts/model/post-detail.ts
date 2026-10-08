@@ -45,6 +45,7 @@ export interface PostDetail {
   postId: number;
   author: PostDetailAuthor;
   isMine: boolean;
+  isBookmarked: boolean;
   recruitmentStatus: PostRecruitmentStatusTypes;
   title: string;
   imageUrls: string[];

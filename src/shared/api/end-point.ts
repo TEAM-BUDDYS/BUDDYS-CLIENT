@@ -63,6 +63,7 @@ export const END_POINT = {
     DETAIL: (postId: number) => `api/v1/posts/${postId}`,
     STATUS: (postId: number) => `api/v1/posts/${postId}/status`,
     COMMENTS: (postId: number) => `api/v1/posts/${postId}/comments`,
+    BOOKMARK: (postId: number) => `api/v1/posts/${postId}/bookmarks`,
     BOOKMARKS: 'api/v1/posts/bookmarks',
   },
   RECOMMENDATION: {

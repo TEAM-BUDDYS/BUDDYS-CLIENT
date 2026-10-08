@@ -21,6 +21,7 @@ interface PartnerCardProps {
   endDate: string;
   imageUrl?: string;
   isBookmarked: boolean;
+  isBookmarkPending?: boolean;
   onBookmarkClick: () => void;
 }
 
@@ -34,6 +35,7 @@ export const PartnerCard = ({
   endDate,
   imageUrl,
   isBookmarked,
+  isBookmarkPending = false,
   onBookmarkClick,
 }: PartnerCardProps) => {
   return (
@@ -78,6 +80,8 @@ export const PartnerCard = ({
       </Link>
       <BookmarkButton
         isBookmarked={isBookmarked}
+        aria-busy={isBookmarkPending}
+        disabled={isBookmarkPending}
         onClick={onBookmarkClick}
         className={cn(
           'absolute top-2 right-1.5',

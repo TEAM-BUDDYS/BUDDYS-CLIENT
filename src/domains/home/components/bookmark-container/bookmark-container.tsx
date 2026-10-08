@@ -14,6 +14,7 @@ const bookmarkPosition = {
 
 interface BookmarkContainerProps {
   isBookmarked: boolean;
+  isBookmarkPending?: boolean;
   variant: BookmarkOverlayVariant;
   onBookmarkClick: () => void;
   children: ReactNode;
@@ -21,6 +22,7 @@ interface BookmarkContainerProps {
 
 export const BookmarkContainer = ({
   isBookmarked,
+  isBookmarkPending = false,
   variant,
   onBookmarkClick,
   children,
@@ -31,7 +33,9 @@ export const BookmarkContainer = ({
 
       <BookmarkButton
         isBookmarked={isBookmarked}
+        aria-busy={isBookmarkPending}
         className={cn('absolute', bookmarkPosition[variant])}
+        disabled={isBookmarkPending}
         onClick={onBookmarkClick}
       />
     </div>

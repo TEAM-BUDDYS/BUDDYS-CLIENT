@@ -7,17 +7,52 @@ import { SEARCH_QUERY_OPTIONS } from '@/domains/home/api/query';
 import type { SearchSort } from '@/domains/home/api/type';
 import { BookmarkContainer } from '@/domains/home/components/bookmark-container/bookmark-container';
 import { ListToolbar } from '@/domains/home/components/list-toolbar/list-toolbar';
-import { hasPostCardFields } from '@/domains/home/model/buddy-search';
+import {
+  type DisplayablePostSummary,
+  hasPostCardFields,
+} from '@/domains/home/model/buddy-search';
 import {
   getSearchSortByLabel,
   SEARCH_SORT_LABEL,
   searchSortOptions,
 } from '@/domains/home/model/search-sort';
+import { usePostBookmark } from '@/domains/posts/features/post-bookmark/use-post-bookmark';
 import { Card, EmptyState } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 
 const SEARCH_RESULT_SIZE = 10;
+
+interface SearchResultPostItemProps {
+  post: DisplayablePostSummary;
+}
+
+const SearchResultPostItem = ({ post }: SearchResultPostItemProps) => {
+  const bookmark = usePostBookmark({
+    postId: post.postId,
+    isBookmarked: post.isBookmarked ?? false,
+  });
+
+  return (
+    <BookmarkContainer
+      isBookmarked={bookmark.isBookmarked}
+      isBookmarkPending={bookmark.isPending}
+      variant="card"
+      onBookmarkClick={bookmark.toggleBookmark}
+    >
+      <Card
+        href={ROUTES.POST.DETAIL(post.postId)}
+        title={post.title}
+        content={post.content}
+        postStatus={post.recruitmentStatus}
+        tagValue={post.country.name}
+        startDate={post.startDate}
+        endDate={post.endDate}
+        image={post.thumbnailImageUrl}
+      />
+    </BookmarkContainer>
+  );
+};
 
 interface SearchResultPostListProps {
   keyword: string;
@@ -27,8 +62,6 @@ export const SearchResultPostList = ({
   keyword,
 }: SearchResultPostListProps) => {
   const [sort, setSort] = useState<SearchSort>('LATEST');
-  // TODO: 동행 게시글 저장 API 연동 시 mutation으로 교체
-  const [toggledBookmarkIds, setToggledBookmarkIds] = useState<number[]>([]);
   const {
     data,
     fetchNextPage,
@@ -63,14 +96,6 @@ export const SearchResultPostList = ({
     });
   };
 
-  const handleBookmarkClick = (postId: number) => {
-    setToggledBookmarkIds((prevPostIds) =>
-      prevPostIds.includes(postId)
-        ? prevPostIds.filter((prevPostId) => prevPostId !== postId)
-        : [...prevPostIds, postId],
-    );
-  };
-
   if (posts.length === 0 && !hasNextPage) {
     return (
       <EmptyState
@@ -93,25 +118,7 @@ export const SearchResultPostList = ({
       <ul className="mt-4 flex flex-col gap-5">
         {posts.map((post) => (
           <li key={post.postId}>
-            <BookmarkContainer
-              isBookmarked={
-                Boolean(post.isBookmarked) !==
-                toggledBookmarkIds.includes(post.postId)
-              }
-              variant="card"
-              onBookmarkClick={() => handleBookmarkClick(post.postId)}
-            >
-              <Card
-                href={ROUTES.POST.DETAIL(post.postId)}
-                title={post.title}
-                content={post.content}
-                postStatus={post.recruitmentStatus}
-                tagValue={post.country.name}
-                startDate={post.startDate}
-                endDate={post.endDate}
-                image={post.thumbnailImageUrl}
-              />
-            </BookmarkContainer>
+            <SearchResultPostItem post={post} />
           </li>
         ))}
       </ul>
