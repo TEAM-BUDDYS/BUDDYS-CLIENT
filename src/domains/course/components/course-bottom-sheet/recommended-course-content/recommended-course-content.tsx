@@ -1,74 +1,28 @@
 'use client';
 
-import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
+import { COURSE_QUERY_OPTIONS } from '@/domains/course/api/course';
+import type {
+  GetBookmarkedCoursesParams,
+  GetCoursesParams,
+} from '@/domains/course/api/type';
 import { useCourseBrowse } from '@/domains/course/features/course-browse/course-browse-provider';
+import { useCourseBookmarkMutation } from '@/domains/course/hook/use-course-bookmark-mutation';
 import {
   COURSE_CATEGORIES,
   COURSE_FILTER_COUNTRIES,
 } from '@/domains/course/model/recommended-course';
 
-import {
-  CourseFilterSection,
-  type FilteredCourseItem,
-} from './course-filter-section';
+import { CourseFilterSection } from './course-filter-section';
 import { SavedCourseSection } from './saved-course-section';
 import { SuggestedCourseSection } from './suggested-course-section';
 
-const COURSE_IMAGES = [
-  { src: '/images/og_image.png', alt: '코스 장소 이미지 1' },
-  { src: '/icons/buddys-pwa-logo-192.png', alt: '코스 장소 이미지 2' },
-  { src: '/icons/buddys-pwa-logo-512.png', alt: '코스 장소 이미지 3' },
-  { src: '/apple-icon.png', alt: '코스 장소 이미지 4' },
-];
-
 const DEFAULT_VISIBLE_COURSE_COUNT = 4;
-const COURSE_CITIES = [
-  '파리',
-  '바르셀로나',
-  '뉴욕',
-  '밴쿠버',
-  '로마',
-  '취리히',
-  '런던',
-  '베를린',
-  '프라하',
-] as const;
-
-const INITIAL_COURSES: readonly FilteredCourseItem[] =
-  COURSE_FILTER_COUNTRIES.map((country, index) => ({
-    id: index + 1,
-    countryIds: [country.id],
-    tagIds: [COURSE_CATEGORIES[index % COURSE_CATEGORIES.length].id],
-    title: `${country.name} 추천 코스`,
-    description: `${country.name} · ${COURSE_CITIES[index]}`,
-    images: COURSE_IMAGES,
-    isBookmarked: false,
-  }));
-
-const INITIAL_SUGGESTED_COURSES: readonly FilteredCourseItem[] =
-  COURSE_CATEGORIES.map((category, index) => ({
-    id: index + 101,
-    countryIds: [COURSE_FILTER_COUNTRIES[index].id],
-    tagIds: [category.id],
-    title: `${category.name} 추천 코스`,
-    description: `${COURSE_FILTER_COUNTRIES[index].name} · ${COURSE_CITIES[index]}`,
-    images: COURSE_IMAGES,
-    isBookmarked: false,
-  }));
-
-const INITIAL_SAVED_COURSES: readonly FilteredCourseItem[] = Array.from(
-  { length: 3 },
-  (_, index) => ({
-    id: index + 201,
-    countryIds: [COURSE_FILTER_COUNTRIES[index].id],
-    tagIds: [COURSE_CATEGORIES[index].id],
-    title: '프라하 3박 4일 (코스 제목)',
-    description: '체코 · 프라하',
-    images: COURSE_IMAGES,
-    isBookmarked: true,
-  }),
-);
+const SAVED_COURSE_QUERY_PARAMS = {
+  page: 0,
+  size: 3,
+} satisfies GetBookmarkedCoursesParams;
 
 interface RecommendedCourseContentProps {
   onExploreClick: () => void;
@@ -85,23 +39,29 @@ export const RecommendedCourseContent = ({
     setSelectedRecommendedCategoryId,
     setSelectedRecommendedCountryId,
   } = useCourseBrowse();
-  const [courses, setCourses] = useState(INITIAL_COURSES);
-  const [suggestedCourses, setSuggestedCourses] = useState(
-    INITIAL_SUGGESTED_COURSES,
+  const courseQueryParams = {
+    page: 0,
+    size: DEFAULT_VISIBLE_COURSE_COUNT,
+    ...(selectedRecommendedCountryId === undefined
+      ? {}
+      : { countryId: selectedRecommendedCountryId }),
+  } satisfies GetCoursesParams;
+  const suggestedCourseQueryParams = {
+    page: 0,
+    size: DEFAULT_VISIBLE_COURSE_COUNT,
+    tagId: selectedRecommendedCategoryId,
+  } satisfies GetCoursesParams;
+  const coursesQuery = useQuery(COURSE_QUERY_OPTIONS.LIST(courseQueryParams));
+  const suggestedCoursesQuery = useQuery(
+    COURSE_QUERY_OPTIONS.LIST(suggestedCourseQueryParams),
   );
-  const [savedCourses, setSavedCourses] = useState(INITIAL_SAVED_COURSES);
-  const filteredCourses =
-    selectedRecommendedCountryId === undefined
-      ? courses.slice(0, DEFAULT_VISIBLE_COURSE_COUNT)
-      : courses.filter((course) =>
-          course.countryIds.includes(selectedRecommendedCountryId),
-        );
-  const filteredSuggestedCourses =
-    selectedRecommendedCategoryId === undefined
-      ? suggestedCourses.slice(0, DEFAULT_VISIBLE_COURSE_COUNT)
-      : suggestedCourses.filter((course) =>
-          course.tagIds.includes(selectedRecommendedCategoryId),
-        );
+  const savedCoursesQuery = useQuery(
+    COURSE_QUERY_OPTIONS.BOOKMARKS(SAVED_COURSE_QUERY_PARAMS),
+  );
+  const courseBookmarkMutation = useCourseBookmarkMutation();
+  const courses = coursesQuery.data?.content ?? [];
+  const suggestedCourses = suggestedCoursesQuery.data?.content ?? [];
+  const savedCourses = savedCoursesQuery.data?.content ?? [];
 
   const handleCountryChange = (countryId: number) => {
     setSelectedRecommendedCountryId((currentCountryId) =>
@@ -110,57 +70,34 @@ export const RecommendedCourseContent = ({
   };
 
   const handleCategoryChange = (categoryId: number) => {
-    setSelectedRecommendedCategoryId((currentCategoryId) =>
-      currentCategoryId === categoryId ? undefined : categoryId,
-    );
+    setSelectedRecommendedCategoryId(categoryId);
   };
 
   const handleCourseBookmarkChange = (
     courseId: number,
     nextBookmarked: boolean,
   ) => {
-    setCourses((currentCourses) =>
-      currentCourses.map((course) =>
-        course.id === courseId
-          ? { ...course, isBookmarked: nextBookmarked }
-          : course,
-      ),
-    );
-  };
+    if (courseBookmarkMutation.isPending) return;
 
-  const handleSuggestedCourseBookmarkChange = (
-    courseId: number,
-    nextBookmarked: boolean,
-  ) => {
-    setSuggestedCourses((currentCourses) =>
-      currentCourses.map((course) =>
-        course.id === courseId
-          ? { ...course, isBookmarked: nextBookmarked }
-          : course,
-      ),
-    );
-  };
-
-  const handleSavedCourseBookmarkChange = (
-    courseId: number,
-    nextBookmarked: boolean,
-  ) => {
-    if (!nextBookmarked) {
-      setSavedCourses((currentCourses) =>
-        currentCourses.filter((course) => course.id !== courseId),
-      );
-    }
+    courseBookmarkMutation.mutate({
+      courseId,
+      bookmarked: nextBookmarked,
+    });
   };
 
   return (
-    <div>
+    <div className="mb-25">
       <CourseFilterSection
         countries={COURSE_FILTER_COUNTRIES}
-        courses={filteredCourses}
+        courses={courses}
+        hasError={coursesQuery.isError}
+        isBookmarkPending={courseBookmarkMutation.isPending}
+        isLoading={coursesQuery.isPending}
         selectedCountryId={selectedRecommendedCountryId}
         onCountryChange={handleCountryChange}
         onCourseBookmarkChange={handleCourseBookmarkChange}
         onExploreClick={onExploreClick}
+        onRetry={() => void coursesQuery.refetch()}
       />
 
       <hr
@@ -170,11 +107,15 @@ export const RecommendedCourseContent = ({
 
       <SuggestedCourseSection
         categories={COURSE_CATEGORIES}
-        courses={filteredSuggestedCourses}
+        courses={suggestedCourses}
+        hasError={suggestedCoursesQuery.isError}
+        isBookmarkPending={courseBookmarkMutation.isPending}
+        isLoading={suggestedCoursesQuery.isPending}
         selectedCategoryId={selectedRecommendedCategoryId}
         onCategoryChange={handleCategoryChange}
-        onCourseBookmarkChange={handleSuggestedCourseBookmarkChange}
+        onCourseBookmarkChange={handleCourseBookmarkChange}
         onMoreClick={onSuggestedMoreClick}
+        onRetry={() => void suggestedCoursesQuery.refetch()}
       />
 
       <hr
@@ -184,7 +125,11 @@ export const RecommendedCourseContent = ({
 
       <SavedCourseSection
         courses={savedCourses}
-        onCourseBookmarkChange={handleSavedCourseBookmarkChange}
+        hasError={savedCoursesQuery.isError}
+        isBookmarkPending={courseBookmarkMutation.isPending}
+        isLoading={savedCoursesQuery.isPending}
+        onCourseBookmarkChange={handleCourseBookmarkChange}
+        onRetry={() => void savedCoursesQuery.refetch()}
       />
     </div>
   );

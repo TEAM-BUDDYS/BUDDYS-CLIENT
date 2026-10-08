@@ -1,7 +1,6 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 
 import {
   BookmarkBoldIcon,
@@ -9,7 +8,6 @@ import {
   SettingIcon,
 } from '@/shared/components/icons';
 import { BottomNavigation, Header } from '@/shared/components/layout';
-import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
 import { ROUTES } from '@/shared/config';
 
 import type { MyProfile } from '../../model/profile';
@@ -24,7 +22,6 @@ interface ProfilePageViewProps {
 
 export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
   const router = useRouter();
-  const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
 
   return (
     <div className="flex h-dvh flex-col">
@@ -74,7 +71,7 @@ export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
         <ProfileIntroSection
           viewerType="me"
           bio={profile.bio}
-          onEditClick={() => setIsComingSoonOpen(true)}
+          onEditClick={() => router.push(ROUTES.PROFILE.EDIT)}
           className="mt-5.25 px-4"
         />
 
@@ -82,11 +79,6 @@ export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
       </main>
 
       <BottomNavigation />
-
-      <ComingSoonModal
-        open={isComingSoonOpen}
-        onClose={() => setIsComingSoonOpen(false)}
-      />
     </div>
   );
 };

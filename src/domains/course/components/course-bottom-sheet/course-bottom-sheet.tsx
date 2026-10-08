@@ -1,3 +1,4 @@
+import { CourseSaveCardSkeleton } from '@/domains/course/components/course-save-card/course-save-card-skeleton';
 import {
   CourseTab,
   type CourseTabValue,
@@ -25,15 +26,24 @@ interface CourseBottomSheetProps {
   position: CourseBottomSheetPosition;
   tab: CourseTabValue;
   bookmarkedItems: readonly NearbyCourseItem[];
+  hasBookmarkError?: boolean;
+  hasBookmarkNextPage?: boolean;
   hasNearbyError?: boolean;
   hasLocationError?: boolean;
   isBookmarkMode: boolean;
+  isBookmarkFetchNextPageError?: boolean;
+  isBookmarkFetchingNextPage?: boolean;
+  isBookmarkLoading?: boolean;
   isNearbyLoading?: boolean;
+  isPlaceSelectionLoading?: boolean;
   nearbyItems: readonly NearbyCourseItem[];
+  pendingBookmarkPlaceIds?: ReadonlySet<string>;
   onClose: () => void;
   onPositionChange: (position: CourseBottomSheetPosition) => void;
   onTabChange: (tab: CourseTabValue) => void;
   onBookmarkChange: (placeId: string, nextBookmarked: boolean) => void;
+  onBookmarkLoadMore?: () => void;
+  onBookmarkRetry?: () => void;
   onExploreClick: () => void;
   onNearbyRetry?: () => void;
   onSuggestedMoreClick: () => void;
@@ -44,15 +54,24 @@ export const CourseBottomSheet = ({
   position,
   tab,
   bookmarkedItems,
+  hasBookmarkError = false,
+  hasBookmarkNextPage = false,
   hasNearbyError = false,
   hasLocationError = false,
   isBookmarkMode,
+  isBookmarkFetchNextPageError = false,
+  isBookmarkFetchingNextPage = false,
+  isBookmarkLoading = false,
   isNearbyLoading = false,
+  isPlaceSelectionLoading = false,
   nearbyItems,
+  pendingBookmarkPlaceIds,
   onClose,
   onPositionChange,
   onTabChange,
   onBookmarkChange,
+  onBookmarkLoadMore,
+  onBookmarkRetry,
   onExploreClick,
   onNearbyRetry,
   onSuggestedMoreClick,
@@ -97,10 +116,22 @@ export const CourseBottomSheet = ({
         ) : null}
 
         <div className="min-h-0 flex-1 scrollbar-none overflow-x-hidden overflow-y-auto overscroll-contain pb-100 [&::-webkit-scrollbar]:hidden">
-          {isBookmarkMode ? (
+          {isPlaceSelectionLoading ? (
+            <div className="border-b border-gray-50 pb-6">
+              <CourseSaveCardSkeleton />
+            </div>
+          ) : isBookmarkMode ? (
             <BookmarkedPlaceContent
+              hasError={hasBookmarkError}
+              hasNextPage={hasBookmarkNextPage}
+              isFetchNextPageError={isBookmarkFetchNextPageError}
+              isFetchingNextPage={isBookmarkFetchingNextPage}
+              isLoading={isBookmarkLoading}
               items={bookmarkedItems}
+              pendingBookmarkPlaceIds={pendingBookmarkPlaceIds}
               onBookmarkChange={onBookmarkChange}
+              onLoadMore={onBookmarkLoadMore}
+              onRetry={onBookmarkRetry}
             />
           ) : tab === 'nearby' ? (
             <NearbyCourseContent
@@ -108,6 +139,7 @@ export const CourseBottomSheet = ({
               hasLocationError={hasLocationError}
               isLoading={isNearbyLoading}
               items={nearbyItems}
+              pendingBookmarkPlaceIds={pendingBookmarkPlaceIds}
               onBookmarkChange={onBookmarkChange}
               onRetry={onNearbyRetry}
             />

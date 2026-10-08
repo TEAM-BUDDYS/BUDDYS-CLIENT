@@ -1,4 +1,8 @@
-import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
+import {
+  infiniteQueryOptions,
+  mutationOptions,
+  queryOptions,
+} from '@tanstack/react-query';
 
 import {
   AIRLINE_QUERY_KEY,
@@ -10,6 +14,8 @@ import {
 
 import type {
   BookmarkedPlace,
+  GetBookmarkedPlaceMarkersParams,
+  GetBookmarkedPlaceMarkersResponse,
   GetBookmarkedPlacesPageParams,
   GetBookmarkedPlacesParams,
   GetBookmarkedPlacesResponse,
@@ -21,7 +27,34 @@ import type {
   SearchPlacesPageParams,
   SearchPlacesParams,
   SearchPlacesResponse,
+  UpdatePlaceBookmarkResponse,
 } from './type';
+
+export interface UpdatePlaceBookmarkVariables {
+  placeId: string;
+  nextBookmarked: boolean;
+}
+
+const updatePlaceBookmark = async ({
+  placeId,
+  nextBookmarked,
+}: UpdatePlaceBookmarkVariables) => {
+  const endpoint = END_POINT.PLACE.BOOKMARK(placeId);
+  const response = await (
+    nextBookmarked ? apiClient.post(endpoint) : apiClient.delete(endpoint)
+  ).json<UpdatePlaceBookmarkResponse>();
+
+  if (!response.success || typeof response.data?.bookmarked !== 'boolean') {
+    throw new Error(
+      response.message ||
+        (nextBookmarked
+          ? '장소를 저장하지 못했습니다.'
+          : '장소 저장을 취소하지 못했습니다.'),
+    );
+  }
+
+  return response.data.bookmarked;
+};
 
 const getNearbyPlaces = async (
   params: GetNearbyPlacesParams,
@@ -178,6 +211,33 @@ const getBookmarkedPlaces = async (
   return data;
 };
 
+const getBookmarkedPlaceMarkers = async (
+  params: GetBookmarkedPlaceMarkersParams,
+  signal?: AbortSignal,
+) => {
+  const response = await apiClient
+    .get(END_POINT.PLACE.BOOKMARK_MARKERS, {
+      searchParams: createSearchParams(params),
+      signal,
+    })
+    .json<GetBookmarkedPlaceMarkersResponse>();
+  const data = response.data;
+
+  if (
+    !response.success ||
+    !data ||
+    !Array.isArray(data.places) ||
+    !data.places.every(isBookmarkedPlace) ||
+    typeof data.truncated !== 'boolean'
+  ) {
+    throw new Error(
+      response.message || '저장한 장소 마커를 불러오지 못했습니다.',
+    );
+  }
+
+  return data;
+};
+
 export const AIRLINE_QUERY_OPTIONS = {
   SEARCH: (params: SearchAirlinesParams) =>
     infiniteQueryOptions({
@@ -225,5 +285,25 @@ export const PLACE_QUERY_OPTIONS = {
       initialPageParam: 0,
       getNextPageParam: (lastPage) =>
         lastPage.hasNext ? lastPage.page + 1 : undefined,
+    }),
+  BOOKMARK_MARKERS: (params: GetBookmarkedPlaceMarkersParams | null) =>
+    queryOptions({
+      queryKey: PLACE_QUERY_KEY.BOOKMARK_MARKERS(params),
+      queryFn: ({ signal }) => {
+        if (!params) {
+          throw new Error('저장 장소 마커 조회 영역이 필요합니다.');
+        }
+
+        return getBookmarkedPlaceMarkers(params, signal);
+      },
+      enabled: params !== null,
+    }),
+};
+
+export const PLACE_MUTATION_OPTIONS = {
+  UPDATE_BOOKMARK: () =>
+    mutationOptions({
+      mutationFn: (variables: UpdatePlaceBookmarkVariables) =>
+        updatePlaceBookmark(variables),
     }),
 };

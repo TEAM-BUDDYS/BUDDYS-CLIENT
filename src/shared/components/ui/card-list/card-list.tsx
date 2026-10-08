@@ -6,16 +6,12 @@ import { cn } from '@/lib/cn';
 import { BookmarkButton } from '@/shared/components/ui/bookmark-button/bookmark-button';
 import { CommonImage } from '@/shared/components/ui/common-image/common-image';
 
-interface CardListImage {
-  src: string;
-  alt: string;
-}
-
 interface CardListProps {
   title: string;
   description: string;
-  images: CardListImage[];
+  images: readonly string[];
   isBookmarked: boolean;
+  isBookmarkPending?: boolean;
   onBookmarkClick: () => void;
   href?: string;
   className?: string;
@@ -26,6 +22,7 @@ export const CardList = ({
   description,
   images,
   isBookmarked,
+  isBookmarkPending = false,
   onBookmarkClick,
   href,
   className,
@@ -62,7 +59,9 @@ export const CardList = ({
 
         <BookmarkButton
           isBookmarked={isBookmarked}
+          aria-busy={isBookmarkPending}
           className="h-6 w-6.25"
+          disabled={isBookmarkPending}
           onClick={onBookmarkClick}
         />
       </div>
@@ -73,11 +72,11 @@ export const CardList = ({
         tabIndex={0}
         className="focus-visible:outline-mint-300 flex w-full scrollbar-none items-center gap-2 overflow-x-auto overscroll-x-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid [&::-webkit-scrollbar]:hidden"
       >
-        {images.map(({ src, alt }) => (
+        {images.map((src, index) => (
           <CommonImage
             key={src}
             src={src}
-            alt={alt}
+            alt={`${title} 이미지 ${index + 1}`}
             width={100}
             height={100}
             radius="rounded-xl"
