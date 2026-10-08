@@ -215,11 +215,10 @@ export const USER_QUERY_KEY = {
       'infinite-list',
       excludePageParam(params),
     ] as const,
+  ME_COURSES_ALL: () => [...USER_QUERY_KEY.ALL, 'me', 'courses'] as const,
   ME_COURSES_INFINITE: (params?: GetQueryParams<'/api/v1/users/me/courses'>) =>
     [
-      ...USER_QUERY_KEY.ALL,
-      'me',
-      'courses',
+      ...USER_QUERY_KEY.ME_COURSES_ALL(),
       'infinite-list',
       excludePageParam(params),
     ] as const,

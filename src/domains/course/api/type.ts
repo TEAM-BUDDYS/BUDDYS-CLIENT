@@ -19,6 +19,7 @@ export type CreateCourseCommentRequest =
   components['schemas']['CreateCommentRequest'];
 export type CreateCourseCommentResponse =
   components['schemas']['BaseResponseCreateCourseCommentResponse'];
+export type DeleteCourseResponse = components['schemas']['BaseResponseVoid'];
 export type GetCourseCommentsParams = NonNullable<
   operations['getComments_1']['parameters']['query']
 >;
