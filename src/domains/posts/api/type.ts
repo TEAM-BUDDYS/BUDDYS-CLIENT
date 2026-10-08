@@ -4,6 +4,10 @@ export type GetPostsParams = operations['getPosts']['parameters']['query'];
 export type GetPostsResponse =
   components['schemas']['BaseResponsePostListResponse'];
 export type PostSummary = components['schemas']['PostSummaryResponse'];
+export type GetClosingSoonPostsResponse =
+  components['schemas']['BaseResponseClosingSoonPostResponse'];
+export type ClosingSoonPostSummary =
+  components['schemas']['ClosingSoonPostSummaryResponse'];
 
 export type CreatePostRequest = components['schemas']['CreatePostRequest'];
 export type CreatePostResponse =

@@ -3,13 +3,22 @@ import { isHTTPError } from 'ky';
 
 import {
   apiClient,
+  COURSE_QUERY_KEY,
   createSearchParams,
   END_POINT,
+  MAGAZINE_QUERY_KEY,
+  POST_QUERY_KEY,
   USER_QUERY_KEY,
 } from '@/shared/api';
 
 import type { MyProfile, OtherProfile } from '../model/profile';
 import type {
+  GetBookmarkedCoursesParams,
+  GetBookmarkedCoursesResponse,
+  GetBookmarkedMagazinesParams,
+  GetBookmarkedMagazinesResponse,
+  GetBookmarkedPostsParams,
+  GetBookmarkedPostsResponse,
   GetMyPostsParams,
   GetMyPostsResponse,
   GetMyProfileResponse,
@@ -68,15 +77,8 @@ const isNullableString = (value: unknown) => {
   return value === undefined || value === null || typeof value === 'string';
 };
 
-const isValidVerificationBadge = (value: unknown) => {
-  return (
-    value === undefined ||
-    value === null ||
-    value === 'SOCIAL_LOGIN' ||
-    value === 'UNIVERSITY_VERIFIED' ||
-    value === 'EXCHANGE_VERIFIED'
-  );
-};
+const isOptionalBoolean = (value: unknown) =>
+  value === undefined || typeof value === 'boolean';
 
 const isValidUserPublicProfileData = (
   data: unknown,
@@ -88,7 +90,8 @@ const isValidUserPublicProfileData = (
   const {
     nickname,
     profileImageUrl,
-    verificationBadge,
+    universityEmailVerified,
+    exchangeDocumentVerified,
     representativeTags,
     bio,
     isDeleted,
@@ -97,7 +100,8 @@ const isValidUserPublicProfileData = (
   return (
     typeof nickname === 'string' &&
     isNullableString(profileImageUrl) &&
-    isValidVerificationBadge(verificationBadge) &&
+    isOptionalBoolean(universityEmailVerified) &&
+    isOptionalBoolean(exchangeDocumentVerified) &&
     isOrderedTagArray(representativeTags) &&
     isNullableString(bio) &&
     (isDeleted === undefined || typeof isDeleted === 'boolean')
@@ -117,13 +121,19 @@ const getMyProfile = async (): Promise<MyProfile> => {
     throw new Error('프로필 응답 형식이 올바르지 않습니다.');
   }
 
-  const { profileImageUrl, nickname, verificationBadge, orderedTags, bio } =
-    response.data;
+  const {
+    profileImageUrl,
+    nickname,
+    universityEmailVerified,
+    exchangeDocumentVerified,
+    orderedTags,
+    bio,
+  } = response.data;
 
   return {
     imageUrl: profileImageUrl || null,
     nickname,
-    isVerified: Boolean(verificationBadge),
+    isVerified: universityEmailVerified || exchangeDocumentVerified,
     tags: toProfileTags(orderedTags),
     bio: bio ?? null,
   };
@@ -171,7 +181,8 @@ const getUserProfile = async (userId: number): Promise<OtherProfile | null> => {
   const {
     profileImageUrl,
     nickname,
-    verificationBadge,
+    universityEmailVerified,
+    exchangeDocumentVerified,
     representativeTags,
     bio,
     isDeleted,
@@ -180,7 +191,7 @@ const getUserProfile = async (userId: number): Promise<OtherProfile | null> => {
   return {
     imageUrl: profileImageUrl || null,
     nickname,
-    isVerified: Boolean(verificationBadge),
+    isVerified: universityEmailVerified || exchangeDocumentVerified,
     tags: toProfileTags(representativeTags),
     bio: bio ?? null,
     isWithdrawn: Boolean(isDeleted),
@@ -193,6 +204,60 @@ const getUserPosts = async (userId: number, params?: GetUserPostsParams) => {
       searchParams: createSearchParams(params),
     })
     .json<GetUserPostsResponse>();
+};
+
+export const requestWithdraw = async () => {
+  await apiClient.delete(END_POINT.USER.ME);
+};
+
+const getBookmarkedPosts = async (params?: GetBookmarkedPostsParams) => {
+  const response = await apiClient
+    .get(END_POINT.POST.BOOKMARKS, {
+      searchParams: createSearchParams(params),
+    })
+    .json<GetBookmarkedPostsResponse>();
+
+  if (response.success === false) {
+    throw new Error(
+      response.message || '저장한 동행 목록을 불러오지 못했습니다.',
+    );
+  }
+
+  return response;
+};
+
+const getBookmarkedCourses = async (params?: GetBookmarkedCoursesParams) => {
+  const response = await apiClient
+    .get(END_POINT.COURSE.BOOKMARKS, {
+      searchParams: createSearchParams(params),
+    })
+    .json<GetBookmarkedCoursesResponse>();
+
+  if (response.success === false) {
+    throw new Error(
+      response.message || '저장한 코스 목록을 불러오지 못했습니다.',
+    );
+  }
+
+  return response;
+};
+
+const getBookmarkedMagazines = async (
+  params?: GetBookmarkedMagazinesParams,
+) => {
+  const response = await apiClient
+    .get(END_POINT.MAGAZINE.BOOKMARKS, {
+      searchParams: createSearchParams(params),
+    })
+    .json<GetBookmarkedMagazinesResponse>();
+
+  if (response.success === false) {
+    throw new Error(
+      response.message || '저장한 매거진 목록을 불러오지 못했습니다.',
+    );
+  }
+
+  return response;
 };
 
 export const PROFILE_QUERY_OPTIONS = {
@@ -234,6 +299,54 @@ export const PROFILE_QUERY_OPTIONS = {
       queryKey: USER_QUERY_KEY.POSTS_INFINITE(userId, params),
       queryFn: ({ pageParam }) =>
         getUserPosts(userId, { ...params, page: pageParam }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        const page = lastPage.data?.page;
+
+        if (!lastPage.data?.hasNext || typeof page !== 'number') {
+          return undefined;
+        }
+
+        return page + 1;
+      },
+    }),
+  BOOKMARKED_POSTS_INFINITE: (params?: GetBookmarkedPostsParams) =>
+    infiniteQueryOptions({
+      queryKey: POST_QUERY_KEY.BOOKMARKS_INFINITE(params),
+      queryFn: ({ pageParam }) =>
+        getBookmarkedPosts({ ...params, page: pageParam }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        const page = lastPage.data?.page;
+
+        if (!lastPage.data?.hasNext || typeof page !== 'number') {
+          return undefined;
+        }
+
+        return page + 1;
+      },
+    }),
+  BOOKMARKED_COURSES_INFINITE: (params?: GetBookmarkedCoursesParams) =>
+    infiniteQueryOptions({
+      queryKey: COURSE_QUERY_KEY.BOOKMARKS_INFINITE(params),
+      queryFn: ({ pageParam }) =>
+        getBookmarkedCourses({ ...params, page: pageParam }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        const page = lastPage.data?.page;
+
+        if (!lastPage.data?.hasNext || typeof page !== 'number') {
+          return undefined;
+        }
+
+        return page + 1;
+      },
+    }),
+  BOOKMARKED_MAGAZINES_INFINITE: (params?: GetBookmarkedMagazinesParams) =>
+    infiniteQueryOptions({
+      queryKey: MAGAZINE_QUERY_KEY.BOOKMARKS_INFINITE(params),
+      queryFn: ({ pageParam }) =>
+        getBookmarkedMagazines({ ...params, page: pageParam }),
       initialPageParam: 0,
       getNextPageParam: (lastPage) => {
         const page = lastPage.data?.page;

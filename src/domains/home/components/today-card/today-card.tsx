@@ -7,10 +7,10 @@ import { cn } from '@/lib/cn';
 import { BookmarkButton, CommonImage, Tag } from '@/shared/components/ui';
 import { formatFullDate } from '@/shared/utils/format-date-range';
 
-import { DisplayablePostSummary } from '../../model/buddy-search';
+import type { DisplayableClosingSoonPost } from '../../model/closing-soon';
 
 interface TodayCardProps {
-  post: DisplayablePostSummary;
+  post: DisplayableClosingSoonPost;
 }
 
 export const TodayCard = ({ post }: TodayCardProps) => {
@@ -22,9 +22,11 @@ export const TodayCard = ({ post }: TodayCardProps) => {
     endDate,
     country,
     thumbnailImageUrl,
+    isSaved,
   } = post;
 
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  // TODO: 게시글 저장 API 연동 시 서버 상태와 동기화
+  const [isBookmarked, setIsBookmarked] = useState(isSaved ?? false);
 
   const handleBookmarkClick = () => {
     setIsBookmarked((currentIsBookmarked) => !currentIsBookmarked);

@@ -1,7 +1,7 @@
 'use client';
 
 import { useMap } from '@vis.gl/react-google-maps';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import type { CourseMapCenter } from '@/domains/course/model/course-map';
 
@@ -17,12 +17,23 @@ export const CourseMapCamera = ({
   preserveCamera = false,
 }: CourseMapCameraProps) => {
   const map = useMap();
+  const handledCenterKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!map || !center || preserveCamera) return;
+    if (!center) {
+      handledCenterKeyRef.current = null;
+      return;
+    }
+
+    if (!map || preserveCamera) return;
+
+    const centerKey = `${center.lat}:${center.lng}`;
+
+    if (handledCenterKeyRef.current === centerKey) return;
 
     if (bottomOverlayRatio <= 0) {
       map.panTo(center);
+      handledCenterKeyRef.current = centerKey;
       return;
     }
 
@@ -36,6 +47,7 @@ export const CourseMapCamera = ({
 
     if (coveredMapHeight <= 0) {
       map.panTo(center);
+      handledCenterKeyRef.current = centerKey;
       return;
     }
 
@@ -61,11 +73,15 @@ export const CourseMapCamera = ({
       return true;
     };
 
-    if (panToVisibleCenter()) return;
+    if (panToVisibleCenter()) {
+      handledCenterKeyRef.current = centerKey;
+      return;
+    }
 
     const projectionListener = map.addListener('projection_changed', () => {
       if (!panToVisibleCenter()) return;
 
+      handledCenterKeyRef.current = centerKey;
       projectionListener.remove();
     });
 

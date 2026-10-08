@@ -10,3 +10,19 @@ export interface PostItem {
 }
 
 export type ContentTabValue = 'post' | 'course';
+
+export interface CourseItem {
+  id: number;
+  title: string;
+  image: string;
+}
+
+// TODO: 코스 목록 API 연동 후 제거
+export const MOCK_PROFILE_COURSES: CourseItem[] = Array.from(
+  { length: 7 },
+  (_, index) => ({
+    id: index + 1,
+    title: `코스 ${index + 1}`,
+    image: `https://picsum.photos/seed/profile-course-${index + 1}/240/240`,
+  }),
+);

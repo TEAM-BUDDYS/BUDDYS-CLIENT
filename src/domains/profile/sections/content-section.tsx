@@ -13,14 +13,15 @@ import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 import { PROFILE_QUERY_OPTIONS } from '../api/query';
 import type { MyPost } from '../api/type';
 import { ContentEmptyState } from '../components/content-empty-state/content-empty-state';
+import { CourseImageGrid } from '../components/course-image-grid/course-image-grid';
 import {
   type ContentTabValue,
+  MOCK_PROFILE_COURSES,
   MY_POSTS_PAGE_SIZE,
   type PostItem,
 } from '../model/content';
 
 interface ContentSectionProps {
-  onCreateCourseClick: () => void;
   className?: string;
 }
 
@@ -118,25 +119,27 @@ const PostTabPanel = () => {
   );
 };
 
-const CourseTabPanel = ({
-  onCreateCourseClick,
-}: {
-  onCreateCourseClick: () => void;
-}) => (
-  <div className="mt-25">
-    <ContentEmptyState
-      title="아직 기록된 코스가 없어요"
-      description="첫 번째 코스를 공유해보세요"
-      buttonLabel="코스 작성하러 가기"
-      onButtonClick={onCreateCourseClick}
-    />
-  </div>
-);
+const CourseTabPanel = () => {
+  const router = useRouter();
+  const courses = MOCK_PROFILE_COURSES;
 
-export const ContentSection = ({
-  onCreateCourseClick,
-  className,
-}: ContentSectionProps) => {
+  if (courses.length === 0) {
+    return (
+      <div className="mt-25">
+        <ContentEmptyState
+          title="아직 기록된 코스가 없어요"
+          description="첫 번째 코스를 공유해보세요"
+          buttonLabel="코스 작성하러 가기"
+          onButtonClick={() => router.push(ROUTES.COURSE.CREATE)}
+        />
+      </div>
+    );
+  }
+
+  return <CourseImageGrid courses={courses} className="pt-3" />;
+};
+
+export const ContentSection = ({ className }: ContentSectionProps) => {
   const [tab, setTab] = useState<ContentTabValue>('post');
 
   return (
@@ -155,7 +158,7 @@ export const ContentSection = ({
           <PostTabPanel />
         </AsyncBoundary>
       ) : (
-        <CourseTabPanel onCreateCourseClick={onCreateCourseClick} />
+        <CourseTabPanel />
       )}
     </div>
   );

@@ -1,13 +1,19 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
+import { useQueryClient } from '@tanstack/react-query';
+import { isHTTPError } from 'ky';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { useAuthSession } from '@/domains/auth/features/auth-session/auth-session-provider';
+import { USER_QUERY_KEY } from '@/shared/api';
 import { Header } from '@/shared/components/layout';
-import { Button } from '@/shared/components/ui';
+import { Button, useToast } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
+import { confirmUniversityEmail, sendUniversityEmail } from '../../api/query';
 import { VerificationHeader } from '../../components/verification-header/verification-header';
 import type { VerificationEntry } from '../../model/verification-entry';
 import { CodeInputStep } from './code-input-step';
@@ -36,6 +42,8 @@ export const UniversityEmailVerificationFlow = ({
     useState<UniversityEmailVerificationStep>(1);
   const [email, setEmail] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
+  const [isSending, setIsSending] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
 
   const isValidEmail = EMAIL_PATTERN.test(email.trim());
   const isVerificationCodeComplete = verificationCode.length === 6;
@@ -43,40 +51,130 @@ export const UniversityEmailVerificationFlow = ({
   const router = useRouter();
   const exchangeDocumentVerificationHref = `${ROUTES.VERIFICATION.EXCHANGE_DOCUMENT}?from=${entryPoint}`;
 
-  const handleBackButtonClick = () => {
+  const queryClient = useQueryClient();
+
+  const { showToast } = useToast();
+  const { logout } = useAuthSession();
+  const [isLogout, setIsLogout] = useState(false);
+
+  const handleBackButtonClick = async () => {
     if (currentStep === 2) {
       setCurrentStep(1);
       return;
     }
 
     if (entryPoint === 'login') {
-      // TODO: 로그아웃 API를 호출하고 인증 세션을 초기화한 뒤 로그인 페이지로 이동
-      router.replace(ROUTES.AUTH.LOGIN);
+      if (isLogout) return;
+
+      setIsLogout(true);
+
+      try {
+        await logout();
+        router.replace(ROUTES.AUTH.LOGIN);
+      } catch (error) {
+        Sentry.captureException(error);
+        setIsLogout(false);
+
+        showToast('로그아웃에 실패했어요. 잠시 후 다시 시도해 주세요.', {
+          variant: 'gray',
+        });
+      }
       return;
     }
-
     router.back();
   };
 
-  const handleSendVerificationCode = () => {
-    // TODO: 학교 이메일 인증번호 발송 API 성공 후 인증번호 입력 단계로 이동
+  const requestVerificationCode = async () => {
+    if (!isValidEmail || isSending) {
+      return false;
+    }
+
+    setIsSending(true);
+
+    try {
+      await sendUniversityEmail({
+        email: email.trim(),
+      });
+
+      return true;
+    } catch (error) {
+      const message =
+        isHTTPError(error) && error.response.status === 404
+          ? '등록된 학교 이메일이 아닙니다.'
+          : '인증번호 발송에 실패했습니다. 잠시 후 다시 시도해 주세요.';
+
+      showToast(message, {
+        bottomOffsetClassName: 'bottom-24.5',
+        variant: 'gray',
+      });
+
+      return false;
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const handleSendVerificationCode = async () => {
+    const isSuccess = await requestVerificationCode();
+
+    if (!isSuccess) {
+      return;
+    }
+
     setVerificationCode('');
     setCurrentStep(2);
   };
 
-  const handleConfirmVerificationCode = () => {
-    // TODO: 학교 이메일 인증번호 확인 API 호출
-    if (entryPoint === 'login') {
-      router.replace(exchangeDocumentVerificationHref);
+  const handleResendVerificationCode = async () => {
+    const isSuccess = await requestVerificationCode();
+
+    if (!isSuccess) {
       return;
     }
 
-    router.back();
+    setVerificationCode('');
+    showToast('인증번호를 다시 전송했습니다.', {
+      bottomOffsetClassName: 'bottom-24.5',
+    });
   };
 
-  const handleResendVerificationCode = () => {
-    // TODO: 현재 학교 이메일로 인증번호 재발송 API 성공 후 입력값 초기화
-    setVerificationCode('');
+  const handleConfirmVerificationCode = async () => {
+    if (!isVerificationCodeComplete || isConfirming) return;
+
+    setIsConfirming(true);
+
+    try {
+      await confirmUniversityEmail({
+        code: verificationCode,
+      });
+
+      if (entryPoint === 'login') {
+        router.replace(exchangeDocumentVerificationHref);
+        return;
+      }
+
+      await queryClient.invalidateQueries({
+        queryKey: USER_QUERY_KEY.ME(),
+      });
+
+      router.back();
+    } catch (error) {
+      const status = isHTTPError(error) ? error.response.status : undefined;
+
+      const message =
+        status === 400
+          ? '인증번호가 올바르지 않거나 만료되었습니다.'
+          : status === 429
+            ? '인증번호 입력 횟수를 초과했습니다. 인증번호를 다시 발급해 주세요.'
+            : '인증번호 확인에 실패했습니다. 잠시 후 다시 시도해 주세요.';
+
+      showToast(message, {
+        bottomOffsetClassName: 'bottom-24.5',
+        variant: 'gray',
+      });
+    } finally {
+      setIsConfirming(false);
+    }
   };
 
   return (
@@ -107,7 +205,7 @@ export const UniversityEmailVerificationFlow = ({
         {currentStep === 1 && (
           <>
             <Button
-              disabled={!isValidEmail}
+              disabled={!isValidEmail || isSending}
               onClick={handleSendVerificationCode}
             >
               계속하기
@@ -127,7 +225,7 @@ export const UniversityEmailVerificationFlow = ({
         {currentStep === 2 && (
           <>
             <Button
-              disabled={!isVerificationCodeComplete}
+              disabled={!isVerificationCodeComplete || isConfirming}
               onClick={handleConfirmVerificationCode}
             >
               인증완료
@@ -139,6 +237,7 @@ export const UniversityEmailVerificationFlow = ({
               <button
                 className="text-body-sb-14 text-gray-800"
                 type="button"
+                disabled={isSending}
                 onClick={handleResendVerificationCode}
               >
                 다시 보내기

@@ -18,3 +18,18 @@ export type GetUserPostsResponse =
   components['schemas']['BaseResponseUserPostsResponse'];
 
 export type UserPost = components['schemas']['PostResponse'];
+
+export type GetBookmarkedPostsParams =
+  operations['getBookmarkedPosts']['parameters']['query'];
+export type GetBookmarkedPostsResponse =
+  components['schemas']['BaseResponsePostListResponse'];
+
+export type GetBookmarkedCoursesParams =
+  operations['getBookmarkedCourses']['parameters']['query'];
+export type GetBookmarkedCoursesResponse =
+  components['schemas']['BaseResponseCourseListResponse'];
+
+export type GetBookmarkedMagazinesParams =
+  operations['getBookmarkedMagazines']['parameters']['query'];
+export type GetBookmarkedMagazinesResponse =
+  components['schemas']['BaseResponseBookmarkedMagazineListResponse'];
