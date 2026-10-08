@@ -1,4 +1,7 @@
 export const END_POINT = {
+  SEARCH: {
+    SUGGESTIONS: 'api/v1/search/suggestions',
+  },
   AIRLINE: {
     SEARCH: 'api/v1/airlines/search',
   },
