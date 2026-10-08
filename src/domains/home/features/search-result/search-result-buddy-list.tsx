@@ -3,6 +3,7 @@
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
+import { useStartChat } from '@/domains/chat/hooks/use-start-chat';
 import { SEARCH_QUERY_OPTIONS } from '@/domains/home/api/query';
 import { ListToolbar } from '@/domains/home/components/list-toolbar/list-toolbar';
 import { SearchBuddys } from '@/domains/home/components/search-buddys/search-buddys';
@@ -44,8 +45,7 @@ export const SearchResultBuddyList = ({
     onIntersect: handleIntersect,
   });
 
-  // TODO: 채팅방 생성 API 연동 시 채팅 화면으로 이동
-  const handleChatClick = () => {};
+  const { startChat } = useStartChat();
 
   if (users.length === 0 && !hasNextPage) {
     return (
@@ -68,7 +68,7 @@ export const SearchResultBuddyList = ({
             nickname={nickname}
             profileImageUrl={profileImageUrl}
             href={ROUTES.PROFILE.DETAIL(userId)}
-            onChatClick={handleChatClick}
+            onChatClick={() => startChat(userId)}
           />
         ))}
       </div>
