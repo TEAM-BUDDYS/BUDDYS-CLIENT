@@ -8,7 +8,6 @@ import { CourseDayPickerSheet } from '@/domains/course/components/course-day-pic
 import { MoreIcon } from '@/shared/components/icons';
 import { Header } from '@/shared/components/layout';
 import { Modal, PostMenuBottomSheet } from '@/shared/components/ui';
-import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
 import { ROUTES } from '@/shared/config';
 import { useContentShare } from '@/shared/hooks/use-content-share';
 
@@ -27,7 +26,6 @@ export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
   const router = useRouter();
   const [isDayPickerOpen, setIsDayPickerOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedDayNumber, setSelectedDayNumber] = useState<number | null>(
     null,
@@ -78,8 +76,21 @@ export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
     setSelectedDayNumber(dayNumber);
   };
 
-  const handleComingSoonOpen = () => {
-    setIsComingSoonOpen(true);
+  const handleMenuAction = (action: 'share' | 'edit' | 'delete') => {
+    if (action === 'share') {
+      void shareContent({
+        title: course.title,
+        url: ROUTES.COURSE.DETAIL(course.courseId),
+      });
+      return;
+    }
+
+    if (action === 'edit') {
+      router.push(ROUTES.COURSE.EDIT(course.courseId));
+      return;
+    }
+
+    setIsDeleteModalOpen(true);
   };
 
   const handleDeleteModalClose = () => {
@@ -149,22 +160,7 @@ export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
         isMine={course.isMine}
         ariaLabel="코스 메뉴"
         onClose={() => setIsMenuOpen(false)}
-        onAction={(action) => {
-          if (action === 'share') {
-            void shareContent({
-              title: course.title,
-              url: ROUTES.COURSE.DETAIL(course.courseId),
-            });
-            return;
-          }
-
-          if (action === 'delete') {
-            setIsDeleteModalOpen(true);
-            return;
-          }
-
-          handleComingSoonOpen();
-        }}
+        onAction={handleMenuAction}
       />
 
       <Modal
@@ -175,11 +171,6 @@ export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
         confirmLabel={isDeleting ? '삭제 중...' : '삭제하기'}
         onClose={handleDeleteModalClose}
         onConfirm={deleteCourse}
-      />
-
-      <ComingSoonModal
-        open={isComingSoonOpen}
-        onClose={() => setIsComingSoonOpen(false)}
       />
     </div>
   );

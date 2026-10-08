@@ -20,6 +20,7 @@ import type {
   CourseCreateDayFormState,
   CourseCreateDetailFormState,
   CourseCreateFlightFormState,
+  CourseCreateInitialValue,
   CourseCreateScreen,
   CourseCreateValue,
 } from './model';
@@ -61,20 +62,32 @@ const getDateByDayIndex = (startDate: Date, dayIndex: number) => {
 };
 
 export const useCourseCreateForm = (
+  initialValue?: CourseCreateInitialValue,
   initialCompanion?: CourseCreateCompanion,
 ) => {
-  const [selectedCountries, setSelectedCountries] = useState<Country[]>([]);
+  const [selectedCountries, setSelectedCountries] = useState<Country[]>(
+    initialValue?.countries ?? [],
+  );
   const [selectedCities, setSelectedCities] = useState<
     CourseCreateCityOption[]
-  >([]);
-  const [dateRange, setDateRange] =
-    useState<DateRangeTypes>(INITIAL_DATE_RANGE);
+  >(initialValue?.cities ?? []);
+  const [dateRange, setDateRange] = useState<DateRangeTypes>(() =>
+    initialValue?.dateRange
+      ? {
+          startDate: initialValue.dateRange.startDate,
+          endDate: initialValue.dateRange.endDate,
+        }
+      : INITIAL_DATE_RANGE,
+  );
   const [selectedDurationDays, setSelectedDurationDays] = useState<
     number | null
-  >(null);
-  const [detail, setDetail] =
-    useState<CourseCreateDetailFormState>(INITIAL_DETAIL_FORM);
-  const [days, setDays] = useState<CourseCreateDayFormState[]>([]);
+  >(initialValue?.dateRange ? null : (initialValue?.durationDays ?? null));
+  const [detail, setDetail] = useState<CourseCreateDetailFormState>(
+    initialValue?.detail ?? INITIAL_DETAIL_FORM,
+  );
+  const [days, setDays] = useState<CourseCreateDayFormState[]>(
+    initialValue?.days ?? [],
+  );
   const [selectedCompanions, setSelectedCompanions] = useState<
     CourseCreateCompanion[]
   >(() => (initialCompanion ? [initialCompanion] : []));
@@ -122,7 +135,9 @@ export const useCourseCreateForm = (
       prevCountries.filter(({ id }) => id !== countryId),
     );
     setSelectedCities((prevCities) =>
-      prevCities.filter((city) => city.countryId !== countryId),
+      prevCities.filter(
+        (city) => city.countryId !== countryId && city.countryId !== null,
+      ),
     );
   };
 
@@ -163,9 +178,11 @@ export const useCourseCreateForm = (
     }
 
     days.slice(durationDays).forEach((day) => {
-      day.images.forEach(({ previewUrl }) => {
-        URL.revokeObjectURL(previewUrl);
-        previewUrlsRef.current.delete(previewUrl);
+      day.images.forEach((image) => {
+        if (image.type === 'new') {
+          URL.revokeObjectURL(image.previewUrl);
+          previewUrlsRef.current.delete(image.previewUrl);
+        }
       });
     });
 
@@ -230,6 +247,7 @@ export const useCourseCreateForm = (
       COURSE_CREATE_MAX_DAY_IMAGE_COUNT - currentDay.images.length,
     );
     const nextImages = files.slice(0, remainingImageCount).map((file) => ({
+      type: 'new' as const,
       file,
       previewUrl: URL.createObjectURL(file),
     }));
@@ -252,8 +270,14 @@ export const useCourseCreateForm = (
   };
 
   const removeDayImage = (dayNumber: number, previewUrl: string) => {
-    URL.revokeObjectURL(previewUrl);
-    previewUrlsRef.current.delete(previewUrl);
+    const removedImage = days
+      .find((day) => day.dayNumber === dayNumber)
+      ?.images.find((image) => image.previewUrl === previewUrl);
+
+    if (removedImage?.type === 'new') {
+      URL.revokeObjectURL(previewUrl);
+      previewUrlsRef.current.delete(previewUrl);
+    }
     setDays((prevDays) =>
       prevDays.map((day) =>
         day.dayNumber === dayNumber
@@ -299,6 +323,21 @@ export const useCourseCreateForm = (
           : day,
       );
     });
+  };
+
+  const removeDayFlight = (dayNumber: number, flightIndex: number) => {
+    setDays((prevDays) =>
+      prevDays.map((day) =>
+        day.dayNumber === dayNumber
+          ? {
+              ...day,
+              flights: day.flights.filter(
+                (_flight, index) => index !== flightIndex,
+              ),
+            }
+          : day,
+      ),
+    );
   };
 
   const handleCompanionSelect = (companion: CourseCreateCompanion) => {
@@ -418,6 +457,7 @@ export const useCourseCreateForm = (
     removeDayImage,
     updateDayMemoCost,
     addDayFlight,
+    removeDayFlight,
     handleCompanionSelect,
     handleCompanionRemove,
     canGoNext,

@@ -27,6 +27,9 @@ export const CourseCreateCityStep = ({
   const [keyword, setKeyword] = useState('');
   const citySearch = useCourseCitySearch({ countries, keyword });
   const isResultOpen = citySearch.cities.length > 0;
+  const hasUnassignedCities = selectedCities.some(
+    ({ countryId }) => countryId === null,
+  );
 
   const handleKeywordChange = (value: string) => {
     setKeyword(value);
@@ -80,7 +83,14 @@ export const CourseCreateCityStep = ({
 
       {selectedCities.length > 0 && (
         <section aria-label="선택한 여행 도시" className="flex flex-col gap-4">
-          <h2 className="text-title-b-18 text-gray-800">내 여행 지역</h2>
+          <div className="flex flex-col gap-1">
+            <h2 className="text-title-b-18 text-gray-800">내 여행 지역</h2>
+            {hasUnassignedCities && countries.length > 1 && (
+              <p className="text-caption-r-12 text-gray-500">
+                국가 구성을 변경하면 기존 도시를 다시 선택해야 해요.
+              </p>
+            )}
+          </div>
           <div className="flex flex-col gap-2">
             {selectedCities.map((city) => (
               <SelectedRegionItem
