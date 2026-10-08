@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useRef } from 'react';
 
 import { COURSE_MUTATION_OPTIONS } from '@/domains/course/api/course';
-import { COURSE_QUERY_KEY } from '@/shared/api';
+import { COURSE_QUERY_KEY, USER_QUERY_KEY } from '@/shared/api';
 import { useToast } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
@@ -19,6 +19,10 @@ export const useCourseDelete = (courseId: number) => {
     onSuccess: () => {
       void queryClient.invalidateQueries({
         queryKey: COURSE_QUERY_KEY.ALL,
+        refetchType: 'none',
+      });
+      void queryClient.invalidateQueries({
+        queryKey: USER_QUERY_KEY.ME_COURSES_ALL(),
         refetchType: 'none',
       });
       showToast('코스가 삭제되었어요');
