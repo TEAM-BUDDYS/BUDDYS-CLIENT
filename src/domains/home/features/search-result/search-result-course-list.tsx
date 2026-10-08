@@ -98,10 +98,7 @@ export const SearchResultCourseList = ({
                 course.content ||
                 [course.countries, course.cities].filter(Boolean).join(' · ')
               }
-              images={course.images.map((src, index) => ({
-                src,
-                alt: `${course.title} 이미지 ${index + 1}`,
-              }))}
+              images={course.images}
               isBookmarked={
                 course.isBookmarked !==
                 toggledBookmarkIds.includes(course.courseId)
