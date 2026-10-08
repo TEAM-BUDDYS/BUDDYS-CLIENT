@@ -190,6 +190,7 @@ export const TAG_QUERY_KEY = {
 export const USER_QUERY_KEY = {
   ALL: ['users'] as const,
   ME: () => [...USER_QUERY_KEY.ALL, 'me'] as const,
+  ME_EDIT: () => [...USER_QUERY_KEY.ALL, 'me', 'edit'] as const,
   SEARCH: (params: GetQueryParams<'/api/v1/users/search'>) =>
     [...USER_QUERY_KEY.ALL, 'search', excludePageParam(params)] as const,
   ME_POSTS: (params?: GetQueryParams<'/api/v1/users/me/posts'>) =>

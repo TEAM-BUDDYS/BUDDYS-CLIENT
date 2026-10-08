@@ -1,4 +1,8 @@
-import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
+import {
+  infiniteQueryOptions,
+  mutationOptions,
+  queryOptions,
+} from '@tanstack/react-query';
 import { isHTTPError } from 'ky';
 
 import {
@@ -21,10 +25,13 @@ import type {
   GetBookmarkedPostsResponse,
   GetMyPostsParams,
   GetMyPostsResponse,
+  GetMyProfileForEditResponse,
   GetMyProfileResponse,
   GetUserPostsParams,
   GetUserPostsResponse,
   GetUserProfileResponse,
+  UpdateMyProfileRequest,
+  UpdateMyProfileResponse,
 } from './type';
 
 interface OrderedTag {
@@ -141,6 +148,20 @@ const getMyProfile = async (): Promise<MyProfile> => {
   };
 };
 
+const getMyProfileForEdit = async (): Promise<GetMyProfileForEditResponse> => {
+  const response = await apiClient
+    .get(END_POINT.USER.ME_EDIT)
+    .json<GetMyProfileForEditResponse>();
+
+  if (response.success === false) {
+    throw new Error(
+      response.message || '프로필 편집 정보를 불러오지 못했습니다.',
+    );
+  }
+
+  return response;
+};
+
 const getMyPosts = async (
   params?: GetMyPostsParams,
 ): Promise<GetMyPostsResponse> => {
@@ -228,6 +249,18 @@ const getBookmarkedPosts = async (params?: GetBookmarkedPostsParams) => {
   return response;
 };
 
+const updateMyProfile = async (body: UpdateMyProfileRequest) => {
+  const response = await apiClient
+    .put(END_POINT.USER.ME, { json: body })
+    .json<UpdateMyProfileResponse>();
+
+  if (response.success === false) {
+    throw new Error(response.message || '프로필을 수정하지 못했습니다.');
+  }
+
+  return response;
+};
+
 const getBookmarkedCourses = async (params?: GetBookmarkedCoursesParams) => {
   const response = await apiClient
     .get(END_POINT.COURSE.BOOKMARKS, {
@@ -262,7 +295,19 @@ const getBookmarkedMagazines = async (
   return response;
 };
 
+export const PROFILE_MUTATION_OPTIONS = {
+  UPDATE: () =>
+    mutationOptions({
+      mutationFn: (body: UpdateMyProfileRequest) => updateMyProfile(body),
+    }),
+};
+
 export const PROFILE_QUERY_OPTIONS = {
+  ME_EDIT: () =>
+    queryOptions({
+      queryKey: USER_QUERY_KEY.ME_EDIT(),
+      queryFn: getMyProfileForEdit,
+    }),
   ME: () =>
     queryOptions({
       queryKey: USER_QUERY_KEY.ME(),

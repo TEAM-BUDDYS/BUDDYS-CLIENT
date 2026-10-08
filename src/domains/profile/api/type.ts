@@ -3,6 +3,22 @@ import type { components, operations } from '@/types/schema';
 export type GetMyProfileResponse =
   components['schemas']['BaseResponseUserProfileResponse'];
 
+export type UpdateMyProfileRequest =
+  components['schemas']['UpdateProfileRequest'];
+
+export type UpdateMyProfileResponse = components['schemas']['BaseResponse'];
+
+export type MyProfileForEdit = Omit<UpdateMyProfileRequest, 'orderedTagIds'> & {
+  orderedTags: components['schemas']['OrderedTagResponse'][];
+};
+
+export type GetMyProfileForEditResponse = Omit<
+  components['schemas']['BaseResponse'],
+  'data'
+> & {
+  data?: MyProfileForEdit;
+};
+
 export type GetMyPostsParams = operations['getMyPosts']['parameters']['query'];
 export type GetMyPostsResponse =
   components['schemas']['BaseResponseUserPostsResponse'];
