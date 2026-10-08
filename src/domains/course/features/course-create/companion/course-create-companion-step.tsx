@@ -22,12 +22,14 @@ const COURSE_INVITE_URL = 'buddys.co.kr';
 const COURSE_CREATE_TOAST_BOTTOM_OFFSET_CLASS_NAME = 'bottom-26.5';
 
 interface CourseCreateCompanionStepProps {
+  isSubmitting: boolean;
   selectedCompanions: CourseCreateCompanion[];
   onCompanionSelect: (companion: CourseCreateCompanion) => void;
   onCompanionRemove: (userId: number) => void;
 }
 
 export const CourseCreateCompanionStep = ({
+  isSubmitting,
   selectedCompanions,
   onCompanionSelect,
   onCompanionRemove,
@@ -96,7 +98,11 @@ export const CourseCreateCompanionStep = ({
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <fieldset
+      aria-busy={isSubmitting}
+      className="flex min-w-0 flex-col gap-6 border-0 p-0"
+      disabled={isSubmitting}
+    >
       <div className="relative w-full">
         <Searchbar
           aria-autocomplete="list"
@@ -187,6 +193,6 @@ export const CourseCreateCompanionStep = ({
           초대 링크 복사하기
         </Button>
       </div>
-    </div>
+    </fieldset>
   );
 };

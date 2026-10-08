@@ -25,7 +25,7 @@ interface CourseBrowseContextValue {
   bottomSheetTab: CourseTabValue;
   currentLocation: CourseMapCenter | null;
   currentLocationStatus: CurrentLocationStatus;
-  isBookmarkActive: boolean;
+  isBookmarkMode: boolean;
   isLocationActive: boolean;
   refetchCurrentLocation: () => Promise<CourseMapCenter | null>;
   searchKeyword: string;
@@ -34,7 +34,7 @@ interface CourseBrowseContextValue {
   selectedRecommendedCountryId?: number;
   setBottomSheetPosition: Dispatch<SetStateAction<CourseBottomSheetPosition>>;
   setBottomSheetTab: Dispatch<SetStateAction<CourseTabValue>>;
-  setIsBookmarkActive: Dispatch<SetStateAction<boolean>>;
+  setIsBookmarkMode: Dispatch<SetStateAction<boolean>>;
   setIsLocationActive: Dispatch<SetStateAction<boolean>>;
   setSearchKeyword: Dispatch<SetStateAction<string>>;
   setSelectedCategory: Dispatch<SetStateAction<CourseMapCategory | undefined>>;
@@ -57,7 +57,7 @@ export const CourseBrowseProvider = ({
     useState<CourseBottomSheetPosition>('default');
   const [bottomSheetTab, setBottomSheetTab] =
     useState<CourseTabValue>('nearby');
-  const [isBookmarkActive, setIsBookmarkActive] = useState(false);
+  const [isBookmarkMode, setIsBookmarkMode] = useState(false);
   const [isLocationActive, setIsLocationActive] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<CourseMapCategory>();
@@ -77,7 +77,7 @@ export const CourseBrowseProvider = ({
       bottomSheetTab,
       currentLocation,
       currentLocationStatus,
-      isBookmarkActive,
+      isBookmarkMode,
       isLocationActive,
       refetchCurrentLocation,
       searchKeyword,
@@ -86,7 +86,7 @@ export const CourseBrowseProvider = ({
       selectedRecommendedCountryId,
       setBottomSheetPosition,
       setBottomSheetTab,
-      setIsBookmarkActive,
+      setIsBookmarkMode,
       setIsLocationActive,
       setSearchKeyword,
       setSelectedCategory,
@@ -98,7 +98,7 @@ export const CourseBrowseProvider = ({
       bottomSheetTab,
       currentLocation,
       currentLocationStatus,
-      isBookmarkActive,
+      isBookmarkMode,
       isLocationActive,
       refetchCurrentLocation,
       searchKeyword,
