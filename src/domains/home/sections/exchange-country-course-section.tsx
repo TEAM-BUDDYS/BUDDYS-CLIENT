@@ -3,20 +3,49 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 import { COURSE_QUERY_OPTIONS } from '@/domains/course/api/course';
+import type { GetCoursesParams } from '@/domains/course/api/type';
 import { CourseListCard } from '@/domains/home/components/course-list-card/course-list-card';
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
 import { useCountryCourseBookmark } from '@/domains/home/hooks/use-country-course-bookmark';
-import { toDisplayableCountryCourses } from '@/domains/home/model/country-course';
+import {
+  type DisplayableCountryCourse,
+  toDisplayableCountryCourses,
+} from '@/domains/home/model/country-course';
 import { PROFILE_QUERY_OPTIONS } from '@/domains/profile/api/query';
 import { AsyncBoundary, EmptyState } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
 const EXCHANGE_COUNTRY_COURSE_SIZE = 3;
 
+interface ExchangeCountryCourseItemProps {
+  course: DisplayableCountryCourse;
+  params: GetCoursesParams;
+}
+
+const ExchangeCountryCourseItem = ({
+  course,
+  params,
+}: ExchangeCountryCourseItemProps) => {
+  const { toggleBookmark } = useCountryCourseBookmark({
+    params,
+    courseId: course.courseId,
+  });
+
+  return (
+    <CourseListCard
+      title={course.title}
+      description={course.description}
+      thumbnailImageUrl={course.thumbnailImageUrl}
+      href={ROUTES.COURSE.DETAIL(course.courseId)}
+      isBookmarked={course.isBookmarked}
+      onBookmarkClick={() => toggleBookmark(course.isBookmarked)}
+    />
+  );
+};
+
 const ExchangeCountryCourseList = ({ countryId }: { countryId: number }) => {
   const params = { countryId, size: EXCHANGE_COUNTRY_COURSE_SIZE };
   const { data } = useSuspenseQuery(COURSE_QUERY_OPTIONS.LIST(params));
-  const { toggleBookmark } = useCountryCourseBookmark(params);
 
   const courses = toDisplayableCountryCourses(data.content);
 
@@ -34,16 +63,7 @@ const ExchangeCountryCourseList = ({ countryId }: { countryId: number }) => {
     <ul className="flex flex-col gap-5">
       {courses.map((course) => (
         <li key={course.courseId}>
-          <CourseListCard
-            title={course.title}
-            description={course.description}
-            thumbnailImageUrl={course.thumbnailImageUrl}
-            href={ROUTES.COURSE.DETAIL(course.courseId)}
-            isBookmarked={course.isBookmarked}
-            onBookmarkClick={() =>
-              toggleBookmark(course.courseId, course.isBookmarked)
-            }
-          />
+          <ExchangeCountryCourseItem course={course} params={params} />
         </li>
       ))}
     </ul>
@@ -55,7 +75,6 @@ const ExchangeCountryCourseContent = () => {
     data: { exchangeCountry },
   } = useSuspenseQuery(PROFILE_QUERY_OPTIONS.ME_COUNTRIES());
 
-  // 온보딩에서 파견 정보를 건너뛴 사용자는 섹션을 노출하지 않음
   if (!exchangeCountry) {
     return null;
   }
