@@ -1,4 +1,8 @@
-import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
+import {
+  infiniteQueryOptions,
+  mutationOptions,
+  queryOptions,
+} from '@tanstack/react-query';
 
 import {
   apiClient,
@@ -16,7 +20,38 @@ import type {
   SearchParams,
   SearchResult,
   SearchType,
+  UpdateMagazineBookmarkResponse,
 } from './type';
+
+interface UpdateMagazineBookmarkVariables {
+  magazineId: number;
+  isBookmarked: boolean;
+}
+
+const updateMagazineBookmark = async ({
+  magazineId,
+  isBookmarked,
+}: UpdateMagazineBookmarkVariables) => {
+  const endpoint = END_POINT.MAGAZINE.BOOKMARK(magazineId);
+  const response = await (
+    isBookmarked ? apiClient.post(endpoint) : apiClient.delete(endpoint)
+  ).json<UpdateMagazineBookmarkResponse>();
+
+  if (
+    response.success !== true ||
+    response.data?.magazineId !== magazineId ||
+    response.data.isBookmarked !== isBookmarked
+  ) {
+    throw new Error(response.message || '매거진 북마크를 변경하지 못했습니다.');
+  }
+
+  return response.data;
+};
+
+export const HOME_MUTATION_OPTIONS = {
+  UPDATE_MAGAZINE_BOOKMARK: () =>
+    mutationOptions({ mutationFn: updateMagazineBookmark }),
+};
 
 const SEARCH_RESULT_KEY_BY_TYPE = {
   POST: 'posts',

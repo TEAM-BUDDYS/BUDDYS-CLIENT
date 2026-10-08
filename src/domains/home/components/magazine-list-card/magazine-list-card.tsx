@@ -10,6 +10,7 @@ interface MagazineListCardProps {
   publishedAt: string;
   externalUrl: string;
   isBookmarked: boolean;
+  isBookmarkPending?: boolean;
   onBookmarkClick: () => void;
   className?: string;
 }
@@ -27,6 +28,7 @@ export const MagazineListCard = ({
   publishedAt,
   externalUrl,
   isBookmarked,
+  isBookmarkPending = false,
   onBookmarkClick,
   className,
 }: MagazineListCardProps) => {
@@ -64,6 +66,8 @@ export const MagazineListCard = ({
       </a>
 
       <BookmarkButton
+        disabled={isBookmarkPending}
+        aria-busy={isBookmarkPending}
         isBookmarked={isBookmarked}
         aria-label={isBookmarked ? `${title} 저장 해제` : `${title} 저장`}
         className="size-6 shrink-0 rounded-sm"
