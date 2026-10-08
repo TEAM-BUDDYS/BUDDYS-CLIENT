@@ -22,6 +22,8 @@ export interface paths {
      *     모든 필드를 요청에 포함해야 합니다.
      *     태그는 전달된 orderedTagIds로 전체 교체되며,
      *     bio를 null로 전달하면 기존 자기소개가 삭제됩니다.
+     *     profileImageUrl을 null로 전달하면 기존 프로필 이미지가 삭제됩니다.
+     *     profileImageUrl은 이미지 업로드 API(imageDomain=PROFILE)로 발급받은 URL이거나 현재 설정된 값이어야 합니다.
      *     태그 배열의 앞 3개가 대표 태그입니다.
      */
     put: operations['updateMyProfile'];
@@ -843,7 +845,7 @@ export interface paths {
     };
     /**
      * 내 관심 국가 및 파견 국가 조회
-     * @description 로그인한 사용자가 설정한 관심 국가와 파견 국가의 ID, 이름, ISO 코드를 조회합니다. 설정하지 않은 국가는 null로 반환합니다.
+     * @description 로그인한 사용자가 설정한 관심 국가와 파견 국가의 ID, 이름, 영문 이름, ISO 코드를 조회합니다. 설정하지 않은 국가는 null로 반환합니다.
      */
     get: operations['getMyCountries'];
     put?: never;
@@ -1268,7 +1270,7 @@ export interface paths {
     };
     /**
      * 국가 검색
-     * @description 검색 키워드에 해당하는 국가를 검색합니다.
+     * @description 검색 키워드가 한글 국가명 또는 영문 국가명에 포함된 국가를 검색합니다. 영문은 대소문자를 구분하지 않으며, 결과는 한글 국가명의 ㄱㄴㄷ순으로 각 국가의 한글명(name)과 영문명(englishName)을 함께 반환합니다.
      */
     get: operations['searchCountries'];
     put?: never;
@@ -1288,7 +1290,7 @@ export interface paths {
     };
     /**
      * 채팅방 상세 조회
-     * @description 채팅방 ID로 채팅방 기본 정보와 상대방 정보를 조회합니다. 내가 상대방을 차단했거나 신고한 경우 canSendMessage가 false로 응답됩니다. 상대방이 나를 차단했거나 신고한 경우에는 영향을 받지 않습니다.
+     * @description 채팅방 ID로 채팅방 기본 정보와 상대방 정보를 조회합니다. 내가 상대방을 차단했거나 신고한 경우 canSendMessage가 false로 응답되며, hasBlocked와 hasReported로 그 이유를 구분할 수 있습니다. 상대방이 나를 차단했거나 신고한 경우에는 영향을 받지 않습니다.
      */
     get: operations['getChatRoom'];
     put?: never;
@@ -1410,6 +1412,11 @@ export interface components {
        * @example 안녕하세요 김버디입니다~~
        */
       bio: string | null;
+      /**
+       * @description 프로필 이미지 URL. 최대 512자. 이미지 업로드 API(imageDomain=PROFILE)로 발급받은 URL 또는 현재 설정된 값만 허용합니다. null이면 기존 프로필 이미지를 삭제합니다.
+       * @example https://example.com/profile.png
+       */
+      profileImageUrl: string | null;
       /**
        * @description 드래그앤드롭으로 정렬한 전체 선택 태그 ID 목록입니다.
        *     카테고리와 무관하게 상위 3개가 대표 태그로 노출됩니다.
@@ -2089,6 +2096,16 @@ export interface components {
        * @example true
        */
       canSendMessage?: boolean;
+      /**
+       * @description 내가 상대방을 차단했는지 여부. 상대방이 나를 차단한 경우는 반영되지 않습니다.
+       * @example false
+       */
+      hasBlocked?: boolean;
+      /**
+       * @description 내가 상대방을 신고했는지 여부. 상대방이 나를 신고한 경우는 반영되지 않습니다.
+       * @example false
+       */
+      hasReported?: boolean;
     };
     ReportChatPartnerRequest: {
       /**
@@ -2197,7 +2214,7 @@ export interface components {
        */
       bio?: string | null;
       /**
-       * @description 프로필 이미지 URL
+       * @description 프로필 이미지 URL. 이미지 업로드 API(imageDomain=PROFILE)로 발급받은 URL 또는 현재 설정된 값만 허용합니다.
        * @example https://example.com/profile.png
        */
       profileImageUrl?: string | null;
@@ -4009,6 +4026,11 @@ export interface components {
        */
       name?: string;
       /**
+       * @description 영문 국가 이름. 영문명이 없는 국가는 null입니다.
+       * @example South Korea
+       */
+      englishName?: string | null;
+      /**
        * @description 국가 코드
        * @example KR
        */
@@ -4529,6 +4551,7 @@ export interface operations {
            *         "gender": "FEMALE",
            *         "birthDate": "2004-10-24",
            *         "bio": "안녕하세요 김버디입니다~~",
+           *         "profileImageUrl": "https://example.com/profile.png",
            *         "orderedTags": [
            *           {
            *             "id": 27,
@@ -8737,6 +8760,7 @@ export interface operations {
            *         "gender": "FEMALE",
            *         "birthDate": "2004-10-24",
            *         "bio": "안녕하세요 김버디입니다~~",
+           *         "profileImageUrl": "https://example.com/profile.png",
            *         "orderedTags": [
            *           {
            *             "id": 27,
@@ -10638,7 +10662,7 @@ export interface operations {
     parameters: {
       query: {
         /**
-         * @description 검색 키워드
+         * @description 검색 키워드. 한글 또는 영문 국가명의 일부를 입력합니다.
          * @example 대한민국
          */
         keyword: string;

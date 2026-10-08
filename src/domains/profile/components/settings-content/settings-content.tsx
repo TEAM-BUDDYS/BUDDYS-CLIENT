@@ -1,5 +1,6 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { useAuthSession } from '@/domains/auth/features/auth-session/auth-session-provider';
@@ -11,16 +12,38 @@ import {
 import { Button, Modal, useToast } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config/routes';
 
-import { requestWithdraw } from '../../api/query';
+import { PROFILE_QUERY_OPTIONS, requestWithdraw } from '../../api/query';
 
-const SETTINGS_MENU_ITEMS = [
-  { label: '학교 이메일 인증', href: ROUTES.VERIFICATION.UNIVERSITY_EMAIL },
-  { label: '파견교 서류 인증', href: ROUTES.VERIFICATION.EXCHANGE_DOCUMENT },
+const POLICY_MENU_ITEMS = [
   { label: '개인정보 처리방침', href: ROUTES.PROFILE.PRIVACY_POLICY },
   { label: '이용약관', href: ROUTES.PROFILE.TERMS },
 ] as const;
 
 export const SettingsContent = () => {
+  const {
+    data: profile,
+    isFetching,
+    isError,
+  } = useQuery(PROFILE_QUERY_OPTIONS.ME());
+
+  const verificationMenuItems =
+    profile && !isFetching && !isError
+      ? [
+          {
+            label: '학교 이메일 인증',
+            href: ROUTES.VERIFICATION.UNIVERSITY_EMAIL,
+            isVisible: !profile.isUniversityEmailVerified,
+          },
+          {
+            label: '파견교 서류 인증',
+            href: ROUTES.VERIFICATION.EXCHANGE_DOCUMENT,
+            isVisible: !profile.isExchangeDocumentVerified,
+          },
+        ].filter((item) => item.isVisible)
+      : [];
+
+  const menuItems = [...verificationMenuItems, ...POLICY_MENU_ITEMS];
+
   const [confirmType, setConfirmType] = useState<SettingsConfirmType | null>(
     null,
   );
@@ -69,7 +92,7 @@ export const SettingsContent = () => {
     <>
       <nav>
         <ul className="flex flex-col">
-          {SETTINGS_MENU_ITEMS.map((item) => (
+          {menuItems.map((item) => (
             <li key={item.label}>
               <SettingsMenuItem label={item.label} href={item.href} />
             </li>
