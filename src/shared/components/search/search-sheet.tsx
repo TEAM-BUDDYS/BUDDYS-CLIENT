@@ -53,7 +53,6 @@ export const SearchSheet = ({
         </FormLabel>
         <div className="mt-4">
           <SearchHistory
-            type="history"
             items={searchHistoryItems}
             onSelect={handleSearchHistorySelect}
             onDelete={handleSearchHistoryDelete}
