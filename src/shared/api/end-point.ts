@@ -54,6 +54,7 @@ export const END_POINT = {
   POST: {
     LIST: 'api/v1/posts',
     CREATE: 'api/v1/posts',
+    CLOSING_SOON: 'api/v1/posts/closing-soon',
     DETAIL: (postId: number) => `api/v1/posts/${postId}`,
     STATUS: (postId: number) => `api/v1/posts/${postId}/status`,
     COMMENTS: (postId: number) => `api/v1/posts/${postId}/comments`,

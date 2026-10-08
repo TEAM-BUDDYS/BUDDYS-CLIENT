@@ -19,6 +19,7 @@ import type {
   CreatePostRequest,
   CreatePostResponse,
   DeletePostResponse,
+  GetClosingSoonPostsResponse,
   GetCommentsParams,
   GetCommentsResponse,
   GetPostDetailResponse,
@@ -36,6 +37,20 @@ const getPosts = async (params?: GetPostsParams) => {
       searchParams: createSearchParams(params),
     })
     .json<GetPostsResponse>();
+};
+
+const getClosingSoonPosts = async () => {
+  const response = await apiClient
+    .get(END_POINT.POST.CLOSING_SOON)
+    .json<GetClosingSoonPostsResponse>();
+
+  if (!response.success) {
+    throw new Error(
+      response.message || '마감 임박 게시글을 불러오지 못했습니다.',
+    );
+  }
+
+  return response.data?.content ?? [];
 };
 
 const createPost = async (body: CreatePostRequest) => {
@@ -165,6 +180,11 @@ export const POST_QUERY_OPTIONS = {
 
         return page + 1;
       },
+    }),
+  CLOSING_SOON: () =>
+    queryOptions({
+      queryKey: POST_QUERY_KEY.CLOSING_SOON(),
+      queryFn: getClosingSoonPosts,
     }),
   DETAIL: (postId: number) =>
     queryOptions({

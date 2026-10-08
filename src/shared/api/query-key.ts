@@ -136,6 +136,7 @@ export const POST_QUERY_KEY = {
     [...POST_QUERY_KEY.ALL, 'list', params ?? {}] as const,
   INFINITE_LIST: (params?: GetQueryParams<'/api/v1/posts'>) =>
     [...POST_QUERY_KEY.ALL, 'infinite-list', excludePageParam(params)] as const,
+  CLOSING_SOON: () => [...POST_QUERY_KEY.ALL, 'closing-soon'] as const,
   DETAIL: (postId: number) =>
     [...POST_QUERY_KEY.ALL, 'detail', postId] as const,
   COMMENTS_ALL: (postId: number) =>

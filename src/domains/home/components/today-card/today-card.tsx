@@ -22,9 +22,11 @@ export const TodayCard = ({ post }: TodayCardProps) => {
     endDate,
     country,
     thumbnailImageUrl,
+    isSaved,
   } = post;
 
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  // TODO: 게시글 저장 API 연동 시 서버 상태와 동기화
+  const [isBookmarked, setIsBookmarked] = useState(isSaved ?? false);
 
   const handleBookmarkClick = () => {
     setIsBookmarked((currentIsBookmarked) => !currentIsBookmarked);
