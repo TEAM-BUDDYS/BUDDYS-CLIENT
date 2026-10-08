@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { POST_MUTATION_OPTIONS } from '@/domains/posts/api/query';
 import { PostRecruitmentStatusBottomSheet } from '@/domains/posts/components/post-recruitment-status-bottom-sheet/post-recruitment-status-bottom-sheet';
 import { PostRecruitmentStatusButton } from '@/domains/posts/components/post-recruitment-status-button/post-recruitment-status-button';
+import { usePostBookmark } from '@/domains/posts/features/post-bookmark/use-post-bookmark';
 import type { PostRecruitmentStatusTypes } from '@/domains/posts/model/post-recruitment-status';
 import { POST_QUERY_KEY, RECOMMENDATION_QUERY_KEY } from '@/shared/api';
 import { defaultProfileImage } from '@/shared/assets/illustrations';
@@ -22,6 +23,7 @@ interface PostDetailProfileHeaderProps {
   profileImageUrl?: string;
   recruitmentStatus?: PostRecruitmentStatusTypes;
   isMine: boolean;
+  isBookmarked: boolean;
 }
 
 export const PostDetailProfileHeader = ({
@@ -32,6 +34,7 @@ export const PostDetailProfileHeader = ({
   profileImageUrl,
   recruitmentStatus = 'RECRUITING',
   isMine,
+  isBookmarked,
 }: PostDetailProfileHeaderProps) => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
@@ -42,7 +45,7 @@ export const PostDetailProfileHeader = ({
   const [selectedRecruitmentStatus, setSelectedRecruitmentStatus] =
     useState(recruitmentStatus);
   const [isStatusBottomSheetOpen, setIsStatusBottomSheetOpen] = useState(false);
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const bookmark = usePostBookmark({ postId, isBookmarked });
   const updateStatusMutation = useMutation({
     ...POST_MUTATION_OPTIONS.UPDATE_STATUS(),
     onSuccess: ({ status }) => {
@@ -90,10 +93,6 @@ export const PostDetailProfileHeader = ({
       postId,
       body: { status },
     });
-  };
-
-  const handleBookmarkClick = () => {
-    setIsBookmarked((currentIsBookmarked) => !currentIsBookmarked);
   };
 
   return (
@@ -145,9 +144,13 @@ export const PostDetailProfileHeader = ({
         </>
       ) : (
         <BookmarkButton
-          isBookmarked={isBookmarked}
-          className={isBookmarked ? 'size-12' : 'size-12 text-gray-500'}
-          onClick={handleBookmarkClick}
+          isBookmarked={bookmark.isBookmarked}
+          aria-busy={bookmark.isPending}
+          className={
+            bookmark.isBookmarked ? 'size-12' : 'size-12 text-gray-500'
+          }
+          disabled={bookmark.isPending}
+          onClick={bookmark.toggleBookmark}
         />
       )}
     </header>

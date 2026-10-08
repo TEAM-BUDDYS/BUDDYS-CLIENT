@@ -7,24 +7,49 @@ import { PartnerCard } from '@/domains/partner/components/partner-card/partner-c
 import { PartnerChipGroup } from '@/domains/partner/components/partner-chip-group/partner-chip-group';
 import {
   DEFAULT_PREFERENCE_TAG_NAME,
+  type DisplayablePreferencePartnerPost,
   isDisplayablePreferencePartnerPost,
   PREFERENCE_PARTNER_SIZE,
   PREFERENCE_TAGS,
 } from '@/domains/partner/model/preference-partner';
 import { POST_QUERY_OPTIONS } from '@/domains/posts/api/query';
+import { usePostBookmark } from '@/domains/posts/features/post-bookmark/use-post-bookmark';
 import { AsyncBoundary, EmptyState } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
+interface PreferenceBuddyPostItemProps {
+  post: DisplayablePreferencePartnerPost;
+}
+
+const PreferenceBuddyPostItem = ({ post }: PreferenceBuddyPostItemProps) => {
+  const bookmark = usePostBookmark({
+    postId: post.postId,
+    isBookmarked: post.isBookmarked ?? false,
+  });
+
+  return (
+    <PartnerCard
+      href={ROUTES.POST.DETAIL(post.postId)}
+      isRecruiting={post.recruitmentStatus === 'RECRUITING'}
+      country={post.country.name}
+      title={post.title}
+      description={post.content}
+      startDate={post.startDate}
+      endDate={post.endDate}
+      imageUrl={post.thumbnailImageUrl}
+      isBookmarked={bookmark.isBookmarked}
+      isBookmarkPending={bookmark.isPending}
+      onBookmarkClick={bookmark.toggleBookmark}
+    />
+  );
+};
+
 interface PreferenceBuddyPostListProps {
   selectedPreferenceTagId: number;
-  bookmarkedItemIds: number[];
-  onBookmarkClick: (itemId: number) => void;
 }
 
 const PreferenceBuddyPostList = ({
   selectedPreferenceTagId,
-  bookmarkedItemIds,
-  onBookmarkClick,
 }: PreferenceBuddyPostListProps) => {
   const { data } = useSuspenseQuery(
     POST_QUERY_OPTIONS.LIST({
@@ -48,19 +73,7 @@ const PreferenceBuddyPostList = ({
         />
       ) : (
         posts.map((post) => (
-          <PartnerCard
-            key={post.postId}
-            href={ROUTES.POST.DETAIL(post.postId)}
-            isRecruiting={post.recruitmentStatus === 'RECRUITING'}
-            country={post.country.name}
-            title={post.title}
-            description={post.content}
-            startDate={post.startDate}
-            endDate={post.endDate}
-            imageUrl={post.thumbnailImageUrl}
-            isBookmarked={bookmarkedItemIds.includes(post.postId)}
-            onBookmarkClick={() => onBookmarkClick(post.postId)}
-          />
+          <PreferenceBuddyPostItem key={post.postId} post={post} />
         ))
       )}
     </div>
@@ -75,17 +88,6 @@ export const PreferenceBuddySection = () => {
     0;
   const [selectedPreferenceTagId, setSelectedPreferenceTagId] =
     useState(defaultTagId);
-  const [bookmarkedItemIds, setBookmarkedItemIds] = useState<number[]>([]);
-
-  const handleBookmarkClick = (itemId: number) => {
-    setBookmarkedItemIds((prevBookmarkedItemIds) =>
-      prevBookmarkedItemIds.includes(itemId)
-        ? prevBookmarkedItemIds.filter(
-            (bookmarkedItemId) => bookmarkedItemId !== itemId,
-          )
-        : [...prevBookmarkedItemIds, itemId],
-    );
-  };
 
   return (
     <section className="flex flex-col">
@@ -107,8 +109,6 @@ export const PreferenceBuddySection = () => {
       >
         <PreferenceBuddyPostList
           selectedPreferenceTagId={selectedPreferenceTagId}
-          bookmarkedItemIds={bookmarkedItemIds}
-          onBookmarkClick={handleBookmarkClick}
         />
       </AsyncBoundary>
     </section>

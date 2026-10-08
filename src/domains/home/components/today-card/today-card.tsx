@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
 
 import { cn } from '@/lib/cn';
 import { BookmarkButton, CommonImage, Tag } from '@/shared/components/ui';
@@ -11,9 +10,17 @@ import type { DisplayableClosingSoonPost } from '../../model/closing-soon';
 
 interface TodayCardProps {
   post: DisplayableClosingSoonPost;
+  isBookmarked: boolean;
+  isBookmarkPending?: boolean;
+  onBookmarkClick: () => void;
 }
 
-export const TodayCard = ({ post }: TodayCardProps) => {
+export const TodayCard = ({
+  post,
+  isBookmarked,
+  isBookmarkPending = false,
+  onBookmarkClick,
+}: TodayCardProps) => {
   const {
     postId,
     title,
@@ -22,15 +29,7 @@ export const TodayCard = ({ post }: TodayCardProps) => {
     endDate,
     country,
     thumbnailImageUrl,
-    isSaved,
   } = post;
-
-  // TODO: 게시글 저장 API 연동 시 서버 상태와 동기화
-  const [isBookmarked, setIsBookmarked] = useState(isSaved ?? false);
-
-  const handleBookmarkClick = () => {
-    setIsBookmarked((currentIsBookmarked) => !currentIsBookmarked);
-  };
 
   return (
     <article className="flex h-[100px] w-full items-center gap-8">
@@ -83,7 +82,9 @@ export const TodayCard = ({ post }: TodayCardProps) => {
 
       <BookmarkButton
         isBookmarked={isBookmarked}
-        onClick={handleBookmarkClick}
+        aria-busy={isBookmarkPending}
+        disabled={isBookmarkPending}
+        onClick={onBookmarkClick}
       />
     </article>
   );

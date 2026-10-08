@@ -79,6 +79,7 @@ export const PostDetailContentSection = ({
         profileImageUrl={post.author.profileImageUrl ?? undefined}
         recruitmentStatus={post.recruitmentStatus}
         isMine={post.isMine}
+        isBookmarked={post.isBookmarked}
       />
 
       <div className="flex w-full flex-col items-start gap-2">

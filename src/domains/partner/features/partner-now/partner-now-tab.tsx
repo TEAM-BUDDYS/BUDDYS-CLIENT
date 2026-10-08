@@ -11,11 +11,13 @@ import {
   type PartnerFilterKey,
 } from '@/domains/partner/model/partner-filter';
 import {
+  type DisplayablePartnerPost,
   getPartnerSearchParams,
   hasPartnerCardFields,
   PARTNER_SEARCH_SIZE,
 } from '@/domains/partner/model/partner-search';
 import { POST_QUERY_OPTIONS } from '@/domains/posts/api/query';
+import { usePostBookmark } from '@/domains/posts/features/post-bookmark/use-post-bookmark';
 import { cn } from '@/lib/cn';
 import { AsyncBoundary, EmptyState, Filter } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
@@ -24,17 +26,38 @@ import { useSheetScroll } from '@/shared/hooks/use-sheet-scroll';
 
 import { usePartnerFilterValue } from './use-partner-filter-value';
 
-interface PostListProps {
-  filterValue: FilterSheetValue;
-  bookmarkedItemIds: number[];
-  onBookmarkClick: (itemId: number) => void;
+interface PartnerPostItemProps {
+  post: DisplayablePartnerPost;
 }
 
-const PostList = ({
-  filterValue,
-  bookmarkedItemIds,
-  onBookmarkClick,
-}: PostListProps) => {
+const PartnerPostItem = ({ post }: PartnerPostItemProps) => {
+  const bookmark = usePostBookmark({
+    postId: post.postId,
+    isBookmarked: post.isBookmarked ?? false,
+  });
+
+  return (
+    <PartnerCard
+      href={ROUTES.POST.DETAIL(post.postId)}
+      isRecruiting={post.recruitmentStatus === 'RECRUITING'}
+      country={post.country.name}
+      title={post.title}
+      description={post.content}
+      startDate={post.startDate}
+      endDate={post.endDate}
+      imageUrl={post.thumbnailImageUrl}
+      isBookmarked={bookmark.isBookmarked}
+      isBookmarkPending={bookmark.isPending}
+      onBookmarkClick={bookmark.toggleBookmark}
+    />
+  );
+};
+
+interface PostListProps {
+  filterValue: FilterSheetValue;
+}
+
+const PostList = ({ filterValue }: PostListProps) => {
   const {
     data,
     fetchNextPage,
@@ -82,19 +105,7 @@ const PostList = ({
       </p>
       <div className="flex flex-col gap-6 pt-4">
         {posts.map((post) => (
-          <PartnerCard
-            key={post.postId}
-            href={ROUTES.POST.DETAIL(post.postId)}
-            isRecruiting={post.recruitmentStatus === 'RECRUITING'}
-            country={post.country.name}
-            title={post.title}
-            description={post.content}
-            startDate={post.startDate}
-            endDate={post.endDate}
-            imageUrl={post.thumbnailImageUrl}
-            isBookmarked={bookmarkedItemIds.includes(post.postId)}
-            onBookmarkClick={() => onBookmarkClick(post.postId)}
-          />
+          <PartnerPostItem key={post.postId} post={post} />
         ))}
       </div>
       <div ref={loadMoreRef} className="h-1" aria-hidden="true" />
@@ -125,7 +136,6 @@ export const PartnerNowTab = ({
   isFilterFixed,
   isTopNavigationVisible,
 }: PartnerNowTabProps) => {
-  const [bookmarkedItemIds, setBookmarkedItemIds] = useState<number[]>([]);
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const {
     appliedFilterKeys,
@@ -141,16 +151,6 @@ export const PartnerNowTab = ({
 
   const handleFilterSheetClose = () => {
     setIsFilterSheetOpen(false);
-  };
-
-  const handleBookmarkClick = (itemId: number) => {
-    setBookmarkedItemIds((prevBookmarkedItemIds) =>
-      prevBookmarkedItemIds.includes(itemId)
-        ? prevBookmarkedItemIds.filter(
-            (bookmarkedItemId) => bookmarkedItemId !== itemId,
-          )
-        : [...prevBookmarkedItemIds, itemId],
-    );
   };
 
   return (
@@ -205,11 +205,7 @@ export const PartnerNowTab = ({
           resetKeys={[filterValue]}
           loadingFallback={<div className="min-h-96 pt-6" aria-busy="true" />}
         >
-          <PostList
-            filterValue={filterValue}
-            bookmarkedItemIds={bookmarkedItemIds}
-            onBookmarkClick={handleBookmarkClick}
-          />
+          <PostList filterValue={filterValue} />
         </AsyncBoundary>
       </section>
       {isFilterSheetOpen && (

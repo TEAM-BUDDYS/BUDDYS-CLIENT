@@ -25,6 +25,7 @@ import type {
   GetPostDetailResponse,
   GetPostsParams,
   GetPostsResponse,
+  UpdatePostBookmarkResponse,
   UpdatePostRequest,
   UpdatePostResponse,
   UpdatePostStatusRequest,
@@ -160,6 +161,31 @@ const createComment = async (postId: number, body: CreateCommentRequest) => {
   return response.data.commentId;
 };
 
+export interface UpdatePostBookmarkVariables {
+  postId: number;
+  nextBookmarked: boolean;
+}
+
+const updatePostBookmark = async ({
+  postId,
+  nextBookmarked,
+}: UpdatePostBookmarkVariables) => {
+  const endpoint = END_POINT.POST.BOOKMARK(postId);
+  const response = await (
+    nextBookmarked ? apiClient.post(endpoint) : apiClient.delete(endpoint)
+  ).json<UpdatePostBookmarkResponse>();
+
+  if (
+    response.success !== true ||
+    response.data?.postId !== postId ||
+    response.data.isBookmarked !== nextBookmarked
+  ) {
+    throw new Error(response.message || '게시글 북마크를 변경하지 못했습니다.');
+  }
+
+  return response.data;
+};
+
 export const POST_QUERY_OPTIONS = {
   LIST: (params?: GetPostsParams) =>
     queryOptions({
@@ -250,5 +276,9 @@ export const POST_MUTATION_OPTIONS = {
         postId: number;
         body: CreateCommentRequest;
       }) => createComment(postId, body),
+    }),
+  UPDATE_BOOKMARK: () =>
+    mutationOptions({
+      mutationFn: updatePostBookmark,
     }),
 };

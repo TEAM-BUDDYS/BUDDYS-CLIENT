@@ -7,15 +7,48 @@ import { BookmarkContainer } from '@/domains/home/components/bookmark-container/
 import { ListToolbar } from '@/domains/home/components/list-toolbar/list-toolbar';
 import { initialFilterValue } from '@/domains/home/features/filter-sheet/use-filter-sheet';
 import {
+  type DisplayablePostSummary,
   getBuddySearchParams,
   hasPostCardFields,
 } from '@/domains/home/model/buddy-search';
 import { POST_QUERY_OPTIONS } from '@/domains/posts/api/query';
+import { usePostBookmark } from '@/domains/posts/features/post-bookmark/use-post-bookmark';
 import { Card, EmptyState } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 
 const SEARCH_RESULT_SIZE = 10;
+
+interface SearchResultPostItemProps {
+  post: DisplayablePostSummary;
+}
+
+const SearchResultPostItem = ({ post }: SearchResultPostItemProps) => {
+  const bookmark = usePostBookmark({
+    postId: post.postId,
+    isBookmarked: post.isBookmarked ?? false,
+  });
+
+  return (
+    <BookmarkContainer
+      isBookmarked={bookmark.isBookmarked}
+      isBookmarkPending={bookmark.isPending}
+      variant="card"
+      onBookmarkClick={bookmark.toggleBookmark}
+    >
+      <Card
+        href={ROUTES.POST.DETAIL(post.postId)}
+        title={post.title}
+        content={post.content}
+        postStatus={post.recruitmentStatus}
+        tagValue={post.country.name}
+        startDate={post.startDate}
+        endDate={post.endDate}
+        image={post.thumbnailImageUrl}
+      />
+    </BookmarkContainer>
+  );
+};
 
 interface SearchResultPostListProps {
   keyword?: string;
@@ -25,7 +58,6 @@ export const SearchResultPostList = ({
   keyword,
 }: SearchResultPostListProps) => {
   const [sort, setSort] = useState('최신순');
-  const [bookmarkedItemIds, setBookmarkedItemIds] = useState<number[]>([]);
   const {
     data,
     fetchNextPage,
@@ -50,16 +82,6 @@ export const SearchResultPostList = ({
     onIntersect: handleIntersect,
   });
 
-  const handleBookmarkClick = (postId: number) => {
-    setBookmarkedItemIds((prevBookmarkedItemIds) =>
-      prevBookmarkedItemIds.includes(postId)
-        ? prevBookmarkedItemIds.filter(
-            (bookmarkedItemId) => bookmarkedItemId !== postId,
-          )
-        : [...prevBookmarkedItemIds, postId],
-    );
-  };
-
   if (posts.length === 0 && !hasNextPage) {
     return (
       <EmptyState
@@ -78,22 +100,7 @@ export const SearchResultPostList = ({
       <ul className="mt-4 flex flex-col gap-5">
         {posts.map((post) => (
           <li key={post.postId}>
-            <BookmarkContainer
-              isBookmarked={bookmarkedItemIds.includes(post.postId)}
-              variant="card"
-              onBookmarkClick={() => handleBookmarkClick(post.postId)}
-            >
-              <Card
-                href={ROUTES.POST.DETAIL(post.postId)}
-                title={post.title}
-                content={post.content}
-                postStatus={post.recruitmentStatus}
-                tagValue={post.country.name}
-                startDate={post.startDate}
-                endDate={post.endDate}
-                image={post.thumbnailImageUrl}
-              />
-            </BookmarkContainer>
+            <SearchResultPostItem post={post} />
           </li>
         ))}
       </ul>
