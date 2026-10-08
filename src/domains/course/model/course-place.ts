@@ -1,4 +1,8 @@
-import type { GetNearbyPlacesParams, Place } from '@/domains/course/api/type';
+import type {
+  BookmarkedPlace,
+  GetNearbyPlacesParams,
+  Place,
+} from '@/domains/course/api/type';
 import type { CourseMapCenter } from '@/domains/course/model/course-map';
 
 export interface NearbyCourseItem {
@@ -12,6 +16,13 @@ const API_CATEGORY_BY_MAP_CATEGORY = {
   food: 'RESTAURANT',
   cafe: 'CAFE',
   accommodation: 'ACCOMMODATION',
+} as const;
+const BOOKMARK_CATEGORY_LABEL = {
+  RESTAURANT: '음식점',
+  CAFE: '카페',
+  TOURISM: '관광지',
+  ACCOMMODATION: '숙소',
+  ETC: '기타',
 } as const;
 
 export type CourseMapCategory = keyof typeof API_CATEGORY_BY_MAP_CATEGORY;
@@ -51,3 +62,36 @@ export const getNearbyCourseItems = (
     description: getPlaceDescription(place),
   }));
 };
+
+export const getBookmarkedCourseItems = (
+  places: readonly BookmarkedPlace[],
+): NearbyCourseItem[] =>
+  places.map((place) => ({
+    place: convertBookmarkedPlaceToPlace(place),
+    description: BOOKMARK_CATEGORY_LABEL[place.category],
+  }));
+
+export const convertBookmarkedPlaceToPlace = (
+  place: BookmarkedPlace,
+): Place => ({
+  placeId: place.placeId,
+  name: place.name,
+  category: place.category,
+  address: place.address,
+  latitude: place.latitude,
+  longitude: place.longitude,
+  bookmarked: true,
+  photoUrl: place.photoUrl,
+  googleMapsUrl: place.googleMapsUrl,
+  country: null,
+  city: null,
+});
+
+export const mergeCoursePlaces = (
+  ...placeGroups: (readonly Place[])[]
+): Place[] =>
+  Array.from(
+    new Map(
+      placeGroups.flat().map((place) => [place.placeId, place] as const),
+    ).values(),
+  );

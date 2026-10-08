@@ -43,15 +43,19 @@ export const END_POINT = {
     BOOKMARKS: 'api/v1/magazines/bookmarks',
   },
   PLACE: {
+    BOOKMARK: (placeId: string) =>
+      `api/v1/places/${encodeURIComponent(placeId)}/bookmark`,
     NEARBY: 'api/v1/places/nearby',
     SEARCH: 'api/v1/places/search',
     BOOKMARKS: 'api/v1/places/bookmarks',
+    BOOKMARK_MARKERS: 'api/v1/places/bookmarks/markers',
     PHOTO: (placeId: string, maxWidth: number) =>
       `api/v1/places/${encodeURIComponent(placeId)}/photo?maxWidth=${maxWidth}`,
   },
   POST: {
     LIST: 'api/v1/posts',
     CREATE: 'api/v1/posts',
+    CLOSING_SOON: 'api/v1/posts/closing-soon',
     DETAIL: (postId: number) => `api/v1/posts/${postId}`,
     STATUS: (postId: number) => `api/v1/posts/${postId}/status`,
     COMMENTS: (postId: number) => `api/v1/posts/${postId}/comments`,

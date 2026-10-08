@@ -3,6 +3,7 @@
 import {
   APIProvider,
   Map,
+  type MapEvent,
   type MapMouseEvent,
 } from '@vis.gl/react-google-maps';
 import { useState } from 'react';
@@ -11,7 +12,10 @@ import type { Place } from '@/domains/course/api/type';
 import { CourseCurrentLocationMarker } from '@/domains/course/components/course-map/course-current-location-marker';
 import { CourseMapCamera } from '@/domains/course/components/course-map/course-map-camera';
 import { CourseMapMarker } from '@/domains/course/components/course-map/course-map-marker';
-import type { CourseMapCenter } from '@/domains/course/model/course-map';
+import type {
+  CourseMapBounds,
+  CourseMapCenter,
+} from '@/domains/course/model/course-map';
 import type { GoogleMapPoi } from '@/domains/course/model/google-place';
 import { AsyncErrorState } from '@/shared/components/ui';
 
@@ -29,6 +33,7 @@ interface CourseMapProps {
   selectedPlace?: Place;
   selectedPlaceId?: string;
   cameraTarget?: CourseMapCenter | null;
+  onBoundsChange?: (bounds: CourseMapBounds) => void;
   onPoiSelect?: (poi: GoogleMapPoi) => void;
   onPlaceSelect?: (placeId: string) => void;
 }
@@ -42,6 +47,7 @@ export const CourseMap = ({
   selectedPlace,
   selectedPlaceId,
   cameraTarget = null,
+  onBoundsChange,
   onPoiSelect,
   onPlaceSelect,
 }: CourseMapProps) => {
@@ -72,6 +78,19 @@ export const CourseMap = ({
 
     event.stop();
     onPoiSelect({ placeId, position: latLng });
+  };
+
+  const handleMapIdle = (event: MapEvent) => {
+    const bounds = event.map.getBounds()?.toJSON();
+
+    if (!bounds || !onBoundsChange) return;
+
+    onBoundsChange({
+      swLat: bounds.south,
+      swLng: bounds.west,
+      neLat: bounds.north,
+      neLng: bounds.east,
+    });
   };
 
   if (hasMapLoadError) {
@@ -108,6 +127,7 @@ export const CourseMap = ({
           disableDefaultUI
           keyboardShortcuts={false}
           onClick={handleMapClick}
+          onIdle={handleMapIdle}
         >
           <CourseMapCamera
             bottomOverlayRatio={bottomOverlayRatio}

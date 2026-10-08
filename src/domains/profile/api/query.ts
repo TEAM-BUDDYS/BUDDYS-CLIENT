@@ -77,6 +77,9 @@ const isNullableString = (value: unknown) => {
   return value === undefined || value === null || typeof value === 'string';
 };
 
+const isOptionalBoolean = (value: unknown) =>
+  value === undefined || typeof value === 'boolean';
+
 const isValidUserPublicProfileData = (
   data: unknown,
 ): data is UserPublicProfileDataWithNickname => {
@@ -97,8 +100,8 @@ const isValidUserPublicProfileData = (
   return (
     typeof nickname === 'string' &&
     isNullableString(profileImageUrl) &&
-    typeof universityEmailVerified === 'boolean' &&
-    typeof exchangeDocumentVerified === 'boolean' &&
+    isOptionalBoolean(universityEmailVerified) &&
+    isOptionalBoolean(exchangeDocumentVerified) &&
     isOrderedTagArray(representativeTags) &&
     isNullableString(bio) &&
     (isDeleted === undefined || typeof isDeleted === 'boolean')
