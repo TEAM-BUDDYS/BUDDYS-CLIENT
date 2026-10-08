@@ -1,54 +1,66 @@
 'use client';
 
-import { useState } from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { useCallback } from 'react';
 
+import { COURSE_QUERY_OPTIONS } from '@/domains/course/api/course';
+import type { GetCoursesParams } from '@/domains/course/api/type';
+import { useCourseBrowse } from '@/domains/course/features/course-browse/course-browse-provider';
+import { useCourseBookmarkMutation } from '@/domains/course/hook/use-course-bookmark-mutation';
 import { COURSE_FILTER_COUNTRIES } from '@/domains/course/model/recommended-course';
 import { Header } from '@/shared/components/layout';
-import { CardList, ChipButton } from '@/shared/components/ui';
+import {
+  AsyncErrorState,
+  AsyncLoadingState,
+  CardList,
+  ChipButton,
+} from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
+import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 
-const COURSE_IMAGES = [
-  { src: '/images/og_image.png', alt: '프라하 코스 장소 이미지 1' },
-  {
-    src: '/icons/buddys-pwa-logo-192.png',
-    alt: '프라하 코스 장소 이미지 2',
-  },
-  {
-    src: '/icons/buddys-pwa-logo-512.png',
-    alt: '프라하 코스 장소 이미지 3',
-  },
-  { src: '/apple-icon.png', alt: '프라하 코스 장소 이미지 4' },
-];
-const INITIAL_COURSES = COURSE_FILTER_COUNTRIES.map((country) => ({
-  id: country.id,
-  countryId: country.id,
-  title: '프라하 3박 4일 (코스 제목)',
-  description: '체코 · 프라하',
-  images: COURSE_IMAGES,
-  isBookmarked: false,
-}));
+const COURSE_EXPLORE_PAGE_SIZE = 10;
 
 export const FilterExplore = () => {
-  const [selectedCountryId, setSelectedCountryId] = useState<number>();
-  const [courses, setCourses] = useState(INITIAL_COURSES);
-  const visibleCourses =
-    selectedCountryId === undefined
-      ? courses
-      : courses.filter((course) => course.countryId === selectedCountryId);
+  const { selectedRecommendedCountryId, setSelectedRecommendedCountryId } =
+    useCourseBrowse();
+  const queryParams = {
+    size: COURSE_EXPLORE_PAGE_SIZE,
+    countryId: selectedRecommendedCountryId,
+  } satisfies GetCoursesParams;
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isError,
+    isFetchNextPageError,
+    isFetchingNextPage,
+    isPending,
+    refetch,
+  } = useInfiniteQuery(COURSE_QUERY_OPTIONS.INFINITE_LIST(queryParams));
+  const courseBookmarkMutation = useCourseBookmarkMutation();
+  const courses = data?.pages.flatMap((page) => page.content) ?? [];
+  const handleIntersect = useCallback(() => {
+    void fetchNextPage();
+  }, [fetchNextPage]);
+  const loadMoreRef = useInfiniteScroll<HTMLDivElement>({
+    enabled:
+      Boolean(hasNextPage) && !isFetchingNextPage && !isFetchNextPageError,
+    onIntersect: handleIntersect,
+  });
 
-  const handleCountryClick = (countryId: number) => {
-    setSelectedCountryId((currentCountryId) =>
+  const handleCountryChange = (countryId: number) => {
+    setSelectedRecommendedCountryId((currentCountryId) =>
       currentCountryId === countryId ? undefined : countryId,
     );
   };
 
-  const handleBookmarkClick = (courseId: number) => {
-    setCourses((currentCourses) =>
-      currentCourses.map((course) =>
-        course.id === courseId
-          ? { ...course, isBookmarked: !course.isBookmarked }
-          : course,
-      ),
-    );
+  const handleBookmarkChange = (courseId: number, nextBookmarked: boolean) => {
+    if (courseBookmarkMutation.isPending) return;
+
+    courseBookmarkMutation.mutate({
+      courseId,
+      bookmarked: nextBookmarked,
+    });
   };
 
   return (
@@ -65,27 +77,68 @@ export const FilterExplore = () => {
             {COURSE_FILTER_COUNTRIES.map((country) => (
               <ChipButton
                 key={country.id}
-                active={selectedCountryId === country.id}
+                active={selectedRecommendedCountryId === country.id}
                 variant="fillMedium"
-                onClick={() => handleCountryClick(country.id)}
+                onClick={() => handleCountryChange(country.id)}
               >
                 {country.name}
               </ChipButton>
             ))}
           </div>
 
-          <div className="flex flex-col gap-3 px-4">
-            {visibleCourses.map((course) => (
-              <CardList
-                key={course.id}
-                title={course.title}
-                description={course.description}
-                images={course.images}
-                isBookmarked={course.isBookmarked}
-                onBookmarkClick={() => handleBookmarkClick(course.id)}
-              />
-            ))}
-          </div>
+          {isPending ? (
+            <AsyncLoadingState
+              className="min-h-80"
+              title="코스를 불러오고 있어요"
+            />
+          ) : isError && courses.length === 0 ? (
+            <AsyncErrorState
+              className="min-h-80"
+              title="코스를 불러오지 못했어요"
+              onRetry={() => void refetch()}
+            />
+          ) : courses.length === 0 ? (
+            <p className="text-body-m-15 py-20 text-center text-gray-500">
+              조건에 맞는 코스가 없어요
+            </p>
+          ) : (
+            <div className="flex flex-col gap-6 px-4 pt-1">
+              {courses.map((course) => (
+                <CardList
+                  key={course.courseId}
+                  title={course.title}
+                  description={[course.countries, course.cities]
+                    .filter(Boolean)
+                    .join(' · ')}
+                  href={ROUTES.COURSE.DETAIL(course.courseId)}
+                  images={course.images}
+                  isBookmarked={course.isBookmarked}
+                  isBookmarkPending={courseBookmarkMutation.isPending}
+                  onBookmarkClick={() =>
+                    handleBookmarkChange(course.courseId, !course.isBookmarked)
+                  }
+                />
+              ))}
+
+              <div ref={loadMoreRef} className="h-1" aria-hidden="true" />
+
+              {isFetchingNextPage ? (
+                <p className="text-caption-m-12 py-4 text-center text-gray-500">
+                  코스를 불러오는 중이에요
+                </p>
+              ) : null}
+
+              {isFetchNextPageError ? (
+                <button
+                  type="button"
+                  className="text-caption-m-12 text-mint-400 mx-auto py-4"
+                  onClick={() => void fetchNextPage()}
+                >
+                  다시 불러오기
+                </button>
+              ) : null}
+            </div>
+          )}
         </section>
       </main>
     </>
