@@ -11,6 +11,7 @@ export default function PrivacyPolicyPage() {
         }
         contentAlign="center"
         hasBackButton
+        className="sticky top-0 z-20"
       />
       <PolicyContent sections={PRIVACY_POLICY_SECTIONS} />
     </main>
