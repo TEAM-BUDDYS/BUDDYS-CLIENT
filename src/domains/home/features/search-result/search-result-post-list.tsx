@@ -1,16 +1,18 @@
 'use client';
 
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
-import { useCallback, useState } from 'react';
+import { startTransition, useCallback, useState } from 'react';
 
+import { SEARCH_QUERY_OPTIONS } from '@/domains/home/api/query';
+import type { SearchSort } from '@/domains/home/api/type';
 import { BookmarkContainer } from '@/domains/home/components/bookmark-container/bookmark-container';
 import { ListToolbar } from '@/domains/home/components/list-toolbar/list-toolbar';
-import { initialFilterValue } from '@/domains/home/features/filter-sheet/use-filter-sheet';
+import { hasPostCardFields } from '@/domains/home/model/buddy-search';
 import {
-  getBuddySearchParams,
-  hasPostCardFields,
-} from '@/domains/home/model/buddy-search';
-import { POST_QUERY_OPTIONS } from '@/domains/posts/api/query';
+  getSearchSortByLabel,
+  SEARCH_SORT_LABEL,
+  searchSortOptions,
+} from '@/domains/home/model/search-sort';
 import { Card, EmptyState } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
@@ -18,14 +20,15 @@ import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 const SEARCH_RESULT_SIZE = 10;
 
 interface SearchResultPostListProps {
-  keyword?: string;
+  keyword: string;
 }
 
 export const SearchResultPostList = ({
   keyword,
 }: SearchResultPostListProps) => {
-  const [sort, setSort] = useState('최신순');
-  const [bookmarkedItemIds, setBookmarkedItemIds] = useState<number[]>([]);
+  const [sort, setSort] = useState<SearchSort>('LATEST');
+  // TODO: 동행 게시글 저장 API 연동 시 mutation으로 교체
+  const [toggledBookmarkIds, setToggledBookmarkIds] = useState<number[]>([]);
   const {
     data,
     fetchNextPage,
@@ -33,14 +36,18 @@ export const SearchResultPostList = ({
     isFetchNextPageError,
     isFetchingNextPage,
   } = useSuspenseInfiniteQuery(
-    POST_QUERY_OPTIONS.INFINITE_LIST(
-      getBuddySearchParams(initialFilterValue, SEARCH_RESULT_SIZE, keyword),
-    ),
+    SEARCH_QUERY_OPTIONS.INFINITE({
+      keyword,
+      type: 'POST',
+      sort,
+      size: SEARCH_RESULT_SIZE,
+    }),
   );
 
   const posts = data.pages
-    .flatMap((page) => page.data?.content ?? [])
+    .flatMap((page) => page.data?.posts?.content ?? [])
     .filter(hasPostCardFields);
+  const totalCount = data.pages[0]?.data?.posts?.totalElements ?? posts.length;
   const handleIntersect = useCallback(() => {
     fetchNextPage();
   }, [fetchNextPage]);
@@ -50,13 +57,17 @@ export const SearchResultPostList = ({
     onIntersect: handleIntersect,
   });
 
+  const handleSortChange = (label: string) => {
+    startTransition(() => {
+      setSort(getSearchSortByLabel(label));
+    });
+  };
+
   const handleBookmarkClick = (postId: number) => {
-    setBookmarkedItemIds((prevBookmarkedItemIds) =>
-      prevBookmarkedItemIds.includes(postId)
-        ? prevBookmarkedItemIds.filter(
-            (bookmarkedItemId) => bookmarkedItemId !== postId,
-          )
-        : [...prevBookmarkedItemIds, postId],
+    setToggledBookmarkIds((prevPostIds) =>
+      prevPostIds.includes(postId)
+        ? prevPostIds.filter((prevPostId) => prevPostId !== postId)
+        : [...prevPostIds, postId],
     );
   };
 
@@ -64,7 +75,7 @@ export const SearchResultPostList = ({
     return (
       <EmptyState
         title="검색 결과가 없어요"
-        description="다른 검색어로 동행 게시물을 찾아보세요"
+        description="다른 검색어로 동행을 찾아보세요"
         className="py-20"
       />
     );
@@ -72,14 +83,21 @@ export const SearchResultPostList = ({
 
   return (
     <>
-      {/* TODO: 전체 건수와 정렬을 지원하는 검색 API 연동 시 교체 */}
-      <ListToolbar count={posts.length} value={sort} onChange={setSort} />
+      <ListToolbar
+        count={totalCount}
+        options={searchSortOptions}
+        value={SEARCH_SORT_LABEL[sort]}
+        onChange={handleSortChange}
+      />
 
       <ul className="mt-4 flex flex-col gap-5">
         {posts.map((post) => (
           <li key={post.postId}>
             <BookmarkContainer
-              isBookmarked={bookmarkedItemIds.includes(post.postId)}
+              isBookmarked={
+                Boolean(post.isBookmarked) !==
+                toggledBookmarkIds.includes(post.postId)
+              }
               variant="card"
               onBookmarkClick={() => handleBookmarkClick(post.postId)}
             >
