@@ -138,8 +138,11 @@ export const ToastProvider = ({
     <ToastContext.Provider value={contextValue}>
       {children}
       <div
+        role="status"
+        aria-atomic="true"
+        aria-live="polite"
         className={cn(
-          'pointer-events-none fixed right-0 left-0 z-50 flex justify-center px-4',
+          'pointer-events-none fixed right-0 left-0 z-60 flex justify-center px-4',
           toast?.bottomOffsetClassName ?? bottomOffsetClassName ?? 'bottom-18',
         )}
       >

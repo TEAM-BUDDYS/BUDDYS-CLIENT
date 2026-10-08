@@ -17,6 +17,7 @@ export interface TextFieldProps extends ComponentProps<'input'> {
   message?: ReactNode;
   status?: TextFieldStatus;
   onClear?: () => void;
+  suffix?: ReactNode;
 }
 
 const STATUS_ICONS = {
@@ -30,6 +31,7 @@ export const TextField = ({
   message,
   status = 'default',
   onClear,
+  suffix,
   required,
   disabled,
   placeholder,
@@ -41,8 +43,10 @@ export const TextField = ({
   const generatedId = useId();
   const inputId = id ?? generatedId;
   const messageId = message ? `${inputId}-message` : undefined;
-  const StatusIcon = status === 'default' ? null : STATUS_ICONS[status];
-  const hasClearButton = status === 'default' && Boolean(onClear) && !disabled;
+  const StatusIcon =
+    suffix || status === 'default' ? null : STATUS_ICONS[status];
+  const hasClearButton =
+    status === 'default' && Boolean(onClear) && !disabled && !suffix;
   const describedBy =
     [ariaDescribedBy, messageId].filter(Boolean).join(' ') || undefined;
 
@@ -76,7 +80,7 @@ export const TextField = ({
             status === 'default' &&
               !disabled &&
               'not-placeholder-shown:not-focus-visible:border-gray-200',
-            (StatusIcon || hasClearButton) && 'pr-12',
+            (StatusIcon || hasClearButton || suffix) && 'pr-12',
             status === 'error' &&
               'border-error-50 focus-visible:border-error-50 focus-visible:ring-error-50',
             status === 'success' &&
@@ -109,6 +113,12 @@ export const TextField = ({
           >
             <XCircleIcon aria-hidden="true" className="size-6" />
           </button>
+        )}
+
+        {suffix && (
+          <div className="absolute top-1/2 right-4 -translate-y-1/2">
+            {suffix}
+          </div>
         )}
       </div>
 

@@ -1,5 +1,6 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { usePathname } from 'next/navigation';
 import {
   createContext,
@@ -15,8 +16,13 @@ import {
 import { setAccessToken, setAccessTokenRefreshHandler } from '@/shared/api';
 import { ROUTES } from '@/shared/config';
 
-import { loginWithKakao, reissueAccessToken } from '../../api/query';
-import type { KakaoLoginParams } from '../../api/type';
+import {
+  loginWithGoogle,
+  loginWithKakao,
+  reissueAccessToken,
+  requestLogout,
+} from '../../api/query';
+import type { GoogleLoginParams, KakaoLoginParams } from '../../api/type';
 import type { AuthSession, AuthStatusTypes } from '../../model/auth';
 
 interface MarkOnboardingCompletedOptions {
@@ -29,8 +35,11 @@ interface AuthSessionContextValue {
   onboardingCompleted: boolean | null;
   isOnboardingCompletionVisible: boolean;
   authenticateWithKakao: (params: KakaoLoginParams) => Promise<AuthSession>;
+  authenticateWithGoogle: (params: GoogleLoginParams) => Promise<AuthSession>;
+  logout: () => Promise<void>;
   markOnboardingCompleted: (options: MarkOnboardingCompletedOptions) => void;
   finishOnboarding: () => void;
+  finishWithdraw: () => void;
 }
 
 interface AuthSessionProviderProps {
@@ -41,7 +50,9 @@ const AuthSessionContext = createContext<AuthSessionContextValue | null>(null);
 
 export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
   const pathname = usePathname();
-  const shouldSkipSessionBootstrap = pathname === ROUTES.AUTH.KAKAO_CALLBACK;
+  const shouldSkipSessionBootstrap =
+    pathname === ROUTES.AUTH.KAKAO_CALLBACK ||
+    pathname === ROUTES.AUTH.GOOGLE_CALLBACK;
   const hasBootstrappedRef = useRef(false);
   const [status, setStatus] = useState<AuthStatusTypes>('initializing');
   const [userId, setUserId] = useState<number | null>(null);
@@ -50,6 +61,7 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
   >(null);
   const [isOnboardingCompletionVisible, setIsOnboardingCompletionVisible] =
     useState(false);
+  const queryClient = useQueryClient();
 
   const setAuthenticatedSession = useCallback((loginResponse: AuthSession) => {
     setAccessToken(loginResponse.accessToken);
@@ -66,12 +78,23 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
   }, []);
 
   const clearSession = useCallback(() => {
+    queryClient.clear();
+
     setAccessToken(null);
     setUserId(null);
     setOnboardingCompleted(null);
     setIsOnboardingCompletionVisible(false);
     setStatus('unauthenticated');
-  }, []);
+  }, [queryClient]);
+
+  const logout = useCallback(async () => {
+    await requestLogout();
+    clearSession();
+  }, [clearSession]);
+
+  const finishWithdraw = useCallback(() => {
+    clearSession();
+  }, [clearSession]);
 
   const refreshSession = useCallback(async () => {
     try {
@@ -87,6 +110,20 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
     async (params: KakaoLoginParams) => {
       try {
         const loginResponse = await loginWithKakao(params);
+        setAuthenticatedSession(loginResponse);
+        return loginResponse;
+      } catch (error) {
+        clearSession();
+        throw error;
+      }
+    },
+    [clearSession, setAuthenticatedSession],
+  );
+
+  const authenticateWithGoogle = useCallback(
+    async (params: GoogleLoginParams) => {
+      try {
+        const loginResponse = await loginWithGoogle(params);
         setAuthenticatedSession(loginResponse);
         return loginResponse;
       } catch (error) {
@@ -143,14 +180,20 @@ export const AuthSessionProvider = ({ children }: AuthSessionProviderProps) => {
       onboardingCompleted,
       isOnboardingCompletionVisible,
       authenticateWithKakao,
+      authenticateWithGoogle,
+      logout,
       markOnboardingCompleted,
       finishOnboarding,
+      finishWithdraw,
     }),
     [
       authenticateWithKakao,
+      authenticateWithGoogle,
       finishOnboarding,
       isOnboardingCompletionVisible,
+      logout,
       markOnboardingCompleted,
+      finishWithdraw,
       onboardingCompleted,
       status,
       userId,

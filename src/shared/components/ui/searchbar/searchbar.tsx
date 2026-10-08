@@ -1,6 +1,6 @@
 'use client';
 
-import { ComponentPropsWithoutRef } from 'react';
+import { type ComponentPropsWithoutRef, type MouseEvent, useRef } from 'react';
 
 import { cn } from '@/lib/cn';
 
@@ -14,6 +14,7 @@ interface SearchbarProps extends Omit<
 > {
   size: SearchbarSize;
   value: string;
+  containerClassName?: string;
   isCompleted?: boolean;
   searchIconClassName?: string;
   onChange: (value: string) => void;
@@ -27,21 +28,37 @@ const searchbarStyle = {
 export const Searchbar = ({
   size,
   value,
+  containerClassName,
   isCompleted = false,
   searchIconClassName,
   onChange,
   placeholder = '검색어를 입력해주세요',
   ...inputProps
 }: SearchbarProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
   const { className: inputClassName, ...restInputProps } = inputProps ?? {};
 
   const showClearButton = value.length > 0 && !isCompleted;
 
+  const handleContainerClick = (event: MouseEvent<HTMLDivElement>) => {
+    if (event.target instanceof Element && event.target.closest('button')) {
+      return;
+    }
+
+    inputRef.current?.focus();
+  };
+
   return (
     <div
-      className={`flex ${searchbarStyle[size]} w-full items-center justify-between rounded-xl bg-gray-50 py-2.5 pr-3 pl-4`}
+      className={cn(
+        'flex w-full items-center justify-between rounded-xl bg-gray-50 py-2.5 pr-3 pl-4',
+        searchbarStyle[size],
+        containerClassName,
+      )}
+      onClick={handleContainerClick}
     >
       <input
+        ref={inputRef}
         {...restInputProps}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -61,7 +78,10 @@ export const Searchbar = ({
         </button>
       ) : (
         <SearchIcon
-          className={cn('size-6 shrink-0 text-gray-500', searchIconClassName)}
+          className={cn(
+            'size-6 shrink-0 text-gray-500 opacity-60',
+            searchIconClassName,
+          )}
         />
       )}
     </div>

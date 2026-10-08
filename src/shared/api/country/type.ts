@@ -4,11 +4,14 @@ export type GetCountriesParams =
   operations['getCountries']['parameters']['query'];
 export type GetCountriesResponse =
   components['schemas']['BaseResponseCountryListResponse'];
+export type SearchCountriesParams =
+  operations['searchCountries']['parameters']['query'];
+export type SearchCountriesResponse =
+  components['schemas']['BaseResponseCountryListResponse'];
 
-export interface Country {
-  id: number;
-  name: string;
-}
+type CountryResponse = components['schemas']['CountryResponse'];
+
+export type Country = Required<Pick<CountryResponse, 'id' | 'name'>>;
 
 export interface CountryPage {
   countries: Country[];

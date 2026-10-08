@@ -13,9 +13,12 @@ import {
   POST_QUERY_OPTIONS,
 } from '@/domains/posts/api/query';
 import { hasPostDetailCommentFields } from '@/domains/posts/model/comment';
-import { PostDetailCommentSection } from '@/domains/posts/sections/post-detail-comment-section';
 import { POST_QUERY_KEY } from '@/shared/api';
-import { AsyncBoundary, BottomActionBar } from '@/shared/components/ui';
+import {
+  AsyncBoundary,
+  BottomActionBar,
+  CommentSection,
+} from '@/shared/components/ui';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 
 const COMMENT_PAGE_SIZE = 20;
@@ -58,7 +61,7 @@ const PostDetailCommentList = ({
 
   return (
     <>
-      <PostDetailCommentSection
+      <CommentSection
         viewCount={viewCount}
         commentCount={commentCount}
         comments={comments}

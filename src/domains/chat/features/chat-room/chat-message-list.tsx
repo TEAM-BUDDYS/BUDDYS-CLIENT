@@ -71,7 +71,7 @@ export const ChatMessageList = ({
   return (
     <div
       ref={scrollContainerRef}
-      className="flex min-h-0 flex-1 scrollbar-none flex-col overflow-y-auto border-b border-b-gray-100 px-4 pb-4 [&::-webkit-scrollbar]:hidden"
+      className="flex min-h-0 flex-1 scrollbar-none flex-col overflow-y-auto px-4 [&::-webkit-scrollbar]:hidden"
     >
       <div ref={loadPreviousRef} className="h-1 shrink-0" aria-hidden="true" />
 
@@ -115,7 +115,7 @@ export const ChatMessageList = ({
           ),
         )}
       </div>
-      <div ref={bottomRef} />
+      <div ref={bottomRef} className="h-4 shrink-0" aria-hidden="true" />
     </div>
   );
 };

@@ -17,21 +17,30 @@ export const AuthEntryGuard = ({ children }: AuthEntryGuardProps) => {
   const router = useRouter();
   const { isOnboardingCompletionVisible, onboardingCompleted, status } =
     useAuthSession();
-  const isOnboardingRoute = pathname === ROUTES.ONBOARDING;
+  const isOnboardingFormRoute = pathname === ROUTES.ONBOARDING;
+  const isOnboardingIntroRoute = pathname === ROUTES.ONBOARDING_INTRO;
+  const isOnboardingFlowRoute = isOnboardingFormRoute || isOnboardingIntroRoute;
+  const isVerificationRoute =
+    pathname === ROUTES.VERIFICATION.UNIVERSITY_EMAIL ||
+    pathname === ROUTES.VERIFICATION.EXCHANGE_DOCUMENT;
+
   const shouldRedirectToOnboarding =
     status === 'authenticated' &&
     onboardingCompleted === false &&
-    !isOnboardingRoute;
+    !isOnboardingFlowRoute &&
+    !isVerificationRoute;
+
   const shouldRedirectToHome =
     status === 'authenticated' &&
     onboardingCompleted === true &&
-    isOnboardingRoute &&
-    !isOnboardingCompletionVisible;
+    (isOnboardingIntroRoute ||
+      (isOnboardingFormRoute && !isOnboardingCompletionVisible));
+
   const redirectTarget =
     status === 'unauthenticated'
       ? ROUTES.LANDING
       : shouldRedirectToOnboarding
-        ? ROUTES.ONBOARDING
+        ? ROUTES.ONBOARDING_INTRO
         : shouldRedirectToHome
           ? ROUTES.HOME
           : null;

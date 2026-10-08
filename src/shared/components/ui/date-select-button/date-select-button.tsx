@@ -24,7 +24,6 @@ export const DateSelectButton = ({
 }: DateSelectButtonProps) => {
   const startDate = dateRange?.startDate;
   const endDate = dateRange?.endDate;
-  const hasSelectedDate = Boolean(startDate);
   const hasSelectedDateRange = Boolean(
     startDate && endDate && startDate.getTime() !== endDate.getTime(),
   );
@@ -37,14 +36,13 @@ export const DateSelectButton = ({
   return (
     <button
       className={cn(
-        'text-body-sb-15 focus-visible:outline-mint-300 group border-mint-300 active:bg-mint-300 inline-flex h-13 items-center justify-center gap-3 rounded-[10px] border bg-white px-4 text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid active:text-white',
-        hasSelectedDate && 'text-gray-800',
+        'text-body-sb-15 focus-visible:outline-mint-300 group border-mint-300 active:bg-mint-300 inline-flex h-13 items-center justify-center gap-3 rounded-xl border bg-white px-4 text-gray-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid active:text-white',
         className,
       )}
       type={type}
       {...props}
     >
-      <CalendarIcon className="text-mint-300 size-4 shrink-0 group-active:text-white" />
+      <CalendarIcon className="text-mint-300 size-5 shrink-0 group-active:text-white" />
       <span className="truncate">{displayText}</span>
     </button>
   );

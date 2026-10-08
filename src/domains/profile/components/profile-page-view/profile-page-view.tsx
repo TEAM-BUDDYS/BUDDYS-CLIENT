@@ -1,11 +1,13 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 
-import { ProfileBadgeIcon, SettingIcon } from '@/shared/components/icons';
+import {
+  BookmarkBoldIcon,
+  ProfileBadgeIcon,
+  SettingIcon,
+} from '@/shared/components/icons';
 import { BottomNavigation, Header } from '@/shared/components/layout';
-import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
 import { ROUTES } from '@/shared/config';
 
 import type { MyProfile } from '../../model/profile';
@@ -20,21 +22,30 @@ interface ProfilePageViewProps {
 
 export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
   const router = useRouter();
-  const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
 
   return (
     <div className="flex h-dvh flex-col">
       <Header
         content="내 프로필"
         right={
-          <button
-            aria-label="설정"
-            type="button"
-            onClick={() => router.push(ROUTES.PROFILE.SETTINGS)}
-            className="flex size-11 shrink-0 items-center justify-center"
-          >
-            <SettingIcon className="size-6 text-gray-500" />
-          </button>
+          <div className="flex items-center">
+            <button
+              aria-label="저장"
+              type="button"
+              onClick={() => router.push(ROUTES.PROFILE.SAVED)}
+              className="flex size-11 shrink-0 items-center justify-center"
+            >
+              <BookmarkBoldIcon className="size-6 text-gray-500" />
+            </button>
+            <button
+              aria-label="설정"
+              type="button"
+              onClick={() => router.push(ROUTES.PROFILE.SETTINGS)}
+              className="flex size-11 shrink-0 items-center justify-center"
+            >
+              <SettingIcon className="size-6 text-gray-500" />
+            </button>
+          </div>
         }
       />
 
@@ -60,22 +71,14 @@ export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
         <ProfileIntroSection
           viewerType="me"
           bio={profile.bio}
-          onEditClick={() => setIsComingSoonOpen(true)}
+          onEditClick={() => router.push(ROUTES.PROFILE.EDIT)}
           className="mt-5.25 px-4"
         />
 
-        <ContentSection
-          onCreateCourseClick={() => setIsComingSoonOpen(true)}
-          className="mt-6"
-        />
+        <ContentSection className="mt-6" />
       </main>
 
       <BottomNavigation />
-
-      <ComingSoonModal
-        open={isComingSoonOpen}
-        onClose={() => setIsComingSoonOpen(false)}
-      />
     </div>
   );
 };

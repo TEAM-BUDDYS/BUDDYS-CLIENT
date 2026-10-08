@@ -4,7 +4,7 @@ import type { KeyboardEvent, ReactNode } from 'react';
 import { useEffect, useId } from 'react';
 
 import { cn } from '@/lib/cn';
-import { Button } from '@/shared/components/ui/button/button';
+import { Button, type ButtonProps } from '@/shared/components/ui/button/button';
 
 interface BaseModalProps {
   open: boolean;
@@ -19,6 +19,7 @@ interface BaseModalProps {
 type ModalProps =
   | (BaseModalProps & {
       type: 'alert';
+      buttonVariant?: ButtonProps['variant'];
     })
   | (BaseModalProps & {
       type?: 'confirm';
@@ -77,7 +78,7 @@ export const Modal = (props: ModalProps) => {
         aria-labelledby={titleId}
         aria-modal="true"
         className={cn(
-          'relative flex w-80 flex-col items-center gap-6 rounded-2xl bg-white p-4',
+          'relative flex w-80 flex-col items-center gap-7 rounded-2xl bg-white p-4 pt-6',
           className,
         )}
         onKeyDown={handleModalKeyDown}
@@ -111,7 +112,11 @@ export const Modal = (props: ModalProps) => {
 
         <div className="flex w-full gap-2">
           <Button
-            variant="secondary"
+            variant={
+              props.type === 'alert'
+                ? (props.buttonVariant ?? 'secondary')
+                : 'secondary'
+            }
             autoFocus
             className="text-body-m-16 flex-1"
             onClick={onClose}

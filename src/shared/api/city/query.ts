@@ -6,19 +6,33 @@ import { COUNTRY_QUERY_KEY } from '../query-key';
 import { createSearchParams } from '../search-params';
 import type { City, SearchCitiesParams, SearchCitiesResponse } from './type';
 
+const isOptionalNullableNumber = (value: unknown) =>
+  value === null || value === undefined || typeof value === 'number';
+
 const isCityResponse = (city: unknown): city is City => {
   if (typeof city !== 'object' || city === null) {
     return false;
   }
 
-  const { id, name, koreanName } = city as City;
+  const { id, name, koreanName, latitude, longitude, recommendedRadius } =
+    city as {
+      id?: unknown;
+      name?: unknown;
+      koreanName?: unknown;
+      latitude?: unknown;
+      longitude?: unknown;
+      recommendedRadius?: unknown;
+    };
 
   return (
     typeof id === 'number' &&
     typeof name === 'string' &&
     (koreanName === null ||
       koreanName === undefined ||
-      typeof koreanName === 'string')
+      typeof koreanName === 'string') &&
+    isOptionalNullableNumber(latitude) &&
+    isOptionalNullableNumber(longitude) &&
+    (recommendedRadius === undefined || typeof recommendedRadius === 'number')
   );
 };
 

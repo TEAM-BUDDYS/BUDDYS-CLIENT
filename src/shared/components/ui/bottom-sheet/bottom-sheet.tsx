@@ -5,23 +5,39 @@ import { Drawer } from 'vaul';
 
 import { cn } from '@/lib/cn';
 
+import { useNonModalPointerEvents } from './use-non-modal-pointer-events';
+
 interface BottomSheetProps {
   open: boolean;
   children: ReactNode;
+  activeSnapPoint?: number | string | null;
   className?: string;
   ariaLabel?: string;
   ariaLabelledBy?: string;
+  handleClassName?: string;
+  dismissible?: boolean;
+  modal?: boolean;
+  snapPoints?: (number | string)[];
   onClose: () => void;
+  onSnapPointChange?: (snapPoint: number | string | null) => void;
 }
 
 export const BottomSheet = ({
   open,
   children,
+  activeSnapPoint,
   className,
   ariaLabel,
   ariaLabelledBy,
+  handleClassName,
+  dismissible = true,
+  modal = true,
+  snapPoints,
   onClose,
+  onSnapPointChange,
 }: BottomSheetProps) => {
+  useNonModalPointerEvents(open, modal);
+
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {
       onClose();
@@ -29,9 +45,17 @@ export const BottomSheet = ({
   };
 
   return (
-    <Drawer.Root open={open} onOpenChange={handleOpenChange}>
+    <Drawer.Root
+      activeSnapPoint={activeSnapPoint}
+      dismissible={dismissible}
+      modal={modal}
+      open={open}
+      setActiveSnapPoint={onSnapPointChange}
+      snapPoints={snapPoints}
+      onOpenChange={handleOpenChange}
+    >
       <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 z-50 bg-black/60" />
+        {modal && <Drawer.Overlay className="fixed inset-0 z-50 bg-black/60" />}
         <Drawer.Content
           aria-describedby={undefined}
           aria-label={ariaLabel}
@@ -42,7 +66,12 @@ export const BottomSheet = ({
           )}
         >
           <div className="flex shrink-0 justify-center pt-2 pb-4">
-            <Drawer.Handle className="h-1.25 w-11 rounded-[15px] bg-gray-200" />
+            <Drawer.Handle
+              className={cn(
+                'h-1.25 w-11 rounded-[15px] bg-gray-200',
+                handleClassName,
+              )}
+            />
           </div>
           {children}
         </Drawer.Content>

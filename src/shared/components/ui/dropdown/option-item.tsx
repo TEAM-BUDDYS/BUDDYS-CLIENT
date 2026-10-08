@@ -5,14 +5,14 @@ import { cn } from '@/lib/cn';
 interface OptionItemProps {
   option?: string;
   label?: string;
-  isSelected: boolean;
+  isSelected?: boolean;
   onSelect?: () => void;
 }
 
 export const OptionItem = ({
   option,
   label,
-  isSelected,
+  isSelected = false,
   onSelect,
 }: OptionItemProps) => {
   const optionLabel = label ?? option ?? '';

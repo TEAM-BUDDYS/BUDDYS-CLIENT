@@ -1,0 +1,77 @@
+import type { ChangeEvent } from 'react';
+
+import { NICKNAME_MAX_LENGTH } from '@/shared/constants/profile';
+
+import { TextField, type TextFieldProps } from '../text-field/text-field';
+import { NicknameCheckButton } from './nickname-check-button';
+
+interface NicknameFieldProps extends Pick<
+  TextFieldProps,
+  'label' | 'message' | 'status' | 'disabled' | 'required' | 'onBlur'
+> {
+  value: string;
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  initialNickname: string;
+  onCheckDuplicate: () => void;
+  isChecking?: boolean;
+  checkedNickname?: string | null;
+}
+
+const DUPLICATE_CHECK_SUCCESS_MESSAGE = '사용 가능한 닉네임입니다.';
+
+export const NicknameField = ({
+  value,
+  onChange,
+  initialNickname,
+  onCheckDuplicate,
+  isChecking = false,
+  checkedNickname = null,
+  label,
+  message,
+  status,
+  disabled,
+  required,
+  onBlur,
+}: NicknameFieldProps) => {
+  const isNicknameUnchanged = value === initialNickname;
+  const trimmedLength = value.trim().length;
+  const isDuplicateChecked =
+    checkedNickname !== null && checkedNickname === value;
+  const isCheckButtonDisabled =
+    disabled ||
+    trimmedLength === 0 ||
+    trimmedLength > NICKNAME_MAX_LENGTH ||
+    isNicknameUnchanged ||
+    isChecking ||
+    isDuplicateChecked;
+  const showDuplicateCheckSuccessMessage =
+    isDuplicateChecked && !isNicknameUnchanged;
+
+  return (
+    <TextField
+      className="pr-24"
+      disabled={disabled}
+      label={label}
+      required={required}
+      onBlur={onBlur}
+      maxLength={NICKNAME_MAX_LENGTH}
+      message={
+        showDuplicateCheckSuccessMessage
+          ? DUPLICATE_CHECK_SUCCESS_MESSAGE
+          : message
+      }
+      placeholder="닉네임을 입력하세요"
+      status={showDuplicateCheckSuccessMessage ? 'success' : status}
+      suffix={
+        <NicknameCheckButton
+          aria-label="닉네임 중복 확인"
+          disabled={isCheckButtonDisabled}
+          isLoading={isChecking}
+          onClick={onCheckDuplicate}
+        />
+      }
+      value={value}
+      onChange={onChange}
+    />
+  );
+};

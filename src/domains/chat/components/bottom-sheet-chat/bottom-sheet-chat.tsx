@@ -9,11 +9,13 @@ import {
   NoticeIcon,
   TrashIcon,
 } from '@/shared/components/icons';
-import { BottomSheet, Button } from '@/shared/components/ui';
+import { BottomSheet, Button, Modal, useToast } from '@/shared/components/ui';
 import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
 
-type ConfirmType = 'block' | 'leave' | null;
-type ChatBottomSheetAction =
+import { CHAT_CONFIRM_MODAL_CONTENT } from '../../model/chat-room-menu';
+
+type ConfirmType = 'block' | 'report' | null;
+export type ChatBottomSheetAction =
   | 'report'
   | 'toggleNotification'
   | 'block'
@@ -22,6 +24,8 @@ type ChatBottomSheetAction =
 interface BottomSheetChatProps {
   open: boolean;
   isNotificationOn?: boolean;
+  hasBlocked: boolean;
+  hasReported: boolean;
   onClose: () => void;
   onAction?: (action: ChatBottomSheetAction) => void;
 }
@@ -29,42 +33,58 @@ interface BottomSheetChatProps {
 export const BottomSheetChat = ({
   open,
   isNotificationOn = true,
+  hasBlocked,
+  hasReported,
   onClose,
   onAction,
 }: BottomSheetChatProps) => {
   const [confirmType, setConfirmType] = useState<ConfirmType>(null);
   const [isComingSoonModalOpen, setIsComingSoonModalOpen] = useState(false);
+  const { showToast } = useToast();
 
-  // TODO: 차단/나가기 확인 모달 연결 후 true로 변경
-  const isConfirmModalEnabled = false;
+  const confirmContent =
+    confirmType === null ? null : CHAT_CONFIRM_MODAL_CONTENT[confirmType];
 
   const handleAction = (action: ChatBottomSheetAction) => {
-    onClose();
-
-    if (onAction) {
-      onAction(action);
-      return;
-    }
-
-    setIsComingSoonModalOpen(true);
+    onAction?.(action);
   };
 
+  // 차단 메뉴 선택
   const handleBlockClick = () => {
-    if (!isConfirmModalEnabled) {
-      handleAction('block');
+    onClose();
+
+    if (hasBlocked) {
+      showToast('이미 차단한 사용자입니다.', {
+        bottomOffsetClassName: 'bottom-[114px]',
+      });
       return;
     }
 
     setConfirmType('block');
   };
 
-  const handleLeaveChatClick = () => {
-    if (!isConfirmModalEnabled) {
-      handleAction('leave');
+  // 신고 메뉴 선택
+  const handleReportClick = () => {
+    onClose();
+
+    if (hasReported) {
+      showToast('이미 신고한 사용자입니다.');
       return;
     }
 
-    setConfirmType('leave');
+    setConfirmType('report');
+  };
+
+  // 알림 메뉴 선택 — 준비 중
+  const handleNotificationClick = () => {
+    onClose();
+    setIsComingSoonModalOpen(true);
+  };
+
+  // 나가기 메뉴 선택 — 준비 중
+  const handleLeaveChatClick = () => {
+    onClose();
+    setIsComingSoonModalOpen(true);
   };
 
   const handleConfirm = () => {
@@ -76,8 +96,11 @@ export const BottomSheetChat = ({
     setConfirmType(null);
   };
 
-  const handleClose = () => {
+  const handleConfirmClose = () => {
     setConfirmType(null);
+  };
+
+  const handleClose = () => {
     onClose();
   };
 
@@ -90,12 +113,16 @@ export const BottomSheetChat = ({
     {
       label: '신고하기',
       icon: <DangerIcon />,
-      onClick: () => handleAction('report'),
+      onClick: handleReportClick,
     },
     {
       label: isNotificationOn ? '알림 끄기' : '알림 켜기',
-      icon: isNotificationOn ? <NoticeIcon /> : <BellIcon />,
-      onClick: () => handleAction('toggleNotification'),
+      icon: isNotificationOn ? (
+        <NoticeIcon />
+      ) : (
+        <BellIcon className="opacity-60" />
+      ),
+      onClick: handleNotificationClick,
     },
   ];
 
@@ -130,12 +157,18 @@ export const BottomSheetChat = ({
           <Button onClick={handleClose}>닫기</Button>
         </div>
       </BottomSheet>
-      {/* 
-        confirmType === 'block' -> 차단 확인 모달
-        confirmType === 'leave' -> 채팅방 나가기 확인 모달
-        확인 버튼 onClick -> handleConfirm
-        취소 버튼 onClick -> setConfirmType(null)
-      */}
+      {confirmContent && (
+        <Modal
+          type="confirm"
+          open={true}
+          title={confirmContent.title}
+          description={confirmContent.description}
+          cancelLabel="닫기"
+          confirmLabel={confirmContent.confirmLabel}
+          onClose={handleConfirmClose}
+          onConfirm={handleConfirm}
+        />
+      )}
       <ComingSoonModal
         open={isComingSoonModalOpen}
         onClose={() => setIsComingSoonModalOpen(false)}

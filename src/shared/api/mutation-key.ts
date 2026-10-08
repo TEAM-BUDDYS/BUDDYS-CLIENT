@@ -1,3 +1,9 @@
+export const COURSE_MUTATION_KEY = {
+  ALL: ['courses'] as const,
+  UPDATE_BOOKMARK: () =>
+    [...COURSE_MUTATION_KEY.ALL, 'update-bookmark'] as const,
+};
+
 export const POST_MUTATION_KEY = {
   ALL: ['posts'] as const,
   CREATE: () => [...POST_MUTATION_KEY.ALL, 'create'] as const,

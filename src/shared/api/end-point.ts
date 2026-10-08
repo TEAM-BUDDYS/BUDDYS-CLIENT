@@ -1,7 +1,18 @@
 export const END_POINT = {
+  AIRLINE: {
+    SEARCH: 'api/v1/airlines/search',
+  },
   AUTH: {
     KAKAO: 'api/v1/auth/kakao',
+    GOOGLE: 'api/v1/auth/google',
     REISSUE: 'api/v1/auth/reissue',
+    LOGOUT: 'api/v1/auth/logout',
+  },
+  VERIFICATION: {
+    UNIVERSITY_EMAIL: 'api/v1/verifications/university/email',
+    UNIVERSITY_EMAIL_CONFIRM: 'api/v1/verifications/university/email/confirm',
+    EXCHANGE: 'api/v1/verifications/exchange',
+    EXCHANGE_UPLOAD_URL: 'api/v1/verifications/exchange/upload-url',
   },
   CHAT_ROOM: {
     LIST: 'api/v1/chat-rooms',
@@ -9,6 +20,8 @@ export const END_POINT = {
     DETAIL: (chatRoomId: number) => `api/v1/chat-rooms/${chatRoomId}`,
     MESSAGES: (chatRoomId: number) =>
       `api/v1/chat-rooms/${chatRoomId}/messages`,
+    REPORT: (chatRoomId: number) => `api/v1/chat-rooms/${chatRoomId}/report`,
+    BLOCK: (chatRoomId: number) => `api/v1/chat-rooms/${chatRoomId}/block`,
   },
   COUNTRY: {
     LIST: 'api/v1/countries',
@@ -18,20 +31,51 @@ export const END_POINT = {
     UNIVERSITY_SEARCH: (countryId: number) =>
       `api/v1/countries/${countryId}/universities/search`,
   },
+  COURSE: {
+    LIST: 'api/v1/courses',
+    CREATE: 'api/v1/courses',
+    COMMENTS: (courseId: number) => `api/v1/courses/${courseId}/comments`,
+    DETAIL: (courseId: number) => `api/v1/courses/${courseId}`,
+    BOOKMARK: (courseId: number) => `api/v1/courses/${courseId}/bookmark`,
+    BOOKMARKS: 'api/v1/courses/bookmarks',
+  },
   IMAGE: {
     PRESIGNED_URL: 'api/v1/images/presigned-url',
+  },
+  MAGAZINE: {
+    BOOKMARK: (magazineId: number) =>
+      `api/v1/magazines/${magazineId}/bookmarks`,
+    LIST: 'api/v1/magazines',
+    BOOKMARKS: 'api/v1/magazines/bookmarks',
+  },
+  PLACE: {
+    BOOKMARK: (placeId: string) =>
+      `api/v1/places/${encodeURIComponent(placeId)}/bookmark`,
+    NEARBY: 'api/v1/places/nearby',
+    SEARCH: 'api/v1/places/search',
+    BOOKMARKS: 'api/v1/places/bookmarks',
+    BOOKMARK_MARKERS: 'api/v1/places/bookmarks/markers',
+    PHOTO: (placeId: string, maxWidth: number) =>
+      `api/v1/places/${encodeURIComponent(placeId)}/photo?maxWidth=${maxWidth}`,
   },
   POST: {
     LIST: 'api/v1/posts',
     CREATE: 'api/v1/posts',
+    CLOSING_SOON: 'api/v1/posts/closing-soon',
     DETAIL: (postId: number) => `api/v1/posts/${postId}`,
     STATUS: (postId: number) => `api/v1/posts/${postId}/status`,
     COMMENTS: (postId: number) => `api/v1/posts/${postId}/comments`,
+    BOOKMARK: (postId: number) => `api/v1/posts/${postId}/bookmarks`,
+    BOOKMARKS: 'api/v1/posts/bookmarks',
   },
   RECOMMENDATION: {
     USERS: 'api/v1/recommendations/users',
     USERS_BY_EXCHANGE_COUNTRY: 'api/v1/recommendations/users/exchange-country',
     POSTS: 'api/v1/recommendations/posts',
+  },
+  SEARCH: {
+    INTEGRATED: 'api/v1/search',
+    SUGGESTIONS: 'api/v1/search/suggestions',
   },
   TAG: {
     LIST: (type: 'ACTIVITY' | 'INTEREST' | 'TRAVEL_STYLE') =>
@@ -39,9 +83,15 @@ export const END_POINT = {
   },
   USER: {
     ME: 'api/v1/users/me',
+    ME_EDIT: 'api/v1/users/me/edit',
     ME_POSTS: 'api/v1/users/me/posts',
+    ME_COUNTRIES: 'api/v1/users/me/countries',
+    ME_COURSES: 'api/v1/users/me/courses',
     ONBOARDING: 'api/v1/users/onboarding',
+    NICKNAME_CHECK: 'api/v1/users/me/nickname-availability',
+    SEARCH: 'api/v1/users/search',
     PROFILE: (userId: number) => `api/v1/users/${userId}`,
     POSTS: (userId: number) => `api/v1/users/${userId}/posts`,
+    COURSES: (userId: number) => `api/v1/users/${userId}/courses`,
   },
 } as const;

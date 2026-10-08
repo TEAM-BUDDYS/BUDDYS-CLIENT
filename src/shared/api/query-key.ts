@@ -20,6 +20,20 @@ const excludePageParam = <Params extends { page?: unknown }>(
   return restParams;
 };
 
+const excludePageTokenParam = <Params extends { pageToken?: unknown }>(
+  params: Params,
+) => {
+  const { pageToken: _pageToken, ...restParams } = params;
+
+  return restParams;
+};
+
+export const AIRLINE_QUERY_KEY = {
+  ALL: ['airlines'] as const,
+  SEARCH: (params: GetQueryParams<'/api/v1/airlines/search'>) =>
+    [...AIRLINE_QUERY_KEY.ALL, 'search', excludePageParam(params)] as const,
+};
+
 export const CHAT_ROOM_QUERY_KEY = {
   ALL: ['chat-rooms'] as const,
   INFINITE_LIST_ALL: () =>
@@ -62,12 +76,89 @@ export const COUNTRY_QUERY_KEY = {
     ] as const,
 };
 
+export const COURSE_QUERY_KEY = {
+  ALL: ['courses'] as const,
+  LISTS_ALL: () => [...COURSE_QUERY_KEY.ALL, 'list'] as const,
+  LIST: (params?: GetQueryParams<'/api/v1/courses'>) =>
+    [...COURSE_QUERY_KEY.LISTS_ALL(), params ?? {}] as const,
+  INFINITE_LISTS_ALL: () => [...COURSE_QUERY_KEY.ALL, 'infinite-list'] as const,
+  INFINITE_LIST: (params?: GetQueryParams<'/api/v1/courses'>) =>
+    [
+      ...COURSE_QUERY_KEY.INFINITE_LISTS_ALL(),
+      excludePageParam(params),
+    ] as const,
+  BOOKMARKS_ALL: () => [...COURSE_QUERY_KEY.ALL, 'bookmarks'] as const,
+  BOOKMARKS: (params?: GetQueryParams<'/api/v1/courses/bookmarks'>) =>
+    [...COURSE_QUERY_KEY.BOOKMARKS_ALL(), params ?? {}] as const,
+  DETAIL: (courseId: number) =>
+    [...COURSE_QUERY_KEY.ALL, 'detail', courseId] as const,
+  COMMENTS_ALL: (courseId: number) =>
+    [...COURSE_QUERY_KEY.ALL, courseId, 'comments'] as const,
+  INFINITE_COMMENTS: (
+    courseId: number,
+    params?: GetQueryParams<'/api/v1/courses/{courseId}/comments'>,
+  ) =>
+    [
+      ...COURSE_QUERY_KEY.COMMENTS_ALL(courseId),
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
+  BOOKMARKS_INFINITE: (params?: GetQueryParams<'/api/v1/courses/bookmarks'>) =>
+    [
+      ...COURSE_QUERY_KEY.BOOKMARKS_ALL(),
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
+};
+
+export const MAGAZINE_QUERY_KEY = {
+  ALL: ['magazines'] as const,
+  LISTS_ALL: () => [...MAGAZINE_QUERY_KEY.ALL, 'list'] as const,
+  LIST: (params: GetQueryParams<'/api/v1/magazines'>) =>
+    [...MAGAZINE_QUERY_KEY.LISTS_ALL(), params] as const,
+  INFINITE_LISTS_ALL: () =>
+    [...MAGAZINE_QUERY_KEY.ALL, 'infinite-list'] as const,
+  INFINITE_LIST: (params: GetQueryParams<'/api/v1/magazines'>) =>
+    [
+      ...MAGAZINE_QUERY_KEY.INFINITE_LISTS_ALL(),
+      excludePageParam(params),
+    ] as const,
+  BOOKMARKS_ALL: () => [...MAGAZINE_QUERY_KEY.ALL, 'bookmarks'] as const,
+  BOOKMARKS_INFINITE: (
+    params?: GetQueryParams<'/api/v1/magazines/bookmarks'>,
+  ) =>
+    [
+      ...MAGAZINE_QUERY_KEY.BOOKMARKS_ALL(),
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
+};
+
+export const PLACE_QUERY_KEY = {
+  ALL: ['places'] as const,
+  NEARBY_ALL: () => [...PLACE_QUERY_KEY.ALL, 'nearby'] as const,
+  NEARBY: (params: GetQueryParams<'/api/v1/places/nearby'> | null) =>
+    [...PLACE_QUERY_KEY.NEARBY_ALL(), params] as const,
+  SEARCH_ALL: () => [...PLACE_QUERY_KEY.ALL, 'search'] as const,
+  SEARCH: (params: GetQueryParams<'/api/v1/places/search'>) =>
+    [...PLACE_QUERY_KEY.SEARCH_ALL(), excludePageTokenParam(params)] as const,
+  BOOKMARKS_ALL: () => [...PLACE_QUERY_KEY.ALL, 'bookmarks'] as const,
+  BOOKMARKS: (params?: GetQueryParams<'/api/v1/places/bookmarks'>) =>
+    [...PLACE_QUERY_KEY.BOOKMARKS_ALL(), excludePageParam(params)] as const,
+  BOOKMARK_MARKERS_ALL: () =>
+    [...PLACE_QUERY_KEY.BOOKMARKS_ALL(), 'markers'] as const,
+  BOOKMARK_MARKERS: (
+    params: GetQueryParams<'/api/v1/places/bookmarks/markers'> | null,
+  ) => [...PLACE_QUERY_KEY.BOOKMARK_MARKERS_ALL(), params] as const,
+};
+
 export const POST_QUERY_KEY = {
   ALL: ['posts'] as const,
   LIST: (params?: GetQueryParams<'/api/v1/posts'>) =>
     [...POST_QUERY_KEY.ALL, 'list', params ?? {}] as const,
   INFINITE_LIST: (params?: GetQueryParams<'/api/v1/posts'>) =>
     [...POST_QUERY_KEY.ALL, 'infinite-list', excludePageParam(params)] as const,
+  CLOSING_SOON: () => [...POST_QUERY_KEY.ALL, 'closing-soon'] as const,
   DETAIL: (postId: number) =>
     [...POST_QUERY_KEY.ALL, 'detail', postId] as const,
   COMMENTS_ALL: (postId: number) =>
@@ -82,6 +173,13 @@ export const POST_QUERY_KEY = {
   ) =>
     [
       ...POST_QUERY_KEY.COMMENTS_ALL(postId),
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
+  BOOKMARKS_ALL: () => [...POST_QUERY_KEY.ALL, 'bookmarks'] as const,
+  BOOKMARKS_INFINITE: (params?: GetQueryParams<'/api/v1/posts/bookmarks'>) =>
+    [
+      ...POST_QUERY_KEY.BOOKMARKS_ALL(),
       'infinite-list',
       excludePageParam(params),
     ] as const,
@@ -105,6 +203,18 @@ export const RECOMMENDATION_QUERY_KEY = {
     [...RECOMMENDATION_QUERY_KEY.POSTS_ALL(), params ?? {}] as const,
 };
 
+export const SEARCH_QUERY_KEY = {
+  ALL: ['search'] as const,
+  SUGGESTIONS: (params: GetQueryParams<'/api/v1/search/suggestions'>) =>
+    [...SEARCH_QUERY_KEY.ALL, 'suggestions', params] as const,
+  INFINITE: (params: GetQueryParams<'/api/v1/search'>) =>
+    [
+      ...SEARCH_QUERY_KEY.ALL,
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
+};
+
 export const TAG_QUERY_KEY = {
   ALL: ['tags'] as const,
   LIST: (type: 'ACTIVITY' | 'INTEREST' | 'TRAVEL_STYLE') =>
@@ -114,6 +224,10 @@ export const TAG_QUERY_KEY = {
 export const USER_QUERY_KEY = {
   ALL: ['users'] as const,
   ME: () => [...USER_QUERY_KEY.ALL, 'me'] as const,
+  ME_COUNTRIES: () => [...USER_QUERY_KEY.ALL, 'me', 'countries'] as const,
+  ME_EDIT: () => [...USER_QUERY_KEY.ALL, 'me', 'edit'] as const,
+  SEARCH: (params: GetQueryParams<'/api/v1/users/search'>) =>
+    [...USER_QUERY_KEY.ALL, 'search', excludePageParam(params)] as const,
   ME_POSTS: (params?: GetQueryParams<'/api/v1/users/me/posts'>) =>
     [...USER_QUERY_KEY.ALL, 'me', 'posts', params ?? {}] as const,
   ME_POSTS_INFINITE: (params?: GetQueryParams<'/api/v1/users/me/posts'>) =>
@@ -124,8 +238,18 @@ export const USER_QUERY_KEY = {
       'infinite-list',
       excludePageParam(params),
     ] as const,
+  ME_COURSES_ALL: () => [...USER_QUERY_KEY.ALL, 'me', 'courses'] as const,
+  ME_COURSES_INFINITE: (params?: GetQueryParams<'/api/v1/users/me/courses'>) =>
+    [
+      ...USER_QUERY_KEY.ME_COURSES_ALL(),
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
   PROFILE: (userId: number) =>
     [...USER_QUERY_KEY.ALL, 'profile', userId] as const,
+  NICKNAME_CHECK: (
+    params: GetQueryParams<'/api/v1/users/me/nickname-availability'>,
+  ) => [...USER_QUERY_KEY.ALL, 'me', 'nickname-availability', params] as const,
   POSTS: (
     userId: number,
     params?: GetQueryParams<'/api/v1/users/{userId}/posts'>,
@@ -138,6 +262,17 @@ export const USER_QUERY_KEY = {
       ...USER_QUERY_KEY.ALL,
       userId,
       'posts',
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
+  COURSES_INFINITE: (
+    userId: number,
+    params?: GetQueryParams<'/api/v1/users/{userId}/courses'>,
+  ) =>
+    [
+      ...USER_QUERY_KEY.ALL,
+      userId,
+      'courses',
       'infinite-list',
       excludePageParam(params),
     ] as const,

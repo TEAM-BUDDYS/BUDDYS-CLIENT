@@ -7,7 +7,7 @@ const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
 
 const DATE_ONLY_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
-const parseDate = (date: Date | string) => {
+export const parseDate = (date: Date | string) => {
   if (date instanceof Date) {
     return date;
   }
@@ -33,6 +33,12 @@ const getDateParts = (date: Date | string) => {
     month: String(date.getMonth() + 1).padStart(2, '0'),
     year: String(date.getFullYear()),
   };
+};
+
+export const formatDateToIsoDate = (date: Date) => {
+  const { day, month, year } = getDateParts(date);
+
+  return `${year}-${month}-${day}`;
 };
 
 export const formatDate = (date: Date | string) => {
@@ -80,4 +86,10 @@ export const formatDateRange = ({
     formattedEndDate: formatDate(endDate),
     formattedStartDate: formatDate(startDate),
   };
+};
+
+export const formatFullDate = (date: Date | string) => {
+  const { day, month, year } = getDateParts(date);
+
+  return `${year}.${month}.${day}`;
 };

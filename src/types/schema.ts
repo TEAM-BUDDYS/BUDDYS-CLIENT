@@ -4,6 +4,165 @@
  */
 
 export interface paths {
+  '/api/v1/users/me': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 내 프로필 조회
+     * @description 로그인한 사용자의 프로필과 태그를 조회합니다.
+     */
+    get: operations['getMyProfile'];
+    /**
+     * 프로필 수정
+     * @description 프로필 정보를 전체 수정합니다.
+     *     모든 필드를 요청에 포함해야 합니다.
+     *     태그는 전달된 orderedTagIds로 전체 교체되며,
+     *     bio를 null로 전달하면 기존 자기소개가 삭제됩니다.
+     *     profileImageUrl을 null로 전달하면 기존 프로필 이미지가 삭제됩니다.
+     *     profileImageUrl은 이미지 업로드 API(imageDomain=PROFILE)로 발급받은 URL이거나 현재 설정된 값이어야 합니다.
+     *     태그 배열의 앞 3개가 대표 태그입니다.
+     */
+    put: operations['updateMyProfile'];
+    post?: never;
+    /**
+     * 회원 탈퇴
+     * @description 로그인한 회원을 탈퇴 상태로 변경하고 개인정보를 익명화합니다. 리프레시 토큰과 프로필 태그는 삭제하며, 기존 저장 내역과 작성한 콘텐츠는 유지됩니다.
+     */
+    delete: operations['withdraw'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/courses/{courseId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 코스 상세 조회
+     * @description 여행 코스 게시글의 상세 정보를 조회합니다.
+     */
+    get: operations['getCourseDetail'];
+    /**
+     * 코스 수정
+     * @description 코스 작성자가 코스 정보를 수정합니다. 요청 본문으로 국가/도시/날짜/제목/내용/태그/일자별 사진·장소·메모·비용/항공편 정보 전체를 대체합니다. 출발일(startDate)과 도착일(endDate)은 선택 입력이며, 둘 다 생략하면 날짜 없이 수정됩니다. 단, 하나만 입력하면 잘못된 요청으로 처리됩니다.
+     */
+    put: operations['updateCourse'];
+    post?: never;
+    /**
+     * 코스 삭제
+     * @description 코스 작성자가 코스를 삭제합니다.
+     */
+    delete: operations['deleteCourse'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/verifications/university/email': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 학교 이메일 인증 코드 발송
+     * @description 학교 이메일 도메인으로 대학교를 찾아 6자리 인증 코드(영어 대문자 + 숫자)를 해당 이메일로 발송합니다.
+     *
+     *     - 이메일 도메인과 일치하는 대학교가 없으면 404(LOC-E003)가 반환됩니다.
+     *     - 인증 메일 발송에 실패하면 500(UNIV-E002)이 반환됩니다.
+     *     - 같은 사용자가 다시 요청하면 이전 코드는 폐기되고 새 코드가 발급됩니다.
+     */
+    post: operations['sendVerification'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/verifications/university/email/confirm': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 학교 이메일 인증 코드 확인
+     * @description 앱 화면에서 입력한 인증 코드를 검증합니다. 일치하면 로그인 사용자의 학교 인증을 완료하고 코드를 폐기합니다.
+     *
+     *     - 코드가 없거나 틀리거나 만료됐으면 400(UNIV-E001)이 반환됩니다.
+     *     - 인증번호 입력 가능 횟수를 초과하면 429(UNIV-E003)가 반환됩니다.
+     */
+    post: operations['confirmVerification'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/verifications/exchange': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 파견교 인증 신청
+     * @description presigned URL로 S3 업로드를 완료한 뒤 서류 정보를 전달해 인증 신청을 접수합니다.
+     */
+    post: operations['submit'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/verifications/exchange/upload-url': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 파견교 인증 서류 업로드 URL 발급
+     * @description 클라이언트가 파견교 인증 서류를 S3에 직접 multipart/form-data POST할 수 있는 서명된 정책을 발급합니다.
+     *
+     *     - presigned URL의 유효 시간은 발급 후 5분입니다.
+     *     - 지원하는 Content-Type: application/pdf, image/jpeg, image/png
+     *     - 최대 파일 크기는 10MB입니다.
+     *     - 응답의 fields를 폼에 모두 넣고 file 필드를 마지막에 추가한 뒤 uploadUrl로 POST합니다.
+     *     - S3는 정책의 content-length-range를 검사해 요청한 fileSize 초과 업로드를 거부합니다.
+     *     - PUT URL을 사용하는 기존 클라이언트는 POST 폼 업로드로 변경해야 합니다.
+     *     - 요청할 때마다 새로운 객체 키와 presigned URL이 발급됩니다.
+     *     - 업로드 완료 후 documentKey를 파견교 인증 신청 API에 전달해야 합니다.
+     *     - 새 신청이 정상 접수되면 기존에 접수된 서류 객체는 S3에서 삭제됩니다.
+     */
+    post: operations['createUploadUrl'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/posts': {
     parameters: {
       query?: never;
@@ -13,7 +172,7 @@ export interface paths {
     };
     /**
      * 동행 게시글 목록 조회
-     * @description 모집중인 동행 게시글 목록을 조건에 따라 조회합니다.
+     * @description 모집중인 삭제되지 않은 동행 게시글 목록을 조건에 따라 조회합니다. totalElements는 페이지 번호·크기와 무관한 검색·필터 조건에 일치하는 전체 게시글 수입니다.
      */
     get: operations['getPosts'];
     put?: never;
@@ -52,6 +211,78 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/posts/{postId}/bookmarks': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 동행 게시글 저장
+     * @description 로그인한 사용자가 동행 게시글을 저장합니다.
+     */
+    post: operations['bookmarkPost'];
+    /**
+     * 동행 게시글 저장 취소
+     * @description 로그인한 사용자가 저장한 동행 게시글을 저장 취소합니다.
+     */
+    delete: operations['removePostBookmark'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/places/{placeId}/bookmark': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 장소 저장
+     * @description 구글 place_id로 장소를 로그인 유저의 저장 목록에 추가합니다. 이미 저장돼 있으면 그대로 성공 응답합니다.
+     */
+    post: operations['bookmarkPlace'];
+    /**
+     * 장소 저장 취소
+     * @description 구글 place_id로 장소를 로그인 유저의 저장 목록에서 제거합니다. 저장돼 있지 않아도 성공 응답합니다.
+     */
+    delete: operations['cancelPlaceBookmark'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/magazines/{magazineId}/bookmarks': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 매거진 저장
+     * @description 로그인한 사용자가 매거진을 저장합니다. 이미 저장한 매거진에 같은 요청을 보내도 성공합니다.
+     */
+    post: operations['bookmarkMagazine'];
+    /**
+     * 매거진 저장 취소
+     * @description 로그인한 사용자가 저장한 매거진을 저장 취소합니다. 저장하지 않은 매거진에 요청해도 성공합니다.
+     */
+    delete: operations['removeMagazineBookmark'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/images/presigned-url': {
     parameters: {
       query?: never;
@@ -63,15 +294,89 @@ export interface paths {
     put?: never;
     /**
      * 이미지 업로드용 presigned URL 발급
-     * @description 클라이언트가 S3에 직접 PUT할 수 있는 presigned URL을 발급합니다.
+     * @description 클라이언트가 S3에 직접 multipart/form-data POST할 수 있는 서명된 정책을 발급합니다.
      *
      *     - presigned URL의 유효 시간은 발급 후 5분입니다.
      *     - 지원하는 Content-Type: image/jpeg, image/png, image/webp
-     *     - 응답의 uploadUrl로 이미지 바이너리를 PUT 요청하면 업로드가 완료되며,
-     *       imageUrl은 업로드 완료 후 게시글/프로필 등록 시 사용하는 최종 이미지 URL입니다.
+     *     - 응답의 fields를 폼에 모두 넣고 file 필드를 마지막에 추가한 뒤 uploadUrl로 POST합니다.
+     *     - S3는 정책의 content-length-range를 검사해 요청한 fileSize 초과 업로드를 거부합니다.
+     *     - PUT URL을 사용하는 기존 클라이언트는 POST 폼 업로드로 변경해야 합니다.
+     *       imageUrl은 업로드 완료 후 게시글/프로필/코스 등록 시 사용하는 최종 이미지 URL입니다.
      */
     post: operations['createPresignedUrl'];
     delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/courses': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 코스 목록 조회
+     * @description 여행 코스 게시글 목록을 국가와 태그로 필터링하여 조회합니다.
+     */
+    get: operations['getCourses'];
+    put?: never;
+    /**
+     * 코스 게시글 작성
+     * @description 로그인한 사용자가 여행 코스 게시글을 작성합니다. 출발일(startDate)과 도착일(endDate)은 선택 입력이며, 둘 다 생략하면 날짜 없이 코스가 생성됩니다. 단, 하나만 입력하면 잘못된 요청으로 처리됩니다.
+     */
+    post: operations['createCourse'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/courses/{courseId}/comments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 코스 댓글 목록 조회
+     * @description 코스에 작성된 댓글 목록을 작성 시간 오름차순으로 조회합니다.
+     */
+    get: operations['getComments_1'];
+    put?: never;
+    /**
+     * 코스 댓글 작성
+     * @description 로그인한 사용자가 코스에 댓글을 작성합니다.
+     */
+    post: operations['createComment_1'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/courses/{courseId}/bookmark': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 코스 저장
+     * @description 로그인한 사용자가 코스를 저장합니다.
+     */
+    post: operations['bookmarkCourse'];
+    /**
+     * 코스 저장 취소
+     * @description 로그인한 사용자가 코스 저장을 취소합니다.
+     */
+    delete: operations['unbookmarkCourse'];
     options?: never;
     head?: never;
     patch?: never;
@@ -86,7 +391,7 @@ export interface paths {
     };
     /**
      * 채팅방 목록 조회
-     * @description 로그인한 사용자가 참여 중인 채팅방 목록을 조회합니다.
+     * @description 로그인한 사용자가 참여 중인 채팅방 목록을 조회합니다. 내가 상대방을 차단했거나 신고한 경우, 그 이후 상대방이 보낸 메시지는 마지막 메시지와 읽지 않은 메시지 수에 반영되지 않습니다.
      */
     get: operations['getChatRooms'];
     put?: never;
@@ -95,6 +400,59 @@ export interface paths {
      * @description 상대방과의 1:1 채팅방이 없으면 생성하고, 이미 있으면 기존 채팅방을 반환합니다.
      */
     post: operations['createChatRoom'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/chat-rooms/{chatRoomId}/report': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 채팅 상대방 신고
+     * @description 해당 채팅방의 상대방을 신고합니다.
+     *
+     *     - 신고 사유(reason)는 선택 입력이며, 생략하면 사유 없이 즉시 접수됩니다.
+     *     - 신고 접수 시 신고자·신고 대상자 정보(및 입력된 사유)를 포함한 메일이 운영팀으로 발송됩니다.
+     *     - 메일 발송에 실패해도 신고 접수 자체는 성공으로 처리됩니다.
+     *     - 신고 접수 이후에는 별도의 차단 없이도 내가 상대방에게 메시지를 보낼 수 없습니다.
+     *     - 상대방은 신고 사실을 알 수 없으며, 기존과 같이 메시지를 보낼 수 있습니다.
+     *     - 신고 이후 상대방이 보낸 메시지는 저장되지만, 나의 메시지 목록·채팅방 목록·실시간 수신에는 표시되지 않습니다.
+     */
+    post: operations['reportChatPartner'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/chat-rooms/{chatRoomId}/block': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 채팅 상대방 차단
+     * @description 해당 채팅방의 상대방을 차단합니다.
+     *
+     *     - 차단 후에는 내가 상대방에게 메시지를 보낼 수 없습니다.
+     *     - 상대방은 차단 사실을 알 수 없으며, 기존과 같이 메시지를 보낼 수 있습니다.
+     *     - 차단 이후 상대방이 보낸 메시지는 저장되지만, 나의 메시지 목록·채팅방 목록·실시간 수신에는 표시되지 않습니다.
+     *     - 기존 채팅 내역은 삭제되지 않고 그대로 유지됩니다.
+     *     - 이미 차단한 상대방을 다시 차단해도 오류 없이 처리됩니다(멱등).
+     */
+    post: operations['blockChatPartner'];
     delete?: never;
     options?: never;
     head?: never;
@@ -121,6 +479,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/auth/logout': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 로그아웃
+     * @description 저장된 리프레시 토큰을 폐기하고 리프레시 토큰 쿠키를 삭제합니다.
+     */
+    post: operations['logout'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/auth/kakao': {
     parameters: {
       query?: never;
@@ -135,6 +513,26 @@ export interface paths {
      * @description 카카오 인가 코드를 이용해 로그인하고 JWT를 발급합니다.
      */
     post: operations['kakaoLogin'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auth/google': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * 구글 로그인
+     * @description 구글 인가 코드를 이용해 로그인하고 JWT를 발급합니다.
+     */
+    post: operations['googleLogin'];
     delete?: never;
     options?: never;
     head?: never;
@@ -161,6 +559,58 @@ export interface paths {
     patch: operations['completeOnboarding'];
     trace?: never;
   };
+  '/api/v1/users/me/notification-settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 알림 설정 조회
+     * @description 로그인한 사용자의 알림 설정 여부를 조회합니다.
+     */
+    get: operations['getNotificationSetting'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * 알림 설정 변경
+     * @description 로그인한 사용자의 알림 설정 여부를 변경합니다.
+     */
+    patch: operations['updateNotificationSetting'];
+    trace?: never;
+  };
+  '/api/v1/posts/{postId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 게시글 상세 조회
+     * @description 동행 모집 게시글의 상세 정보를 조회합니다.
+     */
+    get: operations['getPostDetail'];
+    put?: never;
+    post?: never;
+    /**
+     * 동행 게시글 삭제
+     * @description 작성자의 게시글을 소프트 삭제합니다. 연관 데이터와 이미지 파일은 삭제하지 않습니다.
+     */
+    delete: operations['deletePost'];
+    options?: never;
+    head?: never;
+    /**
+     * 동행 게시글 수정
+     * @description 작성자가 전달한 필드만 부분 수정합니다. 모집 중과 모집 완료 게시글 모두 수정할 수 있습니다.
+     */
+    patch: operations['updatePost'];
+    trace?: never;
+  };
   '/api/v1/posts/{postId}/status': {
     parameters: {
       query?: never;
@@ -179,6 +629,46 @@ export interface paths {
      * @description 게시글 작성자가 모집 상태를 변경합니다.
      */
     patch: operations['updatePostStatus'];
+    trace?: never;
+  };
+  '/api/v1/admin/verifications/exchange/{verificationId}/reject': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * 서류 인증 신청 반려
+     * @description 관리자가 대기 중인 서류 인증 신청을 사유와 함께 반려합니다.
+     */
+    patch: operations['rejectVerification'];
+    trace?: never;
+  };
+  '/api/v1/admin/verifications/exchange/{verificationId}/approve': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * 서류 인증 신청 승인
+     * @description 관리자가 대기 중인 서류 인증 신청을 승인합니다.
+     */
+    patch: operations['approveVerification'];
     trace?: never;
   };
   '/api/v1/users/{userId}': {
@@ -221,7 +711,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/v1/users/me': {
+  '/api/v1/users/{userId}/courses': {
     parameters: {
       query?: never;
       header?: never;
@@ -229,10 +719,35 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * 내 프로필 조회
-     * @description 로그인한 사용자의 프로필과 태그를 조회합니다.
+     * 타 유저가 작성한 코스 목록 조회
+     * @description 특정 사용자가 작성한 코스 목록을 조회합니다.
      */
-    get: operations['getMyProfile'];
+    get: operations['getUserCourses'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/users/search': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 닉네임으로 사용자 검색
+     * @description 코스 동행 등록 시 추가할 사용자를 닉네임으로 검색합니다.
+     *
+     *     - keyword는 대소문자 구분 없이 닉네임에 부분 일치(contains)로 검색되며, 검색 결과는 닉네임 오름차순으로 정렬됩니다.
+     *     - keyword를 생략하거나 빈 문자열/공백만 전달하면 빈 리스트가 반환됩니다.
+     *     - 로그인한 본인은 검색 결과에서 제외됩니다.
+     *     - 커서 없는 Slice 기반 페이지네이션을 사용하며, 다음 페이지 존재 여부는 응답의 hasNext로 확인합니다.
+     */
+    get: operations['searchUsers'];
     put?: never;
     post?: never;
     delete?: never;
@@ -261,6 +776,106 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/users/me/nickname-availability': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 닉네임 중복 확인
+     * @description 현재 사용자를 제외하고 닉네임 사용 가능 여부를 확인합니다.
+     */
+    get: operations['checkNicknameAvailability'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/users/me/edit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 프로필 편집 정보 조회
+     * @description 편집 가능한 프로필 값과 사용자가 지정한 순서대로 정렬된 전체 태그를 반환합니다. 태그 배열의 앞 3개가 대표 태그입니다.
+     */
+    get: operations['getMyProfileForEdit'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/users/me/courses': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 내가 작성한 코스 목록 조회
+     * @description 로그인한 사용자가 작성한 코스 목록을 조회합니다.
+     */
+    get: operations['getMyCourses'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/users/me/countries': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 내 관심 국가 및 파견 국가 조회
+     * @description 로그인한 사용자가 설정한 관심 국가와 파견 국가의 ID, 이름, 영문 이름, ISO 코드를 조회합니다. 설정하지 않은 국가는 null로 반환합니다.
+     */
+    get: operations['getMyCountries'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tags': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 전체 태그 목록 조회
+     * @description 프로필 태그 편집에 사용할 전체 태그를 카테고리별로 반환합니다.
+     */
+    get: operations['getAllTags'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/tags/{type}': {
     parameters: {
       query?: never;
@@ -273,6 +888,46 @@ export interface paths {
      * @description type(ACTIVITY, INTEREST, TRAVEL_STYLE)에 해당하는 태그 목록을 반환합니다.
      */
     get: operations['getTags'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/search': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 통합 검색
+     * @description 검색어로 코스, 사용자, 모집 중 동행 게시글을 동시에 검색합니다. type을 생략하면 세 영역을 모두 조회하고 반환하며, POST/COURSE/USER를 지정하면 해당 영역만 조회하고 반환합니다. 선택하지 않은 영역은 응답 필드에서 제외됩니다. 잘못된 type은 400(GLB-E001)을 반환합니다. sort=LATEST(최신순, 기본값) 또는 BOOKMARK(전체 사용자의 저장 수 순)를 지원합니다. USER는 항상 최신순입니다. 잘못된 sort는 400(GLB-E001)을 반환합니다. 각 영역에 동일한 페이지 번호와 크기를 적용합니다. courses.totalElements와 users.totalElements는 page=0에서만 전체 건수를 제공하며 page>0에서는 건수를 조회하지 않고 명시적으로 null을 반환합니다. posts.totalElements는 페이지 번호·크기와 무관하게 검색어에 일치하는 삭제되지 않은 모집 중 게시글의 전체 수입니다.
+     */
+    get: operations['search'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/search/suggestions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 검색어 자동완성
+     * @description DB에 존재하는 국가, 도시, 장소, 사용자, 코스 및 모집 중 동행 게시글에서 자동완성 검색어를 조회합니다.
+     */
+    get: operations['getSearchSuggestions'];
     put?: never;
     post?: never;
     delete?: never;
@@ -341,7 +996,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/v1/posts/{postId}': {
+  '/api/v1/posts/closing-soon': {
     parameters: {
       query?: never;
       header?: never;
@@ -349,10 +1004,190 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * 게시글 상세 조회
-     * @description 동행 모집 게시글의 상세 정보를 조회합니다.
+     * 마감 임박 동행 게시물 조회
+     * @description 동행 시작일이 오늘이고 모집 상태가 RECRUITING인 활성 게시물을 생성일 기준 오래된 순(createdAt ASC)으로 최대 4개 조회합니다. 인증이 필요하며 조회 결과가 없어도 빈 목록과 함께 200 응답을 반환합니다.
      */
-    get: operations['getPostDetail'];
+    get: operations['getClosingSoonPosts'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/posts/bookmarks': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 저장한 게시글 목록 조회
+     * @description 로그인한 사용자가 저장한 게시글 목록을 최신 저장순으로 조회합니다. totalElements는 모집 상태와 무관하게 해당 사용자가 저장한 삭제되지 않은 전체 게시글 수입니다.
+     */
+    get: operations['getBookmarkedPosts'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/places/{placeId}/photo': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 장소 사진 프록시
+     * @description 장소의 대표 사진 URL로 302 리다이렉트합니다. 구글 API 키를 클라이언트에 노출하지 않기 위한 프록시입니다.
+     */
+    get: operations['getPlacePhoto'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/places/search': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 장소 검색
+     * @description 구글 Places API를 통해 장소를 검색합니다. lat/lng를 함께 주면 해당 좌표 주변 결과를 우선합니다.
+     */
+    get: operations['searchPlaces'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/places/nearby': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 근처 장소 목록 조회
+     * @description 구글 Places Nearby Search API를 통해 좌표 주변 장소를 조회합니다.
+     */
+    get: operations['getNearbyPlaces'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/places/bookmarks': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 저장한 장소 목록 조회
+     * @description 로그인 유저가 저장한 장소를 최근 저장순으로 페이징 조회합니다. 각 항목은 저장 시점 스냅샷이며, 사진은 photoUrl 프록시로 실시간 조회합니다.
+     */
+    get: operations['getBookmarkedPlaces'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/places/bookmarks/markers': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 지도 영역 내 저장한 장소 조회
+     * @description "현재 화면에서 저장한 장소만 보기"용. 지도 bounds(남서/북동 좌표) 안에 있는 저장 장소를 페이징 없이 반환합니다. 좌표가 없는 저장 장소는 제외되며, 상한(300개) 초과 시 truncated=true로 잘라서 반환합니다.
+     */
+    get: operations['getBookmarkedPlaceMarkers'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/magazines': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 매거진 목록 조회
+     * @description 필수 카테고리와 선택 검색어로 매거진 목록을 조회합니다. 검색어는 제목과 요약에 부분 일치로 적용합니다. LATEST는 발행일 최신순, BOOKMARK는 전체 사용자의 저장 수가 많은 순으로 정렬합니다.
+     */
+    get: operations['getMagazines'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/magazines/bookmarks': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 저장한 매거진 목록 조회
+     * @description 로그인한 사용자가 저장한 매거진 목록을 최신 저장순으로 조회합니다.
+     */
+    get: operations['getBookmarkedMagazines'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/courses/bookmarks': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 저장한 코스 목록 조회
+     * @description 로그인한 사용자가 저장한 코스 목록을 조회합니다.
+     */
+    get: operations['getBookmarkedCourses'];
     put?: never;
     post?: never;
     delete?: never;
@@ -415,7 +1250,7 @@ export interface paths {
     };
     /**
      * 도시 검색
-     * @description 특정 국가에 속한 도시를 검색합니다.
+     * @description 특정 국가에 속한 도시를 검색합니다. 응답의 latitude/longitude는 해당 도시의 중심 좌표로, 근처 장소 조회(/api/v1/places/nearby)의 lat/lng로 그대로 사용할 수 있습니다. 일부 도시는 좌표가 없어 null일 수 있습니다. recommendedRadius는 도시 인구 기반으로 추정한 추천 반경(미터)으로, 동일 API의 radius로 사용할 수 있습니다.
      */
     get: operations['searchCities'];
     put?: never;
@@ -435,7 +1270,7 @@ export interface paths {
     };
     /**
      * 국가 검색
-     * @description 검색 키워드에 해당하는 국가를 검색합니다.
+     * @description 검색 키워드가 한글 국가명 또는 영문 국가명에 포함된 국가를 검색합니다. 영문은 대소문자를 구분하지 않으며, 결과는 한글 국가명의 ㄱㄴㄷ순으로 각 국가의 한글명(name)과 영문명(englishName)을 함께 반환합니다.
      */
     get: operations['searchCountries'];
     put?: never;
@@ -455,7 +1290,7 @@ export interface paths {
     };
     /**
      * 채팅방 상세 조회
-     * @description 채팅방 ID로 채팅방 기본 정보와 상대방 정보를 조회합니다.
+     * @description 채팅방 ID로 채팅방 기본 정보와 상대방 정보를 조회합니다. 내가 상대방을 차단했거나 신고한 경우 canSendMessage가 false로 응답되며, hasBlocked와 hasReported로 그 이유를 구분할 수 있습니다. 상대방이 나를 차단했거나 신고한 경우에는 영향을 받지 않습니다.
      */
     get: operations['getChatRoom'];
     put?: never;
@@ -475,9 +1310,73 @@ export interface paths {
     };
     /**
      * 채팅 메시지 목록 조회
-     * @description 채팅방의 메시지 목록을 커서 기반으로 조회합니다.
+     * @description 채팅방의 메시지 목록을 커서 기반으로 조회합니다. 내가 상대방을 차단했거나 신고한 경우, 그 이후 상대방이 보낸 메시지는 목록에서 제외됩니다.
      */
     get: operations['getMessages'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/airlines/search': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 항공사 검색
+     * @description 코스 작성 시 항공편 정보를 등록할 수 있도록 항공사명 또는 항공사 코드로 항공사를 검색합니다.
+     *
+     *     - keyword는 대소문자 구분 없이 항공사명 또는 항공사 코드(IATA)에 부분 일치(contains)로 검색되며, 검색 결과는 항공사명 오름차순으로 정렬됩니다.
+     *     - keyword를 생략하거나 빈 문자열/공백만 전달하면 빈 리스트가 반환됩니다.
+     *     - 커서 없는 Slice 기반 페이지네이션을 사용하며, 다음 페이지 존재 여부는 응답의 hasNext로 확인합니다.
+     */
+    get: operations['searchAirlines'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/verifications/exchange': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 서류 인증 신청 목록 조회
+     * @description 관리자가 전체 신청 또는 처리 상태별 신청 목록을 최신순으로 조회합니다.
+     */
+    get: operations['getVerifications'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/verifications/exchange/{verificationId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 서류 인증 신청 상세 조회
+     * @description 관리자가 서류 인증 신청 정보와 5분 동안 유효한 서류 열람 URL을 조회합니다.
+     */
+    get: operations['getVerification'];
     put?: never;
     post?: never;
     delete?: never;
@@ -490,6 +1389,317 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    UpdateProfileRequest: {
+      /**
+       * @description 닉네임. 최대 14자
+       * @example 정바미
+       */
+      nickname: string;
+      /**
+       * @description 성별
+       * @example FEMALE
+       * @enum {string}
+       */
+      gender: 'MALE' | 'FEMALE';
+      /**
+       * Format: date
+       * @description 생년월일
+       * @example 2004-10-24
+       */
+      birthDate: string;
+      /**
+       * @description 자기소개. 최대 69자. null이면 기존 자기소개를 삭제합니다.
+       * @example 안녕하세요 김버디입니다~~
+       */
+      bio: string | null;
+      /**
+       * @description 프로필 이미지 URL. 최대 512자. 이미지 업로드 API(imageDomain=PROFILE)로 발급받은 URL 또는 현재 설정된 값만 허용합니다. null이면 기존 프로필 이미지를 삭제합니다.
+       * @example https://example.com/profile.png
+       */
+      profileImageUrl: string | null;
+      /**
+       * @description 드래그앤드롭으로 정렬한 전체 선택 태그 ID 목록입니다.
+       *     카테고리와 무관하게 상위 3개가 대표 태그로 노출됩니다.
+       *     서버에서 활동 1~3개, 관심사 1~3개, 여행 스타일 1~5개인지 검증합니다.
+       * @example [
+       *       27,
+       *       1,
+       *       15,
+       *       3,
+       *       18,
+       *       30,
+       *       34
+       *     ]
+       */
+      orderedTagIds: number[];
+    };
+    BaseResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: unknown;
+    };
+    CourseDayRequest: {
+      /**
+       * Format: int32
+       * @description 일차 (1부터 시작)
+       * @example 1
+       */
+      dayNumber: number;
+      /**
+       * Format: date
+       * @description 해당 일자의 실제 날짜
+       * @example 2026-09-01
+       */
+      date?: string;
+      /**
+       * @description 해당 일자의 사진 목록 (1장 이상 10장 이하)
+       * @example [
+       *       "https://example.com/a.jpg"
+       *     ]
+       */
+      imageUrls: string[];
+      /**
+       * @description 해당 일자의 메모
+       * @example 예약 필수
+       */
+      memo?: string;
+      /**
+       * @description 해당 일자의 비용
+       * @example 22000
+       */
+      cost?: number;
+      /** @description 해당 일자에 방문한 장소 목록 (최대 10곳) */
+      places?: components['schemas']['CoursePlaceRequest'][];
+      /** @description 해당 일자의 항공편 목록 (최대 5개) */
+      flights?: components['schemas']['CourseFlightRequest'][];
+    };
+    CourseFlightRequest: {
+      /**
+       * @description 항공사
+       * @example 대한항공
+       */
+      airline: string;
+      /**
+       * @description 항공편명
+       * @example KE901
+       */
+      flightNumber?: string;
+      /**
+       * @description 출발 공항
+       * @example ICN
+       */
+      departureAirport: string;
+      /**
+       * @description 출발 시간 (HH:mm)
+       * @example 13:00
+       */
+      departureTime: string;
+      /**
+       * @description 도착 공항
+       * @example CDG
+       */
+      arrivalAirport: string;
+      /**
+       * @description 도착 시간 (HH:mm)
+       * @example 18:30
+       */
+      arrivalTime: string;
+    };
+    CoursePlaceRequest: {
+      /**
+       * @description 구글맵 place_id
+       * @example ChIJ...
+       */
+      googlePlaceId: string;
+      /**
+       * @description 장소명
+       * @example 루브르 박물관
+       */
+      name: string;
+      /**
+       * @description 장소 카테고리. RESTAURANT, CAFE, TOURISM, ACCOMMODATION, ETC
+       * @example TOURISM
+       */
+      category: string;
+      /**
+       * @description 위도
+       * @example 48.8606
+       */
+      latitude?: number;
+      /**
+       * @description 경도
+       * @example 2.3376
+       */
+      longitude?: number;
+      /**
+       * Format: int32
+       * @description 하루 내 방문 순서
+       * @example 0
+       */
+      orderNo?: number;
+    };
+    UpdateCourseRequest: {
+      /**
+       * @description 국가 ID 목록
+       * @example [
+       *       240
+       *     ]
+       */
+      countryIds: number[];
+      /**
+       * @description 도시 ID 목록
+       * @example [
+       *       11160
+       *     ]
+       */
+      cityIds: number[];
+      /**
+       * @description 코스 제목
+       * @example 여유로운 파리 미술관 코스
+       */
+      title: string;
+      /**
+       * @description 코스 소개
+       * @example 2박 3일 코스로 다녀왔다. 버디즈로 구한 동행 친구와 함께했다.
+       */
+      content?: string;
+      /**
+       * Format: date
+       * @description 출발일. 미입력 시 날짜 없이 수정됩니다.
+       * @example 2026-09-01
+       */
+      startDate?: string | null;
+      /**
+       * Format: date
+       * @description 도착일. 미입력 시 날짜 없이 수정됩니다.
+       * @example 2026-09-05
+       */
+      endDate?: string | null;
+      /**
+       * @description 연결할 태그 ID 목록 (활동 최대 3개, 관심사 최대 2개, 동행스타일 최대 2개, 활동 태그 1개 이상 필수)
+       * @example [
+       *       1,
+       *       4,
+       *       9
+       *     ]
+       */
+      tagIds: number[];
+      /** @description 일자별 코스 목록 (최대 30일). 기존 일자/장소/사진/항공편 정보를 모두 대체합니다. */
+      days: components['schemas']['CourseDayRequest'][];
+    };
+    BaseResponseUpdateCourseResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['UpdateCourseResponse'];
+    };
+    UpdateCourseResponse: {
+      /**
+       * Format: int64
+       * @description 수정된 코스 ID
+       * @example 101
+       */
+      courseId: number;
+    };
+    UniversityVerificationRequest: {
+      /**
+       * Format: email
+       * @description 학교 이메일
+       * @example student@snu.ac.kr
+       */
+      email: string;
+    };
+    BaseResponseVoid: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: unknown;
+    };
+    UniversityVerificationConfirmRequest: {
+      /**
+       * @description 이메일로 받은 인증 코드(영어 대문자 + 숫자 6자리)
+       * @example A1B2C3
+       */
+      code: string;
+    };
+    ExchangeVerificationSubmitRequest: {
+      /** @description 업로드 URL 발급 응답으로 받은 S3 객체 키 */
+      documentKey: string;
+      /**
+       * @description 사용자가 선택한 원본 파일명
+       * @example 교환학생_입학허가서.pdf
+       */
+      originalFileName: string;
+      /**
+       * @description 업로드 URL 발급 시 사용한 Content-Type
+       * @example application/pdf
+       * @enum {string}
+       */
+      contentType: 'application/pdf' | 'image/jpeg' | 'image/png';
+      /**
+       * Format: int64
+       * @description 업로드한 파일 크기(byte)
+       * @example 823044
+       */
+      fileSize: number;
+    };
+    BaseResponseExchangeVerificationSubmitResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['ExchangeVerificationSubmitResponse'];
+    };
+    ExchangeVerificationSubmitResponse: {
+      /**
+       * Format: int64
+       * @description 인증 신청 ID
+       * @example 12
+       */
+      verificationId?: number;
+      /**
+       * @description 처리 상태
+       * @example PENDING
+       * @enum {string}
+       */
+      status?: 'PENDING' | 'APPROVED' | 'REJECTED';
+    };
+    ExchangeDocumentUploadUrlRequest: {
+      /**
+       * @description 업로드할 서류의 Content-Type
+       * @example application/pdf
+       * @enum {string}
+       */
+      contentType: 'application/pdf' | 'image/jpeg' | 'image/png';
+      /**
+       * Format: int64
+       * @description 업로드할 파일 크기(byte). 최대 10MB까지 허용됩니다.
+       * @example 823044
+       */
+      fileSize: number;
+    };
+    BaseResponseExchangeDocumentUploadUrlResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['ExchangeDocumentUploadUrlResponse'];
+    };
+    ExchangeDocumentUploadUrlResponse: {
+      /**
+       * @description 서류를 multipart/form-data로 POST할 S3 버킷 URL. 발급 후 5분간 유효합니다.
+       * @example https://buddys-assets.s3.ap-northeast-2.amazonaws.com/
+       */
+      uploadUrl?: string;
+      /** @description S3 POST 폼에 그대로 포함할 필드. 모든 필드를 먼저 넣고 file을 마지막에 추가하세요. */
+      fields?: {
+        [key: string]: string;
+      };
+      /**
+       * @description 업로드 요청마다 사용자 경로에 새로 생성되며, 인증 신청에 사용할 고유 S3 객체 키
+       * @example exchange-verifications/1/123e4567-e89b-12d3-a456-426614174000.pdf
+       */
+      documentKey?: string;
+    };
     CreatePostRequest: {
       /**
        * Format: int64
@@ -582,12 +1792,6 @@ export interface components {
        */
       imageUrls?: string[];
     };
-    BaseResponse: {
-      success?: boolean;
-      code?: string;
-      message?: string;
-      data?: unknown;
-    };
     BaseResponseCreatePostResponse: {
       success?: boolean;
       code?: string;
@@ -623,13 +1827,84 @@ export interface components {
        */
       commentId?: number;
     };
+    PostBookmarkResponse: {
+      /**
+       * Format: int64
+       * @description 게시글 ID
+       * @example 1
+       */
+      postId: number;
+      /**
+       * @description 게시글 저장 여부
+       * @example true
+       */
+      isBookmarked: boolean;
+    };
+    /** @description 게시글 저장 성공 응답 */
+    PostBookmarkSuccessResponse: {
+      /** @example true */
+      success: boolean;
+      /** @example POST-S006 */
+      code: string;
+      /** @example 게시글 저장에 성공했습니다. */
+      message: string;
+      data: components['schemas']['PostBookmarkResponse'];
+    };
+    BaseResponsePostBookmarkResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['PostBookmarkResponse'];
+    };
+    BaseResponsePlaceBookmarkResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['PlaceBookmarkResponse'];
+    };
+    PlaceBookmarkResponse: {
+      /**
+       * @description 요청 처리 후 로그인 유저의 저장 여부
+       * @example true
+       */
+      bookmarked: boolean;
+    };
+    MagazineBookmarkResponse: {
+      /**
+       * Format: int64
+       * @description 매거진 ID
+       * @example 1
+       */
+      magazineId: number;
+      /**
+       * @description 매거진 저장 여부
+       * @example true
+       */
+      isBookmarked: boolean;
+    };
+    /** @description 매거진 저장 성공 응답 */
+    MagazineBookmarkSuccessResponse: {
+      /** @example true */
+      success: boolean;
+      /** @example MAGAZINE-S002 */
+      code: string;
+      /** @example 매거진 저장에 성공했습니다. */
+      message: string;
+      data: components['schemas']['MagazineBookmarkResponse'];
+    };
+    BaseResponseMagazineBookmarkResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['MagazineBookmarkResponse'];
+    };
     PresignedUrlRequest: {
       /**
-       * @description 이미지가 사용될 도메인 (POST: 게시글, PROFILE: 프로필)
+       * @description 이미지가 사용될 도메인 (POST: 게시글, PROFILE: 프로필, COURSE: 코스)
        * @example POST
        * @enum {string}
        */
-      imageDomain: 'POST' | 'PROFILE';
+      imageDomain: 'POST' | 'PROFILE' | 'COURSE';
       /**
        * @description 업로드할 이미지의 Content-Type. image/jpeg, image/png, image/webp만 허용됩니다.
        * @example image/jpeg
@@ -651,15 +1926,123 @@ export interface components {
     };
     PresignedUrlResponse: {
       /**
-       * @description 클라이언트가 파일을 PUT할 presigned URL. 발급 후 5분간만 유효합니다.
-       * @example https://buddys-assets.s3.ap-northeast-2.amazonaws.com/posts/3f1e...jpg?X-Amz-Algorithm=...
+       * @description 이미지를 multipart/form-data로 POST할 S3 버킷 URL. 발급 후 5분간만 유효합니다.
+       * @example https://buddys-assets.s3.ap-northeast-2.amazonaws.com/
        */
       uploadUrl?: string;
+      /** @description S3 POST 폼에 그대로 포함할 필드. 모든 필드를 먼저 넣고 file을 마지막에 추가하세요. */
+      fields?: {
+        [key: string]: string;
+      };
       /**
-       * @description 업로드 완료 후 게시글/프로필 등록 시 사용할 최종 이미지 URL
+       * @description 업로드 완료 후 게시글/프로필/코스 등록 시 사용할 최종 이미지 URL
        * @example https://buddys-assets.s3.ap-northeast-2.amazonaws.com/posts/3f1e....jpg
        */
       imageUrl?: string;
+    };
+    CreateCourseRequest: {
+      /**
+       * @description 국가 ID 목록
+       * @example [
+       *       240
+       *     ]
+       */
+      countryIds: number[];
+      /**
+       * @description 도시 ID 목록
+       * @example [
+       *       11160
+       *     ]
+       */
+      cityIds: number[];
+      /**
+       * @description 코스 제목
+       * @example 여유로운 파리 미술관 코스
+       */
+      title: string;
+      /**
+       * @description 코스 소개
+       * @example 2박 3일 코스로 다녀왔다. 버디즈로 구한 동행 친구와 함께했다.
+       */
+      content?: string;
+      /**
+       * Format: date
+       * @description 출발일. 미입력 시 날짜 없이 코스가 생성됩니다.
+       * @example 2026-09-01
+       */
+      startDate?: string | null;
+      /**
+       * Format: date
+       * @description 도착일. 미입력 시 날짜 없이 코스가 생성됩니다.
+       * @example 2026-09-05
+       */
+      endDate?: string | null;
+      /**
+       * @description 연결할 태그 ID 목록 (활동 최대 3개, 관심사 최대 2개, 동행스타일 최대 2개, 활동 태그 1개 이상 필수)
+       * @example [
+       *       1,
+       *       4,
+       *       9
+       *     ]
+       */
+      tagIds: number[];
+      /**
+       * @description 함께한 유저 ID 목록 (최대 11명)
+       * @example [
+       *       12,
+       *       30
+       *     ]
+       */
+      companionUserIds?: number[];
+      /** @description 일자별 코스 목록 (최대 30일) */
+      days: components['schemas']['CourseDayRequest'][];
+    };
+    BaseResponseCreateCourseResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['CreateCourseResponse'];
+    };
+    CreateCourseResponse: {
+      /**
+       * Format: int64
+       * @description 생성된 코스 ID
+       * @example 101
+       */
+      courseId: number;
+    };
+    BaseResponseCreateCourseCommentResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['CreateCourseCommentResponse'];
+    };
+    CreateCourseCommentResponse: {
+      /**
+       * Format: int64
+       * @description 생성된 댓글 ID
+       * @example 1
+       */
+      commentId?: number;
+    };
+    BaseResponseCourseBookmarkResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['CourseBookmarkResponse'];
+    };
+    CourseBookmarkResponse: {
+      /**
+       * Format: int64
+       * @description 코스 ID
+       * @example 101
+       */
+      courseId: number;
+      /**
+       * @description 저장(찜) 여부
+       * @example true
+       */
+      bookmarked: boolean;
     };
     CreateChatRoomRequest: {
       /**
@@ -708,6 +2091,28 @@ export interface components {
       createdAt?: string;
       /** @description 상대방 사용자 정보 */
       participant?: components['schemas']['ChatParticipantResponse'];
+      /**
+       * @description 상대방에게 메시지를 보낼 수 있는지 여부. 내가 상대방을 차단했거나 신고한 경우 false입니다.
+       * @example true
+       */
+      canSendMessage?: boolean;
+      /**
+       * @description 내가 상대방을 차단했는지 여부. 상대방이 나를 차단한 경우는 반영되지 않습니다.
+       * @example false
+       */
+      hasBlocked?: boolean;
+      /**
+       * @description 내가 상대방을 신고했는지 여부. 상대방이 나를 신고한 경우는 반영되지 않습니다.
+       * @example false
+       */
+      hasReported?: boolean;
+    };
+    ReportChatPartnerRequest: {
+      /**
+       * @description 신고 사유. 현재는 별도 사유 입력 없이 신고할 수 있어 생략 가능합니다.
+       * @example 부적절한 언행
+       */
+      reason?: string | null;
     };
     BaseResponseLoginResponse: {
       success?: boolean;
@@ -809,7 +2214,7 @@ export interface components {
        */
       bio?: string | null;
       /**
-       * @description 프로필 이미지 URL
+       * @description 프로필 이미지 URL. 이미지 업로드 API(imageDomain=PROFILE)로 발급받은 URL 또는 현재 설정된 값만 허용합니다.
        * @example https://example.com/profile.png
        */
       profileImageUrl?: string | null;
@@ -832,6 +2237,131 @@ export interface components {
        * @example 해령
        */
       nickname?: string;
+    };
+    UpdateNotificationSettingRequest: {
+      /**
+       * @description 알림 설정 여부
+       * @example false
+       */
+      notificationEnabled: boolean;
+    };
+    BaseResponseNotificationSettingResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['NotificationSettingResponse'];
+    };
+    NotificationSettingResponse: {
+      /**
+       * @description 알림 설정 여부
+       * @example true
+       */
+      notificationEnabled: boolean;
+    };
+    /** @description 게시글 부분 수정 요청. 전달한 필드만 수정하며, 명시적인 null은 허용하지 않습니다. */
+    UpdatePostRequest: {
+      /**
+       * Format: int64
+       * @description 전달하면 국가를 수정하며 cityId도 함께 전달해야 합니다. 미전달 시 기존 국가 유지, null 불가
+       * @example 1
+       */
+      countryId?: number;
+      /**
+       * Format: int64
+       * @description 도시만 변경하면 기존 국가, 국가와 함께 변경하면 변경할 국가에 속한 도시여야 합니다. 미전달 시 기존 도시 유지, null 불가
+       * @example 10
+       */
+      cityId?: number;
+      /**
+       * Format: date
+       * @description 전달하면 시작일을 수정하고, 미전달 시 기존 값을 유지합니다. null 불가
+       * @example 2026-09-06
+       */
+      startDate?: string;
+      /**
+       * Format: date
+       * @description 전달하면 종료일을 수정하고, 미전달 시 기존 값을 유지합니다. null 불가
+       * @example 2026-09-19
+       */
+      endDate?: string;
+      /**
+       * @description 전달하면 제목을 수정하고, 미전달 시 기존 값을 유지합니다. null 불가, 최대 120자
+       * @example 주말에 파리 근교 함께 가실 분!
+       */
+      title?: string;
+      /**
+       * @description 전달하면 본문을 수정하고, 미전달 시 기존 값을 유지합니다. null 불가
+       * @example 파리 근교 여행 동행을 구합니다.
+       */
+      content?: string;
+      /** @description 전달 시 나이 조건 전체를 교체하고, 미전달 시 유지합니다. null 및 빈 배열 불가 */
+      ageConditions?: ('EARLY_20S' | 'MID_20S' | 'LATE_20S' | 'OVER_30S')[];
+      /** @description 전달 시 성별 조건 전체를 교체하고, 미전달 시 유지합니다. null 및 빈 배열 불가 */
+      genderConditions?: ('MALE' | 'FEMALE')[];
+      /**
+       * @description 전달하면 동행 유형을 수정하고, 미전달 시 유지합니다. null 불가
+       * @example FULL_TRIP
+       * @enum {string}
+       */
+      companionType?:
+        | 'FULL_TRIP'
+        | 'PARTIAL_TRIP'
+        | 'ACCOMMODATION_SHARE'
+        | 'TOUR'
+        | 'MEAL'
+        | 'DAILY_LIFE'
+        | 'GROUP_PURCHASE';
+      /**
+       * @description 전달하면 모집 인원을 수정하고, 미전달 시 유지합니다. null 불가
+       * @example TWO
+       * @enum {string}
+       */
+      recruitmentCountType?:
+        | 'UNDECIDED'
+        | 'ONE'
+        | 'TWO'
+        | 'THREE'
+        | 'FOUR_OR_MORE';
+      /**
+       * @description 전달 시 태그 전체를 교체하고, 미전달 시 유지합니다. null 및 빈 배열 불가
+       * @example [
+       *       1,
+       *       2,
+       *       3
+       *     ]
+       */
+      tagIds?: number[];
+      /**
+       * @description 전달 시 이미지 전체를 교체하고, 미전달 시 유지합니다. null 불가. 빈 배열은 전체 삭제
+       * @example [
+       *       "https://example.com/post-image.png"
+       *     ]
+       */
+      imageUrls?: string[];
+    };
+    UpdatePostResponse: {
+      /**
+       * Format: int64
+       * @description 수정된 게시글 ID
+       * @example 1
+       */
+      postId: number;
+    };
+    /** @description 게시글 수정 성공 응답 */
+    UpdatePostSuccessResponse: {
+      /** @example true */
+      success: boolean;
+      /** @example POST-S004 */
+      code: string;
+      /** @example 게시글 수정에 성공했습니다. */
+      message: string;
+      data: components['schemas']['UpdatePostResponse'];
+    };
+    BaseResponseUpdatePostResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['UpdatePostResponse'];
     };
     UpdatePostStatusRequest: {
       /**
@@ -861,27 +2391,37 @@ export interface components {
        */
       status?: 'RECRUITING' | 'COMPLETED';
     };
+    ExchangeVerificationRejectRequest: {
+      /**
+       * @description 반려 사유
+       * @example 서류가 확인되지 않습니다.
+       */
+      rejectionReason: string;
+    };
     BaseResponseUserPublicProfileResponse: {
       success?: boolean;
       code?: string;
       message?: string;
       data?: components['schemas']['UserPublicProfileResponse'];
     };
-    TagGroupResponse: {
+    OrderedTagResponse: {
       /**
-       * @description 태그 타입
-       * @example ACTIVITY
+       * Format: int64
+       * @description 태그 ID
+       * @example 27
+       */
+      id: number;
+      /**
+       * @description 태그 이름
+       * @example 계획형
+       */
+      name: string;
+      /**
+       * @description 태그 카테고리
+       * @example TRAVEL_STYLE
        * @enum {string}
        */
-      tagType?: 'ACTIVITY' | 'INTEREST' | 'TRAVEL_STYLE';
-      /**
-       * @description 해당 타입의 전체 태그 이름 목록
-       * @example [
-       *       "액티비티",
-       *       "맛집탐방"
-       *     ]
-       */
-      tags?: string[];
+      tagType: 'ACTIVITY' | 'INTEREST' | 'TRAVEL_STYLE';
     };
     UserPublicProfileResponse: {
       /**
@@ -889,47 +2429,39 @@ export interface components {
        * @description 사용자 ID
        * @example 1
        */
-      userId?: number;
+      userId: number;
       /**
        * @description 닉네임
        * @example 버디
        */
-      nickname?: string;
+      nickname: string;
       /**
        * @description 프로필 이미지 URL
        * @example https://example.com/profile.png
        */
-      profileImageUrl?: string;
+      profileImageUrl: string;
       /**
        * @description 자기소개
        * @example 같이 여행해요!
        */
-      bio?: string;
+      bio: string;
       /**
-       * @description 프로필에 표시할 인증 뱃지
-       * @example SOCIAL_LOGIN
-       * @enum {string}
+       * @description 학교 이메일 인증 여부
+       * @example true
        */
-      verificationBadge?:
-        | 'SOCIAL_LOGIN'
-        | 'UNIVERSITY_VERIFIED'
-        | 'EXCHANGE_VERIFIED';
+      universityEmailVerified: boolean;
       /**
-       * @description 대표 취향 태그
-       * @example [
-       *       "문화생활",
-       *       "액티비티",
-       *       "활발한"
-       *     ]
+       * @description 파견교 서류 인증 여부
+       * @example true
        */
-      representativeTags?: string[];
-      /** @description 전체 취향 태그 */
-      allTags?: components['schemas']['TagGroupResponse'][];
+      exchangeDocumentVerified: boolean;
+      /** @description 사용자가 지정한 순서의 상위 3개 대표 취향 태그 */
+      representativeTags: components['schemas']['OrderedTagResponse'][];
       /**
        * @description 삭제된 사용자 여부
        * @example false
        */
-      isDeleted?: boolean;
+      isDeleted: boolean;
     };
     BaseResponseUserPostsResponse: {
       success?: boolean;
@@ -993,6 +2525,46 @@ export interface components {
        */
       hasNext?: boolean;
     };
+    BaseResponseUserCoursesResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['UserCoursesResponse'];
+    };
+    CourseResponse: {
+      /**
+       * Format: int64
+       * @description 코스 ID
+       * @example 1
+       */
+      courseId: number;
+      /**
+       * @description 프로필에 표시할 코스 썸네일 URL (1일차의 첫 사진, 없으면 null)
+       * @example https://example.com/course-thumbnail.png
+       */
+      thumbnailImageUrl: string | null;
+    };
+    UserCoursesResponse: {
+      /** @description 사용자가 작성한 코스 목록 */
+      courses: components['schemas']['CourseResponse'][];
+      /**
+       * Format: int32
+       * @description 현재 페이지 번호. 0부터 시작합니다.
+       * @example 0
+       */
+      page: number;
+      /**
+       * Format: int32
+       * @description 페이지 크기
+       * @example 18
+       */
+      size: number;
+      /**
+       * @description 다음 페이지 존재 여부
+       * @example true
+       */
+      hasNext: boolean;
+    };
     BaseResponseUserProfileResponse: {
       success?: boolean;
       code?: string;
@@ -1005,48 +2577,50 @@ export interface components {
        * @description 사용자 ID
        * @example 1
        */
-      userId?: number;
+      userId: number;
       /**
        * @description 닉네임
        * @example 버디
        */
-      nickname?: string;
+      nickname: string;
       /**
        * @description 프로필 이미지 URL
        * @example https://example.com/profile.png
        */
-      profileImageUrl?: string;
+      profileImageUrl: string;
       /**
        * @description 자기소개
        * @example 같이 여행해요!
        */
-      bio?: string;
+      bio: string;
       /**
-       * @description 프로필에 표시할 인증 뱃지
-       * @example SOCIAL_LOGIN
-       * @enum {string}
+       * @description 학교 이메일 인증 여부
+       * @example true
        */
-      verificationBadge?:
-        | 'SOCIAL_LOGIN'
-        | 'UNIVERSITY_VERIFIED'
-        | 'EXCHANGE_VERIFIED';
+      universityEmailVerified: boolean;
       /**
-       * @description 대표 취향 태그
-       * @example [
-       *       "문화생활",
-       *       "액티비티",
-       *       "활발한"
-       *     ]
+       * @description 파견교 서류 인증 여부
+       * @example true
        */
-      representativeTags?: string[];
-      /** @description 전체 취향 태그 */
-      allTags?: components['schemas']['TagGroupResponse'][];
+      exchangeDocumentVerified: boolean;
+      /** @description 사용자가 지정한 순서대로 정렬된 전체 취향 태그 */
+      orderedTags: components['schemas']['OrderedTagResponse'][];
     };
-    BaseResponseListTagResponse: {
+    BaseResponseListTagGroupListResponse: {
       success?: boolean;
       code?: string;
       message?: string;
-      data?: components['schemas']['TagResponse'][];
+      data?: components['schemas']['TagGroupListResponse'][];
+    };
+    TagGroupListResponse: {
+      /**
+       * @description 태그 카테고리
+       * @example ACTIVITY
+       * @enum {string}
+       */
+      tagType: 'ACTIVITY' | 'INTEREST' | 'TRAVEL_STYLE';
+      /** @description 카테고리에 속한 전체 태그 */
+      tags: components['schemas']['TagResponse'][];
     };
     TagResponse: {
       /**
@@ -1054,12 +2628,264 @@ export interface components {
        * @description 태그 ID
        * @example 1
        */
-      id?: number;
+      id: number;
       /**
        * @description 태그 이름
        * @example 여행
        */
+      name: string;
+    };
+    BaseResponseListTagResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['TagResponse'][];
+    };
+    BaseResponseSearchResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['SearchResponse'];
+    };
+    CourseSearchResponse: {
+      /** @description 코스 검색 결과 */
+      content: components['schemas']['CourseSummaryResponse'][];
+      /**
+       * Format: int32
+       * @description 현재 페이지 번호
+       * @example 0
+       */
+      page: number;
+      /**
+       * Format: int32
+       * @description 페이지 크기
+       * @example 5
+       */
+      size: number;
+      /**
+       * Format: int64
+       * @description 검색 조건에 일치하는 전체 코스 수. page=0에서만 제공하며 page>0에서는 null입니다.
+       * @example 12
+       */
+      totalElements: number | null;
+      /**
+       * @description 다음 페이지 존재 여부
+       * @example false
+       */
+      hasNext: boolean;
+    };
+    CourseSummaryResponse: {
+      /**
+       * Format: int64
+       * @description 코스 ID
+       * @example 1
+       */
+      courseId: number;
+      /**
+       * @description 코스 제목
+       * @example 여유로운 파리 미술관 코스
+       */
+      title: string;
+      /**
+       * @description 코스 소개
+       * @example 2박 3일 코스로 다녀왔다. 버디즈로 구한 동행 친구와 함께했다.
+       */
+      content: string | null;
+      /**
+       * @description 로그인 사용자의 코스 저장 여부
+       * @example false
+       */
+      isBookmarked: boolean;
+      /**
+       * @description 일자별 사진을 합친 이미지 목록
+       * @example [
+       *       "https://example.com/day1.jpg"
+       *     ]
+       */
+      images: string[];
+      /**
+       * @description 여행 국가 목록 (쉼표로 구분)
+       * @example 체코, 독일
+       */
+      countries: string;
+      /**
+       * @description 여행 도시 목록 (쉼표로 구분)
+       * @example 프라하, 뮌헨, 베를린
+       */
+      cities: string;
+      /**
+       * Format: date-time
+       * @description 코스 생성일시
+       * @example 2026-08-20T14:30:00
+       */
+      createdAt: string;
+    };
+    PostListResponse: {
+      /** @description 게시글 목록 */
+      content?: components['schemas']['PostSummaryResponse'][];
+      /**
+       * Format: int32
+       * @description 현재 페이지 번호. 0부터 시작합니다.
+       * @example 0
+       */
+      page?: number;
+      /**
+       * Format: int32
+       * @description 페이지 크기
+       * @example 10
+       */
+      size?: number;
+      /**
+       * @description 다음 페이지 존재 여부
+       * @example true
+       */
+      hasNext?: boolean;
+      /**
+       * Format: int64
+       * @description 페이지 번호·크기와 무관한 조회 조건에 일치하는 전체 게시글 수. 저장 목록은 해당 사용자가 저장한 삭제되지 않은 게시글 수입니다.
+       * @example 42
+       */
+      totalElements?: number;
+    };
+    PostSummaryCountryResponse: {
+      /**
+       * Format: int64
+       * @description 국가 ID
+       * @example 1
+       */
+      countryId?: number;
+      /**
+       * @description 국가 이름
+       * @example 프랑스
+       */
       name?: string;
+    };
+    PostSummaryResponse: {
+      /**
+       * Format: int64
+       * @description 게시글 ID
+       * @example 1
+       */
+      postId?: number;
+      /**
+       * @description 게시글 제목
+       * @example 주말에 파리 근교 함께 가실 분!
+       */
+      title?: string;
+      /**
+       * @description 게시글 본문
+       * @example 같이 맛집이랑 관광지 다니실 분 구해요.
+       */
+      content?: string;
+      /** @description 국가 */
+      country?: components['schemas']['PostSummaryCountryResponse'];
+      /**
+       * Format: date
+       * @description 동행 시작일
+       * @example 2026-07-23
+       */
+      startDate?: string;
+      /**
+       * Format: date
+       * @description 동행 종료일
+       * @example 2026-07-28
+       */
+      endDate?: string;
+      /**
+       * Format: int32
+       * @description 동행 총 일수
+       * @example 6
+       */
+      durationDays?: number;
+      /**
+       * @description 모집 상태
+       * @example RECRUITING
+       * @enum {string}
+       */
+      recruitmentStatus?: 'RECRUITING' | 'COMPLETED';
+      /**
+       * @description 대표 이미지 URL
+       * @example https://example.com/thumbnail.png
+       */
+      thumbnailImageUrl?: string;
+      /**
+       * @description 로그인 사용자의 게시글 저장 여부
+       * @example true
+       */
+      isBookmarked?: boolean;
+    };
+    SearchResponse: {
+      /** @description 코스 검색 결과. type 생략 또는 COURSE 지정 시에만 포함 */
+      courses?: components['schemas']['CourseSearchResponse'];
+      /** @description 사용자 검색 결과. type 생략 또는 USER 지정 시에만 포함 */
+      users?: components['schemas']['UserSearchResponse'];
+      /** @description 동행 게시글 검색 결과. type 생략 또는 POST 지정 시에만 포함 */
+      posts?: components['schemas']['PostListResponse'];
+    };
+    UserSearchResponse: {
+      /** @description 사용자 검색 결과 */
+      content: components['schemas']['UserSummaryResponse'][];
+      /**
+       * Format: int32
+       * @description 현재 페이지 번호
+       * @example 0
+       */
+      page: number;
+      /**
+       * Format: int32
+       * @description 페이지 크기
+       * @example 5
+       */
+      size: number;
+      /**
+       * Format: int64
+       * @description 검색 조건에 일치하는 전체 사용자 수. page=0에서만 제공하며 page>0에서는 null입니다.
+       * @example 12
+       */
+      totalElements: number | null;
+      /**
+       * @description 다음 페이지 존재 여부
+       * @example false
+       */
+      hasNext: boolean;
+    };
+    UserSummaryResponse: {
+      /**
+       * Format: int64
+       * @description 사용자 ID
+       * @example 10
+       */
+      userId: number;
+      /**
+       * @description 닉네임
+       * @example 파리여행자
+       */
+      nickname: string;
+      /** @description 프로필 이미지 URL */
+      profileImageUrl?: string | null;
+    };
+    BaseResponseSearchSuggestionResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['SearchSuggestionResponse'];
+    };
+    SearchSuggestionResponse: {
+      /** @description 자동완성 검색어 목록 */
+      suggestions: components['schemas']['SuggestionResponse'][];
+    };
+    SuggestionResponse: {
+      /**
+       * @description 자동완성 타입
+       * @example CITY
+       * @enum {string}
+       */
+      type: 'COUNTRY' | 'CITY' | 'PLACE' | 'USER' | 'COURSE' | 'POST';
+      /**
+       * @description 자동완성 검색어
+       * @example 파리
+       */
+      keyword: string;
     };
     BaseResponseRecommendedUserListResponse: {
       success?: boolean;
@@ -1165,6 +2991,21 @@ export interface components {
        */
       endDate?: string;
     };
+    RecommendedPostAuthorResponse: {
+      /**
+       * Format: int64
+       * @description 작성자 ID
+       * @example 10
+       */
+      userId?: number;
+      /**
+       * @description 작성자 닉네임
+       * @example 김가윤
+       */
+      nickname?: string;
+      /** @description 작성자 프로필 이미지 URL */
+      profileImageUrl?: string | null;
+    };
     RecommendedPostCountryResponse: {
       /**
        * Format: int64
@@ -1200,8 +3041,8 @@ export interface components {
       period?: components['schemas']['PeriodResponse'];
       /** @description 썸네일 이미지 주소 */
       thumbnailUrl?: string | null;
-      /** @description 작성자 프로필 이미지 URL */
-      authorProfileImageUrl?: string | null;
+      /** @description 작성자 정보 */
+      author?: components['schemas']['RecommendedPostAuthorResponse'];
       /** @description 게시글 국가 */
       country?: components['schemas']['RecommendedPostCountryResponse'];
       /**
@@ -1216,89 +3057,6 @@ export interface components {
       code?: string;
       message?: string;
       data?: components['schemas']['PostListResponse'];
-    };
-    PostListResponse: {
-      /** @description 게시글 목록 */
-      content?: components['schemas']['PostSummaryResponse'][];
-      /**
-       * Format: int32
-       * @description 현재 페이지 번호. 0부터 시작합니다.
-       * @example 0
-       */
-      page?: number;
-      /**
-       * Format: int32
-       * @description 페이지 크기
-       * @example 10
-       */
-      size?: number;
-      /**
-       * @description 다음 페이지 존재 여부
-       * @example true
-       */
-      hasNext?: boolean;
-    };
-    PostSummaryCountryResponse: {
-      /**
-       * Format: int64
-       * @description 국가 ID
-       * @example 1
-       */
-      countryId?: number;
-      /**
-       * @description 국가 이름
-       * @example France
-       */
-      name?: string;
-    };
-    PostSummaryResponse: {
-      /**
-       * Format: int64
-       * @description 게시글 ID
-       * @example 1
-       */
-      postId?: number;
-      /**
-       * @description 게시글 제목
-       * @example 주말에 파리 근교 함께 가실 분!
-       */
-      title?: string;
-      /**
-       * @description 게시글 본문
-       * @example 같이 맛집이랑 관광지 다니실 분 구해요.
-       */
-      content?: string;
-      /** @description 국가 */
-      country?: components['schemas']['PostSummaryCountryResponse'];
-      /**
-       * Format: date
-       * @description 동행 시작일
-       * @example 2026-07-23
-       */
-      startDate?: string;
-      /**
-       * Format: date
-       * @description 동행 종료일
-       * @example 2026-07-28
-       */
-      endDate?: string;
-      /**
-       * Format: int32
-       * @description 동행 총 일수
-       * @example 6
-       */
-      durationDays?: number;
-      /**
-       * @description 모집 상태
-       * @example RECRUITING
-       * @enum {string}
-       */
-      recruitmentStatus?: 'RECRUITING' | 'COMPLETED';
-      /**
-       * @description 대표 이미지 URL
-       * @example https://example.com/thumbnail.png
-       */
-      thumbnailImageUrl?: string;
     };
     AuthorResponse: {
       /**
@@ -1422,6 +3180,11 @@ export interface components {
        * @example false
        */
       isMine?: boolean;
+      /**
+       * @description 로그인 사용자의 게시글 저장 여부
+       * @example false
+       */
+      isBookmarked?: boolean;
       /**
        * @description 모집 상태
        * @example RECRUITING
@@ -1568,6 +3331,680 @@ export interface components {
        */
       timeAgo?: string;
     };
+    BaseResponseClosingSoonPostResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['ClosingSoonPostResponse'];
+    };
+    ClosingSoonPostCountryResponse: {
+      /**
+       * Format: int64
+       * @description 국가 ID
+       * @example 1
+       */
+      countryId?: number;
+      /**
+       * @description 국가 이름
+       * @example France
+       */
+      name?: string;
+    };
+    ClosingSoonPostResponse: {
+      /** @description 마감 임박 게시글 목록 */
+      content?: components['schemas']['ClosingSoonPostSummaryResponse'][];
+    };
+    ClosingSoonPostSummaryResponse: {
+      /**
+       * Format: int64
+       * @description 게시글 ID
+       * @example 1
+       */
+      postId?: number;
+      /** @description 국가 */
+      country?: components['schemas']['ClosingSoonPostCountryResponse'];
+      /**
+       * @description 게시글 제목
+       * @example 파리 9월 출국 프랑스 교환학생 동행 구함
+       */
+      title?: string;
+      /**
+       * @description 게시글 본문
+       * @example 안녕하세요! 이번 가을 학기 교환학생으로 갑니다.
+       */
+      content?: string;
+      /**
+       * Format: date
+       * @description 동행 시작일
+       * @example 2026-09-01
+       */
+      startDate?: string;
+      /**
+       * Format: date
+       * @description 동행 종료일
+       * @example 2026-09-04
+       */
+      endDate?: string;
+      /**
+       * Format: int32
+       * @description 동행 총 일수
+       * @example 4
+       */
+      durationDays?: number;
+      /**
+       * @description 대표 이미지 URL
+       * @example https://example.com/posts/1.jpg
+       */
+      thumbnailImageUrl?: string | null;
+      /**
+       * @description 현재 사용자의 게시글 저장 여부
+       * @example true
+       */
+      isSaved?: boolean;
+    };
+    BaseResponsePlaceSearchResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['PlaceSearchResponse'];
+    };
+    PlaceResponse: {
+      /**
+       * @description 구글 place_id. 저장(북마크) 시 이 값을 사용
+       * @example ChIJN1t_tDeuEmsRUsoyG83frY4
+       */
+      placeId: string;
+      /**
+       * @description 장소명. 구글이 이름을 안 줄 경우 null일 수 있음
+       * @example 루브르 박물관
+       */
+      name: string | null;
+      /**
+       * @description 장소 카테고리
+       * @example TOURISM
+       * @enum {string}
+       */
+      category?: 'RESTAURANT' | 'CAFE' | 'TOURISM' | 'ACCOMMODATION' | 'ETC';
+      /**
+       * @description 주소. 구글이 주소를 안 줄 경우 null일 수 있음
+       * @example Rue de Rivoli, 75001 Paris
+       */
+      address: string | null;
+      /**
+       * Format: double
+       * @description 위도. 구글이 좌표를 안 줄 경우 null일 수 있음
+       * @example 48.8606
+       */
+      latitude: number | null;
+      /**
+       * Format: double
+       * @description 경도. 구글이 좌표를 안 줄 경우 null일 수 있음
+       * @example 2.3376
+       */
+      longitude: number | null;
+      /**
+       * @description 로그인 유저의 저장 여부
+       * @example false
+       */
+      bookmarked: boolean;
+      /** @description 대표 사진 URL */
+      photoUrl?: string | null;
+      /**
+       * @description 구글맵에서 이 장소를 여는 딥링크
+       * @example https://www.google.com/maps/search/?api=1&query=%EB%A3%A8%EB%B8%8C%EB%A5%B4+%EB%B0%95%EB%AC%BC%EA%B4%80&query_place_id=ChIJN1t_tDeuEmsRUsoyG83frY4
+       */
+      googleMapsUrl: string;
+      /**
+       * @description 국가명(구글 표기, 한글). 구글이 주소 구성요소를 안 줄 경우 null
+       * @example 프랑스
+       */
+      country: string | null;
+      /**
+       * @description 도시명(구글 표기, 한글). locality가 없으면 상위 행정구역으로 대체, 그래도 없으면 null
+       * @example 파리
+       */
+      city: string | null;
+    };
+    PlaceSearchResponse: {
+      places?: components['schemas']['PlaceResponse'][];
+      /** @description 다음 페이지 조회용 토큰. 다음 페이지 없으면 null */
+      nextPageToken?: string | null;
+    };
+    BaseResponseBookmarkedPlaceListResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['BookmarkedPlaceListResponse'];
+    };
+    BookmarkedPlaceListResponse: {
+      /** @description 저장한 장소 목록. 최근 저장순 */
+      places: components['schemas']['BookmarkedPlaceResponse'][];
+      /**
+       * Format: int32
+       * @description 현재 페이지 번호. 0부터 시작합니다.
+       * @example 0
+       */
+      page: number;
+      /**
+       * Format: int32
+       * @description 페이지 크기
+       * @example 20
+       */
+      size: number;
+      /**
+       * @description 다음 페이지 존재 여부
+       * @example true
+       */
+      hasNext: boolean;
+    };
+    BookmarkedPlaceResponse: {
+      /**
+       * @description 구글 place_id. 저장 취소 시 이 값을 사용
+       * @example ChIJN1t_tDeuEmsRUsoyG83frY4
+       */
+      placeId: string;
+      /**
+       * @description 장소명 (저장 시점 스냅샷)
+       * @example 루브르 박물관
+       */
+      name: string;
+      /**
+       * @description 장소 카테고리
+       * @example TOURISM
+       * @enum {string}
+       */
+      category: 'RESTAURANT' | 'CAFE' | 'TOURISM' | 'ACCOMMODATION' | 'ETC';
+      /**
+       * @description 주소 (저장 시점 스냅샷). 구글이 주소를 안 줬으면 null
+       * @example Rue de Rivoli, 75001 Paris
+       */
+      address: string | null;
+      /**
+       * Format: double
+       * @description 위도. 좌표를 저장하지 못했으면 null
+       * @example 48.8606
+       */
+      latitude: number | null;
+      /**
+       * Format: double
+       * @description 경도. 좌표를 저장하지 못했으면 null
+       * @example 2.3376
+       */
+      longitude: number | null;
+      /**
+       * @description 대표 사진 프록시 URL. 사진이 없으면 이 URL 호출 시 404가 반환됩니다.
+       * @example /api/v1/places/ChIJN1t_tDeuEmsRUsoyG83frY4/photo?maxWidth=400
+       */
+      photoUrl: string;
+      /**
+       * @description 구글맵에서 이 장소를 여는 딥링크
+       * @example https://www.google.com/maps/search/?api=1&query=%EB%A3%A8%EB%B8%8C%EB%A5%B4+%EB%B0%95%EB%AC%BC%EA%B4%80&query_place_id=ChIJN1t_tDeuEmsRUsoyG83frY4
+       */
+      googleMapsUrl: string;
+      /**
+       * Format: date-time
+       * @description 저장한 시각
+       * @example 2026-08-30T21:00:00
+       */
+      bookmarkedAt: string;
+    };
+    BaseResponseBookmarkedPlaceMarkersResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['BookmarkedPlaceMarkersResponse'];
+    };
+    BookmarkedPlaceMarkersResponse: {
+      /** @description 요청한 지도 영역 안에 있는, 로그인 유저가 저장한 장소 목록 */
+      places: components['schemas']['BookmarkedPlaceResponse'][];
+      /**
+       * @description 영역 안 저장 장소가 상한을 초과해 일부만 반환됐는지 여부. true면 지도를 확대해 다시 조회하도록 안내
+       * @example false
+       */
+      truncated: boolean;
+    };
+    MagazineListResponse: {
+      /**
+       * Format: int64
+       * @description 조회 조건에 해당하는 전체 매거진 수
+       * @example 2
+       */
+      totalCount: number;
+      /**
+       * Format: int32
+       * @description 현재 페이지 번호. 0부터 시작합니다.
+       * @example 0
+       */
+      page: number;
+      /**
+       * Format: int32
+       * @description 페이지 크기
+       * @example 10
+       */
+      size: number;
+      /**
+       * @description 다음 페이지 존재 여부
+       * @example false
+       */
+      hasNext: boolean;
+      /** @description 매거진 목록 */
+      magazines: components['schemas']['MagazineSummaryResponse'][];
+    };
+    /** @description 매거진 목록 조회 성공 응답 */
+    MagazineListSuccessResponse: {
+      /** @example true */
+      success: boolean;
+      /** @example MAGAZINE-S001 */
+      code: string;
+      /** @example 매거진 목록 조회에 성공했습니다. */
+      message: string;
+      data: components['schemas']['MagazineListResponse'];
+    };
+    MagazineSummaryResponse: {
+      /**
+       * Format: int64
+       * @description 매거진 ID
+       * @example 1
+       */
+      magazineId: number;
+      /**
+       * @description 매거진 제목
+       * @example 유럽 교환학생이라면 루프트한자 학생 혜택부터!
+       */
+      title: string;
+      /**
+       * @description 매거진 목록용 요약 문구
+       * @example 유럽 교환학생을 준비하고 있다면 꼭 확인해야 할 혜택을 소개해요.
+       */
+      summary: string;
+      /**
+       * @description 썸네일 이미지 URL
+       * @example https://example.com/magazines/1.png
+       */
+      thumbnailImageUrl: string;
+      /**
+       * Format: date
+       * @description 발행일
+       * @example 2026-08-20
+       */
+      publishedAt: string;
+      /**
+       * @description 인스타그램 게시물 링크
+       * @example https://www.instagram.com/p/ABC123/
+       */
+      externalUrl: string;
+      /**
+       * @description 로그인한 사용자의 저장 여부
+       * @example true
+       */
+      isBookmarked: boolean;
+    };
+    BaseResponseBookmarkedMagazineListResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['BookmarkedMagazineListResponse'];
+    };
+    BookmarkedMagazineListResponse: {
+      /** @description 저장한 매거진 목록 */
+      magazines: components['schemas']['BookmarkedMagazineResponse'][];
+      /**
+       * Format: int32
+       * @description 현재 페이지 번호. 0부터 시작합니다.
+       * @example 0
+       */
+      page: number;
+      /**
+       * Format: int32
+       * @description 페이지 크기
+       * @example 20
+       */
+      size: number;
+      /**
+       * @description 다음 페이지 존재 여부
+       * @example false
+       */
+      hasNext: boolean;
+    };
+    BookmarkedMagazineResponse: {
+      /**
+       * Format: int64
+       * @description 매거진 ID
+       * @example 1
+       */
+      magazineId: number;
+      /**
+       * @description 매거진 제목
+       * @example 교환학생을 위한 항공권 예약 팁
+       */
+      title: string;
+      /**
+       * @description 매거진 목록용 요약 문구
+       * @example 항공권을 저렴하게 예약하는 방법을 소개해요.
+       */
+      summary: string;
+      /**
+       * @description 썸네일 이미지 URL
+       * @example https://example.com/magazines/1.png
+       */
+      thumbnailImageUrl: string;
+      /**
+       * Format: date
+       * @description 발행일
+       * @example 2026-08-20
+       */
+      publishedAt: string;
+      /**
+       * @description 인스타그램 게시물 링크
+       * @example https://www.instagram.com/p/ABC123/
+       */
+      externalUrl: string;
+      /**
+       * @description 로그인한 사용자의 저장 여부
+       * @example true
+       */
+      isBookmarked: boolean;
+    };
+    BaseResponseCourseListResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['CourseListResponse'];
+    };
+    CourseListResponse: {
+      /** @description 코스 목록 */
+      content: components['schemas']['CourseSummaryResponse'][];
+      /**
+       * Format: int32
+       * @description 현재 페이지 번호. 0부터 시작합니다.
+       * @example 0
+       */
+      page: number;
+      /**
+       * Format: int32
+       * @description 페이지 크기
+       * @example 20
+       */
+      size: number;
+      /**
+       * @description 다음 페이지 존재 여부
+       * @example true
+       */
+      hasNext: boolean;
+    };
+    BaseResponseCourseDetailResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['CourseDetailResponse'];
+    };
+    CompanionResponse: {
+      /**
+       * Format: int64
+       * @description 동행 유저 ID
+       * @example 12
+       */
+      userId: number;
+      /**
+       * @description 동행 유저 닉네임
+       * @example 이버디
+       */
+      nickname: string;
+      /**
+       * @description 동행 유저 프로필 이미지 URL
+       * @example https://example.com/profile2.png
+       */
+      profileImageUrl: string | null;
+    };
+    CourseCityResponse: {
+      /**
+       * Format: int64
+       * @description 도시 ID
+       * @example 11160
+       */
+      cityId: number;
+      /**
+       * @description 도시 이름
+       * @example Paris
+       */
+      name: string;
+      /**
+       * @description 도시 한글 이름
+       * @example 파리
+       */
+      koreanName: string;
+    };
+    CourseCountryResponse: {
+      /**
+       * Format: int64
+       * @description 국가 ID
+       * @example 240
+       */
+      countryId: number;
+      /**
+       * @description 국가 이름
+       * @example France
+       */
+      name: string;
+    };
+    CourseDetailResponse: {
+      /**
+       * Format: int64
+       * @description 코스 ID
+       * @example 1
+       */
+      courseId: number;
+      /** @description 작성자 정보 */
+      author: components['schemas']['AuthorResponse'];
+      /**
+       * @description 로그인 사용자의 코스 여부
+       * @example false
+       */
+      isMine: boolean;
+      /**
+       * @description 로그인 사용자의 코스 저장 여부
+       * @example false
+       */
+      isBookmarked: boolean;
+      /**
+       * @description 코스 제목
+       * @example 파리 5일 코스
+       */
+      title: string;
+      /**
+       * @description 코스 소개
+       * @example 루브르부터...
+       */
+      content: string | null;
+      /** @description 여행 국가 목록 */
+      countries: components['schemas']['CourseCountryResponse'][];
+      /** @description 여행 도시 목록 */
+      cities: components['schemas']['CourseCityResponse'][];
+      /**
+       * Format: date
+       * @description 출발일
+       * @example 2026-09-01
+       */
+      startDate: string | null;
+      /**
+       * Format: date
+       * @description 도착일
+       * @example 2026-09-05
+       */
+      endDate: string | null;
+      /** @description 연결된 태그 목록 */
+      tags: components['schemas']['CourseTagResponse'][];
+      /** @description 함께한 유저 목록 */
+      companions: components['schemas']['CompanionResponse'][];
+      /** @description 일자별 코스 목록 */
+      days: components['schemas']['DayResponse'][];
+      /**
+       * Format: int64
+       * @description 조회수
+       * @example 11
+       */
+      viewCount: number;
+      /**
+       * Format: int64
+       * @description 댓글 수
+       * @example 3
+       */
+      commentCount: number;
+      /**
+       * Format: int64
+       * @description 저장 수
+       * @example 5
+       */
+      bookmarkCount: number;
+      /**
+       * Format: date-time
+       * @description 코스 생성일시
+       * @example 2026-08-20T14:30:00
+       */
+      createdAt: string;
+    };
+    CourseTagResponse: {
+      /**
+       * Format: int64
+       * @description 태그 ID
+       * @example 1
+       */
+      tagId: number;
+      /**
+       * @description 태그 이름
+       * @example 맛집
+       */
+      name: string;
+    };
+    DayResponse: {
+      /**
+       * Format: int32
+       * @description 일차 (1부터 시작)
+       * @example 1
+       */
+      dayNumber: number;
+      /**
+       * Format: date
+       * @description 해당 일자의 실제 날짜
+       * @example 2026-09-01
+       */
+      date: string | null;
+      /** @description 해당 일자의 사진 목록 */
+      imageUrls: string[];
+      /**
+       * @description 해당 일자의 메모
+       * @example 예약 필수
+       */
+      memo: string | null;
+      /**
+       * @description 해당 일자의 비용
+       * @example 22000
+       */
+      cost: number | null;
+      /** @description 해당 일자에 방문한 장소 목록 */
+      places: components['schemas']['PlaceResponse'][];
+      /** @description 해당 일자의 항공편 목록 */
+      flights: components['schemas']['FlightResponse'][];
+    };
+    FlightResponse: {
+      /**
+       * @description 항공사
+       * @example 대한항공
+       */
+      airline: string;
+      /**
+       * @description 항공편명
+       * @example KE901
+       */
+      flightNumber: string | null;
+      /**
+       * @description 출발 공항
+       * @example ICN
+       */
+      departureAirport: string;
+      /**
+       * @description 출발 시간 (HH:mm)
+       * @example 13:00
+       */
+      departureTime: string;
+      /**
+       * @description 도착 공항
+       * @example CDG
+       */
+      arrivalAirport: string;
+      /**
+       * @description 도착 시간 (HH:mm)
+       * @example 18:30
+       */
+      arrivalTime: string;
+    };
+    BaseResponseCourseCommentListResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['CourseCommentListResponse'];
+    };
+    CourseCommentListResponse: {
+      /** @description 댓글 목록 */
+      comments?: components['schemas']['CourseCommentResponse'][];
+      /**
+       * Format: int32
+       * @description 현재 페이지 번호. 0부터 시작합니다.
+       * @example 0
+       */
+      page?: number;
+      /**
+       * Format: int32
+       * @description 페이지 크기
+       * @example 20
+       */
+      size?: number;
+      /**
+       * @description 다음 페이지 존재 여부
+       * @example true
+       */
+      hasNext?: boolean;
+    };
+    CourseCommentResponse: {
+      /**
+       * Format: int64
+       * @description 댓글 ID
+       * @example 1
+       */
+      commentId?: number;
+      /**
+       * Format: int64
+       * @description 댓글 작성자 사용자 ID
+       * @example 10
+       */
+      writerId?: number;
+      /**
+       * @description 댓글 작성자 이름
+       * @example 유저 1
+       */
+      writerName?: string;
+      /**
+       * @description 댓글 작성자 프로필 이미지 URL
+       * @example https://example.com/profile.png
+       */
+      writerProfileImageUrl?: string | null;
+      /**
+       * @description 댓글 내용
+       * @example 저도 같이 가고 싶어요!
+       */
+      content?: string;
+      /**
+       * Format: date-time
+       * @description 댓글 작성 시간
+       * @example 2026-07-09T21:00:00
+       */
+      createdAt?: string;
+      /**
+       * @description 상대 작성 시간
+       * @example 1시간 전
+       */
+      timeAgo?: string;
+    };
     BaseResponseCountryListResponse: {
       success?: boolean;
       code?: string;
@@ -1594,6 +4031,11 @@ export interface components {
        * @example 대한민국
        */
       name?: string;
+      /**
+       * @description 영문 국가 이름. 영문명이 없는 국가는 null입니다.
+       * @example South Korea
+       */
+      englishName?: string | null;
       /**
        * @description 국가 코드
        * @example KR
@@ -1676,6 +4118,22 @@ export interface components {
        * @example 서울
        */
       koreanName?: string | null;
+      /**
+       * @description 도시 중심 위도. 근처 장소 조회(/api/v1/places/nearby) 요청 시 lat로 사용할 수 있습니다.
+       * @example 37.5665
+       */
+      latitude?: number | null;
+      /**
+       * @description 도시 중심 경도. 근처 장소 조회(/api/v1/places/nearby) 요청 시 lng로 사용할 수 있습니다.
+       * @example 126.978
+       */
+      longitude?: number | null;
+      /**
+       * Format: int32
+       * @description 도시 인구 기반으로 추정한 추천 검색 반경(미터). 근처 장소 조회(/api/v1/places/nearby) 요청 시 radius로 사용할 수 있습니다.
+       * @example 25000
+       */
+      recommendedRadius?: number;
     };
     BaseResponseChatRoomListResponse: {
       success?: boolean;
@@ -1789,6 +4247,207 @@ export interface components {
        */
       isRead?: boolean;
     };
+    AirlineListResponse: {
+      /** @description 검색된 항공사 목록. keyword가 없으면 항상 빈 리스트입니다. */
+      airlines: components['schemas']['AirlineResponse'][];
+      /**
+       * Format: int32
+       * @description 현재 페이지 번호 (0부터 시작)
+       * @example 0
+       */
+      page: number;
+      /**
+       * Format: int32
+       * @description 페이지 크기
+       * @example 20
+       */
+      size: number;
+      /**
+       * @description 다음 페이지 존재 여부
+       * @example false
+       */
+      hasNext: boolean;
+    };
+    AirlineResponse: {
+      /**
+       * Format: int64
+       * @description 항공사 ID
+       * @example 1
+       */
+      id: number;
+      /**
+       * @description 항공사명(영문)
+       * @example Korean Air
+       */
+      name: string;
+      /**
+       * @description 항공사명(국문). 없으면 null입니다.
+       * @example 대한항공
+       */
+      koreanName: string | null;
+      /**
+       * @description 항공사 코드 (IATA)
+       * @example KE
+       */
+      code: string;
+    };
+    BaseResponseAirlineListResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['AirlineListResponse'];
+    };
+    BaseResponseExchangeVerificationListResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['ExchangeVerificationListResponse'];
+    };
+    ExchangeVerificationListResponse: {
+      /** @description 서류 인증 신청 목록 */
+      content?: components['schemas']['ExchangeVerificationSummaryResponse'][];
+      /**
+       * Format: int32
+       * @description 현재 페이지 번호. 0부터 시작합니다.
+       * @example 0
+       */
+      page?: number;
+      /**
+       * Format: int32
+       * @description 페이지 크기
+       * @example 20
+       */
+      size?: number;
+      /**
+       * @description 다음 페이지 존재 여부
+       * @example false
+       */
+      hasNext?: boolean;
+    };
+    ExchangeVerificationSummaryResponse: {
+      /**
+       * Format: int64
+       * @description 서류 인증 신청 ID
+       * @example 1
+       */
+      verificationId?: number;
+      /**
+       * Format: int64
+       * @description 신청자 사용자 ID
+       * @example 10
+       */
+      userId?: number;
+      /**
+       * @description 신청자 닉네임
+       * @example 지현
+       */
+      nickname?: string;
+      /**
+       * Format: date-time
+       * @description 신청 일시(UTC)
+       * @example 2026-08-30T05:20:00Z
+       */
+      submittedAt?: string;
+      /**
+       * @description 처리 상태
+       * @example PENDING
+       * @enum {string}
+       */
+      status?: 'PENDING' | 'APPROVED' | 'REJECTED';
+    };
+    BaseResponseExchangeVerificationDetailResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['ExchangeVerificationDetailResponse'];
+    };
+    ExchangeVerificationDetailResponse: {
+      /**
+       * Format: int64
+       * @description 서류 인증 신청 ID
+       * @example 1
+       */
+      verificationId?: number;
+      /**
+       * Format: int64
+       * @description 신청자 사용자 ID
+       * @example 10
+       */
+      userId?: number;
+      /**
+       * @description 신청자 닉네임
+       * @example 지현
+       */
+      nickname?: string;
+      /**
+       * Format: date-time
+       * @description 신청 일시(UTC)
+       * @example 2026-08-30T05:20:00Z
+       */
+      submittedAt?: string;
+      /**
+       * @description 처리 상태
+       * @example PENDING
+       * @enum {string}
+       */
+      status?: 'PENDING' | 'APPROVED' | 'REJECTED';
+      /**
+       * @description 업로드한 원본 파일명
+       * @example 교환학생 확인서.pdf
+       */
+      originalFileName?: string;
+      /** @description 서류 열람용 URL. 5분 동안 유효합니다. */
+      documentUrl?: string;
+      /**
+       * @description 반려 사유. 반려 상태가 아니면 null입니다.
+       * @example 서류가 확인되지 않습니다.
+       */
+      rejectionReason?: string | null;
+    };
+    DeletePostResponse: {
+      /**
+       * Format: int64
+       * @description 삭제된 게시글 ID
+       * @example 1
+       */
+      postId: number;
+    };
+    /** @description 게시글 삭제 성공 응답 */
+    DeletePostSuccessResponse: {
+      /** @example true */
+      success: boolean;
+      /** @example POST-S005 */
+      code: string;
+      /** @example 게시글 삭제에 성공했습니다. */
+      message: string;
+      data: components['schemas']['DeletePostResponse'];
+    };
+    BaseResponseDeletePostResponse: {
+      success?: boolean;
+      code?: string;
+      message?: string;
+      data?: components['schemas']['DeletePostResponse'];
+    };
+    /** @description 게시글 저장 취소 성공 응답 */
+    DeletePostBookmarkSuccessResponse: {
+      /** @example true */
+      success: boolean;
+      /** @example POST-S007 */
+      code: string;
+      /** @example 게시글 저장 취소에 성공했습니다. */
+      message: string;
+      data: components['schemas']['PostBookmarkResponse'];
+    };
+    /** @description 매거진 저장 취소 성공 응답 */
+    DeleteMagazineBookmarkSuccessResponse: {
+      /** @example true */
+      success: boolean;
+      /** @example MAGAZINE-S003 */
+      code: string;
+      /** @example 매거진 저장 취소에 성공했습니다. */
+      message: string;
+      data: components['schemas']['MagazineBookmarkResponse'];
+    };
   };
   responses: never;
   parameters: never;
@@ -1798,6 +4457,864 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+  getMyProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 내 프로필 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseUserProfileResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 사용자 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "USER-E001",
+           *       "message": "사용자를 찾을 수 없습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  updateMyProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateProfileRequest'];
+      };
+    };
+    responses: {
+      /** @description 프로필 수정 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": true,
+           *       "code": "GLB-S001",
+           *       "message": "요청이 성공했습니다.",
+           *       "data": {
+           *         "nickname": "정바미",
+           *         "gender": "FEMALE",
+           *         "birthDate": "2004-10-24",
+           *         "bio": "안녕하세요 김버디입니다~~",
+           *         "profileImageUrl": "https://example.com/profile.png",
+           *         "orderedTags": [
+           *           {
+           *             "id": 27,
+           *             "name": "계획형",
+           *             "tagType": "TRAVEL_STYLE"
+           *           },
+           *           {
+           *             "id": 1,
+           *             "name": "여행",
+           *             "tagType": "ACTIVITY"
+           *           },
+           *           {
+           *             "id": 13,
+           *             "name": "자연",
+           *             "tagType": "INTEREST"
+           *           },
+           *           {
+           *             "id": 28,
+           *             "name": "즉흥형",
+           *             "tagType": "TRAVEL_STYLE"
+           *           }
+           *         ]
+           *       }
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 잘못된 프로필 수정 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 사용자 또는 태그 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 닉네임 중복 */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "AUTH-E003",
+           *       "message": "이미 사용 중인 닉네임입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  withdraw: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 회원 탈퇴 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": true,
+           *       "code": "GLB-S001",
+           *       "message": "요청이 성공했습니다."
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 사용자를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "USER-E001",
+           *       "message": "사용자를 찾을 수 없습니다."
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  getCourseDetail: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description 조회할 코스 ID
+         * @example 1
+         */
+        courseId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseCourseDetailResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 코스를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseCourseDetailResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  updateCourse: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description 수정할 코스 ID
+         * @example 1
+         */
+        courseId: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateCourseRequest'];
+      };
+    };
+    responses: {
+      /** @description 수정 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseUpdateCourseResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 코스 작성자가 아님 */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseUpdateCourseResponse'];
+        };
+      };
+      /** @description 코스, 국가, 도시 또는 태그를 찾을 수 없거나 사용자가 없거나 탈퇴함(USER-E001) */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseUpdateCourseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  deleteCourse: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description 삭제할 코스 ID
+         * @example 1
+         */
+        courseId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 삭제 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseVoid'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 코스 작성자가 아님 */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseVoid'];
+        };
+      };
+      /** @description 코스를 찾을 수 없거나 사용자가 없거나 탈퇴함(USER-E001) */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseVoid'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  sendVerification: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UniversityVerificationRequest'];
+      };
+    };
+    responses: {
+      /** @description 인증 코드 발송 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseVoid'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 대학교를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "LOC-E003",
+           *       "message": "대학교를 찾을 수 없습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 메일 발송 실패 또는 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  confirmVerification: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UniversityVerificationConfirmRequest'];
+      };
+    };
+    responses: {
+      /** @description 학교 인증 완료 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseVoid'];
+        };
+      };
+      /** @description 인증 코드가 올바르지 않거나 만료됨 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "UNIV-E001",
+           *       "message": "인증 코드가 올바르지 않거나 만료되었습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 대학교를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "LOC-E003",
+           *       "message": "대학교를 찾을 수 없습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증번호 입력 가능 횟수 초과 */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "UNIV-E003",
+           *       "message": "인증번호 입력 가능 횟수를 초과했습니다. 인증번호를 다시 발급해주세요.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  submit: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ExchangeVerificationSubmitRequest'];
+      };
+    };
+    responses: {
+      /** @description 신청 접수 성공 */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseExchangeVerificationSubmitResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  createUploadUrl: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ExchangeDocumentUploadUrlRequest'];
+      };
+    };
+    responses: {
+      /** @description 발급 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseExchangeDocumentUploadUrlResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
   getPosts: {
     parameters: {
       query?: {
@@ -1840,6 +5357,8 @@ export interface operations {
          * @example 1
          */
         tagId?: number;
+        /** @description 작성자 인증 조건 목록. 허용값: UNIVERSITY(대학 인증), EXCHANGE(파견교 인증). 복수 선택은 authorVerifications=UNIVERSITY&authorVerifications=EXCHANGE 또는 authorVerifications=UNIVERSITY,EXCHANGE로 전달합니다. 둘 다 선택하면 AND로 적용하며, 미선택 시 인증 상태로 필터링하지 않습니다. */
+        authorVerifications?: ('UNIVERSITY' | 'EXCHANGE')[];
         /**
          * @description 페이지 번호. 0 이상입니다.
          * @example 0
@@ -2190,6 +5709,521 @@ export interface operations {
       };
     };
   };
+  bookmarkPost: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description 저장할 게시글 ID
+         * @example 1
+         */
+        postId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 저장 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['PostBookmarkSuccessResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 게시글을 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponsePostBookmarkResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  removePostBookmark: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description 저장 취소할 게시글 ID
+         * @example 1
+         */
+        postId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 저장 취소 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['DeletePostBookmarkSuccessResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 게시글을 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponsePostBookmarkResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  bookmarkPlace: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description 구글 place_id
+         * @example ChIJN1t_tDeuEmsRUsoyG83frY4
+         */
+        placeId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 저장 성공 */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponsePlaceBookmarkResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 구글 Places 응답 실패 (업스트림 오류) */
+      502: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "PLACE-E001",
+           *       "message": "지도 서비스 응답에 실패했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  cancelPlaceBookmark: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description 구글 place_id
+         * @example ChIJN1t_tDeuEmsRUsoyG83frY4
+         */
+        placeId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 저장 취소 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponsePlaceBookmarkResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  bookmarkMagazine: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description 저장할 매거진 ID
+         * @example 1
+         */
+        magazineId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 저장 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['MagazineBookmarkSuccessResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 매거진을 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseMagazineBookmarkResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  removeMagazineBookmark: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description 저장 취소할 매거진 ID
+         * @example 1
+         */
+        magazineId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 저장 취소 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['DeleteMagazineBookmarkSuccessResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 매거진을 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseMagazineBookmarkResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
   createPresignedUrl: {
     parameters: {
       query?: never;
@@ -2244,6 +6278,482 @@ export interface operations {
            *     }
            */
           'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  getCourses: {
+    parameters: {
+      query?: {
+        /**
+         * @description 국가 ID
+         * @example 240
+         */
+        countryId?: number;
+        /**
+         * @description 태그 ID
+         * @example 1
+         */
+        tagId?: number;
+        /**
+         * @description 페이지 번호. 0 이상입니다.
+         * @example 0
+         */
+        page?: number;
+        /**
+         * @description 페이지 크기. 1 이상 100 이하입니다.
+         * @example 20
+         */
+        size?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseCourseListResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  createCourse: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateCourseRequest'];
+      };
+    };
+    responses: {
+      /** @description 작성 성공 */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseCreateCourseResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 국가, 도시, 태그 또는 사용자를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseCreateCourseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  getComments_1: {
+    parameters: {
+      query?: {
+        /**
+         * @description 페이지 번호. 0 이상입니다.
+         * @example 0
+         */
+        page?: number;
+        /**
+         * @description 페이지 크기. 1 이상 100 이하입니다.
+         * @example 20
+         */
+        size?: number;
+      };
+      header?: never;
+      path: {
+        /**
+         * @description 댓글 목록을 조회할 코스 ID
+         * @example 1
+         */
+        courseId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseCourseCommentListResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 코스를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseCourseCommentListResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  createComment_1: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description 댓글을 작성할 코스 ID
+         * @example 1
+         */
+        courseId: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateCommentRequest'];
+      };
+    };
+    responses: {
+      /** @description 작성 성공 */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseCreateCourseCommentResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 코스 또는 사용자를 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseCreateCourseCommentResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  bookmarkCourse: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description 저장할 코스 ID
+         * @example 1
+         */
+        courseId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 저장 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseCourseBookmarkResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 존재하지 않거나 삭제된 코스 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseCourseBookmarkResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  unbookmarkCourse: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description 저장 취소할 코스 ID
+         * @example 1
+         */
+        courseId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 저장 취소 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseCourseBookmarkResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 존재하지 않거나 삭제된 코스 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseCourseBookmarkResponse'];
         };
       };
       /** @description 서버 내부 오류 */
@@ -2448,6 +6958,198 @@ export interface operations {
       };
     };
   };
+  reportChatPartner: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description 채팅방 ID
+         * @example 1
+         */
+        chatRoomId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['ReportChatPartnerRequest'];
+      };
+    };
+    responses: {
+      /** @description 신고 접수 성공 (운영 메일 발송 실패 여부와 무관) */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseVoid'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 채팅방 접근 권한 없음 */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E003",
+           *       "message": "접근 권한이 없습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 채팅방을 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "CHAT-E002",
+           *       "message": "채팅방을 찾을 수 없습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  blockChatPartner: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description 채팅방 ID
+         * @example 1
+         */
+        chatRoomId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 차단 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseVoid'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 채팅방 접근 권한 없음 */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E003",
+           *       "message": "접근 권한이 없습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 채팅방을 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "CHAT-E002",
+           *       "message": "채팅방을 찾을 수 없습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
   reissue: {
     parameters: {
       query?: never;
@@ -2476,6 +7178,35 @@ export interface operations {
         };
         content: {
           '*/*': components['schemas']['BaseResponseLoginResponse'];
+        };
+      };
+    };
+  };
+  logout: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 로그아웃 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증되지 않은 사용자 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BaseResponse'];
         };
       };
     };
@@ -2511,6 +7242,55 @@ export interface operations {
       };
       /** @description 잘못된 인가 코드 또는 허용되지 않은 redirect_uri */
       400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseLoginResponse'];
+        };
+      };
+    };
+  };
+  googleLogin: {
+    parameters: {
+      query: {
+        /**
+         * @description 구글 OAuth 인가 코드
+         * @example 4/0AY0e-g7...
+         */
+        code: string;
+        /**
+         * @description 구글 인가 요청 시 사용한 redirect_uri
+         * @example http://localhost:3000/auth/google/callback
+         */
+        redirectUri: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 로그인 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseLoginResponse'];
+        };
+      };
+      /** @description 잘못된 인가 코드 또는 허용되지 않은 redirect_uri */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseLoginResponse'];
+        };
+      };
+      /** @description 신규 가입 사용자의 구글 이메일이 인증되지 않음 */
+      401: {
         headers: {
           [name: string]: unknown;
         };
@@ -2641,6 +7421,433 @@ export interface operations {
       };
     };
   };
+  getNotificationSetting: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 알림 설정 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseNotificationSettingResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 사용자 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "USER-E001",
+           *       "message": "사용자를 찾을 수 없습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  updateNotificationSetting: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateNotificationSettingRequest'];
+      };
+    };
+    responses: {
+      /** @description 알림 설정 변경 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseNotificationSettingResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 사용자 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "USER-E001",
+           *       "message": "사용자를 찾을 수 없습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  getPostDetail: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description 조회할 게시글 ID
+         * @example 1
+         */
+        postId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponsePostDetailResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 게시글을 찾을 수 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponsePostDetailResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  deletePost: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description 삭제할 게시글 ID
+         * @example 1
+         */
+        postId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 삭제 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['DeletePostSuccessResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 게시글 작성자가 아님 */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseDeletePostResponse'];
+        };
+      };
+      /** @description 게시글이 존재하지 않거나 이미 삭제됨, 또는 사용자가 없거나 탈퇴함(USER-E001) */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseDeletePostResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  updatePost: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description 수정할 게시글 ID
+         * @example 1
+         */
+        postId: number;
+      };
+      cookie?: never;
+    };
+    /** @description 게시글 부분 수정 요청. 하나 이상의 필드를 전달해야 합니다. */
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdatePostRequest'];
+      };
+    };
+    responses: {
+      /** @description 수정 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['UpdatePostSuccessResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 게시글 작성자가 아님 */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseUpdatePostResponse'];
+        };
+      };
+      /** @description 국가, 도시, 태그 또는 게시글을 찾을 수 없거나 사용자가 없거나 탈퇴함(USER-E001) */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseUpdatePostResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
   updatePostStatus: {
     parameters: {
       query?: never;
@@ -2712,13 +7919,225 @@ export interface operations {
           '*/*': components['schemas']['BaseResponseUpdatePostStatusResponse'];
         };
       };
-      /** @description 게시글을 찾을 수 없음 */
+      /** @description 게시글을 찾을 수 없거나 사용자가 없거나 탈퇴함(USER-E001) */
       404: {
         headers: {
           [name: string]: unknown;
         };
         content: {
           '*/*': components['schemas']['BaseResponseUpdatePostStatusResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  rejectVerification: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description 서류 인증 신청 ID
+         * @example 1
+         */
+        verificationId: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ExchangeVerificationRejectRequest'];
+      };
+    };
+    responses: {
+      /** @description 반려 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseVoid'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 관리자 권한 없음 */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseVoid'];
+        };
+      };
+      /** @description 인증 신청 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseVoid'];
+        };
+      };
+      /** @description 이미 처리된 인증 신청 */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseVoid'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  approveVerification: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description 서류 인증 신청 ID
+         * @example 1
+         */
+        verificationId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 승인 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseVoid'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 관리자 권한 없음 */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseVoid'];
+        };
+      };
+      /** @description 인증 신청 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseVoid'];
+        };
+      };
+      /** @description 이미 처리된 인증 신청 */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseVoid'];
         };
       };
       /** @description 서버 내부 오류 */
@@ -2922,22 +8341,56 @@ export interface operations {
       };
     };
   };
-  getMyProfile: {
+  getUserCourses: {
     parameters: {
-      query?: never;
+      query?: {
+        /**
+         * @description 페이지 번호. 0 이상입니다.
+         * @example 0
+         */
+        page?: number;
+        /**
+         * @description 페이지 크기. 1 이상 100 이하입니다.
+         * @example 18
+         */
+        size?: number;
+      };
       header?: never;
-      path?: never;
+      path: {
+        /**
+         * @description 조회할 사용자 ID
+         * @example 1
+         */
+        userId: number;
+      };
       cookie?: never;
     };
     requestBody?: never;
     responses: {
-      /** @description 내 프로필 조회 성공 */
+      /** @description 타 유저가 작성한 코스 목록 조회 성공 */
       200: {
         headers: {
           [name: string]: unknown;
         };
         content: {
-          '*/*': components['schemas']['BaseResponseUserProfileResponse'];
+          '*/*': components['schemas']['BaseResponseUserCoursesResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
         };
       };
       /** @description 인증 필요 */
@@ -2968,6 +8421,112 @@ export interface operations {
            *       "success": false,
            *       "code": "USER-E001",
            *       "message": "사용자를 찾을 수 없습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  searchUsers: {
+    parameters: {
+      query?: {
+        /**
+         * @description 검색 키워드. 대소문자 구분 없이 닉네임에 부분 일치합니다. 생략하거나 빈 문자열/공백만 전달하면 빈 리스트가 반환됩니다.
+         * @example 버디
+         */
+        keyword?: string;
+        /**
+         * @description 페이지 번호. 0 이상입니다.
+         * @example 0
+         */
+        page?: number;
+        /**
+         * @description 페이지 크기. 1 이상 100 이하입니다.
+         * @example 20
+         */
+        size?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 사용자 검색 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": true,
+           *       "code": "GLB-S001",
+           *       "message": "요청이 성공했습니다.",
+           *       "data": {
+           *         "users": [
+           *           {
+           *             "userId": 2,
+           *             "nickname": "버디",
+           *             "profileImageUrl": "https://example.com/profile.png"
+           *           }
+           *         ],
+           *         "page": 0,
+           *         "size": 20,
+           *         "hasNext": false
+           *       }
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
            *       "data": null
            *     }
            */
@@ -3092,6 +8651,393 @@ export interface operations {
       };
     };
   };
+  checkNicknameAvailability: {
+    parameters: {
+      query: {
+        nickname: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 닉네임 중복 확인 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 사용자 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "USER-E001",
+           *       "message": "사용자를 찾을 수 없습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  getMyProfileForEdit: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 프로필 편집 정보 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": true,
+           *       "code": "GLB-S001",
+           *       "message": "요청이 성공했습니다.",
+           *       "data": {
+           *         "nickname": "정바미",
+           *         "gender": "FEMALE",
+           *         "birthDate": "2004-10-24",
+           *         "bio": "안녕하세요 김버디입니다~~",
+           *         "profileImageUrl": "https://example.com/profile.png",
+           *         "orderedTags": [
+           *           {
+           *             "id": 27,
+           *             "name": "계획형",
+           *             "tagType": "TRAVEL_STYLE"
+           *           },
+           *           {
+           *             "id": 1,
+           *             "name": "여행",
+           *             "tagType": "ACTIVITY"
+           *           },
+           *           {
+           *             "id": 13,
+           *             "name": "자연",
+           *             "tagType": "INTEREST"
+           *           },
+           *           {
+           *             "id": 28,
+           *             "name": "즉흥형",
+           *             "tagType": "TRAVEL_STYLE"
+           *           }
+           *         ]
+           *       }
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 사용자 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "USER-E001",
+           *       "message": "사용자를 찾을 수 없습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  getMyCourses: {
+    parameters: {
+      query?: {
+        /**
+         * @description 페이지 번호. 0 이상입니다.
+         * @example 0
+         */
+        page?: number;
+        /**
+         * @description 페이지 크기. 1 이상 100 이하입니다.
+         * @example 18
+         */
+        size?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 내가 작성한 코스 목록 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseUserCoursesResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 사용자 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "USER-E001",
+           *       "message": "사용자를 찾을 수 없습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  getMyCountries: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 국가 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 사용자 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "USER-E001",
+           *       "message": "사용자를 찾을 수 없습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  getAllTags: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseListTagGroupListResponse'];
+        };
+      };
+    };
+  };
   getTags: {
     parameters: {
       query?: never;
@@ -3123,6 +9069,182 @@ export interface operations {
         };
         content: {
           '*/*': components['schemas']['BaseResponseListTagResponse'];
+        };
+      };
+    };
+  };
+  search: {
+    parameters: {
+      query: {
+        /**
+         * @description 검색어
+         * @example 파리
+         */
+        keyword: string;
+        /**
+         * @description 페이지 번호. 0 이상입니다.
+         * @example 0
+         */
+        page?: number;
+        /**
+         * @description 페이지 크기. 1 이상 100 이하입니다.
+         * @example 5
+         */
+        size?: number;
+        /** @description 검색 영역. 생략하면 모든 영역을 조회하고 반환합니다. 지정하면 해당 영역만 조회하고 반환합니다. 잘못된 값은 400(GLB-E001)을 반환합니다. */
+        type?: 'POST' | 'COURSE' | 'USER';
+        /**
+         * @description 정렬 기준. LATEST: 최신순, BOOKMARK: 전체 사용자의 저장 수 순. 생략 시 LATEST. USER는 항상 최신순입니다.
+         * @example LATEST
+         */
+        sort?: 'LATEST' | 'BOOKMARK';
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 검색 성공. 결과가 없는 영역은 빈 목록 반환 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseSearchResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  getSearchSuggestions: {
+    parameters: {
+      query: {
+        /**
+         * @description 자동완성 검색어
+         * @example 파
+         */
+        keyword: string;
+        /**
+         * @description 자동완성 후보 개수. 1 이상 20 이하입니다.
+         * @example 8
+         */
+        size?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 자동완성 검색어 조회 성공. 결과가 없으면 빈 목록 반환 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseSearchSuggestionResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
         };
       };
     };
@@ -3406,28 +9528,22 @@ export interface operations {
       };
     };
   };
-  getPostDetail: {
+  getClosingSoonPosts: {
     parameters: {
       query?: never;
       header?: never;
-      path: {
-        /**
-         * @description 조회할 게시글 ID
-         * @example 1
-         */
-        postId: number;
-      };
+      path?: never;
       cookie?: never;
     };
     requestBody?: never;
     responses: {
-      /** @description 조회 성공 */
+      /** @description 마감 임박 게시글 조회 성공. 결과가 없으면 빈 목록 반환 */
       200: {
         headers: {
           [name: string]: unknown;
         };
         content: {
-          '*/*': components['schemas']['BaseResponsePostDetailResponse'];
+          '*/*': components['schemas']['BaseResponseClosingSoonPostResponse'];
         };
       };
       /** @description 인증 필요 */
@@ -3447,13 +9563,792 @@ export interface operations {
           'application/json': components['schemas']['BaseResponse'];
         };
       };
-      /** @description 게시글을 찾을 수 없음 */
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  getBookmarkedPosts: {
+    parameters: {
+      query?: {
+        /**
+         * @description 페이지 번호. 0 이상입니다.
+         * @example 0
+         */
+        page?: number;
+        /**
+         * @description 페이지 크기. 1 이상 100 이하입니다.
+         * @example 20
+         */
+        size?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponsePostListResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  getPlacePhoto: {
+    parameters: {
+      query?: {
+        /**
+         * @description 최대 가로 픽셀. 1 이상 4800 이하입니다.
+         * @example 400
+         */
+        maxWidth?: number;
+      };
+      header?: never;
+      path: {
+        /**
+         * @description 구글 place_id
+         * @example ChIJN1t_tDeuEmsRUsoyG83frY4
+         */
+        placeId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 리다이렉트 성공 */
+      302: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 사진 없음 */
       404: {
         headers: {
           [name: string]: unknown;
         };
         content: {
-          '*/*': components['schemas']['BaseResponsePostDetailResponse'];
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "PLACE-E002",
+           *       "message": "장소 사진을 찾을 수 없습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 구글 Places 응답 실패 (업스트림 오류) */
+      502: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "PLACE-E001",
+           *       "message": "지도 서비스 응답에 실패했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  searchPlaces: {
+    parameters: {
+      query?: {
+        /**
+         * @description 검색 키워드
+         * @example 커피
+         */
+        query?: string;
+        /**
+         * @description 장소 카테고리, 없으면 전체 검색
+         * @example CAFE
+         */
+        category?: string;
+        /**
+         * @description 위도. lng와 함께 넘기면 주변 검색으로 편향됩니다.
+         * @example 37.5567
+         */
+        lat?: number;
+        /**
+         * @description 경도. lat와 함께 넘기면 주변 검색으로 편향됩니다.
+         * @example 126.9236
+         */
+        lng?: number;
+        /**
+         * @description 이전 응답의 nextPageToken. 다음 페이지 조회 시 사용
+         * @example AeCrKx...
+         */
+        pageToken?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 검색 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponsePlaceSearchResponse'];
+        };
+      };
+      /** @description 잘못된 요청 — query 파라미터 누락, category 값이 유효하지 않음, lat/lng 중 하나만 전달됨, lat/lng가 유효 범위를 벗어남 중 하나 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 구글 Places 응답 실패 (업스트림 오류) */
+      502: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "PLACE-E001",
+           *       "message": "지도 서비스 응답에 실패했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  getNearbyPlaces: {
+    parameters: {
+      query?: {
+        /**
+         * @description 위도
+         * @example 48.86
+         */
+        lat?: number;
+        /**
+         * @description 경도
+         * @example 2.33
+         */
+        lng?: number;
+        /**
+         * @description 검색 반경(미터). 1 이상 50000 이하이며, 기본값은 1500입니다.
+         * @example 1500
+         */
+        radius?: number;
+        /**
+         * @description 장소 카테고리, 없으면 전체 카테고리에서 조회
+         * @example RESTAURANT
+         */
+        category?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponsePlaceSearchResponse'];
+        };
+      };
+      /** @description 잘못된 요청 — lat/lng 파라미터 누락, lat/lng가 유효 범위를 벗어남, radius가 1~50000 범위를 벗어남, category 값이 유효하지 않음 중 하나 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 구글 Places 응답 실패 (업스트림 오류) */
+      502: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "PLACE-E001",
+           *       "message": "지도 서비스 응답에 실패했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  getBookmarkedPlaces: {
+    parameters: {
+      query?: {
+        /**
+         * @description 페이지 번호. 0 이상입니다.
+         * @example 0
+         */
+        page?: number;
+        /**
+         * @description 페이지 크기. 1 이상 100 이하입니다.
+         * @example 20
+         */
+        size?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseBookmarkedPlaceListResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  getBookmarkedPlaceMarkers: {
+    parameters: {
+      query: {
+        /**
+         * @description 지도 영역 남서(south-west) 모서리 위도
+         * @example 48.84
+         */
+        swLat: number;
+        /**
+         * @description 지도 영역 남서(south-west) 모서리 경도
+         * @example 2.32
+         */
+        swLng: number;
+        /**
+         * @description 지도 영역 북동(north-east) 모서리 위도
+         * @example 48.88
+         */
+        neLat: number;
+        /**
+         * @description 지도 영역 북동(north-east) 모서리 경도
+         * @example 2.36
+         */
+        neLng: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseBookmarkedPlaceMarkersResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  getMagazines: {
+    parameters: {
+      query: {
+        /**
+         * @description 매거진 카테고리(SUPPORT: 지원, DEPARTURE_PREP: 출국 준비, LOCAL_SETTLEMENT: 현지 정착, TRAVEL: 여행)
+         * @example SUPPORT
+         */
+        category: 'SUPPORT' | 'DEPARTURE_PREP' | 'LOCAL_SETTLEMENT' | 'TRAVEL';
+        /**
+         * @description 제목 또는 요약에서 부분 일치로 검색할 검색어. 생략하거나 공백만 입력하면 검색 조건을 적용하지 않습니다.
+         * @example 교환학생
+         */
+        keyword?: string;
+        /**
+         * @description 정렬 기준(LATEST: 최신순, BOOKMARK: 전체 저장 수 순)
+         * @example LATEST
+         */
+        sort?: 'LATEST' | 'BOOKMARK';
+        /**
+         * @description 페이지 번호. 0 이상입니다.
+         * @example 0
+         */
+        page?: number;
+        /**
+         * @description 페이지 크기. 1 이상 100 이하입니다.
+         * @example 10
+         */
+        size?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['MagazineListSuccessResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  getBookmarkedMagazines: {
+    parameters: {
+      query?: {
+        /**
+         * @description 페이지 번호. 0 이상입니다.
+         * @example 0
+         */
+        page?: number;
+        /**
+         * @description 페이지 크기. 1 이상 100 이하입니다.
+         * @example 20
+         */
+        size?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseBookmarkedMagazineListResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  getBookmarkedCourses: {
+    parameters: {
+      query?: {
+        /**
+         * @description 페이지 번호. 0 이상입니다.
+         * @example 0
+         */
+        page?: number;
+        /**
+         * @description 페이지 크기. 1 이상 100 이하입니다.
+         * @example 20
+         */
+        size?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseCourseListResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
         };
       };
       /** @description 서버 내부 오류 */
@@ -3773,7 +10668,7 @@ export interface operations {
     parameters: {
       query: {
         /**
-         * @description 검색 키워드
+         * @description 검색 키워드. 한글 또는 영문 국가명의 일부를 입력합니다.
          * @example 대한민국
          */
         keyword: string;
@@ -4040,6 +10935,284 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  searchAirlines: {
+    parameters: {
+      query?: {
+        /**
+         * @description 검색 키워드. 대소문자 구분 없이 항공사명 또는 항공사 코드에 부분 일치합니다. 생략하거나 빈 문자열/공백만 전달하면 빈 리스트가 반환됩니다.
+         * @example 대한항공
+         */
+        keyword?: string;
+        /**
+         * @description 페이지 번호. 0 이상입니다.
+         * @example 0
+         */
+        page?: number;
+        /**
+         * @description 페이지 크기. 1 이상 100 이하입니다.
+         * @example 20
+         */
+        size?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 검색 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseAirlineListResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  getVerifications: {
+    parameters: {
+      query?: {
+        /**
+         * @description 처리 상태. 생략하면 전체를 조회합니다.
+         * @example PENDING
+         */
+        status?: 'PENDING' | 'APPROVED' | 'REJECTED';
+        /**
+         * @description 페이지 번호. 0부터 시작합니다.
+         * @example 0
+         */
+        page?: number;
+        /**
+         * @description 페이지 크기. 1 이상 100 이하입니다.
+         * @example 20
+         */
+        size?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseExchangeVerificationListResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 관리자 권한 없음 */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseExchangeVerificationListResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
+  getVerification: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /**
+         * @description 서류 인증 신청 ID
+         * @example 1
+         */
+        verificationId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseExchangeVerificationDetailResponse'];
+        };
+      };
+      /** @description 잘못된 요청 */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E001",
+           *       "message": "잘못된 요청입니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 관리자 권한 없음 */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseExchangeVerificationDetailResponse'];
+        };
+      };
+      /** @description 인증 신청 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['BaseResponseExchangeVerificationDetailResponse'];
         };
       };
       /** @description 서버 내부 오류 */

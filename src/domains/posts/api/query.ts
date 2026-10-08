@@ -18,11 +18,16 @@ import type {
   CreateCommentResponse,
   CreatePostRequest,
   CreatePostResponse,
+  DeletePostResponse,
+  GetClosingSoonPostsResponse,
   GetCommentsParams,
   GetCommentsResponse,
   GetPostDetailResponse,
   GetPostsParams,
   GetPostsResponse,
+  UpdatePostBookmarkResponse,
+  UpdatePostRequest,
+  UpdatePostResponse,
   UpdatePostStatusRequest,
   UpdatePostStatusResponse,
 } from './type';
@@ -33,6 +38,20 @@ const getPosts = async (params?: GetPostsParams) => {
       searchParams: createSearchParams(params),
     })
     .json<GetPostsResponse>();
+};
+
+const getClosingSoonPosts = async () => {
+  const response = await apiClient
+    .get(END_POINT.POST.CLOSING_SOON)
+    .json<GetClosingSoonPostsResponse>();
+
+  if (!response.success) {
+    throw new Error(
+      response.message || '마감 임박 게시글을 불러오지 못했습니다.',
+    );
+  }
+
+  return response.data?.content ?? [];
 };
 
 const createPost = async (body: CreatePostRequest) => {
@@ -58,6 +77,18 @@ const createPost = async (body: CreatePostRequest) => {
   return postId;
 };
 
+const deletePost = async (postId: number) => {
+  const response = await apiClient
+    .delete(END_POINT.POST.DETAIL(postId))
+    .json<DeletePostResponse>();
+
+  if (!response.success || response.data?.postId !== postId) {
+    throw new Error(response.message || '게시글을 삭제하지 못했습니다.');
+  }
+
+  return postId;
+};
+
 const getPostDetail = async (postId: number): Promise<PostDetail> => {
   const response = await apiClient
     .get(END_POINT.POST.DETAIL(postId))
@@ -68,6 +99,20 @@ const getPostDetail = async (postId: number): Promise<PostDetail> => {
   }
 
   return response.data as PostDetail;
+};
+
+const updatePost = async (postId: number, body: UpdatePostRequest) => {
+  const response = await apiClient
+    .patch(END_POINT.POST.DETAIL(postId), {
+      json: body,
+    })
+    .json<UpdatePostResponse>();
+
+  if (!response.success || response.data?.postId !== postId) {
+    throw new Error(response.message || '게시글을 수정하지 못했습니다.');
+  }
+
+  return postId;
 };
 
 const updatePostStatus = async (
@@ -116,6 +161,31 @@ const createComment = async (postId: number, body: CreateCommentRequest) => {
   return response.data.commentId;
 };
 
+export interface UpdatePostBookmarkVariables {
+  postId: number;
+  nextBookmarked: boolean;
+}
+
+const updatePostBookmark = async ({
+  postId,
+  nextBookmarked,
+}: UpdatePostBookmarkVariables) => {
+  const endpoint = END_POINT.POST.BOOKMARK(postId);
+  const response = await (
+    nextBookmarked ? apiClient.post(endpoint) : apiClient.delete(endpoint)
+  ).json<UpdatePostBookmarkResponse>();
+
+  if (
+    response.success !== true ||
+    response.data?.postId !== postId ||
+    response.data.isBookmarked !== nextBookmarked
+  ) {
+    throw new Error(response.message || '게시글 북마크를 변경하지 못했습니다.');
+  }
+
+  return response.data;
+};
+
 export const POST_QUERY_OPTIONS = {
   LIST: (params?: GetPostsParams) =>
     queryOptions({
@@ -136,6 +206,11 @@ export const POST_QUERY_OPTIONS = {
 
         return page + 1;
       },
+    }),
+  CLOSING_SOON: () =>
+    queryOptions({
+      queryKey: POST_QUERY_KEY.CLOSING_SOON(),
+      queryFn: getClosingSoonPosts,
     }),
   DETAIL: (postId: number) =>
     queryOptions({
@@ -166,6 +241,20 @@ export const POST_MUTATION_OPTIONS = {
       mutationKey: POST_MUTATION_KEY.CREATE(),
       mutationFn: (body: CreatePostRequest) => createPost(body),
     }),
+  UPDATE: () =>
+    mutationOptions({
+      mutationFn: ({
+        postId,
+        body,
+      }: {
+        postId: number;
+        body: UpdatePostRequest;
+      }) => updatePost(postId, body),
+    }),
+  DELETE: () =>
+    mutationOptions({
+      mutationFn: (postId: number) => deletePost(postId),
+    }),
   UPDATE_STATUS: () =>
     mutationOptions({
       mutationKey: POST_MUTATION_KEY.UPDATE_STATUS(),
@@ -187,5 +276,9 @@ export const POST_MUTATION_OPTIONS = {
         postId: number;
         body: CreateCommentRequest;
       }) => createComment(postId, body),
+    }),
+  UPDATE_BOOKMARK: () =>
+    mutationOptions({
+      mutationFn: updatePostBookmark,
     }),
 };

@@ -3,9 +3,9 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   agentRules: false,
-  output: 'standalone',
 
   images: {
+    unoptimized: process.env.NODE_ENV === 'development',
     remotePatterns: [
       // TODO: example 도메인 및 picsum 도메인 삭제
       {
@@ -32,6 +32,11 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'buddys-assets.s3.ap-northeast-2.amazonaws.com',
         pathname: '/posts/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'buddys-s3-bucket.s3.ap-northeast-2.amazonaws.com',
+        pathname: '/**',
       },
       {
         protocol: 'https',

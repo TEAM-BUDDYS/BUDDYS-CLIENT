@@ -1,0 +1,177 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useRef, useState } from 'react';
+
+import type { CourseDetail } from '@/domains/course/api/type';
+import { CourseDayPickerSheet } from '@/domains/course/components/course-day-picker-sheet/course-day-picker-sheet';
+import { MoreIcon } from '@/shared/components/icons';
+import { Header } from '@/shared/components/layout';
+import { Modal, PostMenuBottomSheet } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
+import { useContentShare } from '@/shared/hooks/use-content-share';
+
+import { CourseContinuationBanner } from './course-continuation-banner';
+import { CourseDetailComments } from './course-detail-comments';
+import { CourseDetailDayList } from './course-detail-day-list';
+import { CourseDetailOverviewSection } from './course-detail-overview-section';
+import { useCourseBookmark } from './use-course-bookmark';
+import { useCourseDelete } from './use-course-delete';
+
+interface CourseDetailViewProps {
+  course: CourseDetail;
+}
+
+export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
+  const router = useRouter();
+  const [isDayPickerOpen, setIsDayPickerOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedDayNumber, setSelectedDayNumber] = useState<number | null>(
+    null,
+  );
+  const { isPending: isBookmarkPending, toggleBookmark } = useCourseBookmark({
+    courseId: course.courseId,
+    isBookmarked: course.isBookmarked,
+  });
+  const { deleteCourse, isPending: isDeleting } = useCourseDelete(
+    course.courseId,
+  );
+  const { shareContent } = useContentShare();
+  const pendingDayScrollRef = useRef<number | null>(null);
+  const dayPickerDays = useMemo(
+    () =>
+      [...course.days]
+        .sort((firstDay, secondDay) => firstDay.dayNumber - secondDay.dayNumber)
+        .map((day) => ({
+          dayNumber: day.dayNumber,
+          date: day.date ? new Date(`${day.date}T00:00:00`) : null,
+        })),
+    [course.days],
+  );
+
+  useEffect(() => {
+    if (isDayPickerOpen || pendingDayScrollRef.current === null) return;
+
+    const dayNumber = pendingDayScrollRef.current;
+    pendingDayScrollRef.current = null;
+    const frameId = window.requestAnimationFrame(() => {
+      const dayHeading = document.getElementById(
+        `course-day-${dayNumber}-heading`,
+      );
+
+      if (!dayHeading) return;
+
+      window.scrollTo({
+        behavior: 'smooth',
+        top: window.scrollY + dayHeading.getBoundingClientRect().top - 60,
+      });
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [isDayPickerOpen]);
+
+  const handleDaySelect = (dayNumber: number) => {
+    pendingDayScrollRef.current = dayNumber;
+    setSelectedDayNumber(dayNumber);
+  };
+
+  const handleMenuAction = (action: 'share' | 'edit' | 'delete') => {
+    if (action === 'share') {
+      void shareContent({
+        title: course.title,
+        url: ROUTES.COURSE.DETAIL(course.courseId),
+      });
+      return;
+    }
+
+    if (action === 'edit') {
+      router.push(ROUTES.COURSE.EDIT(course.courseId));
+      return;
+    }
+
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteModalClose = () => {
+    if (isDeleting) {
+      return;
+    }
+
+    setIsDeleteModalOpen(false);
+  };
+
+  const handleCourseCreateClick = () => {
+    router.push(ROUTES.COURSE.CREATE);
+  };
+
+  return (
+    <div className="min-h-dvh bg-white">
+      <div className="sticky top-0 z-20 bg-white">
+        <Header
+          hasBackButton
+          right={
+            <button
+              type="button"
+              aria-label="코스 메뉴"
+              className="focus-visible:outline-mint-300 flex size-11 items-center justify-center rounded-lg text-gray-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid"
+              onClick={() => setIsMenuOpen(true)}
+            >
+              <MoreIcon className="size-6" />
+            </button>
+          }
+        />
+      </div>
+
+      <main className="pb-24.5">
+        <div className="px-4 pt-4 pb-6">
+          <CourseDetailOverviewSection
+            course={course}
+            isBookmarkPending={isBookmarkPending}
+            isBookmarked={course.isBookmarked}
+            onBookmarkClick={toggleBookmark}
+            onDayPickerOpen={() => setIsDayPickerOpen(true)}
+          />
+        </div>
+
+        <CourseDetailDayList days={course.days} preloadFirstImage />
+
+        <div className="flex flex-col gap-6 px-4 py-4">
+          <CourseDetailComments
+            bookmarkCount={course.bookmarkCount}
+            commentCount={course.commentCount}
+            courseId={course.courseId}
+            viewCount={course.viewCount}
+          />
+          <CourseContinuationBanner onClick={handleCourseCreateClick} />
+        </div>
+      </main>
+
+      <CourseDayPickerSheet
+        open={isDayPickerOpen}
+        days={dayPickerDays}
+        selectedDayNumber={selectedDayNumber}
+        onClose={() => setIsDayPickerOpen(false)}
+        onDaySelect={handleDaySelect}
+      />
+
+      <PostMenuBottomSheet
+        open={isMenuOpen}
+        isMine={course.isMine}
+        ariaLabel="코스 메뉴"
+        onClose={() => setIsMenuOpen(false)}
+        onAction={handleMenuAction}
+      />
+
+      <Modal
+        open={isDeleteModalOpen}
+        title="코스를 삭제할까요?"
+        description="삭제한 코스는 복구할 수 없어요."
+        cancelLabel="취소"
+        confirmLabel={isDeleting ? '삭제 중...' : '삭제하기'}
+        onClose={handleDeleteModalClose}
+        onConfirm={deleteCourse}
+      />
+    </div>
+  );
+};

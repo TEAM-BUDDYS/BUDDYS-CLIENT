@@ -15,16 +15,21 @@ import { ROUTES } from '@/shared/config';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 
 import { PROFILE_QUERY_OPTIONS } from '../api/query';
-import type { UserPost } from '../api/type';
-import type { ContentTabValue, PostItem } from '../model/content';
+import type { UserCourse, UserPost } from '../api/type';
+import { CourseImageGrid } from '../components/course-image-grid/course-image-grid';
+import {
+  type ContentTabValue,
+  type CourseItem,
+  type PostItem,
+} from '../model/content';
 
 interface OtherContentSectionProps {
   userId: number;
-  onCourseTabClick: () => void;
   className?: string;
 }
 
 const USER_POSTS_PAGE_SIZE = 10;
+const USER_COURSES_PAGE_SIZE = 18;
 
 const TAB_ITEMS: { label: string; value: ContentTabValue }[] = [
   { label: '게시물', value: 'post' },
@@ -54,6 +59,14 @@ const toPostItem = (post: UserPost): PostItem | null => {
     image: thumbnailImageUrl,
   };
 };
+
+const toCourseItem = ({
+  courseId,
+  thumbnailImageUrl,
+}: UserCourse): CourseItem => ({
+  id: courseId,
+  image: thumbnailImageUrl,
+});
 
 const PostTabPanel = ({ userId }: { userId: number }) => {
   const {
@@ -124,34 +137,93 @@ const PostTabPanel = ({ userId }: { userId: number }) => {
   );
 };
 
+const CourseTabPanel = ({ userId }: { userId: number }) => {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchNextPageError,
+    isFetchingNextPage,
+  } = useSuspenseInfiniteQuery(
+    PROFILE_QUERY_OPTIONS.USER_COURSES_INFINITE(userId, {
+      size: USER_COURSES_PAGE_SIZE,
+    }),
+  );
+
+  const courses = data.pages
+    .flatMap((page) => page.data?.courses ?? [])
+    .map(toCourseItem);
+
+  const handleIntersect = useCallback(() => {
+    fetchNextPage();
+  }, [fetchNextPage]);
+  const loadMoreRef = useInfiniteScroll<HTMLDivElement>({
+    enabled: Boolean(hasNextPage) && !isFetching && !isFetchNextPageError,
+    onIntersect: handleIntersect,
+  });
+
+  if (courses.length === 0 && !hasNextPage) {
+    return (
+      <EmptyState
+        title="아직 기록된 코스가 없어요"
+        description="코스가 등록되면 이곳에서 볼 수 있어요"
+        className="mt-25"
+      />
+    );
+  }
+
+  return (
+    <div className="flex flex-col">
+      <CourseImageGrid courses={courses} className="pt-3" />
+      <div ref={loadMoreRef} className="h-1" aria-hidden="true" />
+      {isFetchingNextPage && (
+        <p className="text-caption-m-12 py-4 text-center text-gray-500">
+          코스를 불러오는 중이에요
+        </p>
+      )}
+      {isFetchNextPageError && (
+        <button
+          type="button"
+          className="text-caption-m-12 text-mint-400 mx-auto py-4"
+          onClick={() => fetchNextPage()}
+        >
+          다시 불러오기
+        </button>
+      )}
+    </div>
+  );
+};
+
 export const OtherContentSection = ({
   userId,
-  onCourseTabClick,
   className,
 }: OtherContentSectionProps) => {
   const [tab, setTab] = useState<ContentTabValue>('post');
 
-  const handleTabChange = (value: string) => {
-    const nextTab = value as ContentTabValue;
-
-    if (nextTab === 'course') {
-      onCourseTabClick();
-      return;
-    }
-
-    setTab(nextTab);
-  };
-
   return (
     <div className={cn('flex w-full flex-col', className)}>
-      <Tab items={TAB_ITEMS} value={tab} onChange={handleTabChange} />
+      <Tab
+        items={TAB_ITEMS}
+        value={tab}
+        onChange={(value) => setTab(value as ContentTabValue)}
+      />
 
-      {tab === 'post' && (
+      {tab === 'post' ? (
         <AsyncBoundary
+          key="post"
           className="py-20"
           loadingFallback={<div className="min-h-72" aria-busy="true" />}
         >
           <PostTabPanel userId={userId} />
+        </AsyncBoundary>
+      ) : (
+        <AsyncBoundary
+          key="course"
+          className="py-20"
+          loadingFallback={<div className="min-h-72" aria-busy="true" />}
+        >
+          <CourseTabPanel userId={userId} />
         </AsyncBoundary>
       )}
     </div>

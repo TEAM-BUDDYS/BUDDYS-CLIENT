@@ -9,6 +9,7 @@ export interface DateRangeTypes {
 }
 
 const DAYS_IN_WEEK = 7;
+const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000;
 
 export const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
 
@@ -45,6 +46,21 @@ export const checkSameDate = (
 
 export const checkBeforeDate = (leftDate: Date, rightDate: Date) => {
   return compareDates(leftDate, rightDate) < 0;
+};
+
+export const getDateRangeDayCount = (startDate: Date, endDate: Date) => {
+  const startUtc = Date.UTC(
+    startDate.getFullYear(),
+    startDate.getMonth(),
+    startDate.getDate(),
+  );
+  const endUtc = Date.UTC(
+    endDate.getFullYear(),
+    endDate.getMonth(),
+    endDate.getDate(),
+  );
+
+  return Math.round((endUtc - startUtc) / MILLISECONDS_IN_DAY) + 1;
 };
 
 const checkAfterDate = (leftDate: Date, rightDate: Date) => {

@@ -31,8 +31,6 @@ export const Toast = ({
 
   return (
     <div
-      role="status"
-      aria-live="polite"
       className={cn(
         'text-body-sb-14 flex w-fit items-center gap-2 rounded-full px-5 py-4 transition-all duration-300 ease-out',
         variantClassName.container,

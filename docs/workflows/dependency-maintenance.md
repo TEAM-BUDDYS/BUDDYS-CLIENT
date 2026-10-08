@@ -24,7 +24,7 @@
 - 의존성 변경 PR의 작성자는 기존 override가 여전히 필요한지 확인합니다.
 - 리뷰어는 selector가 공식 권고의 affected range보다 넓지 않은지와 대상 버전이 patched version인지 확인합니다.
 - 상위 패키지 업데이트만으로 취약 버전이 제거되면 override를 삭제하고 lockfile을 다시 생성합니다.
-- override가 존재하는 동안 CI와 Docker의 frozen install에는 `pnpm-workspace.yaml`이 함께 제공되어야 합니다.
+- override가 존재하는 동안 CI와 Vercel build에는 `pnpm-workspace.yaml`이 함께 제공되어야 합니다.
 
 ## Verification
 
@@ -41,5 +41,5 @@ pnpm build
 
 - `pnpm-lock.yaml` 상단의 override selector와 대상 버전이 `pnpm-workspace.yaml`과 일치하는지 확인합니다.
 - audit 결과는 전체 심각도 기준으로 확인하고, 허용하거나 보류한 취약점이 있다면 근거를 PR에 남깁니다.
-- Next.js, Sentry 등 production runtime이나 빌드 산출물에 영향을 주는 의존성을 변경했고 `output: 'standalone'`을 사용한다면, production build 후 최소 서버 기동과 애플리케이션 route 응답을 확인합니다.
-- 배포 방식을 변경하면 실제 배포 산출물에 맞춰 CI의 smoke test 기준도 함께 갱신합니다.
+- Next.js, Sentry 등 production runtime이나 빌드 산출물에 영향을 주는 의존성을 변경했다면 Vercel preview deployment 또는 `pnpm build` 결과를 기준으로 확인합니다.
+- 배포 방식을 변경하면 실제 배포 산출물에 맞춰 CI와 preview 검증 기준도 함께 갱신합니다.

@@ -1,8 +1,16 @@
 import type { components } from '@/types/schema';
 
 import type { ChatRoom, ChatRoomList } from '../model/chat-list';
-import type { ChatMessageData, ChatMessageList } from '../model/chat-room';
-import type { GetChatRoomsResponse, GetMessagesResponse } from './type';
+import type {
+  ChatMessageData,
+  ChatMessageList,
+  ChatRoomDetail,
+} from '../model/chat-room';
+import type {
+  GetChatRoomResponse,
+  GetChatRoomsResponse,
+  GetMessagesResponse,
+} from './type';
 
 const isPositiveSafeInteger = (value: unknown): value is number =>
   typeof value === 'number' && Number.isSafeInteger(value) && value > 0;
@@ -146,5 +154,42 @@ export const convertChatMessageListResponse = (
     nextCursorSentAt: data.nextCursorSentAt ?? null,
     nextCursorMessageId: data.nextCursorMessageId ?? null,
     hasNext: data.hasNext,
+  };
+};
+
+export const convertChatRoomDetailResponse = (
+  response: GetChatRoomResponse,
+): ChatRoomDetail => {
+  const canSendMessage = response.data?.canSendMessage;
+  const createdAt = response.data?.createdAt;
+  const participantNickname = response.data?.participant?.nickname;
+  const participantUserId = response.data?.participant?.userId;
+  const hasBlocked = response.data?.hasBlocked;
+  const hasReported = response.data?.hasReported;
+
+  if (
+    response.success !== true ||
+    typeof createdAt !== 'string' ||
+    createdAt.length === 0 ||
+    typeof participantNickname !== 'string' ||
+    participantNickname.length === 0 ||
+    typeof canSendMessage !== 'boolean' ||
+    typeof hasBlocked !== 'boolean' ||
+    typeof hasReported !== 'boolean'
+  ) {
+    throw new Error(
+      response.message || '채팅방 상세 응답이 올바르지 않습니다.',
+    );
+  }
+
+  return {
+    canSendMessage,
+    createdAt,
+    participantNickname,
+    participantUserId: isPositiveSafeInteger(participantUserId)
+      ? participantUserId
+      : null,
+    hasBlocked,
+    hasReported,
   };
 };

@@ -22,6 +22,7 @@ export interface ChipGroupProps {
   rowGap?: keyof typeof rowGapStyles;
   chipClassName?: string;
   onChange: (selectedTagIds: number[]) => void;
+  onSelectionLimitReached?: () => void;
 }
 
 export const ChipGroup = ({
@@ -34,6 +35,7 @@ export const ChipGroup = ({
   rowGap = 'sm',
   chipClassName,
   onChange,
+  onSelectionLimitReached,
 }: ChipGroupProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -45,6 +47,7 @@ export const ChipGroup = ({
     const isSelected = selectedTagIds.includes(tagId);
 
     if (!isSelected && selectedTagIds.length >= maxSelectionCount) {
+      onSelectionLimitReached?.();
       return;
     }
 
@@ -77,7 +80,8 @@ export const ChipGroup = ({
               active={isSelected}
               className={chipClassName}
               aria-label={`${tag.name} 태그 ${isSelected ? '선택 해제' : '선택'}`}
-              disabled={isSelectionDisabled}
+              disabled={isSelectionDisabled && !onSelectionLimitReached}
+              aria-disabled={isSelectionDisabled}
               onClick={() => handleTagClick(tag.id)}
             >
               {tag.name}

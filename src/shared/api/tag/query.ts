@@ -1,21 +1,26 @@
 import { queryOptions } from '@tanstack/react-query';
 
+import type { Tag } from '@/types/tag';
+
 import { apiClient } from '../api-client';
 import { END_POINT } from '../end-point';
 import { TAG_QUERY_KEY } from '../query-key';
-import type { GetTagsResponse, PreferenceTag, TagType } from './type';
+import type { GetTagsResponse, TagType } from './type';
 
-const isPreferenceTag = (tag: unknown): tag is PreferenceTag => {
+const isTagResponse = (tag: unknown): tag is Tag => {
   if (typeof tag !== 'object' || tag === null) {
     return false;
   }
 
-  const { id, name } = tag as Partial<PreferenceTag>;
+  const { id, name } = tag as {
+    id?: unknown;
+    name?: unknown;
+  };
 
   return typeof id === 'number' && typeof name === 'string';
 };
 
-const getTags = async (type: TagType): Promise<PreferenceTag[]> => {
+const getTags = async (type: TagType): Promise<Tag[]> => {
   const response = await apiClient
     .get(END_POINT.TAG.LIST(type))
     .json<GetTagsResponse>();
@@ -27,7 +32,7 @@ const getTags = async (type: TagType): Promise<PreferenceTag[]> => {
   if (
     !Array.isArray(response.data) ||
     response.data.length === 0 ||
-    !response.data.every(isPreferenceTag)
+    !response.data.every(isTagResponse)
   ) {
     throw new Error('태그 목록 응답 형식이 올바르지 않습니다.');
   }

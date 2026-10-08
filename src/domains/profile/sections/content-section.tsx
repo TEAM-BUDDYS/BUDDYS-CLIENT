@@ -11,16 +11,18 @@ import { ROUTES } from '@/shared/config';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 
 import { PROFILE_QUERY_OPTIONS } from '../api/query';
-import type { MyPost } from '../api/type';
+import type { MyCourse, MyPost } from '../api/type';
 import { ContentEmptyState } from '../components/content-empty-state/content-empty-state';
+import { CourseImageGrid } from '../components/course-image-grid/course-image-grid';
 import {
   type ContentTabValue,
+  type CourseItem,
+  MY_COURSES_PAGE_SIZE,
   MY_POSTS_PAGE_SIZE,
   type PostItem,
 } from '../model/content';
 
 interface ContentSectionProps {
-  onCreateCourseClick: () => void;
   className?: string;
 }
 
@@ -46,6 +48,14 @@ const toPostItem = (post: MyPost): PostItem | null => {
     image: thumbnailImageUrl,
   };
 };
+
+const toCourseItem = ({
+  courseId,
+  thumbnailImageUrl,
+}: MyCourse): CourseItem => ({
+  id: courseId,
+  image: thumbnailImageUrl,
+});
 
 const PostTabPanel = () => {
   const router = useRouter();
@@ -118,25 +128,67 @@ const PostTabPanel = () => {
   );
 };
 
-const CourseTabPanel = ({
-  onCreateCourseClick,
-}: {
-  onCreateCourseClick: () => void;
-}) => (
-  <div className="mt-25">
-    <ContentEmptyState
-      title="아직 기록된 코스가 없어요"
-      description="첫 번째 코스를 공유해보세요"
-      buttonLabel="코스 작성하러 가기"
-      onButtonClick={onCreateCourseClick}
-    />
-  </div>
-);
+const CourseTabPanel = () => {
+  const router = useRouter();
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchNextPageError,
+    isFetchingNextPage,
+  } = useSuspenseInfiniteQuery(
+    PROFILE_QUERY_OPTIONS.ME_COURSES_INFINITE({ size: MY_COURSES_PAGE_SIZE }),
+  );
 
-export const ContentSection = ({
-  onCreateCourseClick,
-  className,
-}: ContentSectionProps) => {
+  const courses = data.pages
+    .flatMap((page) => page.data?.courses ?? [])
+    .map(toCourseItem);
+
+  const handleIntersect = useCallback(() => {
+    fetchNextPage();
+  }, [fetchNextPage]);
+  const loadMoreRef = useInfiniteScroll<HTMLDivElement>({
+    enabled: Boolean(hasNextPage) && !isFetching && !isFetchNextPageError,
+    onIntersect: handleIntersect,
+  });
+
+  if (courses.length === 0 && !hasNextPage) {
+    return (
+      <div className="mt-25">
+        <ContentEmptyState
+          title="아직 기록된 코스가 없어요"
+          description="첫 번째 코스를 공유해보세요"
+          buttonLabel="코스 작성하러 가기"
+          onButtonClick={() => router.push(ROUTES.COURSE.CREATE)}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col">
+      <CourseImageGrid courses={courses} className="pt-3" />
+      <div ref={loadMoreRef} className="h-1" aria-hidden="true" />
+      {isFetchingNextPage && (
+        <p className="text-caption-m-12 py-4 text-center text-gray-500">
+          코스를 불러오는 중이에요
+        </p>
+      )}
+      {isFetchNextPageError && (
+        <button
+          type="button"
+          className="text-caption-m-12 text-mint-400 mx-auto py-4"
+          onClick={() => fetchNextPage()}
+        >
+          다시 불러오기
+        </button>
+      )}
+    </div>
+  );
+};
+
+export const ContentSection = ({ className }: ContentSectionProps) => {
   const [tab, setTab] = useState<ContentTabValue>('post');
 
   return (
@@ -149,13 +201,20 @@ export const ContentSection = ({
 
       {tab === 'post' ? (
         <AsyncBoundary
+          key="post"
           className="py-20"
           loadingFallback={<div className="min-h-72" aria-busy="true" />}
         >
           <PostTabPanel />
         </AsyncBoundary>
       ) : (
-        <CourseTabPanel onCreateCourseClick={onCreateCourseClick} />
+        <AsyncBoundary
+          key="course"
+          className="py-20"
+          loadingFallback={<div className="min-h-72" aria-busy="true" />}
+        >
+          <CourseTabPanel />
+        </AsyncBoundary>
       )}
     </div>
   );

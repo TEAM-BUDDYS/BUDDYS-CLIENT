@@ -6,6 +6,8 @@ import { apiClient, createSearchParams, END_POINT } from '@/shared/api';
 import type { AuthSession } from '../model/auth';
 import type {
   AuthErrorResponse,
+  GoogleLoginParams,
+  GoogleLoginResponse,
   KakaoLoginParams,
   KakaoLoginResponse,
   ReissueResponse,
@@ -41,7 +43,7 @@ const getAuthErrorMessage = (error: unknown) => {
 };
 
 const requestLoginSession = async (
-  request: Promise<KakaoLoginResponse | ReissueResponse>,
+  request: Promise<KakaoLoginResponse | GoogleLoginResponse | ReissueResponse>,
 ): Promise<AuthSession> => {
   try {
     const response = await request;
@@ -79,6 +81,16 @@ export const loginWithKakao = async (params: KakaoLoginParams) =>
       .json<KakaoLoginResponse>(),
   );
 
+export const loginWithGoogle = async (params: GoogleLoginParams) =>
+  requestLoginSession(
+    apiClient
+      .post(END_POINT.AUTH.GOOGLE, {
+        searchParams: createSearchParams(params),
+        context: AUTH_REQUEST_CONTEXT,
+      })
+      .json<GoogleLoginResponse>(),
+  );
+
 export const reissueAccessToken = async () =>
   requestLoginSession(
     apiClient
@@ -87,6 +99,10 @@ export const reissueAccessToken = async () =>
       })
       .json<ReissueResponse>(),
   );
+
+export const requestLogout = async () => {
+  await apiClient.post(END_POINT.AUTH.LOGOUT);
+};
 
 export const AUTH_MUTATION_OPTIONS = {
   KAKAO_LOGIN: () =>

@@ -32,6 +32,7 @@ export interface AsyncBoundaryProps {
   errorState?: ErrorStateOptions;
   className?: string;
   resetKeys?: unknown[];
+  shouldReportError?: (error: unknown) => boolean;
   onError?: ErrorBoundaryProps['onError'];
 }
 
@@ -43,6 +44,7 @@ export const AsyncBoundary = ({
   errorState,
   className,
   resetKeys,
+  shouldReportError,
   onError,
 }: AsyncBoundaryProps) => {
   const resolvedLoadingFallback =
@@ -56,7 +58,10 @@ export const AsyncBoundary = ({
     error,
     info,
   ) => {
-    Sentry.captureException(error);
+    if (shouldReportError?.(error) ?? true) {
+      Sentry.captureException(error);
+    }
+
     onError?.(error, info);
   };
 

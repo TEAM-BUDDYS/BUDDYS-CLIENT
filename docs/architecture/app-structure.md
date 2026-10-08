@@ -173,6 +173,13 @@ domains/{domain}/
 - 제품 도메인 지식이 포함된 코드는 형태가 비슷하더라도 소유 도메인에 유지합니다.
 - 외부 라이브러리 wrapper는 앱 전체에서 사용하는 기반 설정일 때 `lib` 배치를 검토합니다.
 
+## Shared User Profile Query
+
+- 다른 사용자의 공개 프로필 조회는 `src/shared/api/user`의 `USER_QUERY_OPTIONS.PROFILE(userId)`를 사용합니다.
+- 프로필 화면과 코스 생성의 초기 동행 추가가 동일한 응답 검증, 데이터 타입과 query key를 공유합니다.
+- 코스 동행 형태로 변환하는 로직과 자동 추가 여부는 course domain이 관리합니다.
+- 내 프로필, 게시글 목록과 프로필 화면 전용 요청은 profile domain에 유지합니다.
+
 ## Server And Client Boundary
 
 - 기본 page와 layout은 Server Component로 둡니다.
@@ -186,7 +193,7 @@ domains/{domain}/
 - 화면 일부의 독립적인 조회 상태는 `src/shared/components/ui/async-boundary`로 감싸 나머지 화면을 유지합니다.
 - Suspense를 사용하는 TanStack Query는 `QueryErrorResetBoundary`와 함께 구성해 재시도 시 query 오류 상태도 초기화합니다.
 - `AsyncBoundary`는 loading fallback을 즉시 표시합니다.
-- `AsyncBoundary`에서 잡은 오류는 Sentry에 기록하고, `onError`가 있으면 추가 오류 처리도 실행합니다.
+- `AsyncBoundary`에서 잡은 오류는 기본적으로 Sentry에 기록하고, 의도된 오류는 `shouldReportError`로 제외할 수 있습니다. `onError`가 있으면 추가 오류 처리도 실행합니다.
 - `redirect()`, `notFound()` 같은 Next.js 라우팅 제어 오류는 잡지 않고 App Router 경계로 다시 전달합니다.
 - 조건부 조회처럼 `enabled`가 필요한 query, background polling과 mutation은 Suspense로 일괄 전환하지 않고 사용처에서 pending/error 상태를 처리합니다.
 - 정상 응답의 빈 데이터는 Error Boundary가 아니라 `EmptyState` 같은 명시적인 empty UI로 처리합니다.

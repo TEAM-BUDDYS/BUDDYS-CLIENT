@@ -4,14 +4,13 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { type City, getCityDisplayName } from '@/shared/api';
+import { useDebouncedValue } from '@/shared/hooks/use-debounced-value';
+import { useProfileForm } from '@/shared/hooks/use-profile-form';
 import { formatDateInput } from '@/shared/utils/format-date-input';
-import type { GenderType } from '@/types/gender';
 
 import { ONBOARDING_QUERY_OPTIONS } from '../../api/query';
-import { useDebouncedValue } from '../../hooks/use-debounced-value';
 import type { OnboardLocationOption, OnboardStep } from '../../model/onboard';
 import type { OnboardingFormPayload } from '../../model/onboarding-form';
-import { isValidDate } from '../../utils/is-valid-date';
 import { isValidYearMonth } from '../../utils/is-valid-year-month';
 
 const getOptionDisplayName = (option: OnboardLocationOption | null) => {
@@ -23,6 +22,8 @@ const convertDateForPayload = (date: string) => {
 };
 
 export const useOnboardForm = () => {
+  const [interestCountryKeyword, setInterestCountryKeyword] = useState('');
+  const [exchangeCountryKeyword, setExchangeCountryKeyword] = useState('');
   const [interestCountry, setInterestCountry] =
     useState<OnboardLocationOption | null>(null);
   const [interestCity, setInterestCity] = useState('');
@@ -41,11 +42,8 @@ export const useOnboardForm = () => {
   const [activityTagIds, setActivityTagIds] = useState<number[]>([]);
   const [interestTagIds, setInterestTagIds] = useState<number[]>([]);
   const [companionTagIds, setCompanionTagIds] = useState<number[]>([]);
-  const [nickname, setNickname] = useState('');
-  const [gender, setGender] = useState<GenderType | null>(null);
-  const [birthDate, setBirthDate] = useState('');
-  const [bio, setBio] = useState('');
-  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+  const profileForm = useProfileForm();
+  const { nickname, gender, birthDate, bio } = profileForm;
 
   const debouncedExchangeSchool = useDebouncedValue(exchangeSchool, 300);
   const trimmedExchangeSchool = exchangeSchool.trim();
@@ -74,9 +72,20 @@ export const useOnboardForm = () => {
         )
       : [];
 
+  const handleInterestCountryKeywordChange = (value: string) => {
+    setInterestCountryKeyword(value);
+
+    if (interestCountry && interestCountry.name !== value) {
+      setInterestCountry(null);
+      setInterestCity('');
+      setSelectedInterestCity(null);
+    }
+  };
+
   const handleInterestCountrySelect = (value: OnboardLocationOption) => {
     const shouldResetCity = interestCountry?.id !== value.id;
 
+    setInterestCountryKeyword(value.name);
     setInterestCountry(value);
 
     if (shouldResetCity) {
@@ -101,9 +110,20 @@ export const useOnboardForm = () => {
     setSelectedInterestCity(value);
   };
 
+  const handleExchangeCountryKeywordChange = (value: string) => {
+    setExchangeCountryKeyword(value);
+
+    if (exchangeCountry && exchangeCountry.name !== value) {
+      setExchangeCountry(null);
+      setExchangeSchool('');
+      setSelectedExchangeSchool(null);
+    }
+  };
+
   const handleExchangeCountrySelect = (value: OnboardLocationOption) => {
     const shouldResetSchool = exchangeCountry?.id !== value.id;
 
+    setExchangeCountryKeyword(value.name);
     setExchangeCountry(value);
 
     if (shouldResetSchool) {
@@ -144,6 +164,7 @@ export const useOnboardForm = () => {
   };
 
   const resetExchangeInfo = () => {
+    setExchangeCountryKeyword('');
     setExchangeCountry(null);
     setExchangeSchool('');
     setSelectedExchangeSchool(null);
@@ -163,30 +184,6 @@ export const useOnboardForm = () => {
 
   const handleCompanionTagIdsChange = (value: number[]) => {
     setCompanionTagIds(value);
-  };
-
-  const handleNicknameChange = (value: string) => {
-    setNickname(value.slice(0, 8));
-  };
-
-  const handleGenderChange = (value: GenderType) => {
-    setGender(value);
-  };
-
-  const handleBirthDateChange = (value: string) => {
-    setBirthDate((prevBirthDate) =>
-      formatDateInput(value, prevBirthDate, {
-        variant: 'date',
-      }),
-    );
-  };
-
-  const handleBioChange = (value: string) => {
-    setBio(value.slice(0, 30));
-  };
-
-  const handleProfileImageChange = (file: File | null) => {
-    setProfileImageFile(file);
   };
 
   const canGoNext = (step: OnboardStep) => {
@@ -217,7 +214,7 @@ export const useOnboardForm = () => {
     }
 
     if (step === 'profile') {
-      return Boolean(nickname.trim() && gender && isValidDate(birthDate));
+      return profileForm.isValid;
     }
 
     return false;
@@ -268,6 +265,11 @@ export const useOnboardForm = () => {
   };
 
   return {
+    ...profileForm,
+    interestCountryKeyword,
+    exchangeCountryKeyword,
+    handleInterestCountryKeywordChange,
+    handleExchangeCountryKeywordChange,
     interestCountry,
     interestCity,
     selectedInterestCity,
@@ -280,11 +282,6 @@ export const useOnboardForm = () => {
     activityTagIds,
     interestTagIds,
     companionTagIds,
-    nickname,
-    gender,
-    birthDate,
-    bio,
-    profileImageFile,
     handleInterestCountrySelect,
     handleInterestCityChange,
     handleInterestCitySelect,
@@ -297,11 +294,6 @@ export const useOnboardForm = () => {
     handleActivityTagIdsChange,
     handleInterestTagIdsChange,
     handleCompanionTagIdsChange,
-    handleNicknameChange,
-    handleGenderChange,
-    handleBirthDateChange,
-    handleBioChange,
-    handleProfileImageChange,
     getOnboardingFormPayload,
     canGoNext,
   };

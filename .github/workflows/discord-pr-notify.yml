@@ -39,6 +39,7 @@ jobs:
               reviewRequested: 0x4dabf7,
               approved: 0x80ed99,
               changesRequested: 0xffd166,
+              commented: 0xadb5bd,
               merged: 0x90dbf4,
             }
 
@@ -204,6 +205,11 @@ jobs:
                   title: 'PR에 변경 요청이 등록됐어요',
                   color: colors.changesRequested,
                 },
+                commented: {
+                  title: 'PR에 리뷰 코멘트가 등록됐어요',
+                  color: colors.commented,
+                  emptyBody: '코드 라인에 리뷰 코멘트가 등록됐어요.',
+                },
               }
 
               const notification = notificationByState[reviewState]
@@ -216,7 +222,7 @@ jobs:
               await sendDiscord({
                 title: notification.title,
                 pullRequest,
-                description: `[#${pullRequest.number}] ${pullRequest.title}\n\n${truncate(review.body)}`,
+                description: `[#${pullRequest.number}] ${pullRequest.title}\n\n${truncate(review.body || notification.emptyBody)}`,
                 color: notification.color,
                 author: getAuthor(review.user),
                 fields: [
