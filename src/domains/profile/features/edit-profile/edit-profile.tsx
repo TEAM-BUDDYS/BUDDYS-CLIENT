@@ -136,6 +136,10 @@ export const EditProfile = () => {
         queryClient.invalidateQueries({ queryKey: POST_QUERY_KEY.ALL }),
         queryClient.invalidateQueries({ queryKey: COURSE_QUERY_KEY.ALL }),
       ]);
+      queryClient.removeQueries({
+        queryKey: USER_QUERY_KEY.ME(),
+        exact: true,
+      });
       showToast('프로필을 수정했어요.');
       router.replace('/profile');
     } catch {
