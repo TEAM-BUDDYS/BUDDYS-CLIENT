@@ -10,11 +10,4 @@ export interface MyProfile {
   bio?: string | null;
 }
 
-export interface OtherProfile {
-  imageUrl?: string | null;
-  nickname: string;
-  isVerified: boolean;
-  tags: Tag[];
-  bio?: string | null;
-  isWithdrawn: boolean;
-}
+export type { UserPublicProfile as OtherProfile } from '@/shared/api/user';

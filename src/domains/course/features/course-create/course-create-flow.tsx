@@ -1,9 +1,11 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { cn } from '@/lib/cn';
+import { USER_QUERY_OPTIONS } from '@/shared/api';
 import { Header } from '@/shared/components/layout';
 import {
   Button,
@@ -29,13 +31,37 @@ import type { CourseCreateScreen } from './model';
 import { useCourseCreateForm } from './use-course-create-form';
 import { useCourseSubmit } from './use-course-submit';
 
-export const CourseCreateFlow = () => {
+interface CourseCreateFlowProps {
+  companionUserId?: number;
+}
+
+export const CourseCreateFlow = ({
+  companionUserId,
+}: CourseCreateFlowProps) => {
   const router = useRouter();
   const [currentScreen, setCurrentScreen] =
     useState<CourseCreateScreen>('country');
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [flightDayNumber, setFlightDayNumber] = useState<number | null>(null);
-  const courseCreateForm = useCourseCreateForm();
+  const { data: companionProfile } = useQuery({
+    ...USER_QUERY_OPTIONS.PROFILE(companionUserId ?? 0),
+    enabled: companionUserId !== undefined,
+    retry: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    throwOnError: false,
+  });
+  const courseCreateForm = useCourseCreateForm(
+    companionUserId !== undefined &&
+      companionProfile &&
+      !companionProfile.isWithdrawn
+      ? {
+          userId: companionUserId,
+          nickname: companionProfile.nickname,
+          profileImageUrl: companionProfile.imageUrl ?? null,
+        }
+      : undefined,
+  );
   const { clearSubmitError, isSubmitting, submitCourse, submitErrorMessage } =
     useCourseSubmit();
 

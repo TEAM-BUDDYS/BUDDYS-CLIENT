@@ -60,7 +60,9 @@ const getDateByDayIndex = (startDate: Date, dayIndex: number) => {
   return date;
 };
 
-export const useCourseCreateForm = () => {
+export const useCourseCreateForm = (
+  initialCompanion?: CourseCreateCompanion,
+) => {
   const [selectedCountries, setSelectedCountries] = useState<Country[]>([]);
   const [selectedCities, setSelectedCities] = useState<
     CourseCreateCityOption[]
@@ -75,7 +77,10 @@ export const useCourseCreateForm = () => {
   const [days, setDays] = useState<CourseCreateDayFormState[]>([]);
   const [selectedCompanions, setSelectedCompanions] = useState<
     CourseCreateCompanion[]
-  >([]);
+  >(() => (initialCompanion ? [initialCompanion] : []));
+  const [hasInitializedCompanion, setHasInitializedCompanion] = useState(
+    initialCompanion !== undefined,
+  );
   const previewUrlsRef = useRef(new Set<string>());
   const durationDays = dateRange.startDate
     ? getDateRangeDayCount(
@@ -92,6 +97,17 @@ export const useCourseCreateForm = () => {
       previewUrls.clear();
     };
   }, []);
+
+  // 비동기 조회가 끝났을 때 한 번만 반영하고, 이후 사용자의 삭제를 유지합니다.
+  if (initialCompanion && !hasInitializedCompanion) {
+    setHasInitializedCompanion(true);
+    setSelectedCompanions((companions) =>
+      companions.length >= COURSE_CREATE_MAX_COMPANION_COUNT ||
+      companions.some(({ userId }) => userId === initialCompanion.userId)
+        ? companions
+        : [...companions, initialCompanion],
+    );
+  }
 
   const handleCountrySelect = (country: Country) => {
     setSelectedCountries((prevCountries) =>

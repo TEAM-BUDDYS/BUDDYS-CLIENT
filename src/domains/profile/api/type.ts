@@ -32,9 +32,6 @@ export type GetMyCoursesResponse =
 
 export type MyCourse = components['schemas']['CourseResponse'];
 
-export type GetUserProfileResponse =
-  components['schemas']['BaseResponseUserPublicProfileResponse'];
-
 export type GetUserPostsParams =
   operations['getUserPosts']['parameters']['query'];
 export type GetUserPostsResponse =

@@ -163,6 +163,7 @@ export const convertChatRoomDetailResponse = (
   const canSendMessage = response.data?.canSendMessage;
   const createdAt = response.data?.createdAt;
   const participantNickname = response.data?.participant?.nickname;
+  const participantUserId = response.data?.participant?.userId;
   const hasBlocked = response.data?.hasBlocked;
   const hasReported = response.data?.hasReported;
 
@@ -185,6 +186,9 @@ export const convertChatRoomDetailResponse = (
     canSendMessage,
     createdAt,
     participantNickname,
+    participantUserId: isPositiveSafeInteger(participantUserId)
+      ? participantUserId
+      : null,
     hasBlocked,
     hasReported,
   };
