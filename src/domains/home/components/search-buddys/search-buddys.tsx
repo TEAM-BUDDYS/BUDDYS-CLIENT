@@ -25,7 +25,7 @@ export const SearchBuddys = ({
   return (
     <div
       className={cn(
-        'flex w-full items-center gap-3 border-b border-gray-100 pb-3.5 last:border-b-0 last:pb-0',
+        'flex w-full items-center border-b border-gray-100 pb-3.5 last:border-b-0 last:pb-0',
         className,
       )}
     >
