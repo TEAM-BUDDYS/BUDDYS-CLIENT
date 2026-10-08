@@ -18,9 +18,15 @@ import {
 
 interface ChatRoomMenuProps {
   chatRoomId: number;
+  hasBlocked: boolean;
+  hasReported: boolean;
 }
 
-export const ChatRoomMenu = ({ chatRoomId }: ChatRoomMenuProps) => {
+export const ChatRoomMenu = ({
+  chatRoomId,
+  hasBlocked,
+  hasReported,
+}: ChatRoomMenuProps) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { showToast } = useToast();
@@ -92,6 +98,8 @@ export const ChatRoomMenu = ({ chatRoomId }: ChatRoomMenuProps) => {
 
       <BottomSheetChat
         open={open}
+        hasBlocked={hasBlocked}
+        hasReported={hasReported}
         onClose={() => setOpen(false)}
         onAction={handleAction}
       />

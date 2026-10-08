@@ -189,7 +189,13 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
         content={chatRoomData.participantNickname}
         hasBackButton
         contentAlign="center"
-        right={<ChatRoomMenu chatRoomId={chatRoomId} />}
+        right={
+          <ChatRoomMenu
+            chatRoomId={chatRoomId}
+            hasBlocked={chatRoomData.hasBlocked}
+            hasReported={chatRoomData.hasReported}
+          />
+        }
       />
       <main className="flex min-h-0 flex-1 flex-col">
         <ChatMessageList

@@ -22,6 +22,8 @@ export interface paths {
      *     모든 필드를 요청에 포함해야 합니다.
      *     태그는 전달된 orderedTagIds로 전체 교체되며,
      *     bio를 null로 전달하면 기존 자기소개가 삭제됩니다.
+     *     profileImageUrl을 null로 전달하면 기존 프로필 이미지가 삭제됩니다.
+     *     profileImageUrl은 이미지 업로드 API(imageDomain=PROFILE)로 발급받은 URL이거나 현재 설정된 값이어야 합니다.
      *     태그 배열의 앞 3개가 대표 태그입니다.
      */
     put: operations['updateMyProfile'];
@@ -1411,6 +1413,11 @@ export interface components {
        */
       bio: string | null;
       /**
+       * @description 프로필 이미지 URL. 최대 512자. 이미지 업로드 API(imageDomain=PROFILE)로 발급받은 URL 또는 현재 설정된 값만 허용합니다. null이면 기존 프로필 이미지를 삭제합니다.
+       * @example https://example.com/profile.png
+       */
+      profileImageUrl: string | null;
+      /**
        * @description 드래그앤드롭으로 정렬한 전체 선택 태그 ID 목록입니다.
        *     카테고리와 무관하게 상위 3개가 대표 태그로 노출됩니다.
        *     서버에서 활동 1~3개, 관심사 1~3개, 여행 스타일 1~5개인지 검증합니다.
@@ -2207,7 +2214,7 @@ export interface components {
        */
       bio?: string | null;
       /**
-       * @description 프로필 이미지 URL
+       * @description 프로필 이미지 URL. 이미지 업로드 API(imageDomain=PROFILE)로 발급받은 URL 또는 현재 설정된 값만 허용합니다.
        * @example https://example.com/profile.png
        */
       profileImageUrl?: string | null;
@@ -4544,6 +4551,7 @@ export interface operations {
            *         "gender": "FEMALE",
            *         "birthDate": "2004-10-24",
            *         "bio": "안녕하세요 김버디입니다~~",
+           *         "profileImageUrl": "https://example.com/profile.png",
            *         "orderedTags": [
            *           {
            *             "id": 27,
@@ -8752,6 +8760,7 @@ export interface operations {
            *         "gender": "FEMALE",
            *         "birthDate": "2004-10-24",
            *         "bio": "안녕하세요 김버디입니다~~",
+           *         "profileImageUrl": "https://example.com/profile.png",
            *         "orderedTags": [
            *           {
            *             "id": 27,
