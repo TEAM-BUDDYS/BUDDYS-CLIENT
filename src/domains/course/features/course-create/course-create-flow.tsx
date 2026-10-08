@@ -25,19 +25,24 @@ import { CourseCreateDurationStep } from './course-create-duration-step';
 import { CourseCreateQuestionHeader } from './course-create-question-header';
 import { CourseCreateFlightForm } from './flight/course-create-flight-form';
 import { CourseCreateItineraryStep } from './itinerary/course-create-itinerary-step';
-import type { CourseCreateScreen } from './model';
+import type { CourseCreateInitialValue, CourseCreateScreen } from './model';
 import { useCourseCreateForm } from './use-course-create-form';
 import { useCourseSubmit } from './use-course-submit';
 
-export const CourseCreateFlow = () => {
+interface CourseCreateFlowProps {
+  initialCourse?: CourseCreateInitialValue;
+}
+
+export const CourseCreateFlow = ({ initialCourse }: CourseCreateFlowProps) => {
   const router = useRouter();
   const [currentScreen, setCurrentScreen] =
     useState<CourseCreateScreen>('country');
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [flightDayNumber, setFlightDayNumber] = useState<number | null>(null);
-  const courseCreateForm = useCourseCreateForm();
+  const courseCreateForm = useCourseCreateForm(initialCourse);
   const { clearSubmitError, isSubmitting, submitCourse, submitErrorMessage } =
-    useCourseSubmit();
+    useCourseSubmit({ courseId: initialCourse?.courseId });
+  const isEditMode = initialCourse !== undefined;
 
   if (flightDayNumber !== null) {
     return (
@@ -54,6 +59,9 @@ export const CourseCreateFlow = () => {
   const currentProgressStep =
     COURSE_CREATE_PROGRESS_STEP_BY_SCREEN[currentScreen];
   const canGoNext = courseCreateForm.canGoNext(currentScreen);
+  const isSubmitScreen = isEditMode
+    ? currentScreen === 'itinerary'
+    : currentScreen === 'companion';
   const isQuestionScreen =
     currentScreen !== 'detail' && currentScreen !== 'itinerary';
 
@@ -101,7 +109,7 @@ export const CourseCreateFlow = () => {
       return;
     }
 
-    if (currentScreen === 'companion') {
+    if (isSubmitScreen) {
       const value = courseCreateForm.getCourseCreateValue();
 
       if (value) {
@@ -131,7 +139,7 @@ export const CourseCreateFlow = () => {
       return;
     }
 
-    if (currentScreen === 'itinerary') {
+    if (currentScreen === 'itinerary' && !isEditMode) {
       setCurrentScreen('companion');
     }
   };
@@ -151,7 +159,9 @@ export const CourseCreateFlow = () => {
       <div className="sticky top-0 z-20 bg-white">
         <Header
           content={
-            <span className="text-title-b-18 text-gray-800">코스 작성하기</span>
+            <span className="text-title-b-18 text-gray-800">
+              {isEditMode ? '코스 수정하기' : '코스 작성하기'}
+            </span>
           }
           contentAlign="center"
           hasBackButton
@@ -160,7 +170,11 @@ export const CourseCreateFlow = () => {
         <div className="px-4">
           <ProgressBar
             currentStep={currentProgressStep}
-            totalStep={COURSE_CREATE_TOTAL_STEP}
+            totalStep={
+              isEditMode
+                ? COURSE_CREATE_PROGRESS_STEP_BY_SCREEN.itinerary
+                : COURSE_CREATE_TOTAL_STEP
+            }
           />
         </div>
       </div>
@@ -192,6 +206,9 @@ export const CourseCreateFlow = () => {
 
           {currentScreen === 'country' && (
             <CourseCreateCountryStep
+              hasUnassignedCities={courseCreateForm.selectedCities.some(
+                ({ countryId }) => countryId === null,
+              )}
               selectedCountries={courseCreateForm.selectedCountries}
               onCountrySelect={courseCreateForm.handleCountrySelect}
               onCountryRemove={courseCreateForm.handleCountryRemove}
@@ -236,12 +253,14 @@ export const CourseCreateFlow = () => {
               title={courseCreateForm.detail.title}
               cities={courseCreateForm.selectedCities}
               days={courseCreateForm.days}
+              isDisabled={isSubmitting}
               onDayPlacesChange={courseCreateForm.setDayPlaces}
               onDayPlaceRemove={courseCreateForm.removeDayPlace}
               onDayImagesAdd={courseCreateForm.addDayImages}
               onDayImageRemove={courseCreateForm.removeDayImage}
               onDayMemoCostChange={courseCreateForm.updateDayMemoCost}
               onFlightDaySelect={setFlightDayNumber}
+              onFlightRemove={courseCreateForm.removeDayFlight}
             />
           )}
 
@@ -257,7 +276,7 @@ export const CourseCreateFlow = () => {
       </section>
 
       <div className="sticky bottom-0 mt-auto flex flex-col gap-4 bg-white px-4 pt-6 pb-8.5">
-        {currentScreen === 'companion' && submitErrorMessage && (
+        {isSubmitScreen && submitErrorMessage && (
           <p className="text-caption-r-12 text-error text-center" role="alert">
             {submitErrorMessage}
           </p>
@@ -267,7 +286,7 @@ export const CourseCreateFlow = () => {
           disabled={!canGoNext || isSubmitting}
           onClick={handleNextClick}
         >
-          {currentScreen === 'companion' ? '등록하기' : '다음'}
+          {isSubmitScreen ? (isEditMode ? '수정하기' : '등록하기') : '다음'}
         </Button>
         {currentScreen === 'date' && (
           <button

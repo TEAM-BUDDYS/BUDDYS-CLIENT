@@ -12,6 +12,9 @@ export type CourseDetail = components['schemas']['CourseDetailResponse'];
 export type CreateCourseRequest = components['schemas']['CreateCourseRequest'];
 export type CreateCourseResponse =
   components['schemas']['BaseResponseCreateCourseResponse'];
+export type UpdateCourseRequest = components['schemas']['UpdateCourseRequest'];
+export type UpdateCourseResponse =
+  components['schemas']['BaseResponseUpdateCourseResponse'];
 export type CourseErrorResponse = components['schemas']['BaseResponse'];
 export type CreateCourseCommentRequest =
   components['schemas']['CreateCommentRequest'];

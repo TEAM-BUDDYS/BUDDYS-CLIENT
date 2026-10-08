@@ -23,6 +23,8 @@ import type {
   GetCourseCommentsResponse,
   GetCourseDetailResponse,
   UpdateCourseBookmarkResponse,
+  UpdateCourseRequest,
+  UpdateCourseResponse,
 } from './type';
 
 interface CreateCourseCommentVariables {
@@ -33,6 +35,11 @@ interface CreateCourseCommentVariables {
 interface UpdateCourseBookmarkVariables {
   courseId: number;
   bookmarked: boolean;
+}
+
+interface UpdateCourseVariables {
+  courseId: number;
+  body: UpdateCourseRequest;
 }
 
 const createCourse = async (body: CreateCourseRequest) => {
@@ -53,6 +60,27 @@ const createCourse = async (body: CreateCourseRequest) => {
   }
 
   return courseId;
+};
+
+const updateCourse = async ({ courseId, body }: UpdateCourseVariables) => {
+  const response = await apiClient
+    .put(END_POINT.COURSE.DETAIL(courseId), {
+      json: body,
+    })
+    .json<UpdateCourseResponse>();
+  const updatedCourseId = response.data?.courseId;
+
+  if (
+    response.success !== true ||
+    typeof updatedCourseId !== 'number' ||
+    !Number.isSafeInteger(updatedCourseId) ||
+    updatedCourseId <= 0 ||
+    updatedCourseId !== courseId
+  ) {
+    throw new Error(response.message || '코스 수정 응답이 올바르지 않습니다.');
+  }
+
+  return updatedCourseId;
 };
 
 const getCourseComments = async (
@@ -169,6 +197,10 @@ export const COURSE_MUTATION_OPTIONS = {
   CREATE_COMMENT: () =>
     mutationOptions({
       mutationFn: createCourseComment,
+    }),
+  UPDATE: () =>
+    mutationOptions({
+      mutationFn: updateCourse,
     }),
   UPDATE_BOOKMARK: () =>
     mutationOptions({
