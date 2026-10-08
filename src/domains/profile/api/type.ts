@@ -39,6 +39,13 @@ export type GetUserPostsResponse =
 
 export type UserPost = components['schemas']['PostResponse'];
 
+export type GetUserCoursesParams =
+  operations['getUserCourses']['parameters']['query'];
+export type GetUserCoursesResponse =
+  components['schemas']['BaseResponseUserCoursesResponse'];
+
+export type UserCourse = components['schemas']['CourseResponse'];
+
 export type GetBookmarkedPostsParams =
   operations['getBookmarkedPosts']['parameters']['query'];
 export type GetBookmarkedPostsResponse =

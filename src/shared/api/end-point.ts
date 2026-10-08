@@ -72,6 +72,9 @@ export const END_POINT = {
     USERS_BY_EXCHANGE_COUNTRY: 'api/v1/recommendations/users/exchange-country',
     POSTS: 'api/v1/recommendations/posts',
   },
+  SEARCH: {
+    INTEGRATED: 'api/v1/search',
+  },
   TAG: {
     LIST: (type: 'ACTIVITY' | 'INTEREST' | 'TRAVEL_STYLE') =>
       `api/v1/tags/${type}`,
@@ -86,5 +89,6 @@ export const END_POINT = {
     SEARCH: 'api/v1/users/search',
     PROFILE: (userId: number) => `api/v1/users/${userId}`,
     POSTS: (userId: number) => `api/v1/users/${userId}/posts`,
+    COURSES: (userId: number) => `api/v1/users/${userId}/courses`,
   },
 } as const;

@@ -199,6 +199,16 @@ export const RECOMMENDATION_QUERY_KEY = {
     [...RECOMMENDATION_QUERY_KEY.POSTS_ALL(), params ?? {}] as const,
 };
 
+export const SEARCH_QUERY_KEY = {
+  ALL: ['search'] as const,
+  INFINITE: (params: GetQueryParams<'/api/v1/search'>) =>
+    [
+      ...SEARCH_QUERY_KEY.ALL,
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
+};
+
 export const TAG_QUERY_KEY = {
   ALL: ['tags'] as const,
   LIST: (type: 'ACTIVITY' | 'INTEREST' | 'TRAVEL_STYLE') =>
@@ -221,11 +231,10 @@ export const USER_QUERY_KEY = {
       'infinite-list',
       excludePageParam(params),
     ] as const,
+  ME_COURSES_ALL: () => [...USER_QUERY_KEY.ALL, 'me', 'courses'] as const,
   ME_COURSES_INFINITE: (params?: GetQueryParams<'/api/v1/users/me/courses'>) =>
     [
-      ...USER_QUERY_KEY.ALL,
-      'me',
-      'courses',
+      ...USER_QUERY_KEY.ME_COURSES_ALL(),
       'infinite-list',
       excludePageParam(params),
     ] as const,
@@ -246,6 +255,17 @@ export const USER_QUERY_KEY = {
       ...USER_QUERY_KEY.ALL,
       userId,
       'posts',
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
+  COURSES_INFINITE: (
+    userId: number,
+    params?: GetQueryParams<'/api/v1/users/{userId}/courses'>,
+  ) =>
+    [
+      ...USER_QUERY_KEY.ALL,
+      userId,
+      'courses',
       'infinite-list',
       excludePageParam(params),
     ] as const,

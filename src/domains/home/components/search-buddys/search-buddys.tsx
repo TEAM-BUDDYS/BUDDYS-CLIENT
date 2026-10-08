@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import { cn } from '@/lib/cn';
 import { defaultProfileImage } from '@/shared/assets/illustrations';
 import { ChatIcon } from '@/shared/components/icons';
@@ -8,6 +10,7 @@ import { CommonImage, IconButton } from '@/shared/components/ui';
 interface SearchBuddysProps {
   nickname: string;
   profileImageUrl?: string | null;
+  href: string;
   onChatClick: () => void;
   className?: string;
 }
@@ -15,6 +18,7 @@ interface SearchBuddysProps {
 export const SearchBuddys = ({
   nickname,
   profileImageUrl,
+  href,
   onChatClick,
   className,
 }: SearchBuddysProps) => {
@@ -25,17 +29,19 @@ export const SearchBuddys = ({
         className,
       )}
     >
-      <CommonImage
-        src={profileImageUrl || defaultProfileImage.src}
-        alt={`${nickname}님의 프로필 이미지`}
-        width={50}
-        height={50}
-        radius="rounded-full"
-        className="size-12.5 shrink-0 border border-gray-100"
-      />
-      <span className="text-body-sb-15 ml-3.25 min-w-0 truncate text-gray-800">
-        {nickname}
-      </span>
+      <Link href={href} className="flex min-w-0 flex-1 items-center">
+        <CommonImage
+          src={profileImageUrl || defaultProfileImage.src}
+          alt={`${nickname}님의 프로필 이미지`}
+          width={50}
+          height={50}
+          radius="rounded-full"
+          className="size-12.5 shrink-0 border border-gray-100"
+        />
+        <span className="text-body-sb-15 ml-3.25 min-w-0 truncate text-gray-800">
+          {nickname}
+        </span>
+      </Link>
       <IconButton
         variant="primary"
         icon={<ChatIcon />}

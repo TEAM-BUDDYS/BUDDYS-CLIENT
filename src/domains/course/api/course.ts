@@ -20,6 +20,7 @@ import type {
   CreateCourseCommentResponse,
   CreateCourseRequest,
   CreateCourseResponse,
+  DeleteCourseResponse,
   GetBookmarkedCoursesParams,
   GetBookmarkedCoursesResponse,
   GetCourseCommentsParams,
@@ -166,6 +167,16 @@ const createCourseComment = async ({
   return commentId;
 };
 
+const deleteCourse = async (courseId: number) => {
+  const response = await apiClient
+    .delete(END_POINT.COURSE.DETAIL(courseId))
+    .json<DeleteCourseResponse>();
+
+  if (response.success !== true) {
+    throw new Error(response.message || '코스를 삭제하지 못했습니다.');
+  }
+};
+
 const updateCourseBookmark = async ({
   courseId,
   bookmarked,
@@ -242,6 +253,10 @@ export const COURSE_MUTATION_OPTIONS = {
   CREATE_COMMENT: () =>
     mutationOptions({
       mutationFn: createCourseComment,
+    }),
+  DELETE: () =>
+    mutationOptions({
+      mutationFn: deleteCourse,
     }),
   UPDATE_BOOKMARK: () =>
     mutationOptions({
