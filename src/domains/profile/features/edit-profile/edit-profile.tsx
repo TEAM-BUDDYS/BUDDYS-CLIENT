@@ -18,28 +18,43 @@ import {
   GENDER_OPTIONS,
   PROFILE_BIO_MAX_LENGTH,
 } from '@/shared/constants/profile';
-import {
-  type ProfileFormValues,
-  useProfileForm,
-} from '@/shared/hooks/use-profile-form';
+import { useProfileForm } from '@/shared/hooks/use-profile-form';
 
+import { PROFILE_QUERY_OPTIONS } from '../../api/query';
+import type { GetMyProfileForEditResponse } from '../../api/type';
 import type { SelectedTag } from '../../model/tag-edit';
 import { TagEditSection } from '../../sections/tag-edit-section';
 
-interface EditProfileProps {
-  initialValues?: ProfileFormValues;
-}
+export const EditProfile = () => {
+  const [profileQuery, activityQuery, interestQuery, travelStyleQuery] =
+    useSuspenseQueries({
+      queries: [
+        {
+          ...PROFILE_QUERY_OPTIONS.ME_EDIT(),
+          select: (response: GetMyProfileForEditResponse) => {
+            if (!response.data) {
+              throw new Error('프로필 편집 정보가 없습니다.');
+            }
 
-export const EditProfile = ({ initialValues }: EditProfileProps) => {
-  const [selectedTags, setSelectedTags] = useState<SelectedTag[]>([]);
-  const [activityQuery, interestQuery, travelStyleQuery] = useSuspenseQueries({
-    queries: [
-      TAG_QUERY_OPTIONS.LIST('ACTIVITY'),
-      TAG_QUERY_OPTIONS.LIST('INTEREST'),
-      TAG_QUERY_OPTIONS.LIST('TRAVEL_STYLE'),
-    ],
+            return response.data;
+          },
+        },
+        TAG_QUERY_OPTIONS.LIST('ACTIVITY'),
+        TAG_QUERY_OPTIONS.LIST('INTEREST'),
+        TAG_QUERY_OPTIONS.LIST('TRAVEL_STYLE'),
+      ],
+    });
+  const profile = profileQuery.data;
+  const [selectedTags, setSelectedTags] = useState<SelectedTag[]>(
+    profile.orderedTags,
+  );
+  const form = useProfileForm({
+    nickname: profile.nickname,
+    gender: profile.gender,
+    birthDate: profile.birthDate,
+    bio: profile.bio ?? '',
+    profileImageUrl: profile.profileImageUrl,
   });
-  const form = useProfileForm(initialValues);
 
   const {
     checkedNickname,
