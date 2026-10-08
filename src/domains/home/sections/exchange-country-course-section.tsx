@@ -36,6 +36,7 @@ const ExchangeCountryCourseItem = ({
       title={course.title}
       description={course.description}
       thumbnailImageUrl={course.thumbnailImageUrl}
+      createdAt={course.createdAt}
       href={ROUTES.COURSE.DETAIL(course.courseId)}
       isBookmarked={course.isBookmarked}
       onBookmarkClick={() => toggleBookmark(course.isBookmarked)}
