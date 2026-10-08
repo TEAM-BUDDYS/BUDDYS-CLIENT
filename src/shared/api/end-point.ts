@@ -1,7 +1,4 @@
 export const END_POINT = {
-  SEARCH: {
-    SUGGESTIONS: 'api/v1/search/suggestions',
-  },
   AIRLINE: {
     SEARCH: 'api/v1/airlines/search',
   },
@@ -74,6 +71,7 @@ export const END_POINT = {
   },
   SEARCH: {
     INTEGRATED: 'api/v1/search',
+    SUGGESTIONS: 'api/v1/search/suggestions',
   },
   TAG: {
     LIST: (type: 'ACTIVITY' | 'INTEREST' | 'TRAVEL_STYLE') =>
