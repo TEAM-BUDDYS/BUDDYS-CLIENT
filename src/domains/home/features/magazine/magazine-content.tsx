@@ -6,6 +6,7 @@ import { useCallback, useState } from 'react';
 import { HOME_QUERY_OPTIONS } from '@/domains/home/api/query';
 import { ListToolbar } from '@/domains/home/components/list-toolbar/list-toolbar';
 import { MagazineListCard } from '@/domains/home/components/magazine-list-card/magazine-list-card';
+import { useMagazineBookmarkMutation } from '@/domains/home/hooks/use-magazine-bookmark-mutation';
 import {
   type MagazineCategory,
   magazineCategoryItems,
@@ -25,6 +26,7 @@ interface MagazineListProps {
 }
 
 const MagazineList = ({ category, sort, onSortChange }: MagazineListProps) => {
+  const bookmarkMutation = useMagazineBookmarkMutation();
   const {
     data,
     fetchNextPage,
@@ -50,8 +52,9 @@ const MagazineList = ({ category, sort, onSortChange }: MagazineListProps) => {
     onIntersect: handleIntersect,
   });
 
-  // TODO: 북마크 API 연동
-  const handleBookmarkClick = () => undefined;
+  const handleBookmarkClick = (magazineId: number, isBookmarked: boolean) => {
+    bookmarkMutation.mutate({ magazineId, isBookmarked });
+  };
 
   if (magazines.length === 0 && !hasNextPage) {
     return (
@@ -74,7 +77,12 @@ const MagazineList = ({ category, sort, onSortChange }: MagazineListProps) => {
           <li key={magazineId}>
             <MagazineListCard
               {...magazine}
-              onBookmarkClick={handleBookmarkClick}
+              isBookmarkPending={bookmarkMutation.pendingMagazineIds.has(
+                magazineId,
+              )}
+              onBookmarkClick={() =>
+                handleBookmarkClick(magazineId, !magazine.isBookmarked)
+              }
             />
           </li>
         ))}

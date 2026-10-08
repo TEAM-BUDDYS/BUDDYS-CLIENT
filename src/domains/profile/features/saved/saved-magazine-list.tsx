@@ -1,9 +1,10 @@
 'use client';
 
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
 import { MagazineListCard } from '@/domains/home/components/magazine-list-card/magazine-list-card';
+import { useMagazineBookmarkMutation } from '@/domains/home/hooks/use-magazine-bookmark-mutation';
 import { PROFILE_QUERY_OPTIONS } from '@/domains/profile/api/query';
 import { AsyncBoundary, EmptyState } from '@/shared/components/ui';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
@@ -11,10 +12,7 @@ import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 const SAVED_MAGAZINES_PAGE_SIZE = 20;
 
 const SavedMagazineItems = () => {
-  // TODO: 매거진 저장 해제 API 연동 시 mutation으로 교체
-  const [unbookmarkedMagazineIds, setUnbookmarkedMagazineIds] = useState<
-    number[]
-  >([]);
+  const bookmarkMutation = useMagazineBookmarkMutation();
   const {
     data,
     fetchNextPage,
@@ -39,13 +37,7 @@ const SavedMagazineItems = () => {
   });
 
   const handleBookmarkClick = (magazineId: number) => {
-    setUnbookmarkedMagazineIds((prevMagazineIds) =>
-      prevMagazineIds.includes(magazineId)
-        ? prevMagazineIds.filter(
-            (prevMagazineId) => prevMagazineId !== magazineId,
-          )
-        : [...prevMagazineIds, magazineId],
-    );
+    bookmarkMutation.mutate({ magazineId, isBookmarked: false });
   };
 
   if (magazines.length === 0 && !hasNextPage) {
@@ -69,9 +61,10 @@ const SavedMagazineItems = () => {
               thumbnailImageUrl={magazine.thumbnailImageUrl}
               publishedAt={magazine.publishedAt}
               externalUrl={magazine.externalUrl}
-              isBookmarked={
-                !unbookmarkedMagazineIds.includes(magazine.magazineId)
-              }
+              isBookmarked={magazine.isBookmarked}
+              isBookmarkPending={bookmarkMutation.pendingMagazineIds.has(
+                magazine.magazineId,
+              )}
               onBookmarkClick={() => handleBookmarkClick(magazine.magazineId)}
             />
           </li>

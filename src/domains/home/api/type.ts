@@ -5,6 +5,8 @@ export type GetMagazinesParams =
 
 export type GetMagazinesResponse =
   components['schemas']['MagazineListSuccessResponse'];
+export type UpdateMagazineBookmarkResponse =
+  components['schemas']['BaseResponseMagazineBookmarkResponse'];
 export type SearchParams = operations['search']['parameters']['query'];
 export type SearchType = NonNullable<SearchParams['type']>;
 export type SearchSort = NonNullable<SearchParams['sort']>;
