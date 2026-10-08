@@ -1,5 +1,6 @@
 'use client';
 
+import { useStartChat } from '@/domains/chat/hooks/use-start-chat';
 import { ListToolbar } from '@/domains/home/components/list-toolbar/list-toolbar';
 import { SearchBuddys } from '@/domains/home/components/search-buddys/search-buddys';
 
@@ -23,8 +24,7 @@ const MOCK_SEARCH_BUDDIES = [
 ];
 
 export const SearchResultBuddyList = () => {
-  // TODO: 채팅방 생성 API 연동 시 채팅 화면으로 이동
-  const handleChatClick = () => {};
+  const { startChat } = useStartChat();
 
   return (
     <>
@@ -32,7 +32,11 @@ export const SearchResultBuddyList = () => {
 
       <div className="mt-4 flex flex-col gap-3.5">
         {MOCK_SEARCH_BUDDIES.map(({ userId, ...buddy }) => (
-          <SearchBuddys key={userId} {...buddy} onChatClick={handleChatClick} />
+          <SearchBuddys
+            key={userId}
+            {...buddy}
+            onChatClick={() => startChat(userId)}
+          />
         ))}
       </div>
     </>
