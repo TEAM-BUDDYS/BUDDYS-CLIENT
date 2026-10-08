@@ -1,31 +1,19 @@
 'use client';
 
-import {
-  type InfiniteData,
-  useInfiniteQuery,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
-import {
-  COURSE_MUTATION_OPTIONS,
-  COURSE_QUERY_OPTIONS,
-} from '@/domains/course/api/course';
-import type {
-  CourseListPage,
-  GetCoursesParams,
-} from '@/domains/course/api/type';
+import { COURSE_QUERY_OPTIONS } from '@/domains/course/api/course';
+import type { GetCoursesParams } from '@/domains/course/api/type';
 import { useCourseBrowse } from '@/domains/course/features/course-browse/course-browse-provider';
+import { useCourseBookmarkMutation } from '@/domains/course/hook/use-course-bookmark-mutation';
 import { COURSE_FILTER_COUNTRIES } from '@/domains/course/model/recommended-course';
-import { COURSE_QUERY_KEY } from '@/shared/api';
 import { Header } from '@/shared/components/layout';
 import {
   AsyncErrorState,
   AsyncLoadingState,
   CardList,
   ChipButton,
-  useToast,
 } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
@@ -33,8 +21,6 @@ import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 const COURSE_EXPLORE_PAGE_SIZE = 10;
 
 export const FilterExplore = () => {
-  const queryClient = useQueryClient();
-  const { showToast } = useToast();
   const { selectedRecommendedCountryId, setSelectedRecommendedCountryId } =
     useCourseBrowse();
   const queryParams = {
@@ -51,44 +37,7 @@ export const FilterExplore = () => {
     isPending,
     refetch,
   } = useInfiniteQuery(COURSE_QUERY_OPTIONS.INFINITE_LIST(queryParams));
-  const courseBookmarkMutation = useMutation({
-    ...COURSE_MUTATION_OPTIONS.UPDATE_BOOKMARK(),
-    onSuccess: ({ courseId, bookmarked }) => {
-      queryClient.setQueryData<InfiniteData<CourseListPage>>(
-        COURSE_QUERY_KEY.INFINITE_LIST(queryParams),
-        (coursePages) =>
-          coursePages && {
-            ...coursePages,
-            pages: coursePages.pages.map((coursePage) => ({
-              ...coursePage,
-              content: coursePage.content.map((course) =>
-                course.courseId === courseId
-                  ? { ...course, isBookmarked: bookmarked }
-                  : course,
-              ),
-            })),
-          },
-      );
-
-      void queryClient.invalidateQueries({
-        queryKey: COURSE_QUERY_KEY.INFINITE_LISTS_ALL(),
-      });
-      void queryClient.invalidateQueries({
-        queryKey: COURSE_QUERY_KEY.LISTS_ALL(),
-      });
-      void queryClient.invalidateQueries({
-        queryKey: COURSE_QUERY_KEY.BOOKMARKS_ALL(),
-      });
-      void queryClient.invalidateQueries({
-        queryKey: COURSE_QUERY_KEY.DETAIL(courseId),
-      });
-    },
-    onError: () => {
-      showToast('북마크를 변경하지 못했어요. 다시 시도해 주세요.', {
-        variant: 'gray',
-      });
-    },
-  });
+  const courseBookmarkMutation = useCourseBookmarkMutation();
   const courses = data?.pages.flatMap((page) => page.content) ?? [];
   const handleIntersect = useCallback(() => {
     void fetchNextPage();

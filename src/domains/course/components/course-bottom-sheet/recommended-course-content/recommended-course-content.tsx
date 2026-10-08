@@ -1,28 +1,18 @@
 'use client';
 
-import {
-  type InfiniteData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
-import {
-  COURSE_MUTATION_OPTIONS,
-  COURSE_QUERY_OPTIONS,
-} from '@/domains/course/api/course';
+import { COURSE_QUERY_OPTIONS } from '@/domains/course/api/course';
 import type {
-  CourseListPage,
   GetBookmarkedCoursesParams,
   GetCoursesParams,
 } from '@/domains/course/api/type';
 import { useCourseBrowse } from '@/domains/course/features/course-browse/course-browse-provider';
+import { useCourseBookmarkMutation } from '@/domains/course/hook/use-course-bookmark-mutation';
 import {
   COURSE_CATEGORIES,
   COURSE_FILTER_COUNTRIES,
 } from '@/domains/course/model/recommended-course';
-import { COURSE_QUERY_KEY } from '@/shared/api';
-import { useToast } from '@/shared/components/ui';
 
 import { CourseFilterSection } from './course-filter-section';
 import { SavedCourseSection } from './saved-course-section';
@@ -43,16 +33,12 @@ export const RecommendedCourseContent = ({
   onExploreClick,
   onSuggestedMoreClick,
 }: RecommendedCourseContentProps) => {
-  const queryClient = useQueryClient();
-  const { showToast } = useToast();
   const {
     selectedRecommendedCategoryId,
     selectedRecommendedCountryId,
     setSelectedRecommendedCategoryId,
     setSelectedRecommendedCountryId,
   } = useCourseBrowse();
-  const activeRecommendedCategoryId =
-    selectedRecommendedCategoryId ?? COURSE_CATEGORIES[0].id;
   const courseQueryParams = {
     page: 0,
     size: DEFAULT_VISIBLE_COURSE_COUNT,
@@ -63,7 +49,7 @@ export const RecommendedCourseContent = ({
   const suggestedCourseQueryParams = {
     page: 0,
     size: DEFAULT_VISIBLE_COURSE_COUNT,
-    tagId: activeRecommendedCategoryId,
+    tagId: selectedRecommendedCategoryId,
   } satisfies GetCoursesParams;
   const coursesQuery = useQuery(COURSE_QUERY_OPTIONS.LIST(courseQueryParams));
   const suggestedCoursesQuery = useQuery(
@@ -72,63 +58,7 @@ export const RecommendedCourseContent = ({
   const savedCoursesQuery = useQuery(
     COURSE_QUERY_OPTIONS.BOOKMARKS(SAVED_COURSE_QUERY_PARAMS),
   );
-  const courseBookmarkMutation = useMutation({
-    ...COURSE_MUTATION_OPTIONS.UPDATE_BOOKMARK(),
-    onSuccess: ({ courseId, bookmarked }) => {
-      queryClient.setQueriesData<CourseListPage>(
-        { queryKey: COURSE_QUERY_KEY.LISTS_ALL() },
-        (coursePage) =>
-          coursePage && {
-            ...coursePage,
-            content: coursePage.content.map((course) =>
-              course.courseId === courseId
-                ? { ...course, isBookmarked: bookmarked }
-                : course,
-            ),
-          },
-      );
-      queryClient.setQueriesData<InfiniteData<CourseListPage>>(
-        { queryKey: COURSE_QUERY_KEY.INFINITE_LISTS_ALL() },
-        (coursePages) =>
-          coursePages && {
-            ...coursePages,
-            pages: coursePages.pages.map((coursePage) => ({
-              ...coursePage,
-              content: coursePage.content.map((course) =>
-                course.courseId === courseId
-                  ? { ...course, isBookmarked: bookmarked }
-                  : course,
-              ),
-            })),
-          },
-      );
-
-      if (!bookmarked) {
-        queryClient.setQueriesData<CourseListPage>(
-          { queryKey: COURSE_QUERY_KEY.BOOKMARKS_ALL() },
-          (coursePage) =>
-            coursePage && {
-              ...coursePage,
-              content: coursePage.content.filter(
-                (course) => course.courseId !== courseId,
-              ),
-            },
-        );
-      }
-
-      void queryClient.invalidateQueries({
-        queryKey: COURSE_QUERY_KEY.BOOKMARKS_ALL(),
-      });
-      void queryClient.invalidateQueries({
-        queryKey: COURSE_QUERY_KEY.DETAIL(courseId),
-      });
-    },
-    onError: () => {
-      showToast('북마크를 변경하지 못했어요. 다시 시도해 주세요.', {
-        variant: 'gray',
-      });
-    },
-  });
+  const courseBookmarkMutation = useCourseBookmarkMutation();
   const courses = coursesQuery.data?.content ?? [];
   const suggestedCourses = suggestedCoursesQuery.data?.content ?? [];
   const savedCourses = savedCoursesQuery.data?.content ?? [];
@@ -181,7 +111,7 @@ export const RecommendedCourseContent = ({
         hasError={suggestedCoursesQuery.isError}
         isBookmarkPending={courseBookmarkMutation.isPending}
         isLoading={suggestedCoursesQuery.isPending}
-        selectedCategoryId={activeRecommendedCategoryId}
+        selectedCategoryId={selectedRecommendedCategoryId}
         onCategoryChange={handleCategoryChange}
         onCourseBookmarkChange={handleCourseBookmarkChange}
         onMoreClick={onSuggestedMoreClick}
