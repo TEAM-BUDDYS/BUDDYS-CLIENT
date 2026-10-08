@@ -32,6 +32,7 @@ export const END_POINT = {
       `api/v1/countries/${countryId}/universities/search`,
   },
   COURSE: {
+    LIST: 'api/v1/courses',
     CREATE: 'api/v1/courses',
     COMMENTS: (courseId: number) => `api/v1/courses/${courseId}/comments`,
     DETAIL: (courseId: number) => `api/v1/courses/${courseId}`,
@@ -75,6 +76,7 @@ export const END_POINT = {
   USER: {
     ME: 'api/v1/users/me',
     ME_POSTS: 'api/v1/users/me/posts',
+    ME_COUNTRIES: 'api/v1/users/me/countries',
     ONBOARDING: 'api/v1/users/onboarding',
     NICKNAME_CHECK: 'api/v1/users/me/nickname-availability',
     SEARCH: 'api/v1/users/search',

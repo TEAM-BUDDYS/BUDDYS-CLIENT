@@ -15,6 +15,7 @@ import type {
   CourseBookmark,
   CourseCommentPage,
   CourseDetail,
+  CourseListPage,
   CreateCourseCommentRequest,
   CreateCourseCommentResponse,
   CreateCourseRequest,
@@ -22,6 +23,8 @@ import type {
   GetCourseCommentsParams,
   GetCourseCommentsResponse,
   GetCourseDetailResponse,
+  GetCoursesParams,
+  GetCoursesResponse,
   UpdateCourseBookmarkResponse,
 } from './type';
 
@@ -53,6 +56,28 @@ const createCourse = async (body: CreateCourseRequest) => {
   }
 
   return courseId;
+};
+
+const getCourses = async (
+  params?: GetCoursesParams,
+  signal?: AbortSignal,
+): Promise<CourseListPage> => {
+  const response = await apiClient
+    .get(END_POINT.COURSE.LIST, {
+      searchParams: createSearchParams(params),
+      signal,
+    })
+    .json<GetCoursesResponse>();
+
+  if (
+    response.success !== true ||
+    !response.data ||
+    !Array.isArray(response.data.content)
+  ) {
+    throw new Error(response.message || '코스 목록을 불러오지 못했습니다.');
+  }
+
+  return response.data;
 };
 
 const getCourseComments = async (
@@ -140,6 +165,11 @@ const updateCourseBookmark = async ({
 };
 
 export const COURSE_QUERY_OPTIONS = {
+  LIST: (params?: GetCoursesParams) =>
+    queryOptions({
+      queryKey: COURSE_QUERY_KEY.LIST(params),
+      queryFn: ({ signal }) => getCourses(params, signal),
+    }),
   INFINITE_COMMENTS: (courseId: number, params?: GetCourseCommentsParams) =>
     infiniteQueryOptions({
       queryKey: COURSE_QUERY_KEY.INFINITE_COMMENTS(courseId, params),

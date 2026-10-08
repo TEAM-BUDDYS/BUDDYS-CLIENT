@@ -9,6 +9,13 @@ export type SearchAirlinesResponse =
 export type CourseCommentPage =
   components['schemas']['CourseCommentListResponse'];
 export type CourseDetail = components['schemas']['CourseDetailResponse'];
+export type CourseSummary = components['schemas']['CourseSummaryResponse'];
+export type CourseListPage = components['schemas']['CourseListResponse'];
+export type GetCoursesParams = NonNullable<
+  operations['getCourses']['parameters']['query']
+>;
+export type GetCoursesResponse =
+  components['schemas']['BaseResponseCourseListResponse'];
 export type CreateCourseRequest = components['schemas']['CreateCourseRequest'];
 export type CreateCourseResponse =
   components['schemas']['BaseResponseCreateCourseResponse'];
