@@ -38,3 +38,4 @@ export {
 export { RECOMMENDATION_QUERY_OPTIONS } from './recommended-posts/query';
 export { createSearchParams } from './search-params';
 export { TAG_QUERY_OPTIONS, type TagType } from './tag';
+export { USER_QUERY_OPTIONS, type UserPublicProfile } from './user';

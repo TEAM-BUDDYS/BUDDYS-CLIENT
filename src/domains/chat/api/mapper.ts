@@ -163,6 +163,7 @@ export const convertChatRoomDetailResponse = (
   const canSendMessage = response.data?.canSendMessage;
   const createdAt = response.data?.createdAt;
   const participantNickname = response.data?.participant?.nickname;
+  const participantUserId = response.data?.participant?.userId;
   const hasBlocked = response.data?.hasBlocked;
   const hasReported = response.data?.hasReported;
 
@@ -172,6 +173,7 @@ export const convertChatRoomDetailResponse = (
     createdAt.length === 0 ||
     typeof participantNickname !== 'string' ||
     participantNickname.length === 0 ||
+    !isPositiveSafeInteger(participantUserId) ||
     typeof canSendMessage !== 'boolean' ||
     typeof hasBlocked !== 'boolean' ||
     typeof hasReported !== 'boolean'
@@ -185,6 +187,7 @@ export const convertChatRoomDetailResponse = (
     canSendMessage,
     createdAt,
     participantNickname,
+    participantUserId,
     hasBlocked,
     hasReported,
   };

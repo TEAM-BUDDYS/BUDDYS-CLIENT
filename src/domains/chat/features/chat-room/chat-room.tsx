@@ -5,11 +5,13 @@ import {
   useSuspenseInfiniteQuery,
   useSuspenseQuery,
 } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAuthSession } from '@/domains/auth/features/auth-session/auth-session-provider';
 import { Header } from '@/shared/components/layout';
 import { BottomActionBar, Button } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config/routes';
 
 import { CHAT_QUERY_OPTIONS } from '../../api/query';
 import {
@@ -28,6 +30,7 @@ interface ChatRoomProps {
 }
 
 export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
+  const router = useRouter();
   const { userId: currentUserId } = useAuthSession();
   const [message, setMessage] = useState('');
   const [realtimeMessages, setRealtimeMessages] = useState<ChatMessageData[]>(
@@ -208,7 +211,15 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
         />
         {!isInputDisabled && (
           <div className="mx-4 mb-4">
-            <Button>코스 기록 바로가기</Button>
+            <Button
+              onClick={() =>
+                router.push(
+                  `${ROUTES.COURSE.CREATE}?companionUserId=${chatRoomData.participantUserId}`,
+                )
+              }
+            >
+              코스 기록 바로가기
+            </Button>
           </div>
         )}
 

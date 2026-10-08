@@ -9,9 +9,6 @@ export type GetMyPostsResponse =
 
 export type MyPost = components['schemas']['PostResponse'];
 
-export type GetUserProfileResponse =
-  components['schemas']['BaseResponseUserPublicProfileResponse'];
-
 export type GetUserPostsParams =
   operations['getUserPosts']['parameters']['query'];
 export type GetUserPostsResponse =
