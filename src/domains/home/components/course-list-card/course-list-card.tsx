@@ -10,7 +10,7 @@ interface CourseListCardProps {
   title: string;
   description: string;
   thumbnailImageUrl: string;
-  createdAt: string;
+  createdAt?: string;
   href: string;
   isBookmarked: boolean;
   onBookmarkClick: () => void;
@@ -48,12 +48,14 @@ export const CourseListCard = ({
             <p className="text-caption-m-12 truncate text-gray-500">
               {description}
             </p>
-            <time
-              dateTime={createdAt}
-              className="text-caption-m-12 text-gray-200"
-            >
-              {formatFullDate(parseDate(createdAt))}
-            </time>
+            {createdAt && (
+              <time
+                dateTime={createdAt}
+                className="text-caption-m-12 text-gray-200"
+              >
+                {formatFullDate(parseDate(createdAt))}
+              </time>
+            )}
           </div>
         </div>
       </Link>
