@@ -389,7 +389,7 @@ export interface paths {
     };
     /**
      * 채팅방 목록 조회
-     * @description 로그인한 사용자가 참여 중인 채팅방 목록을 조회합니다.
+     * @description 로그인한 사용자가 참여 중인 채팅방 목록을 조회합니다. 내가 상대방을 차단했거나 신고한 경우, 그 이후 상대방이 보낸 메시지는 마지막 메시지와 읽지 않은 메시지 수에 반영되지 않습니다.
      */
     get: operations['getChatRooms'];
     put?: never;
@@ -420,7 +420,9 @@ export interface paths {
      *     - 신고 사유(reason)는 선택 입력이며, 생략하면 사유 없이 즉시 접수됩니다.
      *     - 신고 접수 시 신고자·신고 대상자 정보(및 입력된 사유)를 포함한 메일이 운영팀으로 발송됩니다.
      *     - 메일 발송에 실패해도 신고 접수 자체는 성공으로 처리됩니다.
-     *     - 신고 접수 이후에는 별도의 차단 없이도 양쪽 모두 해당 상대방과 서로 메시지를 보낼 수 없습니다.
+     *     - 신고 접수 이후에는 별도의 차단 없이도 내가 상대방에게 메시지를 보낼 수 없습니다.
+     *     - 상대방은 신고 사실을 알 수 없으며, 기존과 같이 메시지를 보낼 수 있습니다.
+     *     - 신고 이후 상대방이 보낸 메시지는 저장되지만, 나의 메시지 목록·채팅방 목록·실시간 수신에는 표시되지 않습니다.
      */
     post: operations['reportChatPartner'];
     delete?: never;
@@ -442,7 +444,9 @@ export interface paths {
      * 채팅 상대방 차단
      * @description 해당 채팅방의 상대방을 차단합니다.
      *
-     *     - 차단 후에는 양쪽 모두 해당 상대방과 서로 메시지를 보낼 수 없습니다.
+     *     - 차단 후에는 내가 상대방에게 메시지를 보낼 수 없습니다.
+     *     - 상대방은 차단 사실을 알 수 없으며, 기존과 같이 메시지를 보낼 수 있습니다.
+     *     - 차단 이후 상대방이 보낸 메시지는 저장되지만, 나의 메시지 목록·채팅방 목록·실시간 수신에는 표시되지 않습니다.
      *     - 기존 채팅 내역은 삭제되지 않고 그대로 유지됩니다.
      *     - 이미 차단한 상대방을 다시 차단해도 오류 없이 처리됩니다(멱등).
      */
@@ -830,6 +834,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/users/me/countries': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * 내 관심 국가 및 파견 국가 조회
+     * @description 로그인한 사용자가 설정한 관심 국가와 파견 국가의 ID, 이름, ISO 코드를 조회합니다. 설정하지 않은 국가는 null로 반환합니다.
+     */
+    get: operations['getMyCountries'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/tags': {
     parameters: {
       query?: never;
@@ -879,7 +903,7 @@ export interface paths {
     };
     /**
      * 통합 검색
-     * @description 검색어로 코스, 사용자, 모집 중 동행 게시글을 동시에 검색합니다. 각 영역에 동일한 페이지 번호와 크기를 적용합니다. posts.totalElements는 페이지 번호·크기와 무관하게 검색어에 일치하는 삭제되지 않은 모집 중 게시글의 전체 수입니다.
+     * @description 검색어로 코스, 사용자, 모집 중 동행 게시글을 동시에 검색합니다. type을 생략하면 세 영역을 모두 조회하고 반환하며, POST/COURSE/USER를 지정하면 해당 영역만 조회하고 반환합니다. 선택하지 않은 영역은 응답 필드에서 제외됩니다. 잘못된 type은 400(GLB-E001)을 반환합니다. sort=LATEST(최신순, 기본값) 또는 BOOKMARK(전체 사용자의 저장 수 순)를 지원합니다. USER는 항상 최신순입니다. 잘못된 sort는 400(GLB-E001)을 반환합니다. 각 영역에 동일한 페이지 번호와 크기를 적용합니다. courses.totalElements와 users.totalElements는 page=0에서만 전체 건수를 제공하며 page>0에서는 건수를 조회하지 않고 명시적으로 null을 반환합니다. posts.totalElements는 페이지 번호·크기와 무관하게 검색어에 일치하는 삭제되지 않은 모집 중 게시글의 전체 수입니다.
      */
     get: operations['search'];
     put?: never;
@@ -1264,7 +1288,7 @@ export interface paths {
     };
     /**
      * 채팅방 상세 조회
-     * @description 채팅방 ID로 채팅방 기본 정보와 상대방 정보를 조회합니다. 나 또는 상대방이 서로를 차단했거나 신고한 경우 canSendMessage가 false로 응답됩니다.
+     * @description 채팅방 ID로 채팅방 기본 정보와 상대방 정보를 조회합니다. 내가 상대방을 차단했거나 신고한 경우 canSendMessage가 false로 응답됩니다. 상대방이 나를 차단했거나 신고한 경우에는 영향을 받지 않습니다.
      */
     get: operations['getChatRoom'];
     put?: never;
@@ -1284,7 +1308,7 @@ export interface paths {
     };
     /**
      * 채팅 메시지 목록 조회
-     * @description 채팅방의 메시지 목록을 커서 기반으로 조회합니다.
+     * @description 채팅방의 메시지 목록을 커서 기반으로 조회합니다. 내가 상대방을 차단했거나 신고한 경우, 그 이후 상대방이 보낸 메시지는 목록에서 제외됩니다.
      */
     get: operations['getMessages'];
     put?: never;
@@ -1460,22 +1484,20 @@ export interface components {
        */
       departureAirport: string;
       /**
-       * Format: date-time
-       * @description 출발일시
-       * @example 2026-09-01T13:00:00
+       * @description 출발 시간 (HH:mm)
+       * @example 13:00
        */
-      departureAt: string;
+      departureTime: string;
       /**
        * @description 도착 공항
        * @example CDG
        */
       arrivalAirport: string;
       /**
-       * Format: date-time
-       * @description 도착일시
-       * @example 2026-09-01T18:30:00
+       * @description 도착 시간 (HH:mm)
+       * @example 18:30
        */
-      arrivalAt: string;
+      arrivalTime: string;
     };
     CoursePlaceRequest: {
       /**
@@ -2063,7 +2085,7 @@ export interface components {
       /** @description 상대방 사용자 정보 */
       participant?: components['schemas']['ChatParticipantResponse'];
       /**
-       * @description 상대방에게 메시지를 보낼 수 있는지 여부. 나 또는 상대방이 서로를 차단했거나 신고한 경우 false입니다.
+       * @description 상대방에게 메시지를 보낼 수 있는지 여부. 내가 상대방을 차단했거나 신고한 경우 false입니다.
        * @example true
        */
       canSendMessage?: boolean;
@@ -2407,14 +2429,15 @@ export interface components {
        */
       bio: string;
       /**
-       * @description 프로필에 표시할 인증 뱃지
-       * @example SOCIAL_LOGIN
-       * @enum {string}
+       * @description 학교 이메일 인증 여부
+       * @example true
        */
-      verificationBadge:
-        | 'SOCIAL_LOGIN'
-        | 'UNIVERSITY_VERIFIED'
-        | 'EXCHANGE_VERIFIED';
+      universityEmailVerified: boolean;
+      /**
+       * @description 파견교 서류 인증 여부
+       * @example true
+       */
+      exchangeDocumentVerified: boolean;
       /** @description 사용자가 지정한 순서의 상위 3개 대표 취향 태그 */
       representativeTags: components['schemas']['OrderedTagResponse'][];
       /**
@@ -2554,14 +2577,15 @@ export interface components {
        */
       bio: string;
       /**
-       * @description 프로필에 표시할 인증 뱃지
-       * @example SOCIAL_LOGIN
-       * @enum {string}
+       * @description 학교 이메일 인증 여부
+       * @example true
        */
-      verificationBadge:
-        | 'SOCIAL_LOGIN'
-        | 'UNIVERSITY_VERIFIED'
-        | 'EXCHANGE_VERIFIED';
+      universityEmailVerified: boolean;
+      /**
+       * @description 파견교 서류 인증 여부
+       * @example true
+       */
+      exchangeDocumentVerified: boolean;
       /** @description 사용자가 지정한 순서대로 정렬된 전체 취향 태그 */
       orderedTags: components['schemas']['OrderedTagResponse'][];
     };
@@ -2606,24 +2630,30 @@ export interface components {
       message?: string;
       data?: components['schemas']['SearchResponse'];
     };
-    CourseListResponse: {
-      /** @description 코스 목록 */
+    CourseSearchResponse: {
+      /** @description 코스 검색 결과 */
       content: components['schemas']['CourseSummaryResponse'][];
       /**
        * Format: int32
-       * @description 현재 페이지 번호. 0부터 시작합니다.
+       * @description 현재 페이지 번호
        * @example 0
        */
       page: number;
       /**
        * Format: int32
        * @description 페이지 크기
-       * @example 20
+       * @example 5
        */
       size: number;
       /**
+       * Format: int64
+       * @description 검색 조건에 일치하는 전체 코스 수. page=0에서만 제공하며 page>0에서는 null입니다.
+       * @example 12
+       */
+      totalElements: number | null;
+      /**
        * @description 다음 페이지 존재 여부
-       * @example true
+       * @example false
        */
       hasNext: boolean;
     };
@@ -2703,7 +2733,7 @@ export interface components {
       countryId?: number;
       /**
        * @description 국가 이름
-       * @example France
+       * @example 프랑스
        */
       name?: string;
     };
@@ -2762,12 +2792,12 @@ export interface components {
       isBookmarked?: boolean;
     };
     SearchResponse: {
-      /** @description 코스 검색 결과 */
-      courses: components['schemas']['CourseListResponse'];
-      /** @description 사용자 검색 결과 */
-      users: components['schemas']['UserSearchResponse'];
-      /** @description 동행 게시글 검색 결과 */
-      posts: components['schemas']['PostListResponse'];
+      /** @description 코스 검색 결과. type 생략 또는 COURSE 지정 시에만 포함 */
+      courses?: components['schemas']['CourseSearchResponse'];
+      /** @description 사용자 검색 결과. type 생략 또는 USER 지정 시에만 포함 */
+      users?: components['schemas']['UserSearchResponse'];
+      /** @description 동행 게시글 검색 결과. type 생략 또는 POST 지정 시에만 포함 */
+      posts?: components['schemas']['PostListResponse'];
     };
     UserSearchResponse: {
       /** @description 사용자 검색 결과 */
@@ -2784,6 +2814,12 @@ export interface components {
        * @example 5
        */
       size: number;
+      /**
+       * Format: int64
+       * @description 검색 조건에 일치하는 전체 사용자 수. page=0에서만 제공하며 page>0에서는 null입니다.
+       * @example 12
+       */
+      totalElements: number | null;
       /**
        * @description 다음 페이지 존재 여부
        * @example false
@@ -3652,6 +3688,27 @@ export interface components {
       message?: string;
       data?: components['schemas']['CourseListResponse'];
     };
+    CourseListResponse: {
+      /** @description 코스 목록 */
+      content: components['schemas']['CourseSummaryResponse'][];
+      /**
+       * Format: int32
+       * @description 현재 페이지 번호. 0부터 시작합니다.
+       * @example 0
+       */
+      page: number;
+      /**
+       * Format: int32
+       * @description 페이지 크기
+       * @example 20
+       */
+      size: number;
+      /**
+       * @description 다음 페이지 존재 여부
+       * @example true
+       */
+      hasNext: boolean;
+    };
     BaseResponseCourseDetailResponse: {
       success?: boolean;
       code?: string;
@@ -3843,22 +3900,20 @@ export interface components {
        */
       departureAirport: string;
       /**
-       * Format: date-time
-       * @description 출발일시
-       * @example 2026-09-01T13:00:00
+       * @description 출발 시간 (HH:mm)
+       * @example 13:00
        */
-      departureAt: string;
+      departureTime: string;
       /**
        * @description 도착 공항
        * @example CDG
        */
       arrivalAirport: string;
       /**
-       * Format: date-time
-       * @description 도착일시
-       * @example 2026-09-01T18:30:00
+       * @description 도착 시간 (HH:mm)
+       * @example 18:30
        */
-      arrivalAt: string;
+      arrivalTime: string;
     };
     BaseResponseCourseCommentListResponse: {
       success?: boolean;
@@ -5273,6 +5328,8 @@ export interface operations {
          * @example 1
          */
         tagId?: number;
+        /** @description 작성자 인증 조건 목록. 허용값: UNIVERSITY(대학 인증), EXCHANGE(파견교 인증). 복수 선택은 authorVerifications=UNIVERSITY&authorVerifications=EXCHANGE 또는 authorVerifications=UNIVERSITY,EXCHANGE로 전달합니다. 둘 다 선택하면 AND로 적용하며, 미선택 시 인증 상태로 필터링하지 않습니다. */
+        authorVerifications?: ('UNIVERSITY' | 'EXCHANGE')[];
         /**
          * @description 페이지 번호. 0 이상입니다.
          * @example 0
@@ -8860,6 +8917,77 @@ export interface operations {
       };
     };
   };
+  getMyCountries: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description 국가 조회 성공 */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 인증 필요 */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E002",
+           *       "message": "인증이 필요합니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 사용자 없음 */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "USER-E001",
+           *       "message": "사용자를 찾을 수 없습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+      /** @description 서버 내부 오류 */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          /**
+           * @example {
+           *       "success": false,
+           *       "code": "GLB-E005",
+           *       "message": "서버 내부 오류가 발생했습니다.",
+           *       "data": null
+           *     }
+           */
+          'application/json': components['schemas']['BaseResponse'];
+        };
+      };
+    };
+  };
   getAllTags: {
     parameters: {
       query?: never;
@@ -8933,6 +9061,13 @@ export interface operations {
          * @example 5
          */
         size?: number;
+        /** @description 검색 영역. 생략하면 모든 영역을 조회하고 반환합니다. 지정하면 해당 영역만 조회하고 반환합니다. 잘못된 값은 400(GLB-E001)을 반환합니다. */
+        type?: 'POST' | 'COURSE' | 'USER';
+        /**
+         * @description 정렬 기준. LATEST: 최신순, BOOKMARK: 전체 사용자의 저장 수 순. 생략 시 LATEST. USER는 항상 최신순입니다.
+         * @example LATEST
+         */
+        sort?: 'LATEST' | 'BOOKMARK';
       };
       header?: never;
       path?: never;

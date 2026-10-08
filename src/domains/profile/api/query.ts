@@ -77,16 +77,6 @@ const isNullableString = (value: unknown) => {
   return value === undefined || value === null || typeof value === 'string';
 };
 
-const isValidVerificationBadge = (value: unknown) => {
-  return (
-    value === undefined ||
-    value === null ||
-    value === 'SOCIAL_LOGIN' ||
-    value === 'UNIVERSITY_VERIFIED' ||
-    value === 'EXCHANGE_VERIFIED'
-  );
-};
-
 const isValidUserPublicProfileData = (
   data: unknown,
 ): data is UserPublicProfileDataWithNickname => {
@@ -97,7 +87,8 @@ const isValidUserPublicProfileData = (
   const {
     nickname,
     profileImageUrl,
-    verificationBadge,
+    universityEmailVerified,
+    exchangeDocumentVerified,
     representativeTags,
     bio,
     isDeleted,
@@ -106,7 +97,8 @@ const isValidUserPublicProfileData = (
   return (
     typeof nickname === 'string' &&
     isNullableString(profileImageUrl) &&
-    isValidVerificationBadge(verificationBadge) &&
+    typeof universityEmailVerified === 'boolean' &&
+    typeof exchangeDocumentVerified === 'boolean' &&
     isOrderedTagArray(representativeTags) &&
     isNullableString(bio) &&
     (isDeleted === undefined || typeof isDeleted === 'boolean')
@@ -126,13 +118,19 @@ const getMyProfile = async (): Promise<MyProfile> => {
     throw new Error('프로필 응답 형식이 올바르지 않습니다.');
   }
 
-  const { profileImageUrl, nickname, verificationBadge, orderedTags, bio } =
-    response.data;
+  const {
+    profileImageUrl,
+    nickname,
+    universityEmailVerified,
+    exchangeDocumentVerified,
+    orderedTags,
+    bio,
+  } = response.data;
 
   return {
     imageUrl: profileImageUrl || null,
     nickname,
-    isVerified: Boolean(verificationBadge),
+    isVerified: universityEmailVerified || exchangeDocumentVerified,
     tags: toProfileTags(orderedTags),
     bio: bio ?? null,
   };
@@ -180,7 +178,8 @@ const getUserProfile = async (userId: number): Promise<OtherProfile | null> => {
   const {
     profileImageUrl,
     nickname,
-    verificationBadge,
+    universityEmailVerified,
+    exchangeDocumentVerified,
     representativeTags,
     bio,
     isDeleted,
@@ -189,7 +188,7 @@ const getUserProfile = async (userId: number): Promise<OtherProfile | null> => {
   return {
     imageUrl: profileImageUrl || null,
     nickname,
-    isVerified: Boolean(verificationBadge),
+    isVerified: universityEmailVerified || exchangeDocumentVerified,
     tags: toProfileTags(representativeTags),
     bio: bio ?? null,
     isWithdrawn: Boolean(isDeleted),
