@@ -1,61 +1,85 @@
+'use client';
+
+import { useSuspenseQuery } from '@tanstack/react-query';
+
+import { COURSE_QUERY_OPTIONS } from '@/domains/course/api/course';
 import { CourseTileCard } from '@/domains/home/components/course-tile-card';
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
+import { toDisplayableCountryCourses } from '@/domains/home/model/country-course';
+import { PROFILE_QUERY_OPTIONS } from '@/domains/profile/api/query';
+import { AsyncBoundary, EmptyState } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
-// TODO: 관심 국가 코스 API 연동 시 응답 데이터로 교체
-const MOCK_INTEREST_COUNTRY = '스페인';
+const INTEREST_COUNTRY_COURSE_SIZE = 4;
 
-const MOCK_INTEREST_COUNTRY_COURSES = [
-  {
-    courseId: 1,
-    title: '바르셀로나 하루 코스',
-    description: '가우디 건축물 집중 탐방',
-  },
-  {
-    courseId: 2,
-    title: '마드리드 미술관 투어',
-    description: '프라도부터 레이나 소피아까지',
-  },
-  {
-    courseId: 3,
-    title: '세비야 골목 산책',
-    description: '스페인 광장과 알카사르',
-  },
-  {
-    courseId: 4,
-    title: '그라나다 1박 2일',
-    description: '알함브라 궁전과 야경 명소',
-  },
-].map((course) => ({
-  ...course,
-  thumbnailImageUrl: `https://picsum.photos/seed/interest-course-${course.courseId}/260/260`,
-}));
+const InterestCountryCourseList = ({ countryId }: { countryId: number }) => {
+  const { data } = useSuspenseQuery(
+    COURSE_QUERY_OPTIONS.LIST({
+      countryId,
+      size: INTEREST_COUNTRY_COURSE_SIZE,
+    }),
+  );
 
-export const InterestCountryCourseSection = () => {
+  const courses = toDisplayableCountryCourses(data.content);
+
+  if (courses.length === 0) {
+    return (
+      <EmptyState
+        title="아직 기록된 코스가 없어요"
+        description="첫 번째 코스를 공유해보세요"
+        className="py-8"
+      />
+    );
+  }
+
+  return (
+    <div className="-mx-4 scrollbar-none overflow-x-auto px-4">
+      <div className="flex gap-5">
+        {courses.map((course) => (
+          <CourseTileCard
+            key={course.courseId}
+            title={course.title}
+            description={course.description}
+            image={{
+              src: course.thumbnailImageUrl,
+              alt: `${course.title} 썸네일`,
+            }}
+            href={ROUTES.COURSE.DETAIL(course.courseId)}
+            className="shrink-0"
+          />
+        ))}
+        <div aria-hidden="true" className="w-2 shrink-0" />
+      </div>
+    </div>
+  );
+};
+
+const InterestCountryCourseContent = () => {
+  const {
+    data: { interestCountry },
+  } = useSuspenseQuery(PROFILE_QUERY_OPTIONS.ME_COUNTRIES());
+
+  if (!interestCountry) {
+    return null;
+  }
+
   return (
     <section className="flex flex-col gap-5">
       <SectionHeader
-        title={`${MOCK_INTEREST_COUNTRY}의 코스를 둘러보세요`}
+        title={`${interestCountry.name}의 코스를 둘러보세요`}
         moreHref={ROUTES.COURSE.CUSTOMIZED_EXPLORE}
       />
-      <div className="-mx-4 scrollbar-none overflow-x-auto px-4">
-        <div className="flex gap-5">
-          {MOCK_INTEREST_COUNTRY_COURSES.map((course) => (
-            <CourseTileCard
-              key={course.courseId}
-              title={course.title}
-              description={course.description}
-              image={{
-                src: course.thumbnailImageUrl,
-                alt: `${course.title} 썸네일`,
-              }}
-              href={ROUTES.COURSE.DETAIL(course.courseId)}
-              className="shrink-0"
-            />
-          ))}
-          <div aria-hidden="true" className="w-2 shrink-0" />
-        </div>
-      </div>
+      <AsyncBoundary className="py-8">
+        <InterestCountryCourseList countryId={interestCountry.id} />
+      </AsyncBoundary>
     </section>
+  );
+};
+
+export const InterestCountryCourseSection = () => {
+  return (
+    <AsyncBoundary className="py-8">
+      <InterestCountryCourseContent />
+    </AsyncBoundary>
   );
 };

@@ -16,7 +16,7 @@ export {
   useCountrySearch,
 } from './country';
 export { END_POINT } from './end-point';
-export { POST_MUTATION_KEY } from './mutation-key';
+export { COURSE_MUTATION_KEY, POST_MUTATION_KEY } from './mutation-key';
 export {
   type CheckNicknameParams,
   type CheckNicknameResponse,

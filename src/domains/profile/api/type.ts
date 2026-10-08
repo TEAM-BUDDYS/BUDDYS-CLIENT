@@ -3,6 +3,20 @@ import type { components, operations } from '@/types/schema';
 export type GetMyProfileResponse =
   components['schemas']['BaseResponseUserProfileResponse'];
 
+export type GetMyCountriesResponse = components['schemas']['BaseResponse'];
+
+export interface MyCountry {
+  id: number;
+  name: string;
+  englishName: string;
+  code: string;
+}
+
+export interface MyCountries {
+  interestCountry: MyCountry | null;
+  exchangeCountry: MyCountry | null;
+}
+
 export type UpdateMyProfileRequest =
   components['schemas']['UpdateProfileRequest'];
 

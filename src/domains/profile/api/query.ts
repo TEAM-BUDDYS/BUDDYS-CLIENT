@@ -22,6 +22,7 @@ import type {
   GetBookmarkedMagazinesResponse,
   GetBookmarkedPostsParams,
   GetBookmarkedPostsResponse,
+  GetMyCountriesResponse,
   GetMyCoursesParams,
   GetMyCoursesResponse,
   GetMyPostsParams,
@@ -32,6 +33,8 @@ import type {
   GetUserCoursesResponse,
   GetUserPostsParams,
   GetUserPostsResponse,
+  MyCountries,
+  MyCountry,
   UpdateMyProfileRequest,
   UpdateMyProfileResponse,
 } from './type';
@@ -126,6 +129,41 @@ const getMyProfile = async (): Promise<MyProfile> => {
     isExchangeDocumentVerified: exchangeDocumentVerified,
     tags: toProfileTags(orderedTags),
     bio: bio ?? null,
+  };
+};
+
+const isMyCountry = (value: unknown): value is MyCountry => {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+
+  const { id, name } = value as Partial<MyCountry>;
+
+  return typeof id === 'number' && typeof name === 'string';
+};
+
+const toMyCountry = (value: unknown) => (isMyCountry(value) ? value : null);
+
+const getMyCountries = async (): Promise<MyCountries> => {
+  const response = await apiClient
+    .get(END_POINT.USER.ME_COUNTRIES)
+    .json<GetMyCountriesResponse>();
+
+  if (
+    response.success !== true ||
+    typeof response.data !== 'object' ||
+    response.data === null
+  ) {
+    throw new Error(response.message || '내 국가 정보를 불러오지 못했습니다.');
+  }
+
+  const { interestCountry, exchangeCountry } = response.data as Partial<
+    Record<keyof MyCountries, unknown>
+  >;
+
+  return {
+    interestCountry: toMyCountry(interestCountry),
+    exchangeCountry: toMyCountry(exchangeCountry),
   };
 };
 
@@ -291,6 +329,11 @@ export const PROFILE_QUERY_OPTIONS = {
     queryOptions({
       queryKey: USER_QUERY_KEY.ME(),
       queryFn: getMyProfile,
+    }),
+  ME_COUNTRIES: () =>
+    queryOptions({
+      queryKey: USER_QUERY_KEY.ME_COUNTRIES(),
+      queryFn: getMyCountries,
     }),
   ME_POSTS: (params?: GetMyPostsParams) =>
     queryOptions({

@@ -2713,6 +2713,12 @@ export interface components {
        * @example 프라하, 뮌헨, 베를린
        */
       cities: string;
+      /**
+       * Format: date-time
+       * @description 코스 생성일시
+       * @example 2026-08-20T14:30:00
+       */
+      createdAt: string;
     };
     PostListResponse: {
       /** @description 게시글 목록 */
