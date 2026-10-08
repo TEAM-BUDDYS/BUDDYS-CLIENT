@@ -11,12 +11,14 @@ import { useCourseCountrySearch } from './use-course-country-search';
 const COUNTRY_RESULT_LIST_ID = 'course-country-result-list';
 
 interface CourseCreateCountryStepProps {
+  hasUnassignedCities?: boolean;
   selectedCountries: Country[];
   onCountrySelect: (country: Country) => void;
   onCountryRemove: (countryId: number) => void;
 }
 
 export const CourseCreateCountryStep = ({
+  hasUnassignedCities = false,
   selectedCountries,
   onCountrySelect,
   onCountryRemove,
@@ -99,7 +101,14 @@ export const CourseCreateCountryStep = ({
 
       {selectedCountries.length > 0 && (
         <section aria-label="선택한 여행 국가" className="flex flex-col gap-4">
-          <h2 className="text-title-b-18 text-gray-800">내 여행 지역</h2>
+          <div className="flex flex-col gap-1">
+            <h2 className="text-title-b-18 text-gray-800">내 여행 지역</h2>
+            {hasUnassignedCities && selectedCountries.length > 1 && (
+              <p className="text-caption-r-12 text-gray-500">
+                국가를 변경하면 기존 도시를 다시 선택해야 해요.
+              </p>
+            )}
+          </div>
           <div className="flex flex-col gap-2">
             {selectedCountries.map((country) => (
               <SelectedRegionItem

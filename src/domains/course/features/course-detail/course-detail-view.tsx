@@ -7,15 +7,16 @@ import type { CourseDetail } from '@/domains/course/api/type';
 import { CourseDayPickerSheet } from '@/domains/course/components/course-day-picker-sheet/course-day-picker-sheet';
 import { MoreIcon } from '@/shared/components/icons';
 import { Header } from '@/shared/components/layout';
-import { PostMenuBottomSheet } from '@/shared/components/ui';
-import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
+import { Modal, PostMenuBottomSheet } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
+import { useContentShare } from '@/shared/hooks/use-content-share';
 
 import { CourseContinuationBanner } from './course-continuation-banner';
 import { CourseDetailComments } from './course-detail-comments';
 import { CourseDetailDayList } from './course-detail-day-list';
 import { CourseDetailOverviewSection } from './course-detail-overview-section';
 import { useCourseBookmark } from './use-course-bookmark';
+import { useCourseDelete } from './use-course-delete';
 
 interface CourseDetailViewProps {
   course: CourseDetail;
@@ -25,7 +26,7 @@ export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
   const router = useRouter();
   const [isDayPickerOpen, setIsDayPickerOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedDayNumber, setSelectedDayNumber] = useState<number | null>(
     null,
   );
@@ -33,6 +34,10 @@ export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
     courseId: course.courseId,
     isBookmarked: course.isBookmarked,
   });
+  const { deleteCourse, isPending: isDeleting } = useCourseDelete(
+    course.courseId,
+  );
+  const { shareContent } = useContentShare();
   const pendingDayScrollRef = useRef<number | null>(null);
   const dayPickerDays = useMemo(
     () =>
@@ -71,8 +76,29 @@ export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
     setSelectedDayNumber(dayNumber);
   };
 
-  const handleComingSoonOpen = () => {
-    setIsComingSoonOpen(true);
+  const handleMenuAction = (action: 'share' | 'edit' | 'delete') => {
+    if (action === 'share') {
+      void shareContent({
+        title: course.title,
+        url: ROUTES.COURSE.DETAIL(course.courseId),
+      });
+      return;
+    }
+
+    if (action === 'edit') {
+      router.push(ROUTES.COURSE.EDIT(course.courseId));
+      return;
+    }
+
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteModalClose = () => {
+    if (isDeleting) {
+      return;
+    }
+
+    setIsDeleteModalOpen(false);
   };
 
   const handleCourseCreateClick = () => {
@@ -134,12 +160,17 @@ export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
         isMine={course.isMine}
         ariaLabel="코스 메뉴"
         onClose={() => setIsMenuOpen(false)}
-        onAction={handleComingSoonOpen}
+        onAction={handleMenuAction}
       />
 
-      <ComingSoonModal
-        open={isComingSoonOpen}
-        onClose={() => setIsComingSoonOpen(false)}
+      <Modal
+        open={isDeleteModalOpen}
+        title="코스를 삭제할까요?"
+        description="삭제한 코스는 복구할 수 없어요."
+        cancelLabel="취소"
+        confirmLabel={isDeleting ? '삭제 중...' : '삭제하기'}
+        onClose={handleDeleteModalClose}
+        onConfirm={deleteCourse}
       />
     </div>
   );

@@ -16,7 +16,7 @@ export type CourseCreateScreen =
   | 'companion';
 
 export interface CourseCreateCityOption extends City {
-  countryId: number;
+  countryId: number | null;
 }
 
 export interface CourseCreateDetailFormState {
@@ -38,10 +38,17 @@ export interface CourseCreateBasicInfoValue {
   detail: CourseCreateDetailFormState;
 }
 
-export interface CourseCreateImageDraft {
-  file: File;
-  previewUrl: string;
-}
+export type CourseCreateImageDraft =
+  | {
+      type: 'existing';
+      imageUrl: string;
+      previewUrl: string;
+    }
+  | {
+      type: 'new';
+      file: File;
+      previewUrl: string;
+    };
 
 export interface CourseCreateFlightFormState {
   airline: CourseFlightRequest['airline'];
@@ -67,6 +74,11 @@ export interface CourseCreateValue extends CourseCreateBasicInfoValue {
   companionUserIds: NonNullable<
     components['schemas']['CreateCourseRequest']['companionUserIds']
   >;
+}
+
+export interface CourseCreateInitialValue extends CourseCreateBasicInfoValue {
+  courseId: number;
+  days: CourseCreateDayFormState[];
 }
 
 export type CourseCreateCompanion = CourseCompanion;

@@ -9,3 +9,7 @@ overrides:
   'fast-uri@>=3.0.0 <3.1.5': '3.1.5'
   'js-yaml@>=4.0.0 <4.3.1': '4.3.1'
   'svgo@>=3.0.0 <3.3.4': '3.3.4'
+
+# Forward modal to Radix so non-modal drawers allow external input focus.
+patchedDependencies:
+  vaul@1.1.2: patches/vaul@1.1.2.patch

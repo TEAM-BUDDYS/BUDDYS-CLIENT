@@ -48,6 +48,7 @@ const PLACE_CATEGORIES: {
 interface CourseCreatePlacePickerProps {
   cities: CourseCreateCityOption[];
   dayNumber: CourseCreateDayFormState['dayNumber'];
+  fallbackPlaces: CourseCreateDayFormState['places'];
   selectedPlaces: CourseCreateDayFormState['places'];
   onClose: () => void;
   onConfirm: (places: CourseCreateDayFormState['places']) => void;
@@ -56,6 +57,7 @@ interface CourseCreatePlacePickerProps {
 export const CourseCreatePlacePicker = ({
   cities,
   dayNumber,
+  fallbackPlaces,
   selectedPlaces,
   onClose,
   onConfirm,
@@ -68,6 +70,7 @@ export const CourseCreatePlacePicker = ({
   const [isResultSheetOpen, setIsResultSheetOpen] = useState(true);
   const placeResults = useCoursePlaceResults({
     cities,
+    fallbackPlaces,
     keyword,
     category,
     isSheetOpen: isResultSheetOpen,

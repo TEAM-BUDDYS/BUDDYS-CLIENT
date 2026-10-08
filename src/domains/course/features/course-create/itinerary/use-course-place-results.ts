@@ -9,7 +9,10 @@ import type { CourseMapCenter } from '@/domains/course/model/course-map';
 import { useDebouncedValue } from '@/shared/hooks/use-debounced-value';
 
 import { COURSE_CREATE_SEARCH_DEBOUNCE_MS } from '../constants';
-import type { CourseCreateCityOption } from '../model';
+import type {
+  CourseCreateCityOption,
+  CourseCreateDayFormState,
+} from '../model';
 
 type PlaceCategory = NonNullable<Place['category']>;
 
@@ -17,6 +20,7 @@ const BOOKMARK_PAGE_SIZE = 20;
 
 const getSearchCenter = (
   cities: CourseCreateCityOption[],
+  fallbackPlaces: CourseCreateDayFormState['places'],
 ): CourseMapCenter | null => {
   const selectedCity = cities.reduce<CourseCreateCityOption | null>(
     (currentCity, city) => {
@@ -37,11 +41,19 @@ const getSearchCenter = (
     null,
   );
 
-  if (selectedCity?.latitude == null || selectedCity.longitude == null) {
+  if (selectedCity?.latitude != null && selectedCity.longitude != null) {
+    return { lat: selectedCity.latitude, lng: selectedCity.longitude };
+  }
+
+  const fallbackPlace = fallbackPlaces.find(
+    ({ latitude, longitude }) => latitude != null && longitude != null,
+  );
+
+  if (fallbackPlace?.latitude == null || fallbackPlace.longitude == null) {
     return null;
   }
 
-  return { lat: selectedCity.latitude, lng: selectedCity.longitude };
+  return { lat: fallbackPlace.latitude, lng: fallbackPlace.longitude };
 };
 
 const getUniquePlaces = <T extends Place | BookmarkedPlace>(places: T[]) => {
@@ -59,6 +71,7 @@ const getUniquePlaces = <T extends Place | BookmarkedPlace>(places: T[]) => {
 
 interface UseCoursePlaceResultsParams {
   cities: CourseCreateCityOption[];
+  fallbackPlaces: CourseCreateDayFormState['places'];
   keyword: string;
   category?: PlaceCategory;
   isSheetOpen: boolean;
@@ -66,6 +79,7 @@ interface UseCoursePlaceResultsParams {
 
 export const useCoursePlaceResults = ({
   cities,
+  fallbackPlaces,
   keyword,
   category,
   isSheetOpen,
@@ -78,7 +92,10 @@ export const useCoursePlaceResults = ({
   const isKeywordSynced = debouncedKeyword === trimmedKeyword;
   const isSearchMode = trimmedKeyword.length > 0 || category !== undefined;
   const isSearchReady = trimmedKeyword.length > 0 && isKeywordSynced;
-  const searchCenter = useMemo(() => getSearchCenter(cities), [cities]);
+  const searchCenter = useMemo(
+    () => getSearchCenter(cities, fallbackPlaces),
+    [cities, fallbackPlaces],
+  );
   const searchParams = useMemo(
     () => ({
       query: debouncedKeyword,

@@ -9,8 +9,8 @@ import { PostDetailContentSection } from '@/domains/posts/sections/post-detail-c
 import { MoreIcon } from '@/shared/components/icons';
 import { Header } from '@/shared/components/layout';
 import { Modal, PostMenuBottomSheet } from '@/shared/components/ui';
-import { ComingSoonModal } from '@/shared/components/ui/modal/coming-soon-modal/coming-soon-modal';
 import { ROUTES } from '@/shared/config';
+import { useContentShare } from '@/shared/hooks/use-content-share';
 
 import { usePostDelete } from './use-post-delete';
 
@@ -20,10 +20,10 @@ interface PostDetailViewProps {
 
 export const PostDetailView = ({ post }: PostDetailViewProps) => {
   const router = useRouter();
-  const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
   const [isMenuBottomSheetOpen, setIsMenuBottomSheetOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { deletePost, isPending: isDeleting } = usePostDelete(post.postId);
+  const { shareContent } = useContentShare();
 
   const handleDeleteModalClose = () => {
     if (isDeleting) {
@@ -78,17 +78,20 @@ export const PostDetailView = ({ post }: PostDetailViewProps) => {
         isMine={post.isMine}
         onClose={() => setIsMenuBottomSheetOpen(false)}
         onAction={(action) => {
+          if (action === 'share') {
+            void shareContent({
+              title: post.title,
+              url: ROUTES.POST.DETAIL(post.postId),
+            });
+            return;
+          }
+
           if (action === 'edit') {
             router.push(ROUTES.POST.EDIT(post.postId));
             return;
           }
 
-          if (action === 'delete') {
-            setIsDeleteModalOpen(true);
-            return;
-          }
-
-          setIsComingSoonOpen(true);
+          setIsDeleteModalOpen(true);
         }}
       />
 
@@ -100,11 +103,6 @@ export const PostDetailView = ({ post }: PostDetailViewProps) => {
         confirmLabel={isDeleting ? '삭제 중...' : '삭제하기'}
         onClose={handleDeleteModalClose}
         onConfirm={deletePost}
-      />
-
-      <ComingSoonModal
-        open={isComingSoonOpen}
-        onClose={() => setIsComingSoonOpen(false)}
       />
     </div>
   );

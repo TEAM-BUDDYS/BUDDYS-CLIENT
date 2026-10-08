@@ -1,10 +1,14 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { SEARCH_QUERY_OPTIONS } from '@/shared/api/search/query';
 import type { SearchHistoryItem } from '@/shared/components/search/search-history';
 import { ROUTES } from '@/shared/config';
+
+import { useDebouncedValue } from './use-debounced-value';
 
 const SEARCH_HISTORY_STORAGE_KEY = 'buddys-search-history';
 const SEARCH_HISTORY_LIMIT = 10;
@@ -72,6 +76,30 @@ export const useSearchSheet = (onClose?: () => void, initialKeyword = '') => {
     SearchHistoryItem[]
   >(getInitialSearchHistoryItems);
 
+  const trimmedKeyword = searchKeyword.trim();
+  const debouncedKeyword = useDebouncedValue(trimmedKeyword, 300);
+  const isSuggestionMode = Boolean(trimmedKeyword);
+  const isDebouncing = trimmedKeyword !== debouncedKeyword;
+  const suggestionsQuery = useQuery({
+    ...SEARCH_QUERY_OPTIONS.SUGGESTIONS({ keyword: debouncedKeyword, size: 8 }),
+    enabled: isSuggestionMode && !isDebouncing,
+  });
+  const recentKeywordOrder = new Map(
+    searchHistoryItems.map((item, index) => [item.keyword, index]),
+  );
+  const suggestionItems = Array.from(
+    new Set(
+      (isDebouncing ? [] : (suggestionsQuery.data ?? []))
+        .map((item) => item.keyword.trim())
+        .filter(Boolean),
+    ),
+    (keyword) => ({ keyword, isRecentSearch: recentKeywordOrder.has(keyword) }),
+  ).sort(
+    (a, b) =>
+      (recentKeywordOrder.get(a.keyword) ?? searchHistoryItems.length) -
+      (recentKeywordOrder.get(b.keyword) ?? searchHistoryItems.length),
+  );
+
   const saveSearchKeyword = (keyword: string) => {
     const trimmedKeyword = keyword.trim();
 
@@ -104,8 +132,8 @@ export const useSearchSheet = (onClose?: () => void, initialKeyword = '') => {
     router.push(href);
   };
 
-  const handleSearchSubmit = () => {
-    const savedKeyword = saveSearchKeyword(searchKeyword);
+  const handleSearchSubmit = (keyword = searchKeyword) => {
+    const savedKeyword = saveSearchKeyword(keyword);
 
     if (!savedKeyword) {
       return;
@@ -115,13 +143,7 @@ export const useSearchSheet = (onClose?: () => void, initialKeyword = '') => {
   };
 
   const handleSearchHistorySelect = (item: SearchHistoryItem) => {
-    const savedKeyword = saveSearchKeyword(item.keyword);
-
-    if (!savedKeyword) {
-      return;
-    }
-
-    routeToSearchResult(savedKeyword);
+    handleSearchSubmit(item.keyword);
   };
 
   const handleSearchHistoryDelete = (id: string) => {
@@ -136,6 +158,12 @@ export const useSearchSheet = (onClose?: () => void, initialKeyword = '') => {
   return {
     searchKeyword,
     searchHistoryItems,
+    isSuggestionMode,
+    suggestionItems,
+    isSuggestionsLoading:
+      isSuggestionMode && (isDebouncing || suggestionsQuery.isPending),
+    hasSuggestionsError: !isDebouncing && suggestionsQuery.isError,
+    retrySuggestions: suggestionsQuery.refetch,
     handleSearchKeywordChange: setSearchKeyword,
     handleSearchSubmit,
     handleSearchHistorySelect,
