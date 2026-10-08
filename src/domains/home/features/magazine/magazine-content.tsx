@@ -10,7 +10,7 @@ import {
   type MagazineCategory,
   magazineCategoryItems,
 } from '@/domains/home/model/magazine-category';
-import { AsyncBoundary, Filter } from '@/shared/components/ui';
+import { AsyncBoundary, EmptyState, Filter } from '@/shared/components/ui';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 
 const MAGAZINE_SORT = {
@@ -52,6 +52,16 @@ const MagazineList = ({ category, sort, onSortChange }: MagazineListProps) => {
 
   // TODO: 북마크 API 연동
   const handleBookmarkClick = () => undefined;
+
+  if (magazines.length === 0 && !hasNextPage) {
+    return (
+      <EmptyState
+        title="등록된 매거진이 없어요"
+        description="새로운 매거진을 준비하고 있어요"
+        className="pt-25.25"
+      />
+    );
+  }
 
   return (
     <>
