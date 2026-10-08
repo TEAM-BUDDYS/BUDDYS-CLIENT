@@ -28,6 +28,8 @@ import type {
   GetMyPostsResponse,
   GetMyProfileForEditResponse,
   GetMyProfileResponse,
+  GetUserCoursesParams,
+  GetUserCoursesResponse,
   GetUserPostsParams,
   GetUserPostsResponse,
   UpdateMyProfileRequest,
@@ -185,6 +187,27 @@ const getUserPosts = async (userId: number, params?: GetUserPostsParams) => {
     .json<GetUserPostsResponse>();
 };
 
+const getUserCourses = async (
+  userId: number,
+  params?: GetUserCoursesParams,
+): Promise<GetUserCoursesResponse> => {
+  const response = await apiClient
+    .get(END_POINT.USER.COURSES(userId), {
+      searchParams: createSearchParams(params),
+    })
+    .json<GetUserCoursesResponse>();
+
+  if (response.success === false) {
+    throw new Error(response.message || '코스를 불러오지 못했습니다.');
+  }
+
+  if (!isValidUserCoursesData(response.data)) {
+    throw new Error('코스 응답 형식이 올바르지 않습니다.');
+  }
+
+  return response;
+};
+
 export const requestWithdraw = async () => {
   await apiClient.delete(END_POINT.USER.ME);
 };
@@ -312,6 +335,22 @@ export const PROFILE_QUERY_OPTIONS = {
       queryKey: USER_QUERY_KEY.POSTS_INFINITE(userId, params),
       queryFn: ({ pageParam }) =>
         getUserPosts(userId, { ...params, page: pageParam }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        const page = lastPage.data?.page;
+
+        if (!lastPage.data?.hasNext || typeof page !== 'number') {
+          return undefined;
+        }
+
+        return page + 1;
+      },
+    }),
+  USER_COURSES_INFINITE: (userId: number, params?: GetUserCoursesParams) =>
+    infiniteQueryOptions({
+      queryKey: USER_QUERY_KEY.COURSES_INFINITE(userId, params),
+      queryFn: ({ pageParam }) =>
+        getUserCourses(userId, { ...params, page: pageParam }),
       initialPageParam: 0,
       getNextPageParam: (lastPage) => {
         const page = lastPage.data?.page;
