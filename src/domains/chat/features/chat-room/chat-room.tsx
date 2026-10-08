@@ -182,6 +182,17 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
     }
   };
 
+  const handleCourseCreateClick = () => {
+    const companionUserId = chatRoomData.participantUserId;
+
+    if (companionUserId === null) {
+      router.push(ROUTES.COURSE.CREATE);
+      return;
+    }
+
+    router.push(`${ROUTES.COURSE.CREATE}?companionUserId=${companionUserId}`);
+  };
+
   if (currentUserId === null) {
     return null;
   }
@@ -211,13 +222,7 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
         />
         {!isInputDisabled && (
           <div className="mx-4 mb-4">
-            <Button
-              onClick={() =>
-                router.push(
-                  `${ROUTES.COURSE.CREATE}?companionUserId=${chatRoomData.participantUserId}`,
-                )
-              }
-            >
+            <Button onClick={handleCourseCreateClick}>
               코스 기록 바로가기
             </Button>
           </div>
