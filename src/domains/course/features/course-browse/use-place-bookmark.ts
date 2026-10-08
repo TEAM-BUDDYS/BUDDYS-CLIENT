@@ -1,4 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  type InfiniteData,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { useCallback, useRef, useState } from 'react';
 
 import {
@@ -10,6 +14,11 @@ import { PLACE_QUERY_KEY } from '@/shared/api';
 
 interface UsePlaceBookmarkParams {
   onBookmarkChange: (placeId: string, bookmarked: boolean) => void;
+}
+
+interface PlaceSearchPage {
+  places: Place[];
+  nextPageToken: string | null;
 }
 
 export const usePlaceBookmark = ({
@@ -29,6 +38,19 @@ export const usePlaceBookmark = ({
           places?.map((place) =>
             place.placeId === placeId ? { ...place, bookmarked } : place,
           ),
+      );
+      queryClient.setQueriesData<InfiniteData<PlaceSearchPage>>(
+        { queryKey: PLACE_QUERY_KEY.SEARCH_ALL() },
+        (data) =>
+          data && {
+            ...data,
+            pages: data.pages.map((page) => ({
+              ...page,
+              places: page.places.map((place) =>
+                place.placeId === placeId ? { ...place, bookmarked } : place,
+              ),
+            })),
+          },
       );
 
       if (!bookmarked) {

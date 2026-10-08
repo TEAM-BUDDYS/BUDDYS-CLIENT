@@ -12,6 +12,11 @@ overrides:
   js-yaml@>=4.0.0 <4.3.1: 4.3.1
   svgo@>=3.0.0 <3.3.4: 3.3.4
 
+patchedDependencies:
+  vaul@1.1.2:
+    hash: 161068fd77e96d9faa1254dda4ccf00dd0152c2f8b2e95d1be7f3c8644d060e8
+    path: patches/vaul@1.1.2.patch
+
 importers:
 
   .:
@@ -69,7 +74,7 @@ importers:
         version: 3.6.0
       vaul:
         specifier: ^1.1.2
-        version: 1.1.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 1.1.2(patch_hash=161068fd77e96d9faa1254dda4ccf00dd0152c2f8b2e95d1be7f3c8644d060e8)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
     devDependencies:
       '@svgr/cli':
         specifier: ^8.1.0
@@ -7019,7 +7024,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.17
 
-  vaul@1.1.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+  vaul@1.1.2(patch_hash=161068fd77e96d9faa1254dda4ccf00dd0152c2f8b2e95d1be7f3c8644d060e8)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
     dependencies:
       '@radix-ui/react-dialog': 1.1.18(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       react: 19.2.4
