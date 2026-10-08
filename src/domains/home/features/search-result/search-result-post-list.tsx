@@ -95,6 +95,7 @@ export const SearchResultPostList = ({
       setSort(getSearchSortByLabel(label));
     });
   };
+
   if (posts.length === 0 && !hasNextPage) {
     return (
       <EmptyState
