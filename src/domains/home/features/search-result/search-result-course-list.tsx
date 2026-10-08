@@ -13,20 +13,18 @@ const MOCK_SEARCH_COURSES = [
     title: '바르셀로나 하루 코스',
     description:
       '사그라다 파밀리아부터 보른 지구까지, 하루 만에 둘러볼 수 있는 동선을 담았어요.',
-    images: [1, 2, 3, 4].map((index) => ({
-      src: `https://picsum.photos/seed/search-course-1-${index}/200/200`,
-      alt: `바르셀로나 하루 코스 이미지 ${index}`,
-    })),
+    images: [1, 2, 3, 4].map(
+      (index) => `https://picsum.photos/seed/search-course-1-${index}/200/200`,
+    ),
     isBookmarked: false,
   },
   {
     courseId: 2,
     title: '런던 미술관 투어',
     description: '영국 · 1박 2일',
-    images: [1, 2, 3].map((index) => ({
-      src: `https://picsum.photos/seed/search-course-2-${index}/200/200`,
-      alt: `런던 미술관 투어 이미지 ${index}`,
-    })),
+    images: [1, 2, 3].map(
+      (index) => `https://picsum.photos/seed/search-course-2-${index}/200/200`,
+    ),
     isBookmarked: false,
   },
 ];

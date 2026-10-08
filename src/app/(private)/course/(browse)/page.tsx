@@ -61,10 +61,19 @@ export default function CoursePage() {
   } = useCourseBrowse();
   const {
     hasError: hasNearbyError,
+    hasNextPage: hasNearbyNextPage,
+    isFetchNextPageError: isNearbyFetchNextPageError,
+    isFetchingNextPage: isNearbyFetchingNextPage,
     isLoading: isNearbyLoading,
+    isSearchMode,
+    loadMore: loadMoreNearbyPlaces,
     places: nearbyPlaces,
     refetch: refetchNearbyPlaces,
-  } = useNearbyPlaces({ currentLocation, selectedCategory });
+  } = useNearbyPlaces({
+    currentLocation,
+    searchKeyword,
+    selectedCategory,
+  });
   const bookmarkedMarkers = useBookmarkedPlaceMarkers({ bounds: mapBounds });
   const {
     clearSelectedPlace,
@@ -127,6 +136,19 @@ export default function CoursePage() {
     setSelectedCategory((currentCategory) =>
       currentCategory === category ? undefined : category,
     );
+  };
+
+  const handleSearchKeywordChange = (keyword: string) => {
+    clearSelectedPlace();
+    setIsBookmarkMode(false);
+    setBottomSheetTab('nearby');
+    if (
+      keyword.trim() &&
+      (!searchKeyword.trim() || isBookmarkMode || bottomSheetTab !== 'nearby')
+    ) {
+      setBottomSheetPosition('default');
+    }
+    setSearchKeyword(keyword);
   };
 
   const handleLocationClick = async () => {
@@ -211,7 +233,7 @@ export default function CoursePage() {
   };
 
   const handleNearbyRetry = () => {
-    if (hasLocationError) {
+    if (!isSearchMode && hasLocationError) {
       void refetchCurrentLocation();
       return;
     }
@@ -242,7 +264,7 @@ export default function CoursePage() {
               searchIconClassName="text-gray-200"
               size="small"
               value={searchKeyword}
-              onChange={setSearchKeyword}
+              onChange={handleSearchKeywordChange}
             />
           }
         />
@@ -305,12 +327,18 @@ export default function CoursePage() {
           }
           hasBookmarkNextPage={bookmarkedList.hasNextPage}
           hasNearbyError={hasNearbyError}
-          hasLocationError={hasLocationError}
+          hasNearbyNextPage={hasNearbyNextPage}
+          hasLocationError={!isSearchMode && hasLocationError}
           isBookmarkMode={isBookmarkMode}
           isBookmarkFetchNextPageError={bookmarkedList.isFetchNextPageError}
           isBookmarkFetchingNextPage={bookmarkedList.isFetchingNextPage}
           isBookmarkLoading={bookmarkedList.isLoading}
-          isNearbyLoading={isCurrentLocationLoading || isNearbyLoading}
+          isNearbyLoading={
+            (!isSearchMode && isCurrentLocationLoading) || isNearbyLoading
+          }
+          isNearbySearchMode={isSearchMode}
+          isNearbyFetchNextPageError={isNearbyFetchNextPageError}
+          isNearbyFetchingNextPage={isNearbyFetchingNextPage}
           isPlaceSelectionLoading={isWaitingForBookmarkMarkers}
           nearbyItems={nearbyItems}
           pendingBookmarkPlaceIds={pendingBookmarkPlaceIds}
@@ -324,6 +352,7 @@ export default function CoursePage() {
           onBookmarkRetry={handleBookmarkRetry}
           onExploreClick={() => router.push(ROUTES.COURSE.CUSTOMIZED_EXPLORE)}
           onNearbyRetry={handleNearbyRetry}
+          onNearbyLoadMore={loadMoreNearbyPlaces}
           onSuggestedMoreClick={() =>
             router.push(ROUTES.COURSE.SUGGEST_EXPLORE)
           }

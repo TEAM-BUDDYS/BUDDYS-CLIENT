@@ -1,5 +1,8 @@
-import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
-import { isHTTPError } from 'ky';
+import {
+  infiniteQueryOptions,
+  mutationOptions,
+  queryOptions,
+} from '@tanstack/react-query';
 
 import {
   apiClient,
@@ -11,7 +14,7 @@ import {
   USER_QUERY_KEY,
 } from '@/shared/api';
 
-import type { MyProfile, OtherProfile } from '../model/profile';
+import type { MyProfile } from '../model/profile';
 import type {
   GetBookmarkedCoursesParams,
   GetBookmarkedCoursesResponse,
@@ -19,32 +22,22 @@ import type {
   GetBookmarkedMagazinesResponse,
   GetBookmarkedPostsParams,
   GetBookmarkedPostsResponse,
+  GetMyCoursesParams,
+  GetMyCoursesResponse,
   GetMyPostsParams,
   GetMyPostsResponse,
+  GetMyProfileForEditResponse,
   GetMyProfileResponse,
   GetUserPostsParams,
   GetUserPostsResponse,
-  GetUserProfileResponse,
+  UpdateMyProfileRequest,
+  UpdateMyProfileResponse,
 } from './type';
 
 interface OrderedTag {
   id: number;
   name: string;
 }
-
-const isOrderedTagArray = (value: unknown): value is OrderedTag[] => {
-  return (
-    value === undefined ||
-    (Array.isArray(value) &&
-      value.every(
-        (tag) =>
-          typeof tag === 'object' &&
-          tag !== null &&
-          typeof (tag as OrderedTag).id === 'number' &&
-          typeof (tag as OrderedTag).name === 'string',
-      ))
-  );
-};
 
 const toProfileTags = (tags: OrderedTag[] | undefined) => {
   return (tags ?? []).map(({ id, name }) => ({
@@ -68,43 +61,36 @@ const hasValidNickname = (
   return typeof nickname === 'string';
 };
 
-type UserPublicProfileData = NonNullable<GetUserProfileResponse['data']>;
-type UserPublicProfileDataWithNickname = UserPublicProfileData & {
-  nickname: string;
-};
-
 const isNullableString = (value: unknown) => {
   return value === undefined || value === null || typeof value === 'string';
 };
 
-const isOptionalBoolean = (value: unknown) =>
-  value === undefined || typeof value === 'boolean';
+type UserCoursesData = NonNullable<GetMyCoursesResponse['data']>;
 
-const isValidUserPublicProfileData = (
-  data: unknown,
-): data is UserPublicProfileDataWithNickname => {
+const isValidCourse = (course: unknown) => {
+  if (typeof course !== 'object' || course === null) {
+    return false;
+  }
+
+  const { courseId, thumbnailImageUrl } = course as Partial<
+    UserCoursesData['courses'][number]
+  >;
+
+  return typeof courseId === 'number' && isNullableString(thumbnailImageUrl);
+};
+
+const isValidUserCoursesData = (data: unknown): data is UserCoursesData => {
   if (typeof data !== 'object' || data === null) {
     return false;
   }
 
-  const {
-    nickname,
-    profileImageUrl,
-    universityEmailVerified,
-    exchangeDocumentVerified,
-    representativeTags,
-    bio,
-    isDeleted,
-  } = data as Partial<UserPublicProfileData>;
+  const { courses, page, hasNext } = data as Partial<UserCoursesData>;
 
   return (
-    typeof nickname === 'string' &&
-    isNullableString(profileImageUrl) &&
-    isOptionalBoolean(universityEmailVerified) &&
-    isOptionalBoolean(exchangeDocumentVerified) &&
-    isOrderedTagArray(representativeTags) &&
-    isNullableString(bio) &&
-    (isDeleted === undefined || typeof isDeleted === 'boolean')
+    Array.isArray(courses) &&
+    courses.every(isValidCourse) &&
+    typeof page === 'number' &&
+    typeof hasNext === 'boolean'
   );
 };
 
@@ -141,6 +127,20 @@ const getMyProfile = async (): Promise<MyProfile> => {
   };
 };
 
+const getMyProfileForEdit = async (): Promise<GetMyProfileForEditResponse> => {
+  const response = await apiClient
+    .get(END_POINT.USER.ME_EDIT)
+    .json<GetMyProfileForEditResponse>();
+
+  if (response.success === false) {
+    throw new Error(
+      response.message || '프로필 편집 정보를 불러오지 못했습니다.',
+    );
+  }
+
+  return response;
+};
+
 const getMyPosts = async (
   params?: GetMyPostsParams,
 ): Promise<GetMyPostsResponse> => {
@@ -157,47 +157,24 @@ const getMyPosts = async (
   return response;
 };
 
-const getUserProfile = async (userId: number): Promise<OtherProfile | null> => {
-  let response: GetUserProfileResponse;
-
-  try {
-    response = await apiClient
-      .get(END_POINT.USER.PROFILE(userId))
-      .json<GetUserProfileResponse>();
-  } catch (error) {
-    if (isHTTPError(error) && error.response.status === 404) {
-      return null;
-    }
-
-    throw error;
-  }
+const getMyCourses = async (
+  params?: GetMyCoursesParams,
+): Promise<GetMyCoursesResponse> => {
+  const response = await apiClient
+    .get(END_POINT.USER.ME_COURSES, {
+      searchParams: createSearchParams(params),
+    })
+    .json<GetMyCoursesResponse>();
 
   if (response.success === false) {
-    throw new Error(response.message || '프로필을 불러오지 못했습니다.');
+    throw new Error(response.message || '코스를 불러오지 못했습니다.');
   }
 
-  if (!isValidUserPublicProfileData(response.data)) {
-    throw new Error('프로필 응답 형식이 올바르지 않습니다.');
+  if (!isValidUserCoursesData(response.data)) {
+    throw new Error('코스 응답 형식이 올바르지 않습니다.');
   }
 
-  const {
-    profileImageUrl,
-    nickname,
-    universityEmailVerified,
-    exchangeDocumentVerified,
-    representativeTags,
-    bio,
-    isDeleted,
-  } = response.data;
-
-  return {
-    imageUrl: profileImageUrl || null,
-    nickname,
-    isVerified: universityEmailVerified || exchangeDocumentVerified,
-    tags: toProfileTags(representativeTags),
-    bio: bio ?? null,
-    isWithdrawn: Boolean(isDeleted),
-  };
+  return response;
 };
 
 const getUserPosts = async (userId: number, params?: GetUserPostsParams) => {
@@ -223,6 +200,18 @@ const getBookmarkedPosts = async (params?: GetBookmarkedPostsParams) => {
     throw new Error(
       response.message || '저장한 동행 목록을 불러오지 못했습니다.',
     );
+  }
+
+  return response;
+};
+
+const updateMyProfile = async (body: UpdateMyProfileRequest) => {
+  const response = await apiClient
+    .put(END_POINT.USER.ME, { json: body })
+    .json<UpdateMyProfileResponse>();
+
+  if (response.success === false) {
+    throw new Error(response.message || '프로필을 수정하지 못했습니다.');
   }
 
   return response;
@@ -262,7 +251,19 @@ const getBookmarkedMagazines = async (
   return response;
 };
 
+export const PROFILE_MUTATION_OPTIONS = {
+  UPDATE: () =>
+    mutationOptions({
+      mutationFn: (body: UpdateMyProfileRequest) => updateMyProfile(body),
+    }),
+};
+
 export const PROFILE_QUERY_OPTIONS = {
+  ME_EDIT: () =>
+    queryOptions({
+      queryKey: USER_QUERY_KEY.ME_EDIT(),
+      queryFn: getMyProfileForEdit,
+    }),
   ME: () =>
     queryOptions({
       queryKey: USER_QUERY_KEY.ME(),
@@ -286,10 +287,20 @@ export const PROFILE_QUERY_OPTIONS = {
         return (lastPage.data.page ?? 0) + 1;
       },
     }),
-  USER_PROFILE: (userId: number) =>
-    queryOptions({
-      queryKey: USER_QUERY_KEY.PROFILE(userId),
-      queryFn: () => getUserProfile(userId),
+  ME_COURSES_INFINITE: (params?: GetMyCoursesParams) =>
+    infiniteQueryOptions({
+      queryKey: USER_QUERY_KEY.ME_COURSES_INFINITE(params),
+      queryFn: ({ pageParam }) => getMyCourses({ ...params, page: pageParam }),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => {
+        const page = lastPage.data?.page;
+
+        if (!lastPage.data?.hasNext || typeof page !== 'number') {
+          return undefined;
+        }
+
+        return page + 1;
+      },
     }),
   USER_POSTS: (userId: number, params?: GetUserPostsParams) =>
     queryOptions({
