@@ -1,51 +1,96 @@
 'use client';
 
-import { useState } from 'react';
+import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
+import { useCallback, useState } from 'react';
 
+import { HOME_QUERY_OPTIONS } from '@/domains/home/api/query';
 import { ListToolbar } from '@/domains/home/components/list-toolbar/list-toolbar';
 import { MagazineListCard } from '@/domains/home/components/magazine-list-card/magazine-list-card';
 import {
   type MagazineCategory,
   magazineCategoryItems,
 } from '@/domains/home/model/magazine-category';
-import { Filter } from '@/shared/components/ui';
+import { AsyncBoundary, Filter } from '@/shared/components/ui';
+import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 
-// TODO: 매거진 목록 API 연동 시 응답 데이터로 교체
-const MOCK_MAGAZINES = [
-  {
-    magazineId: 1,
-    title: '유럽 교환학생이라면 루프트한자 학생 혜택부터!',
-    summary: '유럽 교환학생을 준비하고 있다면 꼭 확인해야 할 혜택을 소개해요.',
-    thumbnailImageUrl: 'https://picsum.photos/seed/magazine-1/200/200',
-    publishedAt: '2026-08-20',
-    externalUrl: 'https://www.instagram.com/p/ABC123/',
-    isBookmarked: true,
-  },
-  {
-    magazineId: 2,
-    title: '교환학생 첫 달 생활비, 이렇게 아껴보세요',
-    summary: '현지 교통 패스부터 장보기 팁까지 한 번에 정리했어요.',
-    thumbnailImageUrl: 'https://picsum.photos/seed/magazine-2/200/200',
-    publishedAt: '2026-10-03',
-    externalUrl: 'https://www.instagram.com/p/DEF456/',
-    isBookmarked: false,
-  },
-];
+const MAGAZINE_SORT = {
+  최신순: 'LATEST',
+  저장순: 'BOOKMARK',
+} as const;
+
+interface MagazineListProps {
+  category: MagazineCategory;
+  sort: string;
+  onSortChange: (value: string) => void;
+}
+
+const MagazineList = ({ category, sort, onSortChange }: MagazineListProps) => {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchNextPageError,
+    isFetchingNextPage,
+  } = useSuspenseInfiniteQuery(
+    HOME_QUERY_OPTIONS.MAGAZINES_INFINITE({
+      category,
+      sort: MAGAZINE_SORT[sort as keyof typeof MAGAZINE_SORT],
+      size: 10,
+    }),
+  );
+
+  const magazines = data.pages.flatMap((page) => page.data.magazines);
+  const totalCount = data.pages[0]?.data.totalCount ?? 0;
+  const handleIntersect = useCallback(() => {
+    void fetchNextPage();
+  }, [fetchNextPage]);
+  const loadMoreRef = useInfiniteScroll<HTMLDivElement>({
+    enabled:
+      Boolean(hasNextPage) && !isFetchingNextPage && !isFetchNextPageError,
+    onIntersect: handleIntersect,
+  });
+
+  // TODO: 북마크 API 연동
+  const handleBookmarkClick = () => undefined;
+
+  return (
+    <>
+      <div className="mt-6">
+        <ListToolbar count={totalCount} value={sort} onChange={onSortChange} />
+      </div>
+
+      <ul className="mt-4 flex flex-col gap-5">
+        {magazines.map(({ magazineId, ...magazine }) => (
+          <li key={magazineId}>
+            <MagazineListCard
+              {...magazine}
+              onBookmarkClick={handleBookmarkClick}
+            />
+          </li>
+        ))}
+      </ul>
+      <div ref={loadMoreRef} className="h-1" aria-hidden="true" />
+      {isFetchingNextPage && (
+        <p className="text-caption-m-12 py-4 text-center text-gray-500">
+          매거진을 불러오는 중이에요
+        </p>
+      )}
+      {isFetchNextPageError && (
+        <button
+          type="button"
+          className="text-caption-m-12 text-mint-400 mx-auto block py-4"
+          onClick={() => fetchNextPage()}
+        >
+          다시 불러오기
+        </button>
+      )}
+    </>
+  );
+};
 
 export const MagazineContent = () => {
   const [category, setCategory] = useState<MagazineCategory>('SUPPORT');
   const [sort, setSort] = useState('최신순');
-  const [magazines, setMagazines] = useState(MOCK_MAGAZINES);
-
-  const handleBookmarkClick = (magazineId: number) => {
-    setMagazines((prevMagazines) =>
-      prevMagazines.map((magazine) =>
-        magazine.magazineId === magazineId
-          ? { ...magazine, isBookmarked: !magazine.isBookmarked }
-          : magazine,
-      ),
-    );
-  };
 
   return (
     <main className="px-4 pt-4 pb-6">
@@ -60,20 +105,9 @@ export const MagazineContent = () => {
         ))}
       </div>
 
-      <div className="mt-6">
-        <ListToolbar count={magazines.length} value={sort} onChange={setSort} />
-      </div>
-
-      <ul className="mt-4 flex flex-col gap-5">
-        {magazines.map(({ magazineId, ...magazine }) => (
-          <li key={magazineId}>
-            <MagazineListCard
-              {...magazine}
-              onBookmarkClick={() => handleBookmarkClick(magazineId)}
-            />
-          </li>
-        ))}
-      </ul>
+      <AsyncBoundary className="py-8" resetKeys={[category, sort]}>
+        <MagazineList category={category} sort={sort} onSortChange={setSort} />
+      </AsyncBoundary>
     </main>
   );
 };

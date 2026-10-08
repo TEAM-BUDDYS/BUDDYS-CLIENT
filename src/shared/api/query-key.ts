@@ -102,6 +102,14 @@ export const COURSE_QUERY_KEY = {
 
 export const MAGAZINE_QUERY_KEY = {
   ALL: ['magazines'] as const,
+  LIST: (params: GetQueryParams<'/api/v1/magazines'>) =>
+    [...MAGAZINE_QUERY_KEY.ALL, 'list', params] as const,
+  INFINITE_LIST: (params: GetQueryParams<'/api/v1/magazines'>) =>
+    [
+      ...MAGAZINE_QUERY_KEY.ALL,
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
   BOOKMARKS_ALL: () => [...MAGAZINE_QUERY_KEY.ALL, 'bookmarks'] as const,
   BOOKMARKS_INFINITE: (
     params?: GetQueryParams<'/api/v1/magazines/bookmarks'>,
