@@ -16,8 +16,8 @@ const ClosingSoonPostList = () => {
   if (posts.length === 0) {
     return (
       <EmptyState
-        title="오늘 마감되는 동행 게시물이 없어요"
-        description="새로운 동행 게시물을 둘러보세요"
+        title="오늘 마감되는 게시물이 없어요"
+        description="동행 탭에서 게시물을 둘러보세요"
         className="py-8"
       />
     );
