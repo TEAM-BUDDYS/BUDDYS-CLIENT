@@ -1,6 +1,7 @@
 'use client';
 
 import { useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 
 import { COURSE_QUERY_OPTIONS } from '@/domains/course/api/course';
 import type { CourseDetail } from '@/domains/course/api/type';
@@ -27,11 +28,13 @@ const CourseEditFormContent = ({ course }: CourseEditFormContentProps) => {
         TAG_QUERY_OPTIONS.LIST('TRAVEL_STYLE'),
       ],
     });
-  const initialCourse = convertCourseDetailToInitialValue(course, {
-    activityTags: activityTagsQuery.data,
-    interestTags: interestTagsQuery.data,
-    travelStyleTags: travelStyleTagsQuery.data,
-  });
+  const [initialCourse] = useState(() =>
+    convertCourseDetailToInitialValue(course, {
+      activityTags: activityTagsQuery.data,
+      interestTags: interestTagsQuery.data,
+      travelStyleTags: travelStyleTagsQuery.data,
+    }),
+  );
 
   return <CourseCreateFlow initialCourse={initialCourse} />;
 };
