@@ -6,6 +6,7 @@ export interface ChatRoomDetail {
   hasReported: boolean;
   createdAt: string;
   participantNickname: string;
+  participantUserId: number | null;
 }
 
 export interface ChatMessageData {

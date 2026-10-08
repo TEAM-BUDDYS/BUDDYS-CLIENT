@@ -332,7 +332,10 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
             birthDate={onboardForm.birthDate}
             bio={onboardForm.bio}
             isUploading={isSubmitting}
-            profileImageFile={onboardForm.profileImageFile}
+            profileImagePreviewUrl={onboardForm.profileImagePreviewUrl}
+            imageError={onboardForm.imageError}
+            birthDateError={onboardForm.birthDateError}
+            onBirthDateBlur={onboardForm.handleBirthDateBlur}
             onNicknameChange={(value) => {
               resetNicknameCheck();
               onboardForm.handleNicknameChange(value);

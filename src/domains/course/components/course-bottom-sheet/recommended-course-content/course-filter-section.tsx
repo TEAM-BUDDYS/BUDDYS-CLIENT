@@ -1,40 +1,42 @@
+import type { CourseSummary } from '@/domains/course/api/type';
 import { CourseSectionHeader } from '@/domains/course/components/course-section-header/course-section-header';
-import { CardList, ChipButton } from '@/shared/components/ui';
+import {
+  AsyncErrorState,
+  AsyncLoadingState,
+  CardList,
+  ChipButton,
+} from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
 
 export interface CourseFilterCountry {
   id: number;
   name: string;
 }
 
-export interface FilteredCourseItem {
-  id: number;
-  countryIds: readonly number[];
-  tagIds: readonly number[];
-  title: string;
-  description: string;
-  images: {
-    src: string;
-    alt: string;
-  }[];
-  isBookmarked: boolean;
-}
-
 interface CourseFilterSectionProps {
   countries: readonly CourseFilterCountry[];
-  courses: readonly FilteredCourseItem[];
+  courses: readonly CourseSummary[];
+  hasError: boolean;
+  isBookmarkPending: boolean;
+  isLoading: boolean;
   selectedCountryId?: number;
   onExploreClick: () => void;
   onCountryChange: (countryId: number) => void;
   onCourseBookmarkChange: (courseId: number, nextBookmarked: boolean) => void;
+  onRetry: () => void;
 }
 
 export const CourseFilterSection = ({
   countries,
   courses,
+  hasError,
+  isBookmarkPending,
+  isLoading,
   selectedCountryId,
   onExploreClick,
   onCountryChange,
   onCourseBookmarkChange,
+  onRetry,
 }: CourseFilterSectionProps) => {
   return (
     <section className="flex flex-col gap-4">
@@ -60,20 +62,41 @@ export const CourseFilterSection = ({
         })}
       </div>
 
-      <div className="flex flex-col gap-3">
-        {courses.map((course) => (
-          <CardList
-            key={course.id}
-            title={course.title}
-            description={course.description}
-            images={course.images}
-            isBookmarked={course.isBookmarked}
-            onBookmarkClick={() =>
-              onCourseBookmarkChange(course.id, !course.isBookmarked)
-            }
-          />
-        ))}
-      </div>
+      {isLoading ? (
+        <AsyncLoadingState
+          className="min-h-40"
+          title="코스를 불러오고 있어요"
+        />
+      ) : hasError ? (
+        <AsyncErrorState
+          className="min-h-40"
+          title="코스를 불러오지 못했어요"
+          onRetry={onRetry}
+        />
+      ) : courses.length === 0 ? (
+        <p className="text-body-m-15 py-10 text-center text-gray-500">
+          조건에 맞는 코스가 없어요
+        </p>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {courses.map((course) => (
+            <CardList
+              key={course.courseId}
+              title={course.title}
+              description={[course.countries, course.cities]
+                .filter(Boolean)
+                .join(' · ')}
+              href={ROUTES.COURSE.DETAIL(course.courseId)}
+              images={course.images}
+              isBookmarked={course.isBookmarked}
+              isBookmarkPending={isBookmarkPending}
+              onBookmarkClick={() =>
+                onCourseBookmarkChange(course.courseId, !course.isBookmarked)
+              }
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 };

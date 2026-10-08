@@ -173,6 +173,13 @@ domains/{domain}/
 - 제품 도메인 지식이 포함된 코드는 형태가 비슷하더라도 소유 도메인에 유지합니다.
 - 외부 라이브러리 wrapper는 앱 전체에서 사용하는 기반 설정일 때 `lib` 배치를 검토합니다.
 
+## Shared User Profile Query
+
+- 다른 사용자의 공개 프로필 조회는 `src/shared/api/user`의 `USER_QUERY_OPTIONS.PROFILE(userId)`를 사용합니다.
+- 프로필 화면과 코스 생성의 초기 동행 추가가 동일한 응답 검증, 데이터 타입과 query key를 공유합니다.
+- 코스 동행 형태로 변환하는 로직과 자동 추가 여부는 course domain이 관리합니다.
+- 내 프로필, 게시글 목록과 프로필 화면 전용 요청은 profile domain에 유지합니다.
+
 ## Server And Client Boundary
 
 - 기본 page와 layout은 Server Component로 둡니다.

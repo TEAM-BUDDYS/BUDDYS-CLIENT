@@ -32,9 +32,11 @@ export {
   PLACE_QUERY_KEY,
   POST_QUERY_KEY,
   RECOMMENDATION_QUERY_KEY,
+  SEARCH_QUERY_KEY,
   TAG_QUERY_KEY,
   USER_QUERY_KEY,
 } from './query-key';
 export { RECOMMENDATION_QUERY_OPTIONS } from './recommended-posts/query';
 export { createSearchParams } from './search-params';
 export { TAG_QUERY_OPTIONS, type TagType } from './tag';
+export { USER_QUERY_OPTIONS, type UserPublicProfile } from './user';
