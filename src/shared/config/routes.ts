@@ -25,6 +25,7 @@ export const ROUTES = {
     ROOT: '/course',
     CREATE: '/course/post',
     DETAIL: (courseId: number) => `/course/${courseId}` as const,
+    EDIT: (courseId: number) => `/course/${courseId}/edit` as const,
     CUSTOMIZED_EXPLORE: '/course/customized-explore',
     SUGGEST_EXPLORE: '/course/customized-explore?type=suggest',
   },

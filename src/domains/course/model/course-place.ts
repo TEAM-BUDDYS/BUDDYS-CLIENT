@@ -27,6 +27,9 @@ const BOOKMARK_CATEGORY_LABEL = {
 
 export type CourseMapCategory = keyof typeof API_CATEGORY_BY_MAP_CATEGORY;
 
+export const getApiPlaceCategory = (category?: CourseMapCategory) =>
+  category ? API_CATEGORY_BY_MAP_CATEGORY[category] : undefined;
+
 export const getNearbyPlaceParams = (
   currentLocation: CourseMapCenter | null,
   selectedCategory?: CourseMapCategory,
@@ -37,9 +40,7 @@ export const getNearbyPlaceParams = (
     lat: currentLocation.lat,
     lng: currentLocation.lng,
     radius: NEARBY_PLACE_RADIUS_METERS,
-    category: selectedCategory
-      ? API_CATEGORY_BY_MAP_CATEGORY[selectedCategory]
-      : undefined,
+    category: getApiPlaceCategory(selectedCategory),
   };
 };
 

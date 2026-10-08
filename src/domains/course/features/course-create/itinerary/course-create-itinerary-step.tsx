@@ -7,6 +7,7 @@ import { PlusIcon } from '@/shared/components/icons';
 import { useToast } from '@/shared/components/ui';
 
 import { COURSE_CREATE_MAX_FLIGHT_COUNT } from '../constants';
+import { CourseCreateFlightList } from '../flight/course-create-flight-list';
 import type {
   CourseCreateCityOption,
   CourseCreateDayFormState,
@@ -18,6 +19,7 @@ interface CourseCreateItineraryStepProps {
   title: string;
   cities: CourseCreateCityOption[];
   days: CourseCreateDayFormState[];
+  isDisabled?: boolean;
   onDayPlacesChange: (
     dayNumber: number,
     places: CourseCreateDayFormState['places'],
@@ -30,18 +32,21 @@ interface CourseCreateItineraryStepProps {
     value: Pick<CourseCreateDayFormState, 'memo' | 'cost'>,
   ) => void;
   onFlightDaySelect: (dayNumber: number) => void;
+  onFlightRemove: (dayNumber: number, flightIndex: number) => void;
 }
 
 export const CourseCreateItineraryStep = ({
   title,
   cities,
   days,
+  isDisabled = false,
   onDayPlacesChange,
   onDayPlaceRemove,
   onDayImagesAdd,
   onDayImageRemove,
   onDayMemoCostChange,
   onFlightDaySelect,
+  onFlightRemove,
 }: CourseCreateItineraryStepProps) => {
   const { showToast } = useToast();
   const [placePickerDayNumber, setPlacePickerDayNumber] = useState<
@@ -80,14 +85,21 @@ export const CourseCreateItineraryStep = ({
           </div>
 
           <button
-            aria-disabled={isFlightLimitReached}
+            aria-disabled={isDisabled || isFlightLimitReached}
             className="text-caption-m-12 flex h-8.5 w-[93px] items-center justify-center gap-1 rounded-lg border border-gray-200 bg-white text-gray-800 aria-disabled:cursor-not-allowed aria-disabled:border-gray-50 aria-disabled:bg-gray-50 aria-disabled:text-gray-200"
+            disabled={isDisabled || isFlightLimitReached}
             type="button"
             onClick={handleFlightAddClick}
           >
             <PlusIcon aria-hidden className="size-4" />
             {`항공편 ${flightCount}/${COURSE_CREATE_MAX_FLIGHT_COUNT}`}
           </button>
+
+          <CourseCreateFlightList
+            days={days}
+            isDisabled={isDisabled}
+            onRemove={onFlightRemove}
+          />
         </div>
 
         <div>
@@ -95,6 +107,7 @@ export const CourseCreateItineraryStep = ({
             <CourseCreateDaySection
               key={day.dayNumber}
               day={day}
+              isDisabled={isDisabled}
               isFirst={index === 0}
               isLast={index === days.length - 1}
               onPlaceAdd={setPlacePickerDayNumber}
@@ -107,10 +120,11 @@ export const CourseCreateItineraryStep = ({
         </div>
       </div>
 
-      {placePickerDay && (
+      {placePickerDay && !isDisabled && (
         <CourseCreatePlacePicker
           cities={cities}
           dayNumber={placePickerDay.dayNumber}
+          fallbackPlaces={days.flatMap(({ places }) => places)}
           selectedPlaces={placePickerDay.places}
           onClose={() => setPlacePickerDayNumber(null)}
           onConfirm={(places) =>
@@ -121,7 +135,7 @@ export const CourseCreateItineraryStep = ({
 
       <CourseDayPickerSheet
         days={days}
-        open={isFlightDayPickerOpen}
+        open={isFlightDayPickerOpen && !isDisabled}
         selectedDayNumber={null}
         onClose={() => setIsFlightDayPickerOpen(false)}
         onDaySelect={onFlightDaySelect}

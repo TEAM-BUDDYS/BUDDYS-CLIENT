@@ -13,6 +13,7 @@ import { CourseCreateMemoCostSheet } from './course-create-memo-cost-sheet';
 
 interface CourseCreateDaySectionProps {
   day: CourseCreateDayFormState;
+  isDisabled?: boolean;
   isFirst: boolean;
   isLast: boolean;
   onPlaceAdd: (dayNumber: number) => void;
@@ -27,6 +28,7 @@ interface CourseCreateDaySectionProps {
 
 export const CourseCreateDaySection = ({
   day,
+  isDisabled = false,
   isFirst,
   isLast,
   onPlaceAdd,
@@ -39,9 +41,10 @@ export const CourseCreateDaySection = ({
   const headingId = `course-day-${day.dayNumber}-title`;
 
   return (
-    <section
+    <fieldset
+      disabled={isDisabled}
       className={cn(
-        'flex flex-col gap-8 pb-10',
+        'm-0 flex min-w-0 flex-col gap-8 border-0 p-0 pb-10 disabled:cursor-not-allowed disabled:opacity-60',
         !isFirst && 'pt-10',
         !isLast && 'border-b border-gray-100',
       )}
@@ -96,6 +99,6 @@ export const CourseCreateDaySection = ({
           onConfirm={(value) => onMemoCostChange(day.dayNumber, value)}
         />
       )}
-    </section>
+    </fieldset>
   );
 };

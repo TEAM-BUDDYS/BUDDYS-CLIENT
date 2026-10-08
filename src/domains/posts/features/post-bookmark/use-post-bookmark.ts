@@ -3,7 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { POST_MUTATION_OPTIONS } from '@/domains/posts/api/query';
-import { POST_QUERY_KEY } from '@/shared/api';
+import { POST_QUERY_KEY, SEARCH_QUERY_KEY } from '@/shared/api';
 import { useToast } from '@/shared/components/ui';
 
 interface UsePostBookmarkParams {
@@ -21,9 +21,14 @@ export const usePostBookmark = ({
   const mutation = useMutation({
     ...POST_MUTATION_OPTIONS.UPDATE_BOOKMARK(),
     onSuccess: () => {
-      return queryClient.invalidateQueries({
-        queryKey: POST_QUERY_KEY.ALL,
-      });
+      return Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: POST_QUERY_KEY.ALL,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: SEARCH_QUERY_KEY.ALL,
+        }),
+      ]);
     },
     onError: () => {
       showToast('북마크를 변경하지 못했어요. 다시 시도해 주세요.', {
