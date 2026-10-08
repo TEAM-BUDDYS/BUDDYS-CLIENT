@@ -181,6 +181,16 @@ export const RECOMMENDATION_QUERY_KEY = {
     [...RECOMMENDATION_QUERY_KEY.POSTS_ALL(), params ?? {}] as const,
 };
 
+export const SEARCH_QUERY_KEY = {
+  ALL: ['search'] as const,
+  INFINITE: (params: GetQueryParams<'/api/v1/search'>) =>
+    [
+      ...SEARCH_QUERY_KEY.ALL,
+      'infinite-list',
+      excludePageParam(params),
+    ] as const,
+};
+
 export const TAG_QUERY_KEY = {
   ALL: ['tags'] as const,
   LIST: (type: 'ACTIVITY' | 'INTEREST' | 'TRAVEL_STYLE') =>
