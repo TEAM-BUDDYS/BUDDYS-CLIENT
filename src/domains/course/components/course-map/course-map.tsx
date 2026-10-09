@@ -6,10 +6,11 @@ import {
   type MapEvent,
   type MapMouseEvent,
 } from '@vis.gl/react-google-maps';
-import { useState } from 'react';
+import { type RefObject, useState } from 'react';
 
 import type { Place } from '@/domains/course/api/type';
 import { CourseCurrentLocationMarker } from '@/domains/course/components/course-map/course-current-location-marker';
+import { CourseMapAttribution } from '@/domains/course/components/course-map/course-map-attribution';
 import { CourseMapCamera } from '@/domains/course/components/course-map/course-map-camera';
 import { CourseMapMarker } from '@/domains/course/components/course-map/course-map-marker';
 import type {
@@ -27,13 +28,17 @@ const FALLBACK_CENTER = {
 interface CourseMapProps {
   places: Place[];
   bottomOverlayRatio?: number;
+  bottomOverlayHeight?: number;
+  bottomSheetRef?: RefObject<HTMLDivElement | null>;
   currentLocation?: CourseMapCenter | null;
   preserveCamera?: boolean;
   showCurrentLocation?: boolean;
   selectedPlace?: Place;
   selectedPlaceId?: string;
   cameraTarget?: CourseMapCenter | null;
+  cameraRequestId?: number;
   onBoundsChange?: (bounds: CourseMapBounds) => void;
+  onCenterChange?: (center: CourseMapCenter) => void;
   onPoiSelect?: (poi: GoogleMapPoi) => void;
   onPlaceSelect?: (placeId: string) => void;
 }
@@ -41,13 +46,17 @@ interface CourseMapProps {
 export const CourseMap = ({
   places,
   bottomOverlayRatio = 0,
+  bottomOverlayHeight = 0,
+  bottomSheetRef,
   currentLocation = null,
   preserveCamera = false,
   showCurrentLocation = false,
   selectedPlace,
   selectedPlaceId,
   cameraTarget = null,
+  cameraRequestId = 0,
   onBoundsChange,
+  onCenterChange,
   onPoiSelect,
   onPlaceSelect,
 }: CourseMapProps) => {
@@ -68,8 +77,7 @@ export const CourseMap = ({
       : null;
 
   const center = selectedPlaceCenter ?? currentLocation ?? FALLBACK_CENTER;
-  const resolvedCameraTarget =
-    cameraTarget ?? selectedPlaceCenter ?? currentLocation;
+  const resolvedCameraTarget = cameraTarget ?? selectedPlaceCenter;
 
   const handleMapClick = (event: MapMouseEvent) => {
     const { latLng, placeId } = event.detail;
@@ -95,7 +103,7 @@ export const CourseMap = ({
 
   if (hasMapLoadError) {
     return (
-      <section className="relative h-80 w-full overflow-hidden rounded-2xl bg-gray-50">
+      <section className="relative h-full w-full overflow-hidden bg-gray-50">
         <AsyncErrorState
           className="min-h-full py-4"
           title="지도를 불러오지 못했어요"
@@ -107,7 +115,7 @@ export const CourseMap = ({
 
   if (!apiKey || !mapId) {
     return (
-      <section className="relative h-80 w-full overflow-hidden rounded-2xl bg-gray-50">
+      <section className="relative h-full w-full overflow-hidden bg-gray-50">
         <div className="flex h-full w-full items-center justify-center text-gray-500">
           {resolvedSelectedPlace?.name ?? '지도가 표시될 영역입니다'}
         </div>
@@ -116,7 +124,7 @@ export const CourseMap = ({
   }
 
   return (
-    <section className="relative h-full w-full overflow-hidden rounded-2xl">
+    <section className="relative h-full w-full overflow-hidden">
       <APIProvider apiKey={apiKey} onError={() => setHasMapLoadError(true)}>
         <Map
           mapId={mapId}
@@ -129,8 +137,15 @@ export const CourseMap = ({
           onClick={handleMapClick}
           onIdle={handleMapIdle}
         >
+          {bottomSheetRef && (
+            <CourseMapAttribution bottomSheetRef={bottomSheetRef} />
+          )}
           <CourseMapCamera
+            initialCenter={currentLocation}
+            requestId={cameraRequestId}
             bottomOverlayRatio={bottomOverlayRatio}
+            bottomOverlayHeight={bottomOverlayHeight}
+            onVisibleCenterChange={onCenterChange}
             center={resolvedCameraTarget}
             preserveCamera={preserveCamera}
           />

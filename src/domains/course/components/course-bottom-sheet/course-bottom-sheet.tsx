@@ -1,3 +1,6 @@
+import type { Ref } from 'react';
+
+import type { Place } from '@/domains/course/api/type';
 import { CourseSaveCardSkeleton } from '@/domains/course/components/course-save-card/course-save-card-skeleton';
 import {
   CourseTab,
@@ -23,6 +26,7 @@ export type CourseBottomSheetPosition = 'collapsed' | 'default' | 'expanded';
 
 interface CourseBottomSheetProps {
   open: boolean;
+  contentRef?: Ref<HTMLDivElement>;
   position: CourseBottomSheetPosition;
   tab: CourseTabValue;
   bookmarkedItems: readonly NearbyCourseItem[];
@@ -46,6 +50,7 @@ interface CourseBottomSheetProps {
   onPositionChange: (position: CourseBottomSheetPosition) => void;
   onTabChange: (tab: CourseTabValue) => void;
   onBookmarkChange: (placeId: string, nextBookmarked: boolean) => void;
+  onPlaceSelect: (place: Place) => void;
   onBookmarkLoadMore?: () => void;
   onBookmarkRetry?: () => void;
   onExploreClick: () => void;
@@ -56,6 +61,7 @@ interface CourseBottomSheetProps {
 
 export const CourseBottomSheet = ({
   open,
+  contentRef,
   position,
   tab,
   bookmarkedItems,
@@ -79,6 +85,7 @@ export const CourseBottomSheet = ({
   onPositionChange,
   onTabChange,
   onBookmarkChange,
+  onPlaceSelect,
   onBookmarkLoadMore,
   onBookmarkRetry,
   onExploreClick,
@@ -108,6 +115,7 @@ export const CourseBottomSheet = ({
 
   return (
     <BottomSheet
+      contentRef={contentRef}
       activeSnapPoint={activeSnapPoint}
       open={open}
       ariaLabel="코스 탐색"
@@ -140,6 +148,7 @@ export const CourseBottomSheet = ({
               items={bookmarkedItems}
               pendingBookmarkPlaceIds={pendingBookmarkPlaceIds}
               onBookmarkChange={onBookmarkChange}
+              onPlaceSelect={onPlaceSelect}
               onLoadMore={onBookmarkLoadMore}
               onRetry={onBookmarkRetry}
             />
@@ -155,6 +164,7 @@ export const CourseBottomSheet = ({
               items={nearbyItems}
               pendingBookmarkPlaceIds={pendingBookmarkPlaceIds}
               onBookmarkChange={onBookmarkChange}
+              onPlaceSelect={onPlaceSelect}
               onLoadMore={onNearbyLoadMore}
               onRetry={onNearbyRetry}
             />

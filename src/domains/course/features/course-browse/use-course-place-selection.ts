@@ -28,24 +28,33 @@ export const useCoursePlaceSelection = ({
     setSelectedPlace(undefined);
   }, []);
 
+  const selectPlace = useCallback(
+    (place: Place) => {
+      selectionRequestIdRef.current += 1;
+      const bookmarkedPlace = bookmarkedPlaces.find(
+        (item) => item.placeId === place.placeId,
+      );
+      const resolvedPlace = {
+        ...place,
+        bookmarked: place.bookmarked || Boolean(bookmarkedPlace),
+      };
+
+      setSelectedPlace(resolvedPlace);
+      return resolvedPlace;
+    },
+    [bookmarkedPlaces],
+  );
+
   const selectNearbyPlace = useCallback(
     (placeId: string) => {
-      selectionRequestIdRef.current += 1;
-      const nearbyPlace = nearbyPlaces.find((item) => item.placeId === placeId);
-      const bookmarkedPlace = bookmarkedPlaces.find(
-        (item) => item.placeId === placeId,
-      );
-      const place = nearbyPlace
-        ? {
-            ...nearbyPlace,
-            bookmarked: nearbyPlace.bookmarked || Boolean(bookmarkedPlace),
-          }
-        : bookmarkedPlace;
+      const place =
+        nearbyPlaces.find((item) => item.placeId === placeId) ??
+        bookmarkedPlaces.find((item) => item.placeId === placeId) ??
+        (selectedPlace?.placeId === placeId ? selectedPlace : undefined);
 
-      setSelectedPlace(place);
-      return place;
+      return place ? selectPlace(place) : undefined;
     },
-    [bookmarkedPlaces, nearbyPlaces],
+    [bookmarkedPlaces, nearbyPlaces, selectedPlace, selectPlace],
   );
 
   const selectGooglePlace = useCallback(
@@ -104,6 +113,7 @@ export const useCoursePlaceSelection = ({
     selectedPlaceId: resolvedSelectedPlace?.placeId,
     selectGooglePlace,
     selectNearbyPlace,
+    selectPlace,
     updateSelectedPlaceBookmark,
   };
 };

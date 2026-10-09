@@ -48,12 +48,14 @@ export const CourseCreateFlightList = ({
                 <FlightIcon className="size-5" />
               </div>
               <div className="min-w-0">
-                <p className="text-caption-m-12 text-gray-500">
-                  {`Day ${dayNumber}`}
-                </p>
-                <p className="text-body-sb-14 truncate text-gray-800">
-                  {flightLabel}
-                </p>
+                <div className="flex min-w-0 items-center gap-1">
+                  <span className="text-caption-m-12 shrink-0 text-gray-500">
+                    {`Day ${dayNumber} ·`}
+                  </span>
+                  <p className="text-body-sb-14 truncate text-gray-800">
+                    {flightLabel}
+                  </p>
+                </div>
                 <p className="text-caption-r-12 truncate text-gray-500">
                   {`${flight.departureAirport} ${flight.departureTime} → ${flight.arrivalAirport} ${flight.arrivalTime}`}
                 </p>

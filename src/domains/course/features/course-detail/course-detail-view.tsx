@@ -10,6 +10,7 @@ import { Header } from '@/shared/components/layout';
 import { Modal, PostMenuBottomSheet } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 import { useContentShare } from '@/shared/hooks/use-content-share';
+import { useIsShareEntry } from '@/shared/hooks/use-share-entry';
 
 import { CourseContinuationBanner } from './course-continuation-banner';
 import { CourseDetailComments } from './course-detail-comments';
@@ -38,6 +39,7 @@ export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
     course.courseId,
   );
   const { shareContent } = useContentShare();
+  const isShareEntry = useIsShareEntry();
   const pendingDayScrollRef = useRef<number | null>(null);
   const dayPickerDays = useMemo(
     () =>
@@ -81,6 +83,7 @@ export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
       void shareContent({
         title: course.title,
         url: ROUTES.COURSE.DETAIL(course.courseId),
+        markAsShareEntry: true,
       });
       return;
     }
@@ -110,6 +113,7 @@ export const CourseDetailView = ({ course }: CourseDetailViewProps) => {
       <div className="sticky top-0 z-20 bg-white">
         <Header
           hasBackButton
+          backFallbackHref={isShareEntry ? ROUTES.HOME : undefined}
           right={
             <button
               type="button"

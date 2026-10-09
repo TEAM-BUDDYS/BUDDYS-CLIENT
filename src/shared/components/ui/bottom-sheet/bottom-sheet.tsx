@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import type { ReactNode, Ref } from 'react';
 import { Drawer } from 'vaul';
 
 import { cn } from '@/lib/cn';
@@ -12,6 +12,7 @@ interface BottomSheetProps {
   children: ReactNode;
   activeSnapPoint?: number | string | null;
   className?: string;
+  contentRef?: Ref<HTMLDivElement>;
   ariaLabel?: string;
   ariaLabelledBy?: string;
   handleClassName?: string;
@@ -27,6 +28,7 @@ export const BottomSheet = ({
   children,
   activeSnapPoint,
   className,
+  contentRef,
   ariaLabel,
   ariaLabelledBy,
   handleClassName,
@@ -57,6 +59,7 @@ export const BottomSheet = ({
       <Drawer.Portal>
         {modal && <Drawer.Overlay className="fixed inset-0 z-50 bg-black/60" />}
         <Drawer.Content
+          ref={contentRef}
           aria-describedby={undefined}
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledBy}

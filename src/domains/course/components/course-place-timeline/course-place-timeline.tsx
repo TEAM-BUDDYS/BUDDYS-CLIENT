@@ -1,17 +1,15 @@
-import type { BookmarkedPlace, Place } from '@/domains/course/api/type';
 import { cn } from '@/lib/cn';
 import { XCircleIcon } from '@/shared/components/icons';
 
-type SharedPlaceFields =
-  | 'placeId'
-  | 'name'
-  | 'address'
-  | 'latitude'
-  | 'longitude';
-
-type CoursePlaceTimelineItem =
-  | Pick<Place, SharedPlaceFields | 'country' | 'city'>
-  | Pick<BookmarkedPlace, SharedPlaceFields>;
+interface CoursePlaceTimelineItem {
+  placeId: string;
+  name: string | null;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  country?: string | null;
+  city?: string | null;
+}
 
 const EARTH_RADIUS_METERS = 6_371_000;
 
@@ -62,10 +60,7 @@ const formatPlaceDistance = (distance: number | null) => {
 };
 
 const formatPlaceLocation = (place: CoursePlaceTimelineItem) => {
-  const location =
-    'country' in place
-      ? [place.country, place.city].filter(Boolean).join(' · ')
-      : '';
+  const location = [place.country, place.city].filter(Boolean).join(' · ');
 
   return location || place.address || '위치 정보 없음';
 };
@@ -124,7 +119,7 @@ export const CoursePlaceTimeline = ({
                     aria-hidden="true"
                   />
                   <span
-                    className="text-caption-m-10 absolute top-[calc(100%+8px)] left-1/2 z-20 flex h-5 min-w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-gray-100 bg-white px-1 text-gray-500"
+                    className="text-caption-m-10 absolute top-[calc(100%+8px)] left-1/2 z-10 flex h-5 min-w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-gray-100 bg-white px-1 text-gray-500"
                     aria-hidden="true"
                   >
                     {distance}

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import type { ReactNode } from 'react';
 
 import type { CourseDetail } from '@/domains/course/api/type';
@@ -9,6 +10,7 @@ import {
   MyIcon,
 } from '@/shared/components/icons';
 import { BookmarkButton, Chip, CommonImage, Tag } from '@/shared/components/ui';
+import { ROUTES } from '@/shared/config';
 import { formatMonthDayWithWeekday } from '@/shared/utils/format-date-range';
 import { formatRelativeTime } from '@/shared/utils/format-relative-time';
 
@@ -164,6 +166,39 @@ export const CourseDetailOverviewSection = ({
     places,
   }));
   const profileImage = course.author.profileImageUrl || defaultProfileImage;
+  const authorName = course.author.nickname ?? '알 수 없는 사용자';
+  const profileHref = course.isMine
+    ? ROUTES.PROFILE.ROOT
+    : course.author.userId
+      ? ROUTES.PROFILE.DETAIL(course.author.userId)
+      : null;
+  const authorProfile = (
+    <>
+      <CommonImage
+        src={profileImage}
+        alt=""
+        width={44}
+        height={44}
+        radius="rounded-full"
+        unoptimized={Boolean(course.author.profileImageUrl)}
+        className="size-11 border border-gray-100"
+      />
+
+      <div className="flex min-w-0 flex-col">
+        <div className="flex min-w-0 items-center gap-1">
+          <strong className="text-body-sb-16 truncate text-gray-800">
+            {authorName}
+          </strong>
+          {primaryCityName ? <Tag value={primaryCityName} /> : null}
+        </div>
+        {authorDescription ? (
+          <p className="text-body-r-14 truncate text-gray-500">
+            {authorDescription}
+          </p>
+        ) : null}
+      </div>
+    </>
+  );
 
   return (
     <section
@@ -172,31 +207,19 @@ export const CourseDetailOverviewSection = ({
     >
       <div className="flex flex-col gap-6">
         <header className="flex min-w-0 items-center justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-2">
-            <CommonImage
-              src={profileImage}
-              alt=""
-              width={44}
-              height={44}
-              radius="rounded-full"
-              unoptimized={Boolean(course.author.profileImageUrl)}
-              className="size-11 border border-gray-100"
-            />
-
-            <div className="flex min-w-0 flex-col">
-              <div className="flex min-w-0 items-center gap-1">
-                <strong className="text-body-sb-16 truncate text-gray-800">
-                  {course.author.nickname ?? '알 수 없는 사용자'}
-                </strong>
-                {primaryCityName ? <Tag value={primaryCityName} /> : null}
-              </div>
-              {authorDescription ? (
-                <p className="text-body-r-14 truncate text-gray-500">
-                  {authorDescription}
-                </p>
-              ) : null}
+          {profileHref ? (
+            <Link
+              href={profileHref}
+              aria-label={`${authorName} 프로필로 이동`}
+              className="focus-visible:outline-mint-300 flex min-w-0 items-center gap-2 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid"
+            >
+              {authorProfile}
+            </Link>
+          ) : (
+            <div className="flex min-w-0 items-center gap-2">
+              {authorProfile}
             </div>
-          </div>
+          )}
           {!course.isMine && (
             <BookmarkButton
               aria-busy={isBookmarkPending}

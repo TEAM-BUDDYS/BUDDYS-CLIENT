@@ -16,18 +16,20 @@ const SEARCH_DEBOUNCE_MS = 300;
 
 interface UseNearbyPlacesParams {
   currentLocation: CourseMapCenter | null;
+  nearbyCenter?: CourseMapCenter | null;
   searchKeyword: string;
   selectedCategory?: CourseMapCategory;
 }
 
 export const useNearbyPlaces = ({
   currentLocation,
+  nearbyCenter = currentLocation,
   searchKeyword,
   selectedCategory,
 }: UseNearbyPlacesParams) => {
   const nearbyParams = useMemo(
-    () => getNearbyPlaceParams(currentLocation, selectedCategory),
-    [currentLocation, selectedCategory],
+    () => getNearbyPlaceParams(nearbyCenter, selectedCategory),
+    [nearbyCenter, selectedCategory],
   );
   const trimmedKeyword = searchKeyword.trim();
   const debouncedKeyword = useDebouncedValue(

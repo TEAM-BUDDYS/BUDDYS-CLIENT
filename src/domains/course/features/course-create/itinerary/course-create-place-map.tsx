@@ -100,7 +100,7 @@ export const CourseCreatePlaceMap = ({
           <CourseMapCamera
             bottomOverlayRatio={bottomOverlayRatio}
             center={cameraTarget}
-            moveRequestKey={focusRequestKey}
+            requestId={focusRequestKey}
           />
 
           {places.map((place) => {
