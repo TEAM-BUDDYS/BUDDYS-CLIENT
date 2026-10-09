@@ -7,6 +7,7 @@ import {
 } from '@/shared/components/ui';
 
 import type { OnboardLocationOption } from '../../model/onboard';
+import { isValidYearMonth } from '../../utils/is-valid-year-month';
 
 interface OnboardExchangeInfoStepProps {
   countryKeyword: string;
@@ -43,6 +44,11 @@ export const OnboardExchangeInfoStep = ({
   onStartMonthChange,
   onEndMonthChange,
 }: OnboardExchangeInfoStepProps) => {
+  const isExchangePeriodOrderInvalid =
+    isValidYearMonth(startMonth) &&
+    isValidYearMonth(endMonth) &&
+    startMonth > endMonth;
+
   return (
     <div className="flex flex-col gap-7">
       <div className="flex flex-col gap-2">
@@ -100,6 +106,11 @@ export const OnboardExchangeInfoStep = ({
             onChange={(event) => onEndMonthChange(event.target.value)}
           />
         </div>
+        {isExchangePeriodOrderInvalid && (
+          <p className="text-caption-r-12 text-error" role="alert">
+            종료월은 시작월 이후로 입력해 주세요.
+          </p>
+        )}
       </div>
     </div>
   );

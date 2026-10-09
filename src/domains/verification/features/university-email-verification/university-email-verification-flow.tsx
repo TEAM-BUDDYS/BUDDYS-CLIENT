@@ -47,6 +47,10 @@ export const UniversityEmailVerificationFlow = ({
 
   const isValidEmail = EMAIL_PATTERN.test(email.trim());
   const isVerificationCodeComplete = verificationCode.length === 6;
+  const toastBottomOffsetClassName =
+    entryPoint === 'login' || currentStep === 2
+      ? 'bottom-[139px]'
+      : 'bottom-24.5';
 
   const router = useRouter();
   const exchangeDocumentVerificationHref = `${ROUTES.VERIFICATION.EXCHANGE_DOCUMENT}?from=${entryPoint}`;
@@ -104,7 +108,7 @@ export const UniversityEmailVerificationFlow = ({
           : '인증번호 발송에 실패했습니다. 잠시 후 다시 시도해 주세요.';
 
       showToast(message, {
-        bottomOffsetClassName: 'bottom-24.5',
+        bottomOffsetClassName: toastBottomOffsetClassName,
         variant: 'gray',
       });
 
@@ -134,7 +138,7 @@ export const UniversityEmailVerificationFlow = ({
 
     setVerificationCode('');
     showToast('인증번호를 다시 전송했습니다.', {
-      bottomOffsetClassName: 'bottom-24.5',
+      bottomOffsetClassName: toastBottomOffsetClassName,
     });
   };
 
@@ -169,7 +173,7 @@ export const UniversityEmailVerificationFlow = ({
             : '인증번호 확인에 실패했습니다. 잠시 후 다시 시도해 주세요.';
 
       showToast(message, {
-        bottomOffsetClassName: 'bottom-24.5',
+        bottomOffsetClassName: toastBottomOffsetClassName,
         variant: 'gray',
       });
     } finally {
