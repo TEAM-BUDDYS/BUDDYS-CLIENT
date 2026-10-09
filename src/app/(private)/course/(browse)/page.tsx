@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { CourseBottomSheet } from '@/domains/course/components/course-bottom-sheet/course-bottom-sheet';
 import { CourseMap } from '@/domains/course/components/course-map/course-map';
@@ -39,7 +39,9 @@ const MAP_CATEGORY_ITEMS = [
 export default function CoursePage() {
   const router = useRouter();
   const { showToast } = useToast();
+  const bottomSheetRef = useRef<HTMLDivElement>(null);
   const [mapBounds, setMapBounds] = useState<CourseMapBounds | null>(null);
+  const [locationCameraRequestId, setLocationCameraRequestId] = useState(0);
   const [bookmarkMarkerDataUpdatedAtAtClick, setBookmarkMarkerDataUpdatedAt] =
     useState<number | null>(null);
   const {
@@ -170,6 +172,10 @@ export default function CoursePage() {
 
     clearSelectedPlace();
     setIsLocationActive(true);
+    setBottomSheetPosition((position) =>
+      position === 'expanded' ? 'default' : position,
+    );
+    setLocationCameraRequestId((requestId) => requestId + 1);
   };
 
   const handleBookmarkModeClick = () => {
@@ -285,10 +291,16 @@ export default function CoursePage() {
         </div>
 
         <CourseMap
+          bottomSheetRef={bottomSheetRef}
           key={currentLocation ? 'current-location' : 'fallback-location'}
           bottomOverlayRatio={
-            bottomSheetPosition === 'default' ? 0.59 : undefined
+            bottomSheetPosition === 'expanded'
+              ? 0.78
+              : bottomSheetPosition === 'default'
+                ? 0.59
+                : undefined
           }
+          cameraRequestId={locationCameraRequestId}
           cameraTarget={isLocationActive ? currentLocation : null}
           currentLocation={currentLocation}
           places={mapPlaces}
@@ -318,6 +330,7 @@ export default function CoursePage() {
         </div>
 
         <CourseBottomSheet
+          contentRef={bottomSheetRef}
           open
           position={bottomSheetPosition}
           tab={bottomSheetTab}

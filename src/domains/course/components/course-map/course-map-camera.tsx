@@ -9,15 +9,18 @@ interface CourseMapCameraProps {
   center: CourseMapCenter | null;
   bottomOverlayRatio?: number;
   preserveCamera?: boolean;
+  requestId?: number;
 }
 
 export const CourseMapCamera = ({
   center,
   bottomOverlayRatio = 0,
   preserveCamera = false,
+  requestId = 0,
 }: CourseMapCameraProps) => {
   const map = useMap();
   const handledCenterKeyRef = useRef<string | null>(null);
+  const handledRequestIdRef = useRef(0);
 
   useEffect(() => {
     if (!center) {
@@ -25,15 +28,18 @@ export const CourseMapCamera = ({
       return;
     }
 
-    if (!map || preserveCamera) return;
+    const isExplicitRequest = requestId !== handledRequestIdRef.current;
+
+    if (!map || (preserveCamera && !isExplicitRequest)) return;
 
     const centerKey = `${center.lat}:${center.lng}`;
 
-    if (handledCenterKeyRef.current === centerKey) return;
+    if (handledCenterKeyRef.current === centerKey && !isExplicitRequest) return;
 
     if (bottomOverlayRatio <= 0) {
       map.panTo(center);
       handledCenterKeyRef.current = centerKey;
+      handledRequestIdRef.current = requestId;
       return;
     }
 
@@ -48,6 +54,7 @@ export const CourseMapCamera = ({
     if (coveredMapHeight <= 0) {
       map.panTo(center);
       handledCenterKeyRef.current = centerKey;
+      handledRequestIdRef.current = requestId;
       return;
     }
 
@@ -75,6 +82,7 @@ export const CourseMapCamera = ({
 
     if (panToVisibleCenter()) {
       handledCenterKeyRef.current = centerKey;
+      handledRequestIdRef.current = requestId;
       return;
     }
 
@@ -82,11 +90,12 @@ export const CourseMapCamera = ({
       if (!panToVisibleCenter()) return;
 
       handledCenterKeyRef.current = centerKey;
+      handledRequestIdRef.current = requestId;
       projectionListener.remove();
     });
 
     return () => projectionListener.remove();
-  }, [bottomOverlayRatio, center, map, preserveCamera]);
+  }, [bottomOverlayRatio, center, map, preserveCamera, requestId]);
 
   return null;
 };
