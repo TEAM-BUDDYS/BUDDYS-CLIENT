@@ -116,6 +116,10 @@ export const CourseCreatePlacePicker = ({
     setIsResultSheetOpen(false);
   };
 
+  const handlePlaceFocus = (placeId: string) => {
+    setFocusedPlaceId(placeId);
+  };
+
   const handlePlaceSelect = (placeId: string) => {
     if (selectedPlaceIds.has(placeId)) {
       setDraftPlaces((currentPlaces) =>
@@ -266,6 +270,7 @@ export const CourseCreatePlacePicker = ({
                       <CourseSelectCard
                         place={place}
                         isSelected={selectedPlaceIds.has(place.placeId)}
+                        onPlaceFocus={handlePlaceFocus}
                         onSelect={handlePlaceSelect}
                       />
                     </li>
