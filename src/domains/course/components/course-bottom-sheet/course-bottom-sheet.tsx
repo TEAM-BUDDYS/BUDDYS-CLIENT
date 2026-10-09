@@ -1,3 +1,4 @@
+import type { Place } from '@/domains/course/api/type';
 import { CourseSaveCardSkeleton } from '@/domains/course/components/course-save-card/course-save-card-skeleton';
 import {
   CourseTab,
@@ -46,6 +47,7 @@ interface CourseBottomSheetProps {
   onPositionChange: (position: CourseBottomSheetPosition) => void;
   onTabChange: (tab: CourseTabValue) => void;
   onBookmarkChange: (placeId: string, nextBookmarked: boolean) => void;
+  onPlaceSelect: (place: Place) => void;
   onBookmarkLoadMore?: () => void;
   onBookmarkRetry?: () => void;
   onExploreClick: () => void;
@@ -79,6 +81,7 @@ export const CourseBottomSheet = ({
   onPositionChange,
   onTabChange,
   onBookmarkChange,
+  onPlaceSelect,
   onBookmarkLoadMore,
   onBookmarkRetry,
   onExploreClick,
@@ -140,6 +143,7 @@ export const CourseBottomSheet = ({
               items={bookmarkedItems}
               pendingBookmarkPlaceIds={pendingBookmarkPlaceIds}
               onBookmarkChange={onBookmarkChange}
+              onPlaceSelect={onPlaceSelect}
               onLoadMore={onBookmarkLoadMore}
               onRetry={onBookmarkRetry}
             />
@@ -155,6 +159,7 @@ export const CourseBottomSheet = ({
               items={nearbyItems}
               pendingBookmarkPlaceIds={pendingBookmarkPlaceIds}
               onBookmarkChange={onBookmarkChange}
+              onPlaceSelect={onPlaceSelect}
               onLoadMore={onNearbyLoadMore}
               onRetry={onNearbyRetry}
             />

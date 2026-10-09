@@ -1,8 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import type { Place } from '@/domains/course/api/type';
 import { CourseBottomSheet } from '@/domains/course/components/course-bottom-sheet/course-bottom-sheet';
 import { CourseMap } from '@/domains/course/components/course-map/course-map';
 import { MapFloatingControls } from '@/domains/course/components/map-floating-controls/map-floating-controls';
@@ -12,7 +13,10 @@ import { useBookmarkedPlaces } from '@/domains/course/features/course-browse/use
 import { useCoursePlaceSelection } from '@/domains/course/features/course-browse/use-course-place-selection';
 import { useNearbyPlaces } from '@/domains/course/features/course-browse/use-nearby-places';
 import { usePlaceBookmark } from '@/domains/course/features/course-browse/use-place-bookmark';
-import type { CourseMapBounds } from '@/domains/course/model/course-map';
+import type {
+  CourseMapBounds,
+  CourseMapCenter,
+} from '@/domains/course/model/course-map';
 import {
   type CourseMapCategory,
   mergeCoursePlaces,
@@ -40,6 +44,10 @@ export default function CoursePage() {
   const router = useRouter();
   const { showToast } = useToast();
   const [mapBounds, setMapBounds] = useState<CourseMapBounds | null>(null);
+  const mapCenterRef = useRef<CourseMapCenter | null>(null);
+  const [nearbyQueryCenter, setNearbyQueryCenter] =
+    useState<CourseMapCenter | null>(null);
+  const [placeCameraRequestId, setPlaceCameraRequestId] = useState(0);
   const [bookmarkMarkerDataUpdatedAtAtClick, setBookmarkMarkerDataUpdatedAt] =
     useState<number | null>(null);
   const {
@@ -73,6 +81,7 @@ export default function CoursePage() {
     currentLocation,
     searchKeyword,
     selectedCategory,
+    nearbyCenter: nearbyQueryCenter ?? currentLocation,
   });
   const bookmarkedMarkers = useBookmarkedPlaceMarkers({ bounds: mapBounds });
   const {
@@ -82,6 +91,7 @@ export default function CoursePage() {
     selectedPlaceId,
     selectGooglePlace,
     selectNearbyPlace,
+    selectPlace,
     updateSelectedPlaceBookmark,
   } = useCoursePlaceSelection({
     nearbyPlaces,
@@ -97,7 +107,7 @@ export default function CoursePage() {
       mergeCoursePlaces(
         isBookmarkMode ? [] : nearbyPlaces,
         bookmarkedMarkers.places,
-        selectedPlace?.bookmarked ? [selectedPlace] : [],
+        selectedPlace ? [selectedPlace] : [],
       ),
     [bookmarkedMarkers.places, isBookmarkMode, nearbyPlaces, selectedPlace],
   );
@@ -117,6 +127,10 @@ export default function CoursePage() {
     });
   }, []);
 
+  const handleMapCenterChange = useCallback((center: CourseMapCenter) => {
+    mapCenterRef.current = center;
+  }, []);
+
   useEffect(() => {
     if (currentLocationStatus !== 'idle') return;
 
@@ -132,7 +146,21 @@ export default function CoursePage() {
     bookmarkedMarkers.dataUpdatedAt === bookmarkMarkerDataUpdatedAtAtClick;
 
   const handleCategoryChange = (category: CourseMapCategory) => {
+    const center = mapCenterRef.current ?? currentLocation;
+    if (!center) {
+      showToast('지도 위치를 확인한 뒤 다시 시도해 주세요', {
+        variant: 'gray',
+      });
+      return;
+    }
+
     clearSelectedPlace();
+    setSearchKeyword('');
+    setNearbyQueryCenter(center);
+    setIsBookmarkMode(false);
+    setIsLocationActive(false);
+    setBottomSheetTab('nearby');
+    setBookmarkMarkerDataUpdatedAt(null);
     setSelectedCategory((currentCategory) =>
       currentCategory === category ? undefined : category,
     );
@@ -140,6 +168,7 @@ export default function CoursePage() {
 
   const handleSearchKeywordChange = (keyword: string) => {
     clearSelectedPlace();
+    setNearbyQueryCenter(null);
     setIsBookmarkMode(false);
     setBottomSheetTab('nearby');
     if (
@@ -199,6 +228,17 @@ export default function CoursePage() {
     if (place) openSelectedPlace(isBookmarkMode && place.bookmarked);
   };
 
+  const handleCardPlaceSelect = (place: Place) => {
+    if (place.latitude == null || place.longitude == null) {
+      showToast('이 장소의 위치 정보가 없어요', { variant: 'gray' });
+      return;
+    }
+
+    const selected = selectPlace(place);
+    openSelectedPlace(isBookmarkMode && selected.bookmarked);
+    setPlaceCameraRequestId((requestId) => requestId + 1);
+  };
+
   const handlePoiSelect = async (poi: GoogleMapPoi) => {
     setBookmarkMarkerDataUpdatedAt(
       bookmarkedMarkers.isLoading ? bookmarkedMarkers.dataUpdatedAt : null,
@@ -233,7 +273,7 @@ export default function CoursePage() {
   };
 
   const handleNearbyRetry = () => {
-    if (!isSearchMode && hasLocationError) {
+    if (!isSearchMode && !nearbyQueryCenter && hasLocationError) {
       void refetchCurrentLocation();
       return;
     }
@@ -265,6 +305,7 @@ export default function CoursePage() {
               size="small"
               value={searchKeyword}
               onChange={handleSearchKeywordChange}
+              onFocus={() => setSelectedCategory(undefined)}
             />
           }
         />
@@ -285,10 +326,16 @@ export default function CoursePage() {
         </div>
 
         <CourseMap
+          cameraRequestId={placeCameraRequestId}
           key={currentLocation ? 'current-location' : 'fallback-location'}
           bottomOverlayRatio={
-            bottomSheetPosition === 'default' ? 0.59 : undefined
+            bottomSheetPosition === 'expanded'
+              ? 0.78
+              : bottomSheetPosition === 'default'
+                ? 0.59
+                : undefined
           }
+          bottomOverlayHeight={bottomSheetPosition === 'collapsed' ? 78 : 0}
           cameraTarget={isLocationActive ? currentLocation : null}
           currentLocation={currentLocation}
           places={mapPlaces}
@@ -297,6 +344,7 @@ export default function CoursePage() {
           selectedPlaceId={selectedPlaceId}
           showCurrentLocation={isLocationActive}
           onBoundsChange={handleMapBoundsChange}
+          onCenterChange={handleMapCenterChange}
           onPlaceSelect={handlePlaceSelect}
           onPoiSelect={(poi) => void handlePoiSelect(poi)}
         />
@@ -328,13 +376,16 @@ export default function CoursePage() {
           hasBookmarkNextPage={bookmarkedList.hasNextPage}
           hasNearbyError={hasNearbyError}
           hasNearbyNextPage={hasNearbyNextPage}
-          hasLocationError={!isSearchMode && hasLocationError}
+          hasLocationError={
+            !isSearchMode && !nearbyQueryCenter && hasLocationError
+          }
           isBookmarkMode={isBookmarkMode}
           isBookmarkFetchNextPageError={bookmarkedList.isFetchNextPageError}
           isBookmarkFetchingNextPage={bookmarkedList.isFetchingNextPage}
           isBookmarkLoading={bookmarkedList.isLoading}
           isNearbyLoading={
-            (!isSearchMode && isCurrentLocationLoading) || isNearbyLoading
+            (!isSearchMode && !nearbyQueryCenter && isCurrentLocationLoading) ||
+            isNearbyLoading
           }
           isNearbySearchMode={isSearchMode}
           isNearbyFetchNextPageError={isNearbyFetchNextPageError}
@@ -342,6 +393,7 @@ export default function CoursePage() {
           isPlaceSelectionLoading={isWaitingForBookmarkMarkers}
           nearbyItems={nearbyItems}
           pendingBookmarkPlaceIds={pendingBookmarkPlaceIds}
+          onPlaceSelect={handleCardPlaceSelect}
           onClose={() => setBottomSheetPosition('collapsed')}
           onPositionChange={setBottomSheetPosition}
           onTabChange={setBottomSheetTab}

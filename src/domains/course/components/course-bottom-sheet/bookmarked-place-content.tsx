@@ -1,5 +1,6 @@
 'use client';
 
+import type { Place } from '@/domains/course/api/type';
 import { CourseSaveCard } from '@/domains/course/components/course-save-card/course-save-card';
 import type { NearbyCourseItem } from '@/domains/course/model/course-place';
 import { AsyncErrorState, AsyncLoadingState } from '@/shared/components/ui';
@@ -14,6 +15,7 @@ interface BookmarkedPlaceContentProps {
   items: readonly NearbyCourseItem[];
   pendingBookmarkPlaceIds?: ReadonlySet<string>;
   onBookmarkChange: (placeId: string, nextBookmarked: boolean) => void;
+  onPlaceSelect: (place: Place) => void;
   onLoadMore?: () => void;
   onRetry?: () => void;
 }
@@ -27,6 +29,7 @@ export const BookmarkedPlaceContent = ({
   items,
   pendingBookmarkPlaceIds,
   onBookmarkChange,
+  onPlaceSelect,
   onLoadMore,
   onRetry,
 }: BookmarkedPlaceContentProps) => {
@@ -78,6 +81,7 @@ export const BookmarkedPlaceContent = ({
               description={description}
               isBookmarkPending={pendingBookmarkPlaceIds?.has(place.placeId)}
               onBookmarkChange={onBookmarkChange}
+              onPlaceSelect={onPlaceSelect}
             />
           </li>
         ))}
