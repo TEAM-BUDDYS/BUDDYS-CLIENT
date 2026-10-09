@@ -19,8 +19,9 @@ const FALLBACK_CENTER: CourseMapCenter = {
 interface CourseCreatePlaceMapProps {
   bottomOverlayRatio?: number;
   center?: CourseMapCenter | null;
+  focusRequestKey?: number;
+  focusedPlaceId?: string;
   places: CourseCreateDayFormState['places'];
-  selectedPlaceId?: string;
   onPlaceSelect: (placeId: string) => void;
 }
 
@@ -40,8 +41,9 @@ const getPlaceCenter = (
 export const CourseCreatePlaceMap = ({
   bottomOverlayRatio = 0,
   center = null,
+  focusRequestKey,
+  focusedPlaceId,
   places,
-  selectedPlaceId,
   onPlaceSelect,
 }: CourseCreatePlaceMapProps) => {
   const [hasMapLoadError, setHasMapLoadError] = useState(false);
@@ -50,10 +52,8 @@ export const CourseCreatePlaceMap = ({
   const { currentLocation } = useCurrentLocation({
     requestOnMount: center === null,
   });
-  const selectedPlace = places.find(
-    ({ placeId }) => placeId === selectedPlaceId,
-  );
-  const selectedPlaceCenter = getPlaceCenter(selectedPlace);
+  const focusedPlace = places.find(({ placeId }) => placeId === focusedPlaceId);
+  const focusedPlaceCenter = getPlaceCenter(focusedPlace);
   const firstPlaceCenter = getPlaceCenter(
     places.find(
       ({ latitude, longitude }) => latitude != null && longitude != null,
@@ -62,7 +62,7 @@ export const CourseCreatePlaceMap = ({
   const initialCenter =
     center ?? currentLocation ?? firstPlaceCenter ?? FALLBACK_CENTER;
   const cameraTarget =
-    selectedPlaceCenter ?? center ?? currentLocation ?? firstPlaceCenter;
+    focusedPlaceCenter ?? center ?? currentLocation ?? firstPlaceCenter;
   const sectionClassName = 'relative h-full w-full overflow-hidden bg-gray-50';
 
   if (hasMapLoadError) {
@@ -81,7 +81,7 @@ export const CourseCreatePlaceMap = ({
     return (
       <section className={sectionClassName}>
         <div className="flex h-full w-full items-center justify-center text-gray-500">
-          {selectedPlace?.name ?? '지도가 표시될 영역입니다'}
+          {focusedPlace?.name ?? '지도가 표시될 영역입니다'}
         </div>
       </section>
     );
@@ -100,6 +100,7 @@ export const CourseCreatePlaceMap = ({
           <CourseMapCamera
             bottomOverlayRatio={bottomOverlayRatio}
             center={cameraTarget}
+            moveRequestKey={focusRequestKey}
           />
 
           {places.map((place) => {

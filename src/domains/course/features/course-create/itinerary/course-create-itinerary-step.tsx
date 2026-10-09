@@ -19,6 +19,7 @@ interface CourseCreateItineraryStepProps {
   title: string;
   cities: CourseCreateCityOption[];
   days: CourseCreateDayFormState[];
+  initialPlaces?: CourseCreateDayFormState['places'];
   isDisabled?: boolean;
   onDayPlacesChange: (
     dayNumber: number,
@@ -39,6 +40,7 @@ export const CourseCreateItineraryStep = ({
   title,
   cities,
   days,
+  initialPlaces = [],
   isDisabled = false,
   onDayPlacesChange,
   onDayPlaceRemove,
@@ -56,6 +58,10 @@ export const CourseCreateItineraryStep = ({
   const placePickerDay = days.find(
     ({ dayNumber }) => dayNumber === placePickerDayNumber,
   );
+  const placeSearchFallbackPlaces = [
+    ...days.flatMap(({ places }) => places),
+    ...initialPlaces,
+  ];
   const flightCount = days.reduce(
     (count, { flights }) => count + flights.length,
     0,
@@ -124,7 +130,7 @@ export const CourseCreateItineraryStep = ({
         <CourseCreatePlacePicker
           cities={cities}
           dayNumber={placePickerDay.dayNumber}
-          fallbackPlaces={days.flatMap(({ places }) => places)}
+          fallbackPlaces={placeSearchFallbackPlaces}
           selectedPlaces={placePickerDay.places}
           onClose={() => setPlacePickerDayNumber(null)}
           onConfirm={(places) =>

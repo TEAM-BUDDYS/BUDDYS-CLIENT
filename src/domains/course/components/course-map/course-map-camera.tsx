@@ -8,12 +8,14 @@ import type { CourseMapCenter } from '@/domains/course/model/course-map';
 interface CourseMapCameraProps {
   center: CourseMapCenter | null;
   bottomOverlayRatio?: number;
+  moveRequestKey?: number;
   preserveCamera?: boolean;
 }
 
 export const CourseMapCamera = ({
   center,
   bottomOverlayRatio = 0,
+  moveRequestKey,
   preserveCamera = false,
 }: CourseMapCameraProps) => {
   const map = useMap();
@@ -27,7 +29,7 @@ export const CourseMapCamera = ({
 
     if (!map || preserveCamera) return;
 
-    const centerKey = `${center.lat}:${center.lng}`;
+    const centerKey = `${center.lat}:${center.lng}:${moveRequestKey ?? ''}`;
 
     if (handledCenterKeyRef.current === centerKey) return;
 
@@ -86,7 +88,7 @@ export const CourseMapCamera = ({
     });
 
     return () => projectionListener.remove();
-  }, [bottomOverlayRatio, center, map, preserveCamera]);
+  }, [bottomOverlayRatio, center, map, moveRequestKey, preserveCamera]);
 
   return null;
 };

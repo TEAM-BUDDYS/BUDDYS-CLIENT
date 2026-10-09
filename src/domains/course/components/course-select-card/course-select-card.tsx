@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 
 import type { BookmarkedPlace, Place } from '@/domains/course/api/type';
 import { cn } from '@/lib/cn';
@@ -20,6 +20,8 @@ export const CourseSelectCard = ({
   onPlaceFocus,
   onSelect,
 }: CourseSelectCardProps) => {
+  const headingId = useId();
+  const focusActionId = `${headingId}-focus-action`;
   const [failedPhotoUrl, setFailedPhotoUrl] = useState<string>();
   const { placeId, name, address, photoUrl } = place;
   const imageUrl = photoUrl ? getApiResourceUrl(photoUrl) : null;
@@ -32,12 +34,18 @@ export const CourseSelectCard = ({
 
   return (
     <article className="flex w-full items-center gap-4">
-      <button
-        aria-label={`${displayName} 지도에서 보기`}
-        className="focus-visible:outline-mint-300 flex min-w-0 flex-1 items-center gap-4 rounded-xl text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid"
-        type="button"
-        onClick={() => onPlaceFocus(placeId)}
-      >
+      <div className="relative flex min-w-0 flex-1 items-center gap-4">
+        <button
+          aria-labelledby={`${headingId} ${focusActionId}`}
+          className="focus-visible:outline-mint-300 absolute inset-0 z-10 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid"
+          type="button"
+          onClick={() => onPlaceFocus(placeId)}
+        >
+          <span id={focusActionId} className="sr-only">
+            지도에서 보기
+          </span>
+        </button>
+
         {imageUrl && !hasImageError ? (
           <CommonImage
             unoptimized
@@ -54,7 +62,7 @@ export const CourseSelectCard = ({
         )}
 
         <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <h3 className="text-body-sb-16 truncate text-gray-800">
+          <h3 id={headingId} className="text-body-sb-16 truncate text-gray-800">
             {displayName}
           </h3>
           <div className="text-caption-m-12 flex min-w-0 flex-col gap-0.5 text-gray-500">
@@ -62,7 +70,7 @@ export const CourseSelectCard = ({
             <p className="truncate">{address ?? '주소 정보 없음'}</p>
           </div>
         </div>
-      </button>
+      </div>
 
       <ChipButton
         active={isSelected}

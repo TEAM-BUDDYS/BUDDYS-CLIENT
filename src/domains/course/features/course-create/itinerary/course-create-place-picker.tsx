@@ -56,6 +56,11 @@ interface CourseCreatePlacePickerProps {
   onConfirm: (places: CourseCreateDayFormState['places']) => void;
 }
 
+interface PlaceFocusRequest {
+  placeId: string;
+  requestKey: number;
+}
+
 export const CourseCreatePlacePicker = ({
   cities,
   dayNumber,
@@ -68,7 +73,8 @@ export const CourseCreatePlacePicker = ({
   const [keyword, setKeyword] = useState('');
   const [category, setCategory] = useState<PlaceCategory>();
   const [draftPlaces, setDraftPlaces] = useState(selectedPlaces);
-  const [focusedPlaceId, setFocusedPlaceId] = useState<string>();
+  const [placeFocusRequest, setPlaceFocusRequest] =
+    useState<PlaceFocusRequest>();
   const [isResultSheetOpen, setIsResultSheetOpen] = useState(true);
   const placeResults = useCoursePlaceResults({
     cities,
@@ -89,7 +95,7 @@ export const CourseCreatePlacePicker = ({
 
   const handleKeywordChange = (value: string) => {
     setKeyword(value);
-    setFocusedPlaceId(undefined);
+    setPlaceFocusRequest(undefined);
 
     if (value.trim().length > 0 || category !== undefined) {
       setIsResultSheetOpen(true);
@@ -100,7 +106,7 @@ export const CourseCreatePlacePicker = ({
     setCategory((currentCategory) =>
       currentCategory === nextCategory ? undefined : nextCategory,
     );
-    setFocusedPlaceId(undefined);
+    setPlaceFocusRequest(undefined);
     setIsResultSheetOpen(true);
   };
 
@@ -108,7 +114,7 @@ export const CourseCreatePlacePicker = ({
     if (placeResults.isSearchMode || !isResultSheetOpen) {
       setKeyword('');
       setCategory(undefined);
-      setFocusedPlaceId(undefined);
+      setPlaceFocusRequest(undefined);
       setIsResultSheetOpen(true);
       return;
     }
@@ -117,7 +123,10 @@ export const CourseCreatePlacePicker = ({
   };
 
   const handlePlaceFocus = (placeId: string) => {
-    setFocusedPlaceId(placeId);
+    setPlaceFocusRequest((currentRequest) => ({
+      placeId,
+      requestKey: (currentRequest?.requestKey ?? 0) + 1,
+    }));
   };
 
   const handlePlaceSelect = (placeId: string) => {
@@ -125,7 +134,6 @@ export const CourseCreatePlacePicker = ({
       setDraftPlaces((currentPlaces) =>
         currentPlaces.filter((place) => place.placeId !== placeId),
       );
-      setFocusedPlaceId(undefined);
       return;
     }
 
@@ -144,7 +152,11 @@ export const CourseCreatePlacePicker = ({
     }
 
     setDraftPlaces((currentPlaces) => [...currentPlaces, place]);
-    setFocusedPlaceId(placeId);
+  };
+
+  const handlePlaceFocusAndSelect = (placeId: string) => {
+    handlePlaceFocus(placeId);
+    handlePlaceSelect(placeId);
   };
 
   const handleConfirm = () => {
@@ -157,9 +169,10 @@ export const CourseCreatePlacePicker = ({
       <CourseCreatePlaceMap
         bottomOverlayRatio={isResultSheetOpen ? RESULT_SHEET_OVERLAY_RATIO : 0}
         center={placeResults.searchCenter}
+        focusRequestKey={placeFocusRequest?.requestKey}
+        focusedPlaceId={placeFocusRequest?.placeId}
         places={visiblePlaces}
-        selectedPlaceId={focusedPlaceId}
-        onPlaceSelect={handlePlaceSelect}
+        onPlaceSelect={handlePlaceFocusAndSelect}
       />
 
       <div className="absolute top-2 right-4 left-2 z-10 flex items-center">
@@ -271,7 +284,7 @@ export const CourseCreatePlacePicker = ({
                         place={place}
                         isSelected={selectedPlaceIds.has(place.placeId)}
                         onPlaceFocus={handlePlaceFocus}
-                        onSelect={handlePlaceSelect}
+                        onSelect={handlePlaceFocusAndSelect}
                       />
                     </li>
                   ))}
