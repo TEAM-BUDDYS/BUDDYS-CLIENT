@@ -124,7 +124,7 @@ export const CoursePlaceTimeline = ({
                     aria-hidden="true"
                   />
                   <span
-                    className="text-caption-m-10 absolute top-[calc(100%+8px)] left-1/2 z-20 flex h-5 min-w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-gray-100 bg-white px-1 text-gray-500"
+                    className="text-caption-m-10 absolute top-[calc(100%+8px)] left-1/2 z-10 flex h-5 min-w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-gray-100 bg-white px-1 text-gray-500"
                     aria-hidden="true"
                   >
                     {distance}
