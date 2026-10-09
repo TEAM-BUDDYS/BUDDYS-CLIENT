@@ -45,6 +45,8 @@ const PLACE_CATEGORIES: {
   { icon: AccommodationIcon, label: '숙소', value: 'ACCOMMODATION' },
 ];
 
+const RESULT_SHEET_OVERLAY_RATIO = 0.57;
+
 interface CourseCreatePlacePickerProps {
   cities: CourseCreateCityOption[];
   dayNumber: CourseCreateDayFormState['dayNumber'];
@@ -149,6 +151,7 @@ export const CourseCreatePlacePicker = ({
   return (
     <div className="fixed inset-0 z-40 mx-auto max-w-107.5 overflow-hidden bg-white">
       <CourseCreatePlaceMap
+        bottomOverlayRatio={isResultSheetOpen ? RESULT_SHEET_OVERLAY_RATIO : 0}
         center={placeResults.searchCenter}
         places={visiblePlaces}
         selectedPlaceId={focusedPlaceId}

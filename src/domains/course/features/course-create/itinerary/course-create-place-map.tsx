@@ -17,6 +17,7 @@ const FALLBACK_CENTER: CourseMapCenter = {
 };
 
 interface CourseCreatePlaceMapProps {
+  bottomOverlayRatio?: number;
   center?: CourseMapCenter | null;
   places: CourseCreateDayFormState['places'];
   selectedPlaceId?: string;
@@ -37,6 +38,7 @@ const getPlaceCenter = (
 };
 
 export const CourseCreatePlaceMap = ({
+  bottomOverlayRatio = 0,
   center = null,
   places,
   selectedPlaceId,
@@ -95,7 +97,10 @@ export const CourseCreatePlaceMap = ({
           gestureHandling="greedy"
           disableDefaultUI
         >
-          <CourseMapCamera center={cameraTarget} />
+          <CourseMapCamera
+            bottomOverlayRatio={bottomOverlayRatio}
+            center={cameraTarget}
+          />
 
           {places.map((place) => {
             const placeCenter = getPlaceCenter(place);
