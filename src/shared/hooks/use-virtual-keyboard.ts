@@ -56,7 +56,7 @@ export const useVirtualKeyboard = () => {
         ORIENTATION_CHANGE_WIDTH_THRESHOLD;
 
       if (hasOrientationChanged) {
-        viewportHeight = viewportWidth;
+        viewportHeight = isOpenRef.current ? viewportWidth : currentHeight;
         viewportWidth = currentWidth;
         isPortrait = currentIsPortrait;
       } else if (hasViewportWidthChanged) {
