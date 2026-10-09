@@ -81,7 +81,7 @@ export const CourseMapCamera = ({
     const isExplicitRequest = requestId !== handledRequestIdRef.current;
     if (!map || (preserveCamera && !isExplicitRequest)) return;
 
-    const centerKey = `${target.lat}:${target.lng}`;
+    const centerKey = `${target.lat}:${target.lng}:${bottomOverlayRatio}`;
 
     if (handledCenterKeyRef.current === centerKey && !isExplicitRequest) return;
 

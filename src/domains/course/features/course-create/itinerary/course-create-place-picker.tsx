@@ -45,6 +45,8 @@ const PLACE_CATEGORIES: {
   { icon: AccommodationIcon, label: '숙소', value: 'ACCOMMODATION' },
 ];
 
+const RESULT_SHEET_OVERLAY_RATIO = 0.57;
+
 interface CourseCreatePlacePickerProps {
   cities: CourseCreateCityOption[];
   dayNumber: CourseCreateDayFormState['dayNumber'];
@@ -52,6 +54,11 @@ interface CourseCreatePlacePickerProps {
   selectedPlaces: CourseCreateDayFormState['places'];
   onClose: () => void;
   onConfirm: (places: CourseCreateDayFormState['places']) => void;
+}
+
+interface PlaceFocusRequest {
+  placeId: string;
+  requestKey: number;
 }
 
 export const CourseCreatePlacePicker = ({
@@ -66,7 +73,8 @@ export const CourseCreatePlacePicker = ({
   const [keyword, setKeyword] = useState('');
   const [category, setCategory] = useState<PlaceCategory>();
   const [draftPlaces, setDraftPlaces] = useState(selectedPlaces);
-  const [focusedPlaceId, setFocusedPlaceId] = useState<string>();
+  const [placeFocusRequest, setPlaceFocusRequest] =
+    useState<PlaceFocusRequest>();
   const [isResultSheetOpen, setIsResultSheetOpen] = useState(true);
   const placeResults = useCoursePlaceResults({
     cities,
@@ -87,7 +95,7 @@ export const CourseCreatePlacePicker = ({
 
   const handleKeywordChange = (value: string) => {
     setKeyword(value);
-    setFocusedPlaceId(undefined);
+    setPlaceFocusRequest(undefined);
 
     if (value.trim().length > 0 || category !== undefined) {
       setIsResultSheetOpen(true);
@@ -98,7 +106,7 @@ export const CourseCreatePlacePicker = ({
     setCategory((currentCategory) =>
       currentCategory === nextCategory ? undefined : nextCategory,
     );
-    setFocusedPlaceId(undefined);
+    setPlaceFocusRequest(undefined);
     setIsResultSheetOpen(true);
   };
 
@@ -106,7 +114,7 @@ export const CourseCreatePlacePicker = ({
     if (placeResults.isSearchMode || !isResultSheetOpen) {
       setKeyword('');
       setCategory(undefined);
-      setFocusedPlaceId(undefined);
+      setPlaceFocusRequest(undefined);
       setIsResultSheetOpen(true);
       return;
     }
@@ -114,12 +122,18 @@ export const CourseCreatePlacePicker = ({
     setIsResultSheetOpen(false);
   };
 
+  const handlePlaceFocus = (placeId: string) => {
+    setPlaceFocusRequest((currentRequest) => ({
+      placeId,
+      requestKey: (currentRequest?.requestKey ?? 0) + 1,
+    }));
+  };
+
   const handlePlaceSelect = (placeId: string) => {
     if (selectedPlaceIds.has(placeId)) {
       setDraftPlaces((currentPlaces) =>
         currentPlaces.filter((place) => place.placeId !== placeId),
       );
-      setFocusedPlaceId(undefined);
       return;
     }
 
@@ -138,7 +152,11 @@ export const CourseCreatePlacePicker = ({
     }
 
     setDraftPlaces((currentPlaces) => [...currentPlaces, place]);
-    setFocusedPlaceId(placeId);
+  };
+
+  const handlePlaceFocusAndSelect = (placeId: string) => {
+    handlePlaceFocus(placeId);
+    handlePlaceSelect(placeId);
   };
 
   const handleConfirm = () => {
@@ -149,10 +167,12 @@ export const CourseCreatePlacePicker = ({
   return (
     <div className="fixed inset-0 z-40 mx-auto max-w-107.5 overflow-hidden bg-white">
       <CourseCreatePlaceMap
+        bottomOverlayRatio={isResultSheetOpen ? RESULT_SHEET_OVERLAY_RATIO : 0}
         center={placeResults.searchCenter}
+        focusRequestKey={placeFocusRequest?.requestKey}
+        focusedPlaceId={placeFocusRequest?.placeId}
         places={visiblePlaces}
-        selectedPlaceId={focusedPlaceId}
-        onPlaceSelect={handlePlaceSelect}
+        onPlaceSelect={handlePlaceFocusAndSelect}
       />
 
       <div className="absolute top-2 right-4 left-2 z-10 flex items-center">
@@ -263,7 +283,8 @@ export const CourseCreatePlacePicker = ({
                       <CourseSelectCard
                         place={place}
                         isSelected={selectedPlaceIds.has(place.placeId)}
-                        onSelect={handlePlaceSelect}
+                        onPlaceFocus={handlePlaceFocus}
+                        onSelect={handlePlaceFocusAndSelect}
                       />
                     </li>
                   ))}
