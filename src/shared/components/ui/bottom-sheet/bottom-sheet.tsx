@@ -18,6 +18,7 @@ interface BottomSheetProps {
   handleClassName?: string;
   dismissible?: boolean;
   modal?: boolean;
+  repositionInputs?: boolean;
   snapPoints?: (number | string)[];
   onClose: () => void;
   onSnapPointChange?: (snapPoint: number | string | null) => void;
@@ -34,6 +35,7 @@ export const BottomSheet = ({
   handleClassName,
   dismissible = true,
   modal = true,
+  repositionInputs = true,
   snapPoints,
   onClose,
   onSnapPointChange,
@@ -52,6 +54,7 @@ export const BottomSheet = ({
       dismissible={dismissible}
       modal={modal}
       open={open}
+      repositionInputs={repositionInputs}
       setActiveSnapPoint={onSnapPointChange}
       snapPoints={snapPoints}
       onOpenChange={handleOpenChange}
