@@ -91,7 +91,7 @@ export const PreferenceBuddySection = () => {
 
   return (
     <section className="flex flex-col">
-      <div className="mb-2 flex flex-col">
+      <div className="mt-6 mb-2 flex flex-col">
         <h2 className="text-title-b-18 text-gray-800">취향 기반 추천</h2>
         <span className="text-body-r-14 text-gray-700">
           이런 취향의 동행자는 어떠세요?

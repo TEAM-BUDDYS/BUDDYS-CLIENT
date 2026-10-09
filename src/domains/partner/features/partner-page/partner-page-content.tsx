@@ -78,11 +78,11 @@ export const PartnerPageContent = () => {
         )}
         {tab === 'recommend' && <PartnerRecommendTab />}
       </main>
-      <div className="pointer-events-none fixed bottom-22 left-1/2 z-40 flex w-full max-w-107.5 -translate-x-1/2 justify-end px-4">
+      <div className="pointer-events-none fixed bottom-18.5 left-1/2 z-40 flex w-full max-w-107.5 -translate-x-1/2 justify-end px-4">
         <IconButton
           variant="primary"
           icon={<PlusIcon />}
-          className="pointer-events-auto"
+          className="pointer-events-auto h-11 px-2.5 py-0"
           onClick={() => router.push(ROUTES.POST.ROOT)}
         >
           글쓰기
