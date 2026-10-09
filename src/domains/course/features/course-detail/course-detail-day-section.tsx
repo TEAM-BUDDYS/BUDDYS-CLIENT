@@ -39,7 +39,12 @@ export const CourseDetailDaySection = ({
       />
       {day.places.length > 0 && (
         <div className="px-4">
-          <CoursePlaceTimeline places={day.places} />
+          <CoursePlaceTimeline
+            places={day.places.map((place) => ({
+              ...place,
+              placeId: place.googlePlaceId,
+            }))}
+          />
         </div>
       )}
       <CourseDayMemoCost className="px-4" memo={day.memo} cost={day.cost} />

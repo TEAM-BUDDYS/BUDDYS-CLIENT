@@ -1,7 +1,7 @@
 import type { City, Country } from '@/shared/api';
 import type { components } from '@/types/schema';
 
-import type { BookmarkedPlace, CourseCompanion, Place } from '../../api/type';
+import type { CourseCompanion, Place } from '../../api/type';
 
 type CourseDayRequest = components['schemas']['CourseDayRequest'];
 type CourseFlightRequest = components['schemas']['CourseFlightRequest'];
@@ -59,10 +59,21 @@ export interface CourseCreateFlightFormState {
   arrivalTime: string;
 }
 
+export interface CourseCreatePlace {
+  placeId: Place['placeId'];
+  name: Place['name'];
+  category?: Place['category'];
+  address: Place['address'];
+  latitude: Place['latitude'];
+  longitude: Place['longitude'];
+  country?: Place['country'];
+  city?: Place['city'];
+}
+
 export interface CourseCreateDayFormState {
   dayNumber: CourseDayRequest['dayNumber'];
   date?: CourseDayRequest['date'];
-  places: (Place | BookmarkedPlace)[];
+  places: CourseCreatePlace[];
   images: CourseCreateImageDraft[];
   memo: NonNullable<CourseDayRequest['memo']>;
   cost: NonNullable<CourseDayRequest['cost']> | null;

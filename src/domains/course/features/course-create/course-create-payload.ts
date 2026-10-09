@@ -25,6 +25,9 @@ const convertCoursePlace = (
       ? { longitude: place.longitude }
       : {}),
     orderNo,
+    address: place.address,
+    ...(place.country !== undefined ? { country: place.country } : {}),
+    ...(place.city !== undefined ? { city: place.city } : {}),
   };
 };
 

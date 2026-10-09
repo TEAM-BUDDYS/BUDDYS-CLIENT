@@ -1538,6 +1538,21 @@ export interface components {
        * @example 0
        */
       orderNo?: number;
+      /**
+       * @description 주소. 장소 검색 응답의 address를 그대로 전달
+       * @example Rue de Rivoli, 75001 Paris
+       */
+      address?: string | null;
+      /**
+       * @description 국가명. 장소 검색 응답의 country를 그대로 전달
+       * @example 프랑스
+       */
+      country?: string | null;
+      /**
+       * @description 도시명. 장소 검색 응답의 city를 그대로 전달
+       * @example 파리
+       */
+      city?: string | null;
     };
     UpdateCourseRequest: {
       /**
@@ -3863,6 +3878,55 @@ export interface components {
        */
       createdAt: string;
     };
+    CoursePlaceResponse: {
+      /**
+       * Format: int64
+       * @description 장소 ID
+       * @example 5
+       */
+      placeId: number;
+      /**
+       * @description 구글 장소 ID
+       * @example ChIJ-test-place
+       */
+      googlePlaceId: string;
+      /**
+       * @description 장소 이름
+       * @example 루브르 박물관
+       */
+      name: string;
+      /**
+       * @description 장소 카테고리
+       * @example TOURISM
+       * @enum {string}
+       */
+      category: 'RESTAURANT' | 'CAFE' | 'TOURISM' | 'ACCOMMODATION' | 'ETC';
+      /**
+       * @description 위도
+       * @example 48.8606
+       */
+      latitude: number | null;
+      /**
+       * @description 경도
+       * @example 2.3376
+       */
+      longitude: number | null;
+      /**
+       * @description 주소. 저장된 값이 없으면 null
+       * @example Rue de Rivoli, 75001 Paris
+       */
+      address: string | null;
+      /**
+       * @description 국가명(구글 표기, 한글). 저장된 값이 없으면 null
+       * @example 프랑스
+       */
+      country: string | null;
+      /**
+       * @description 도시명(구글 표기, 한글). 저장된 값이 없으면 null
+       * @example 파리
+       */
+      city: string | null;
+    };
     CourseTagResponse: {
       /**
        * Format: int64
@@ -3902,7 +3966,7 @@ export interface components {
        */
       cost: number | null;
       /** @description 해당 일자에 방문한 장소 목록 */
-      places: components['schemas']['PlaceResponse'][];
+      places: components['schemas']['CoursePlaceResponse'][];
       /** @description 해당 일자의 항공편 목록 */
       flights: components['schemas']['FlightResponse'][];
     };
