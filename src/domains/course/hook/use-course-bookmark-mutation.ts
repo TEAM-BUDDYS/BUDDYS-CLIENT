@@ -7,7 +7,10 @@ import {
 } from '@tanstack/react-query';
 
 import { COURSE_MUTATION_OPTIONS } from '@/domains/course/api/course';
-import type { CourseListPage } from '@/domains/course/api/type';
+import type {
+  CourseListPage,
+  GetBookmarkedCoursesResponse,
+} from '@/domains/course/api/type';
 import { COURSE_QUERY_KEY } from '@/shared/api';
 import { useToast } from '@/shared/components/ui';
 
@@ -17,7 +20,11 @@ export const useCourseBookmarkMutation = () => {
 
   return useMutation({
     ...COURSE_MUTATION_OPTIONS.UPDATE_BOOKMARK(),
-    onSuccess: ({ courseId, bookmarked }) => {
+    onSuccess: async ({ courseId, bookmarked }) => {
+      await queryClient.cancelQueries({
+        queryKey: COURSE_QUERY_KEY.BOOKMARKS_ALL(),
+      });
+
       queryClient.setQueriesData<CourseListPage>(
         { queryKey: COURSE_QUERY_KEY.LISTS_ALL() },
         (coursePage) =>
@@ -48,13 +55,29 @@ export const useCourseBookmarkMutation = () => {
 
       if (!bookmarked) {
         queryClient.setQueriesData<CourseListPage>(
-          { queryKey: COURSE_QUERY_KEY.BOOKMARKS_ALL() },
+          { queryKey: COURSE_QUERY_KEY.BOOKMARKS() },
           (coursePage) =>
             coursePage && {
               ...coursePage,
               content: coursePage.content.filter(
                 (course) => course.courseId !== courseId,
               ),
+            },
+        );
+        queryClient.setQueriesData<InfiniteData<GetBookmarkedCoursesResponse>>(
+          { queryKey: COURSE_QUERY_KEY.BOOKMARKS_INFINITE() },
+          (coursePages) =>
+            coursePages && {
+              ...coursePages,
+              pages: coursePages.pages.map((page) => ({
+                ...page,
+                data: page.data && {
+                  ...page.data,
+                  content: page.data.content.filter(
+                    (course) => course.courseId !== courseId,
+                  ),
+                },
+              })),
             },
         );
       }
