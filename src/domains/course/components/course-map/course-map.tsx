@@ -95,7 +95,7 @@ export const CourseMap = ({
 
   if (hasMapLoadError) {
     return (
-      <section className="relative h-80 w-full overflow-hidden rounded-2xl bg-gray-50">
+      <section className="relative h-full w-full overflow-hidden bg-gray-50">
         <AsyncErrorState
           className="min-h-full py-4"
           title="지도를 불러오지 못했어요"
@@ -107,7 +107,7 @@ export const CourseMap = ({
 
   if (!apiKey || !mapId) {
     return (
-      <section className="relative h-80 w-full overflow-hidden rounded-2xl bg-gray-50">
+      <section className="relative h-full w-full overflow-hidden bg-gray-50">
         <div className="flex h-full w-full items-center justify-center text-gray-500">
           {resolvedSelectedPlace?.name ?? '지도가 표시될 영역입니다'}
         </div>
@@ -116,7 +116,7 @@ export const CourseMap = ({
   }
 
   return (
-    <section className="relative h-full w-full overflow-hidden rounded-2xl">
+    <section className="relative h-full w-full overflow-hidden">
       <APIProvider apiKey={apiKey} onError={() => setHasMapLoadError(true)}>
         <Map
           mapId={mapId}
