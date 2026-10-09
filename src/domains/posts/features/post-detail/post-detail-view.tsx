@@ -11,6 +11,7 @@ import { Header } from '@/shared/components/layout';
 import { Modal, PostMenuBottomSheet } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 import { useContentShare } from '@/shared/hooks/use-content-share';
+import { useIsShareEntry } from '@/shared/hooks/use-share-entry';
 
 import { usePostDelete } from './use-post-delete';
 
@@ -24,6 +25,7 @@ export const PostDetailView = ({ post }: PostDetailViewProps) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { deletePost, isPending: isDeleting } = usePostDelete(post.postId);
   const { shareContent } = useContentShare();
+  const isShareEntry = useIsShareEntry();
 
   const handleDeleteModalClose = () => {
     if (isDeleting) {
@@ -38,6 +40,7 @@ export const PostDetailView = ({ post }: PostDetailViewProps) => {
       <div className="sticky top-0 z-20 bg-white">
         <Header
           hasBackButton
+          backFallbackHref={isShareEntry ? ROUTES.PARTNER : undefined}
           right={
             <button
               aria-label="게시물 메뉴"
@@ -82,6 +85,7 @@ export const PostDetailView = ({ post }: PostDetailViewProps) => {
             void shareContent({
               title: post.title,
               url: ROUTES.POST.DETAIL(post.postId),
+              markAsShareEntry: true,
             });
             return;
           }

@@ -1,8 +1,9 @@
 'use client';
 
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
+import { useCourseBookmarkMutation } from '@/domains/course/hook/use-course-bookmark-mutation';
 import { PROFILE_QUERY_OPTIONS } from '@/domains/profile/api/query';
 import { AsyncBoundary, CardList, EmptyState } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
@@ -11,10 +12,7 @@ import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 const SAVED_COURSES_PAGE_SIZE = 20;
 
 const SavedCourseItems = () => {
-  // TODO: 코스 저장 해제 API 연동 시 mutation으로 교체
-  const [unbookmarkedCourseIds, setUnbookmarkedCourseIds] = useState<number[]>(
-    [],
-  );
+  const bookmarkMutation = useCourseBookmarkMutation();
   const {
     data,
     fetchNextPage,
@@ -39,11 +37,9 @@ const SavedCourseItems = () => {
   });
 
   const handleBookmarkClick = (courseId: number) => {
-    setUnbookmarkedCourseIds((prevCourseIds) =>
-      prevCourseIds.includes(courseId)
-        ? prevCourseIds.filter((prevCourseId) => prevCourseId !== courseId)
-        : [...prevCourseIds, courseId],
-    );
+    if (bookmarkMutation.isPending) return;
+
+    bookmarkMutation.mutate({ courseId, bookmarked: false });
   };
 
   if (courses.length === 0 && !hasNextPage) {
@@ -68,7 +64,8 @@ const SavedCourseItems = () => {
                 [course.countries, course.cities].filter(Boolean).join(' · ')
               }
               images={course.images}
-              isBookmarked={!unbookmarkedCourseIds.includes(course.courseId)}
+              isBookmarked={course.isBookmarked}
+              isBookmarkPending={bookmarkMutation.isPending}
               href={ROUTES.COURSE.DETAIL(course.courseId)}
               className="[&_h3]:text-body-sb-15"
               onBookmarkClick={() => handleBookmarkClick(course.courseId)}

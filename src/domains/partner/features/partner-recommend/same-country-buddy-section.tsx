@@ -5,6 +5,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { HOME_QUERY_OPTIONS } from '@/domains/partner/api/query';
 import type { ExchangeCountryRecommendedUser } from '@/domains/partner/api/type';
 import { ProfileCard } from '@/domains/partner/components/profile-card/profile-card';
+import { PROFILE_QUERY_OPTIONS } from '@/domains/profile/api/query';
 import { AsyncBoundary, EmptyState } from '@/shared/components/ui';
 
 const SAME_COUNTRY_BUDDY_SIZE = 5;
@@ -71,21 +72,43 @@ const SameCountryBuddyList = () => {
   );
 };
 
+const SameCountryBuddySectionContent = () => {
+  const {
+    data: { exchangeCountry },
+  } = useSuspenseQuery(PROFILE_QUERY_OPTIONS.ME_COUNTRIES());
+
+  if (!exchangeCountry) {
+    return null;
+  }
+
+  return (
+    <>
+      <section className="flex flex-col gap-5">
+        <div className="my-6 flex flex-col">
+          <h2 className="text-title-b-18 text-gray-800">오늘의 추천 동행</h2>
+          <span className="text-body-r-14 text-gray-700">
+            같은 파견 국가의 학생이에요
+          </span>
+        </div>
+        <AsyncBoundary
+          className="py-8"
+          loadingFallback={<div className="min-h-42" aria-busy="true" />}
+        >
+          <SameCountryBuddyList />
+        </AsyncBoundary>
+      </section>
+      <hr
+        className="-mx-4 h-2 border-0 bg-gray-50 opacity-50"
+        aria-hidden="true"
+      />
+    </>
+  );
+};
+
 export const SameCountryBuddySection = () => {
   return (
-    <section className="flex flex-col gap-5">
-      <div className="mt-6 flex flex-col">
-        <h2 className="text-title-b-18 text-gray-800">오늘의 추천 동행</h2>
-        <span className="text-body-r-14 text-gray-700">
-          같은 파견 국가의 학생이에요
-        </span>
-      </div>
-      <AsyncBoundary
-        className="py-8"
-        loadingFallback={<div className="min-h-42" aria-busy="true" />}
-      >
-        <SameCountryBuddyList />
-      </AsyncBoundary>
-    </section>
+    <AsyncBoundary loadingFallback={null}>
+      <SameCountryBuddySectionContent />
+    </AsyncBoundary>
   );
 };

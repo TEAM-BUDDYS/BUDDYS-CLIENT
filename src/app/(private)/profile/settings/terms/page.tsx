@@ -9,6 +9,7 @@ export default function TermsPage() {
         content={<h1 className="text-title-b-18 text-gray-800">이용약관</h1>}
         contentAlign="center"
         hasBackButton
+        className="sticky top-0 z-20"
       />
       <PolicyContent sections={TERMS_SECTIONS} />
     </main>

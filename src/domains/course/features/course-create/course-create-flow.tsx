@@ -277,6 +277,9 @@ export const CourseCreateFlow = ({
               title={courseCreateForm.detail.title}
               cities={courseCreateForm.selectedCities}
               days={courseCreateForm.days}
+              initialPlaces={initialCourse?.days.flatMap(
+                ({ places }) => places,
+              )}
               isDisabled={isSubmitting}
               onDayPlacesChange={courseCreateForm.setDayPlaces}
               onDayPlaceRemove={courseCreateForm.removeDayPlace}
