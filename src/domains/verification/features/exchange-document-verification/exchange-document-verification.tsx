@@ -32,6 +32,8 @@ export const ExchangeDocumentVerification = ({
   entryPoint,
 }: ExchangeDocumentVerificationProps) => {
   const { showToast } = useToast();
+  const toastBottomOffsetClassName =
+    entryPoint === 'login' ? 'bottom-[139px]' : 'bottom-24.5';
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileError, setFileError] =
     useState<ExchangeDocumentValidationError | null>(null);
@@ -70,7 +72,7 @@ export const ExchangeDocumentVerification = ({
     if (fileError) {
       setHasUploadError(true);
       showToast(FILE_ERROR_MESSAGES[fileError], {
-        bottomOffsetClassName: 'bottom-[139px]',
+        bottomOffsetClassName: toastBottomOffsetClassName,
         variant: 'gray',
       });
       return;
@@ -88,7 +90,7 @@ export const ExchangeDocumentVerification = ({
       router.back();
     } catch {
       showToast('서류 인증 신청에 실패했습니다. 잠시 후 다시 시도해 주세요.', {
-        bottomOffsetClassName: 'bottom-[139px]',
+        bottomOffsetClassName: toastBottomOffsetClassName,
         variant: 'gray',
       });
     } finally {
