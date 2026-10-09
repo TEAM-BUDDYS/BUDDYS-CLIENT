@@ -49,7 +49,7 @@ export const ProfilePageView = ({ profile }: ProfilePageViewProps) => {
         }
       />
 
-      <main className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto pt-9 pb-9">
+      <main className="flex min-h-0 flex-1 scrollbar-none flex-col items-center overflow-y-auto pt-9 pb-9 [&::-webkit-scrollbar]:hidden">
         <UserProfile
           imageUrl={profile.imageUrl}
           nickname={profile.nickname}
