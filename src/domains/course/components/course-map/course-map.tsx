@@ -6,10 +6,11 @@ import {
   type MapEvent,
   type MapMouseEvent,
 } from '@vis.gl/react-google-maps';
-import { useState } from 'react';
+import { type RefObject, useState } from 'react';
 
 import type { Place } from '@/domains/course/api/type';
 import { CourseCurrentLocationMarker } from '@/domains/course/components/course-map/course-current-location-marker';
+import { CourseMapAttribution } from '@/domains/course/components/course-map/course-map-attribution';
 import { CourseMapCamera } from '@/domains/course/components/course-map/course-map-camera';
 import { CourseMapMarker } from '@/domains/course/components/course-map/course-map-marker';
 import type {
@@ -27,6 +28,7 @@ const FALLBACK_CENTER = {
 interface CourseMapProps {
   places: Place[];
   bottomOverlayRatio?: number;
+  bottomSheetRef?: RefObject<HTMLDivElement | null>;
   currentLocation?: CourseMapCenter | null;
   preserveCamera?: boolean;
   showCurrentLocation?: boolean;
@@ -42,6 +44,7 @@ interface CourseMapProps {
 export const CourseMap = ({
   places,
   bottomOverlayRatio = 0,
+  bottomSheetRef,
   currentLocation = null,
   preserveCamera = false,
   showCurrentLocation = false,
@@ -131,6 +134,9 @@ export const CourseMap = ({
           onClick={handleMapClick}
           onIdle={handleMapIdle}
         >
+          {bottomSheetRef && (
+            <CourseMapAttribution bottomSheetRef={bottomSheetRef} />
+          )}
           <CourseMapCamera
             requestId={cameraRequestId}
             bottomOverlayRatio={bottomOverlayRatio}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { CourseBottomSheet } from '@/domains/course/components/course-bottom-sheet/course-bottom-sheet';
 import { CourseMap } from '@/domains/course/components/course-map/course-map';
@@ -39,6 +39,7 @@ const MAP_CATEGORY_ITEMS = [
 export default function CoursePage() {
   const router = useRouter();
   const { showToast } = useToast();
+  const bottomSheetRef = useRef<HTMLDivElement>(null);
   const [mapBounds, setMapBounds] = useState<CourseMapBounds | null>(null);
   const [locationCameraRequestId, setLocationCameraRequestId] = useState(0);
   const [bookmarkMarkerDataUpdatedAtAtClick, setBookmarkMarkerDataUpdatedAt] =
@@ -290,6 +291,7 @@ export default function CoursePage() {
         </div>
 
         <CourseMap
+          bottomSheetRef={bottomSheetRef}
           key={currentLocation ? 'current-location' : 'fallback-location'}
           bottomOverlayRatio={
             bottomSheetPosition === 'expanded'
@@ -328,6 +330,7 @@ export default function CoursePage() {
         </div>
 
         <CourseBottomSheet
+          contentRef={bottomSheetRef}
           open
           position={bottomSheetPosition}
           tab={bottomSheetTab}
