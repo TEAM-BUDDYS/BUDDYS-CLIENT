@@ -12,6 +12,7 @@ interface HeaderProps {
   content?: ReactNode;
   right?: ReactNode;
   hasBackButton?: boolean;
+  backFallbackHref?: string;
   contentAlign?: HeaderContentAlignTypes;
   onBackClick?: () => void;
   className?: string;
@@ -21,6 +22,7 @@ export const Header = ({
   content,
   right,
   hasBackButton = false,
+  backFallbackHref,
   contentAlign = 'left',
   onBackClick,
   className,
@@ -30,6 +32,11 @@ export const Header = ({
   const handleBackButtonClick = () => {
     if (onBackClick) {
       onBackClick();
+      return;
+    }
+
+    if (backFallbackHref) {
+      router.replace(backFallbackHref);
       return;
     }
 
