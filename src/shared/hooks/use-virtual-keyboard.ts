@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const MINIMUM_KEYBOARD_HEIGHT = 120;
 const KEYBOARD_HEIGHT_RATIO = 0.15;
@@ -27,41 +27,72 @@ const isEditableElement = (element: Element | null) => {
 
 export const useVirtualKeyboard = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const isOpenRef = useRef(false);
 
   useEffect(() => {
     const visualViewport = window.visualViewport;
-    let viewportHeight = visualViewport?.height ?? window.innerHeight;
+    const orientationQuery = window.matchMedia('(orientation: portrait)');
+    const getViewportHeight = () =>
+      visualViewport
+        ? visualViewport.height * visualViewport.scale
+        : window.innerHeight;
+    let viewportHeight = getViewportHeight();
     let viewportWidth = window.innerWidth;
+    let isPortrait = orientationQuery.matches;
     let animationFrameId: number | undefined;
 
+    const setKeyboardOpen = (nextIsOpen: boolean) => {
+      isOpenRef.current = nextIsOpen;
+      setIsOpen(nextIsOpen);
+    };
+
     const updateKeyboardState = () => {
-      const currentHeight = visualViewport?.height ?? window.innerHeight;
+      const currentHeight = getViewportHeight();
       const currentWidth = window.innerWidth;
-      const hasOrientationChanged =
+      const currentIsPortrait = orientationQuery.matches;
+      const hasOrientationChanged = currentIsPortrait !== isPortrait;
+      const hasViewportWidthChanged =
         Math.abs(currentWidth - viewportWidth) >
         ORIENTATION_CHANGE_WIDTH_THRESHOLD;
 
       if (hasOrientationChanged) {
+        viewportHeight = viewportWidth;
+        viewportWidth = currentWidth;
+        isPortrait = currentIsPortrait;
+      } else if (hasViewportWidthChanged) {
         viewportHeight = currentHeight;
         viewportWidth = currentWidth;
-        setIsOpen(false);
+        setKeyboardOpen(false);
         return;
       }
 
       if (!isEditableElement(document.activeElement)) {
-        viewportHeight = currentHeight;
-        setIsOpen(false);
+        if (!isOpenRef.current) {
+          viewportHeight = currentHeight;
+          return;
+        }
+
+        const keyboardHeightThreshold = Math.max(
+          MINIMUM_KEYBOARD_HEIGHT,
+          viewportHeight * KEYBOARD_HEIGHT_RATIO,
+        );
+        const isViewportStillReduced =
+          viewportHeight - currentHeight > keyboardHeightThreshold;
+
+        if (!isViewportStillReduced) {
+          viewportHeight = currentHeight;
+        }
+
+        setKeyboardOpen(isViewportStillReduced);
         return;
       }
-
-      if (visualViewport && Math.abs(visualViewport.scale - 1) > 0.01) return;
 
       const keyboardHeightThreshold = Math.max(
         MINIMUM_KEYBOARD_HEIGHT,
         viewportHeight * KEYBOARD_HEIGHT_RATIO,
       );
 
-      setIsOpen(viewportHeight - currentHeight > keyboardHeightThreshold);
+      setKeyboardOpen(viewportHeight - currentHeight > keyboardHeightThreshold);
     };
 
     const scheduleKeyboardStateUpdate = () => {
