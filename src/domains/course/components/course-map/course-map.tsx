@@ -28,6 +28,7 @@ const FALLBACK_CENTER = {
 interface CourseMapProps {
   places: Place[];
   bottomOverlayRatio?: number;
+  bottomOverlayHeight?: number;
   bottomSheetRef?: RefObject<HTMLDivElement | null>;
   currentLocation?: CourseMapCenter | null;
   preserveCamera?: boolean;
@@ -37,6 +38,7 @@ interface CourseMapProps {
   cameraTarget?: CourseMapCenter | null;
   cameraRequestId?: number;
   onBoundsChange?: (bounds: CourseMapBounds) => void;
+  onCenterChange?: (center: CourseMapCenter) => void;
   onPoiSelect?: (poi: GoogleMapPoi) => void;
   onPlaceSelect?: (placeId: string) => void;
 }
@@ -44,6 +46,7 @@ interface CourseMapProps {
 export const CourseMap = ({
   places,
   bottomOverlayRatio = 0,
+  bottomOverlayHeight = 0,
   bottomSheetRef,
   currentLocation = null,
   preserveCamera = false,
@@ -53,6 +56,7 @@ export const CourseMap = ({
   cameraTarget = null,
   cameraRequestId = 0,
   onBoundsChange,
+  onCenterChange,
   onPoiSelect,
   onPlaceSelect,
 }: CourseMapProps) => {
@@ -73,8 +77,7 @@ export const CourseMap = ({
       : null;
 
   const center = selectedPlaceCenter ?? currentLocation ?? FALLBACK_CENTER;
-  const resolvedCameraTarget =
-    cameraTarget ?? selectedPlaceCenter ?? currentLocation;
+  const resolvedCameraTarget = cameraTarget ?? selectedPlaceCenter;
 
   const handleMapClick = (event: MapMouseEvent) => {
     const { latLng, placeId } = event.detail;
@@ -138,8 +141,11 @@ export const CourseMap = ({
             <CourseMapAttribution bottomSheetRef={bottomSheetRef} />
           )}
           <CourseMapCamera
+            initialCenter={currentLocation}
             requestId={cameraRequestId}
             bottomOverlayRatio={bottomOverlayRatio}
+            bottomOverlayHeight={bottomOverlayHeight}
+            onVisibleCenterChange={onCenterChange}
             center={resolvedCameraTarget}
             preserveCamera={preserveCamera}
           />
