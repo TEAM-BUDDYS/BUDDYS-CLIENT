@@ -40,6 +40,7 @@ export default function CoursePage() {
   const router = useRouter();
   const { showToast } = useToast();
   const [mapBounds, setMapBounds] = useState<CourseMapBounds | null>(null);
+  const [locationCameraRequestId, setLocationCameraRequestId] = useState(0);
   const [bookmarkMarkerDataUpdatedAtAtClick, setBookmarkMarkerDataUpdatedAt] =
     useState<number | null>(null);
   const {
@@ -170,6 +171,10 @@ export default function CoursePage() {
 
     clearSelectedPlace();
     setIsLocationActive(true);
+    setBottomSheetPosition((position) =>
+      position === 'expanded' ? 'default' : position,
+    );
+    setLocationCameraRequestId((requestId) => requestId + 1);
   };
 
   const handleBookmarkModeClick = () => {
@@ -287,8 +292,13 @@ export default function CoursePage() {
         <CourseMap
           key={currentLocation ? 'current-location' : 'fallback-location'}
           bottomOverlayRatio={
-            bottomSheetPosition === 'default' ? 0.59 : undefined
+            bottomSheetPosition === 'expanded'
+              ? 0.78
+              : bottomSheetPosition === 'default'
+                ? 0.59
+                : undefined
           }
+          cameraRequestId={locationCameraRequestId}
           cameraTarget={isLocationActive ? currentLocation : null}
           currentLocation={currentLocation}
           places={mapPlaces}

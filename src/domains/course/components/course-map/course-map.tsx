@@ -33,6 +33,7 @@ interface CourseMapProps {
   selectedPlace?: Place;
   selectedPlaceId?: string;
   cameraTarget?: CourseMapCenter | null;
+  cameraRequestId?: number;
   onBoundsChange?: (bounds: CourseMapBounds) => void;
   onPoiSelect?: (poi: GoogleMapPoi) => void;
   onPlaceSelect?: (placeId: string) => void;
@@ -47,6 +48,7 @@ export const CourseMap = ({
   selectedPlace,
   selectedPlaceId,
   cameraTarget = null,
+  cameraRequestId = 0,
   onBoundsChange,
   onPoiSelect,
   onPlaceSelect,
@@ -130,6 +132,7 @@ export const CourseMap = ({
           onIdle={handleMapIdle}
         >
           <CourseMapCamera
+            requestId={cameraRequestId}
             bottomOverlayRatio={bottomOverlayRatio}
             center={resolvedCameraTarget}
             preserveCamera={preserveCamera}
