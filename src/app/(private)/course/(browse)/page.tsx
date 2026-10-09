@@ -198,6 +198,7 @@ export default function CoursePage() {
     }
 
     clearSelectedPlace();
+    setNearbyQueryCenter(null);
     setIsLocationActive(true);
   };
 
