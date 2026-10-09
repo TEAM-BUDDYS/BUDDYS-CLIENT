@@ -43,11 +43,12 @@ const MAP_CATEGORY_ITEMS = [
 export default function CoursePage() {
   const router = useRouter();
   const { showToast } = useToast();
+  const bottomSheetRef = useRef<HTMLDivElement>(null);
   const [mapBounds, setMapBounds] = useState<CourseMapBounds | null>(null);
   const mapCenterRef = useRef<CourseMapCenter | null>(null);
   const [nearbyQueryCenter, setNearbyQueryCenter] =
     useState<CourseMapCenter | null>(null);
-  const [placeCameraRequestId, setPlaceCameraRequestId] = useState(0);
+  const [cameraRequestId, setCameraRequestId] = useState(0);
   const [bookmarkMarkerDataUpdatedAtAtClick, setBookmarkMarkerDataUpdatedAt] =
     useState<number | null>(null);
   const {
@@ -200,6 +201,10 @@ export default function CoursePage() {
     clearSelectedPlace();
     setNearbyQueryCenter(null);
     setIsLocationActive(true);
+    setBottomSheetPosition((position) =>
+      position === 'expanded' ? 'default' : position,
+    );
+    setCameraRequestId((requestId) => requestId + 1);
   };
 
   const handleBookmarkModeClick = () => {
@@ -237,7 +242,7 @@ export default function CoursePage() {
 
     const selected = selectPlace(place);
     openSelectedPlace(isBookmarkMode && selected.bookmarked);
-    setPlaceCameraRequestId((requestId) => requestId + 1);
+    setCameraRequestId((requestId) => requestId + 1);
   };
 
   const handlePoiSelect = async (poi: GoogleMapPoi) => {
@@ -327,7 +332,8 @@ export default function CoursePage() {
         </div>
 
         <CourseMap
-          cameraRequestId={placeCameraRequestId}
+          bottomSheetRef={bottomSheetRef}
+          cameraRequestId={cameraRequestId}
           key={currentLocation ? 'current-location' : 'fallback-location'}
           bottomOverlayRatio={
             bottomSheetPosition === 'expanded'
@@ -367,6 +373,7 @@ export default function CoursePage() {
         </div>
 
         <CourseBottomSheet
+          contentRef={bottomSheetRef}
           open
           position={bottomSheetPosition}
           tab={bottomSheetTab}

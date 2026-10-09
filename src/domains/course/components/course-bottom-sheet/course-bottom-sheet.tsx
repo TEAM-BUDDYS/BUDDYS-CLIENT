@@ -1,3 +1,5 @@
+import type { Ref } from 'react';
+
 import type { Place } from '@/domains/course/api/type';
 import { CourseSaveCardSkeleton } from '@/domains/course/components/course-save-card/course-save-card-skeleton';
 import {
@@ -24,6 +26,7 @@ export type CourseBottomSheetPosition = 'collapsed' | 'default' | 'expanded';
 
 interface CourseBottomSheetProps {
   open: boolean;
+  contentRef?: Ref<HTMLDivElement>;
   position: CourseBottomSheetPosition;
   tab: CourseTabValue;
   bookmarkedItems: readonly NearbyCourseItem[];
@@ -58,6 +61,7 @@ interface CourseBottomSheetProps {
 
 export const CourseBottomSheet = ({
   open,
+  contentRef,
   position,
   tab,
   bookmarkedItems,
@@ -111,6 +115,7 @@ export const CourseBottomSheet = ({
 
   return (
     <BottomSheet
+      contentRef={contentRef}
       activeSnapPoint={activeSnapPoint}
       open={open}
       ariaLabel="코스 탐색"
