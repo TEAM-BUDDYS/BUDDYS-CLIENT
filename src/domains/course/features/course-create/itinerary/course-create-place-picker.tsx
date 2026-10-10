@@ -1,6 +1,6 @@
 'use client';
 
-import type { ComponentType, SVGProps } from 'react';
+import type { ComponentType, KeyboardEvent, SVGProps } from 'react';
 import { useState } from 'react';
 
 import type { Place } from '@/domains/course/api/type';
@@ -23,6 +23,7 @@ import {
   useToast,
 } from '@/shared/components/ui';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
+import { useVirtualKeyboard } from '@/shared/hooks/use-virtual-keyboard';
 
 import { COURSE_CREATE_MAX_DAY_PLACE_COUNT } from '../constants';
 import type {
@@ -70,12 +71,14 @@ export const CourseCreatePlacePicker = ({
   onConfirm,
 }: CourseCreatePlacePickerProps) => {
   const { showToast } = useToast();
+  const isVirtualKeyboardOpen = useVirtualKeyboard();
   const [keyword, setKeyword] = useState('');
   const [category, setCategory] = useState<PlaceCategory>();
   const [draftPlaces, setDraftPlaces] = useState(selectedPlaces);
   const [placeFocusRequest, setPlaceFocusRequest] =
     useState<PlaceFocusRequest>();
   const [isResultSheetOpen, setIsResultSheetOpen] = useState(true);
+  const isResultSheetVisible = isResultSheetOpen && !isVirtualKeyboardOpen;
   const placeResults = useCoursePlaceResults({
     cities,
     fallbackPlaces,
@@ -100,6 +103,13 @@ export const CourseCreatePlacePicker = ({
     if (value.trim().length > 0 || category !== undefined) {
       setIsResultSheetOpen(true);
     }
+  };
+
+  const handleSearchKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== 'Enter' || event.nativeEvent.isComposing) return;
+
+    setIsResultSheetOpen(true);
+    event.currentTarget.blur();
   };
 
   const handleCategoryChange = (nextCategory: PlaceCategory) => {
@@ -167,7 +177,9 @@ export const CourseCreatePlacePicker = ({
   return (
     <div className="fixed inset-0 z-40 mx-auto max-w-107.5 overflow-hidden bg-white">
       <CourseCreatePlaceMap
-        bottomOverlayRatio={isResultSheetOpen ? RESULT_SHEET_OVERLAY_RATIO : 0}
+        bottomOverlayRatio={
+          isResultSheetVisible ? RESULT_SHEET_OVERLAY_RATIO : 0
+        }
         center={placeResults.searchCenter}
         focusRequestKey={placeFocusRequest?.requestKey}
         focusedPlaceId={placeFocusRequest?.placeId}
@@ -187,10 +199,12 @@ export const CourseCreatePlacePicker = ({
         <div className="min-w-0 flex-1 rounded-xl bg-white shadow-[0_2px_2px_rgba(0,0,0,0.2)] [&>div]:bg-white">
           <Searchbar
             aria-label="장소 검색"
+            enterKeyHint="search"
             size="small"
             value={keyword}
             placeholder="검색어를 입력해주세요"
             onChange={handleKeywordChange}
+            onKeyDown={handleSearchKeyDown}
           />
         </div>
       </div>
@@ -220,7 +234,7 @@ export const CourseCreatePlacePicker = ({
       <div
         className={cn(
           'absolute right-4 z-10 transition-[bottom] duration-200',
-          isResultSheetOpen ? 'bottom-[calc(57dvh+1rem)]' : 'bottom-4',
+          isResultSheetVisible ? 'bottom-[calc(57dvh+1rem)]' : 'bottom-4',
         )}
       >
         <IconButton
@@ -243,7 +257,7 @@ export const CourseCreatePlacePicker = ({
       </div>
 
       <BottomSheet
-        open={isResultSheetOpen}
+        open={isResultSheetVisible}
         modal={false}
         ariaLabel={`Day ${dayNumber} ${placeResults.isSearchMode ? '장소 검색 결과' : '최근 저장 장소'}`}
         className="flex h-[57dvh] flex-col rounded-t-[20px]"

@@ -312,6 +312,18 @@ export default function CoursePage() {
               value={searchKeyword}
               onChange={handleSearchKeywordChange}
               onFocus={() => setSelectedCategory(undefined)}
+              onKeyDown={(event) => {
+                if (
+                  event.key !== 'Enter' ||
+                  event.nativeEvent.isComposing ||
+                  event.nativeEvent.keyCode === 229
+                ) {
+                  return;
+                }
+
+                event.preventDefault();
+                event.currentTarget.blur();
+              }}
             />
           }
         />
