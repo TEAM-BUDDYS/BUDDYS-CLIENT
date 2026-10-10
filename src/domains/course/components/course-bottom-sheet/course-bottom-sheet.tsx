@@ -122,6 +122,7 @@ export const CourseBottomSheet = ({
       className="z-10 flex h-dvh max-h-none flex-col"
       dismissible={false}
       modal={false}
+      repositionInputs={false}
       snapPoints={COURSE_SNAP_POINTS}
       onClose={onClose}
       onSnapPointChange={handleSnapPointChange}

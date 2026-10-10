@@ -8,6 +8,7 @@ import { PlusIcon } from '@/shared/components/icons';
 import { BottomNavigation } from '@/shared/components/layout';
 import { IconButton } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
+import { useVirtualKeyboard } from '@/shared/hooks/use-virtual-keyboard';
 
 interface CourseBrowseLayoutProps {
   children: ReactNode;
@@ -17,6 +18,7 @@ export default function CourseBrowseLayout({
   children,
 }: CourseBrowseLayoutProps) {
   const router = useRouter();
+  const isKeyboardOpen = useVirtualKeyboard();
 
   return (
     <CourseBrowseProvider>
@@ -32,7 +34,9 @@ export default function CourseBrowseLayout({
           글쓰기
         </IconButton>
       </div>
-      <BottomNavigation className="fixed right-0 bottom-0 left-0 z-20 mx-auto max-w-107.5" />
+      {!isKeyboardOpen && (
+        <BottomNavigation className="fixed right-0 bottom-0 left-0 z-20 mx-auto max-w-107.5" />
+      )}
     </CourseBrowseProvider>
   );
 }
