@@ -134,7 +134,10 @@ export const CourseBottomSheet = ({
           </div>
         ) : null}
 
-        <div className="min-h-0 flex-1 scrollbar-none overflow-x-hidden overflow-y-auto overscroll-contain pb-100 [&::-webkit-scrollbar]:hidden">
+        <div
+          key={tab}
+          className="min-h-0 flex-1 scrollbar-none overflow-x-hidden overflow-y-auto overscroll-contain pb-100 [&::-webkit-scrollbar]:hidden"
+        >
           {isPlaceSelectionLoading ? (
             <div className="border-b border-gray-50 pb-6">
               <CourseSaveCardSkeleton />
