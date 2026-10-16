@@ -1,6 +1,6 @@
 import './globals.css';
 
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 
 import { GoogleAnalytics } from '@/shared/analytics/google-analytics';
@@ -41,6 +41,10 @@ export const metadata: Metadata = {
       },
     ],
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#ffffff',
 };
 
 export default function RootLayout({
