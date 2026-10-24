@@ -1,10 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-
 import type { Place } from '@/domains/course/api/type';
-import { getApiResourceUrl } from '@/shared/api';
-import { BookmarkButton, CommonImage } from '@/shared/components/ui';
+import { CoursePlaceImage } from '@/domains/course/components/course-place-image/course-place-image';
+import { BookmarkButton } from '@/shared/components/ui';
 
 interface CourseSaveCardProps {
   place: Place;
@@ -21,11 +19,8 @@ export const CourseSaveCard = ({
   onPlaceSelect,
   onBookmarkChange,
 }: CourseSaveCardProps) => {
-  const [failedPhotoUrl, setFailedPhotoUrl] = useState<string>();
   const { placeId, name, address, bookmarked, photoUrl } = place;
   const displayName = name ?? '이름 없는 장소';
-  const resolvedPhotoUrl = photoUrl ? getApiResourceUrl(photoUrl) : null;
-  const hasImageError = failedPhotoUrl === resolvedPhotoUrl;
 
   const handleBookmarkClick = () => {
     onBookmarkChange(placeId, !bookmarked);
@@ -39,23 +34,7 @@ export const CourseSaveCard = ({
         className="focus-visible:outline-mint-300 flex w-full items-center gap-4 rounded-xl pr-14 text-left focus-visible:outline-2 focus-visible:outline-offset-2"
         onClick={() => onPlaceSelect(place)}
       >
-        {resolvedPhotoUrl && !hasImageError ? (
-          <CommonImage
-            unoptimized
-            src={resolvedPhotoUrl}
-            alt={`${displayName} 이미지`}
-            width={100}
-            height={100}
-            radius="rounded-xl"
-            className="size-25 shrink-0"
-            onError={() => setFailedPhotoUrl(resolvedPhotoUrl)}
-          />
-        ) : (
-          <span
-            aria-hidden
-            className="size-25 shrink-0 rounded-xl bg-gray-50"
-          />
-        )}
+        <CoursePlaceImage photoUrl={photoUrl} />
 
         <span className="flex min-w-0 flex-1 flex-col gap-2">
           <span className="text-body-sb-16 truncate text-gray-800">
