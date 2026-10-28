@@ -333,11 +333,11 @@ export default function CoursePage() {
             <ChipButton
               key={key}
               active={selectedCategory === key}
-              className="text-caption-m-12 h-8.5 w-16.75 gap-1 px-3 py-2 shadow-[0_2px_4px_0_rgba(0,0,0,0.12)]"
+              className="text-caption-m-12 h-8.5 w-16.75 gap-1 border-0 px-3 py-2 shadow-[0_2px_4px_0_rgba(0,0,0,0.12)]"
               variant="fillMedium"
               onClick={() => handleCategoryChange(key)}
             >
-              <Icon className="size-5" />
+              <Icon className="size-4.5" />
               {label}
             </ChipButton>
           ))}
