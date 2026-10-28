@@ -83,18 +83,15 @@ export const ExchangeDocumentVerification = ({
     try {
       await requestExchangeVerification(selectedFile);
 
+      showToast('서류 등록이 완료되었습니다.', {
+        bottomOffsetClassName: toastBottomOffsetClassName,
+        variant: 'gray',
+      });
+
       if (entryPoint === 'login') {
         router.replace(ROUTES.ONBOARDING_INTRO);
         return;
       }
-
-      if (entryPoint === 'profile') {
-        showToast('서류 등록이 완료되었습니다.', {
-          bottomOffsetClassName: toastBottomOffsetClassName,
-          variant: 'gray',
-        });
-      }
-
       router.back();
     } catch {
       showToast('서류 인증 신청에 실패했습니다. 잠시 후 다시 시도해 주세요.', {
