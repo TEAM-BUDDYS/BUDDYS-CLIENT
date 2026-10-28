@@ -26,7 +26,7 @@ interface CourseBrowseContextValue {
   currentLocation: CourseMapCenter | null;
   currentLocationStatus: CurrentLocationStatus;
   isBookmarkMode: boolean;
-  isLocationActive: boolean;
+  isCurrentLocationVisible: boolean;
   refetchCurrentLocation: () => Promise<CourseMapCenter | null>;
   searchKeyword: string;
   selectedCategory?: CourseMapCategory;
@@ -35,7 +35,7 @@ interface CourseBrowseContextValue {
   setBottomSheetPosition: Dispatch<SetStateAction<CourseBottomSheetPosition>>;
   setBottomSheetTab: Dispatch<SetStateAction<CourseTabValue>>;
   setIsBookmarkMode: Dispatch<SetStateAction<boolean>>;
-  setIsLocationActive: Dispatch<SetStateAction<boolean>>;
+  setIsCurrentLocationVisible: Dispatch<SetStateAction<boolean>>;
   setSearchKeyword: Dispatch<SetStateAction<string>>;
   setSelectedCategory: Dispatch<SetStateAction<CourseMapCategory | undefined>>;
   setSelectedRecommendedCategoryId: Dispatch<SetStateAction<number>>;
@@ -58,7 +58,8 @@ export const CourseBrowseProvider = ({
   const [bottomSheetTab, setBottomSheetTab] =
     useState<CourseTabValue>('nearby');
   const [isBookmarkMode, setIsBookmarkMode] = useState(false);
-  const [isLocationActive, setIsLocationActive] = useState(false);
+  const [isCurrentLocationVisible, setIsCurrentLocationVisible] =
+    useState(false);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<CourseMapCategory>();
   const [selectedRecommendedCategoryId, setSelectedRecommendedCategoryId] =
@@ -78,7 +79,7 @@ export const CourseBrowseProvider = ({
       currentLocation,
       currentLocationStatus,
       isBookmarkMode,
-      isLocationActive,
+      isCurrentLocationVisible,
       refetchCurrentLocation,
       searchKeyword,
       selectedCategory,
@@ -87,7 +88,7 @@ export const CourseBrowseProvider = ({
       setBottomSheetPosition,
       setBottomSheetTab,
       setIsBookmarkMode,
-      setIsLocationActive,
+      setIsCurrentLocationVisible,
       setSearchKeyword,
       setSelectedCategory,
       setSelectedRecommendedCategoryId,
@@ -99,7 +100,7 @@ export const CourseBrowseProvider = ({
       currentLocation,
       currentLocationStatus,
       isBookmarkMode,
-      isLocationActive,
+      isCurrentLocationVisible,
       refetchCurrentLocation,
       searchKeyword,
       selectedCategory,
