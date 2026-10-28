@@ -83,6 +83,11 @@ export const ExchangeDocumentVerification = ({
     try {
       await requestExchangeVerification(selectedFile);
 
+      showToast('서류 등록이 완료되었습니다.', {
+        bottomOffsetClassName: toastBottomOffsetClassName,
+        variant: 'gray',
+      });
+
       if (entryPoint === 'login') {
         router.replace(ROUTES.ONBOARDING_INTRO);
         return;
