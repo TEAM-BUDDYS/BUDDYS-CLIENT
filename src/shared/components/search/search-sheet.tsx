@@ -56,7 +56,7 @@ export const SearchSheet = ({
       <main className="mt-4 flex flex-col px-4">
         {isSuggestionMode ? (
           isSuggestionsLoading ? (
-            <p role="status" className="text-body-m-14 py-4 text-gray-500">
+            <p role="status" className="text-body-m-15 py-2.75 text-gray-500">
               연관 검색어를 불러오는 중이에요
             </p>
           ) : hasSuggestionsError ? (
@@ -66,7 +66,7 @@ export const SearchSheet = ({
               onRetry={() => void retrySuggestions()}
             />
           ) : suggestionItems.length === 0 ? (
-            <p role="status" className="text-body-m-14 py-4 text-gray-500">
+            <p role="status" className="text-body-m-15 py-2.75 text-gray-500">
               연관 검색어가 없어요
             </p>
           ) : (
