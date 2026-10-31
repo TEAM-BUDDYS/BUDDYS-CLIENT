@@ -3,14 +3,14 @@ import { IconButton } from '@/shared/components/ui';
 
 interface MapFloatingControlsProps {
   isBookmarkMode: boolean;
-  isLocationActive: boolean;
+  isLocationLoading: boolean;
   onBookmarkClick: () => void;
   onLocationClick: () => void;
 }
 
 export const MapFloatingControls = ({
   isBookmarkMode,
-  isLocationActive,
+  isLocationLoading,
   onBookmarkClick,
   onLocationClick,
 }: MapFloatingControlsProps) => {
@@ -31,11 +31,12 @@ export const MapFloatingControls = ({
         onClick={onBookmarkClick}
       />
       <IconButton
-        aria-label={isLocationActive ? '현재 위치 추적 해제' : '현재 위치'}
-        aria-pressed={isLocationActive}
+        aria-label="현재 위치로 이동"
+        aria-busy={isLocationLoading}
+        disabled={isLocationLoading}
         className={
-          isLocationActive
-            ? 'bg-mint-400 size-9 text-white shadow-[0_2px_6px_0_rgba(0,0,0,0.22)]'
+          isLocationLoading
+            ? 'bg-mint-400 disabled:bg-mint-400 size-9 text-white shadow-[0_2px_6px_0_rgba(0,0,0,0.22)] disabled:border-0 disabled:text-white'
             : 'bg-mint-300 size-9 text-white shadow-[0_2px_6px_0_rgba(0,0,0,0.22)]'
         }
         icon={<LocationIcon />}
