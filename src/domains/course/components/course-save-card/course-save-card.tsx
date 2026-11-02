@@ -44,7 +44,7 @@ export const CourseSaveCard = ({
             <span className="text-caption-m-12 truncate text-gray-500">
               {address ?? '주소 정보 없음'}
             </span>
-            <span className="text-caption-m-12 truncate text-gray-200">
+            <span className="text-caption-m-12 truncate text-gray-500">
               {description}
             </span>
           </span>
