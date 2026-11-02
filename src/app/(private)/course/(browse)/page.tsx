@@ -49,6 +49,10 @@ export default function CoursePage() {
   const [nearbyQueryCenter, setNearbyQueryCenter] =
     useState<CourseMapCenter | null>(null);
   const [cameraRequestId, setCameraRequestId] = useState(0);
+  const [locationCameraTarget, setLocationCameraTarget] =
+    useState<CourseMapCenter | null>(null);
+  const [isLocating, setIsLocating] = useState(false);
+  const locationRequestPendingRef = useRef(false);
   const [bookmarkMarkerDataUpdatedAtAtClick, setBookmarkMarkerDataUpdatedAt] =
     useState<number | null>(null);
   const {
@@ -57,14 +61,14 @@ export default function CoursePage() {
     currentLocation,
     currentLocationStatus,
     isBookmarkMode,
-    isLocationActive,
+    isCurrentLocationVisible,
     refetchCurrentLocation,
     searchKeyword,
     selectedCategory,
     setBottomSheetPosition,
     setBottomSheetTab,
     setIsBookmarkMode,
-    setIsLocationActive,
+    setIsCurrentLocationVisible,
     setSearchKeyword,
     setSelectedCategory,
   } = useCourseBrowse();
@@ -107,7 +111,7 @@ export default function CoursePage() {
     () =>
       mergeCoursePlaces(
         isBookmarkMode ? [] : nearbyPlaces,
-        bookmarkedMarkers.places,
+        isBookmarkMode ? bookmarkedMarkers.places : [],
         selectedPlace ? [selectedPlace] : [],
       ),
     [bookmarkedMarkers.places, isBookmarkMode, nearbyPlaces, selectedPlace],
@@ -159,7 +163,7 @@ export default function CoursePage() {
     setSearchKeyword('');
     setNearbyQueryCenter(center);
     setIsBookmarkMode(false);
-    setIsLocationActive(false);
+    setLocationCameraTarget(null);
     setBottomSheetTab('nearby');
     setBookmarkMarkerDataUpdatedAt(null);
     setSelectedCategory((currentCategory) =>
@@ -182,29 +186,38 @@ export default function CoursePage() {
   };
 
   const handleLocationClick = async () => {
-    if (isLocationActive) {
-      setIsLocationActive(false);
+    if (
+      currentLocationStatus === 'loading' ||
+      locationRequestPendingRef.current
+    ) {
       return;
     }
 
-    if (currentLocationStatus === 'loading') return;
+    locationRequestPendingRef.current = true;
+    setIsLocating(true);
 
-    const location = await refetchCurrentLocation();
+    try {
+      const location = await refetchCurrentLocation();
 
-    if (!location) {
-      showToast('위치 권한을 확인하거나 다시 시도해 주세요', {
-        variant: 'gray',
-      });
-      return;
+      if (!location) {
+        showToast('위치 권한을 확인하거나 다시 시도해 주세요', {
+          variant: 'gray',
+        });
+        return;
+      }
+
+      clearSelectedPlace();
+      setNearbyQueryCenter(null);
+      setIsCurrentLocationVisible(true);
+      setLocationCameraTarget(location);
+      setBottomSheetPosition((position) =>
+        position === 'expanded' ? 'default' : position,
+      );
+      setCameraRequestId((requestId) => requestId + 1);
+    } finally {
+      locationRequestPendingRef.current = false;
+      setIsLocating(false);
     }
-
-    clearSelectedPlace();
-    setNearbyQueryCenter(null);
-    setIsLocationActive(true);
-    setBottomSheetPosition((position) =>
-      position === 'expanded' ? 'default' : position,
-    );
-    setCameraRequestId((requestId) => requestId + 1);
   };
 
   const handleBookmarkModeClick = () => {
@@ -213,13 +226,13 @@ export default function CoursePage() {
     setIsBookmarkMode(nextBookmarkMode);
 
     if (nextBookmarkMode) {
-      setIsLocationActive(false);
+      setLocationCameraTarget(null);
       setBottomSheetPosition('default');
     }
   };
 
   const openSelectedPlace = (preserveBookmarkMode = false) => {
-    setIsLocationActive(false);
+    setLocationCameraTarget(null);
 
     if (!preserveBookmarkMode) {
       setIsBookmarkMode(false);
@@ -249,7 +262,7 @@ export default function CoursePage() {
     setBookmarkMarkerDataUpdatedAt(
       bookmarkedMarkers.isLoading ? bookmarkedMarkers.dataUpdatedAt : null,
     );
-    setIsLocationActive(false);
+    setLocationCameraTarget(null);
     setBottomSheetPosition('default');
 
     try {
@@ -355,13 +368,13 @@ export default function CoursePage() {
                 : undefined
           }
           bottomOverlayHeight={bottomSheetPosition === 'collapsed' ? 78 : 0}
-          cameraTarget={isLocationActive ? currentLocation : null}
+          cameraTarget={locationCameraTarget}
           currentLocation={currentLocation}
           places={mapPlaces}
           preserveCamera={bottomSheetPosition === 'expanded'}
           selectedPlace={selectedPlace}
           selectedPlaceId={selectedPlaceId}
-          showCurrentLocation={isLocationActive}
+          showCurrentLocation={isCurrentLocationVisible}
           onBoundsChange={handleMapBoundsChange}
           onCenterChange={handleMapCenterChange}
           onPlaceSelect={handlePlaceSelect}
@@ -378,7 +391,7 @@ export default function CoursePage() {
         >
           <MapFloatingControls
             isBookmarkMode={isBookmarkMode}
-            isLocationActive={isLocationActive}
+            isLocationLoading={isLocating}
             onBookmarkClick={handleBookmarkModeClick}
             onLocationClick={handleLocationClick}
           />
