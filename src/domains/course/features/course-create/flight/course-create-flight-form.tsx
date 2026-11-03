@@ -19,6 +19,7 @@ interface CourseCreateFlightFormProps {
   onConfirm: (flight: CourseCreateFlightFormState) => void;
 }
 
+const MAX_FLIGHT_NUMBER_LENGTH = 20;
 const TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
 
 const getAirlineName = ({ koreanName, name }: Airline) => koreanName ?? name;
@@ -50,9 +51,12 @@ export const CourseCreateFlightForm = ({
     keyword: airlineKeyword,
     enabled: selectedAirline === null,
   });
+  const maxFlightNumberInputLength =
+    MAX_FLIGHT_NUMBER_LENGTH - (selectedAirline?.code.length ?? 0);
   const isComplete =
     selectedAirline !== null &&
-    flightNumber.trim().length > 0 &&
+    flightNumber.length > 0 &&
+    flightNumber.length <= maxFlightNumberInputLength &&
     departureAirport.trim().length > 0 &&
     TIME_PATTERN.test(departureTime) &&
     arrivalAirport.trim().length > 0 &&
@@ -80,7 +84,7 @@ export const CourseCreateFlightForm = ({
 
     onConfirm({
       airline: getAirlineName(selectedAirline),
-      flightNumber: flightNumber.trim(),
+      flightNumber: `${selectedAirline.code}${flightNumber}`,
       departureAirport: departureAirport.trim(),
       departureTime,
       arrivalAirport: arrivalAirport.trim(),
@@ -139,10 +143,14 @@ export const CourseCreateFlightForm = ({
             required
             className="border-gray-200 bg-white"
             id="course-flight-number"
+            inputMode="numeric"
             label="항공편명"
+            maxLength={maxFlightNumberInputLength}
             placeholder="항공편명을 작성해주세요"
             value={flightNumber}
-            onChange={(event) => setFlightNumber(event.target.value)}
+            onChange={(event) =>
+              setFlightNumber(event.target.value.replace(/\D/g, ''))
+            }
           />
 
           <TextField
