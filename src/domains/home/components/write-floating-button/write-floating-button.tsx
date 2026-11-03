@@ -54,9 +54,13 @@ export const WriteFloatingButton = () => {
           ref={triggerRef}
           variant="primary"
           icon={isOpen ? <XIcon /> : <PlusIcon />}
+          iconClassName={isOpen ? undefined : 'size-5'}
           aria-label={isOpen ? '닫기' : '글쓰기'}
           aria-expanded={isOpen}
-          className={cn('pointer-events-auto', !isOpen && 'h-11 px-2.5 py-0')}
+          className={cn(
+            'pointer-events-auto',
+            isOpen ? 'size-12' : 'text-body-sb-14 px-4 py-[13.5px]',
+          )}
           onClick={toggleMenu}
         >
           {isOpen ? undefined : '글쓰기'}

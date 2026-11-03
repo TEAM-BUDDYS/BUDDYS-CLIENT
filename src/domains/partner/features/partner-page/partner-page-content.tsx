@@ -82,7 +82,8 @@ export const PartnerPageContent = () => {
         <IconButton
           variant="primary"
           icon={<PlusIcon />}
-          className="pointer-events-auto h-11 px-2.5 py-0"
+          iconClassName="size-5"
+          className="text-body-sb-14 pointer-events-auto px-4 py-[13.5px]"
           onClick={() => router.push(ROUTES.POST.ROOT)}
         >
           글쓰기

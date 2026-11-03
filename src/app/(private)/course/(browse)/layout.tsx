@@ -27,8 +27,9 @@ export default function CourseBrowseLayout({
         <IconButton
           variant="primary"
           icon={<PlusIcon />}
+          iconClassName="size-5"
           aria-label="글쓰기"
-          className="pointer-events-auto h-11 px-2.5 py-0"
+          className="text-body-sb-14 pointer-events-auto px-4 py-[13.5px]"
           onClick={() => router.push(ROUTES.COURSE.CREATE)}
         >
           글쓰기
