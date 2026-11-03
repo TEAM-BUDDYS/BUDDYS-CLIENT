@@ -3,7 +3,12 @@
 import type { ChangeEvent } from 'react';
 
 import { validateImageFile } from '@/shared/api/image';
-import { ImageInput, ImagePreview, useToast } from '@/shared/components/ui';
+import {
+  FormLabel,
+  ImageInput,
+  ImagePreview,
+  useToast,
+} from '@/shared/components/ui';
 
 import { COURSE_CREATE_MAX_DAY_IMAGE_COUNT } from '../constants';
 import type { CourseCreateDayFormState } from '../model';
@@ -63,7 +68,9 @@ export const CourseCreateDayImageField = ({
   return (
     <section className="flex min-w-0 flex-col gap-3">
       <div className="flex items-center gap-2">
-        <h3 className="text-body-sb-14 text-gray-800">사진</h3>
+        <FormLabel as="p" required className="text-body-sb-14">
+          사진
+        </FormLabel>
         <p className="text-caption-r-12 text-gray-500">
           최소 1개 선택 ({images.length}/{COURSE_CREATE_MAX_DAY_IMAGE_COUNT})
         </p>
