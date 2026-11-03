@@ -145,11 +145,14 @@ export const CourseCreateFlightForm = ({
             id="course-flight-number"
             inputMode="numeric"
             label="항공편명"
-            maxLength={maxFlightNumberInputLength}
             placeholder="항공편명을 작성해주세요"
             value={flightNumber}
             onChange={(event) =>
-              setFlightNumber(event.target.value.replace(/\D/g, ''))
+              setFlightNumber(
+                event.target.value
+                  .replace(/\D/g, '')
+                  .slice(0, maxFlightNumberInputLength),
+              )
             }
           />
 
