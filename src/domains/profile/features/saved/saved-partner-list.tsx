@@ -3,14 +3,14 @@
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
-import { BookmarkContainer } from '@/domains/home/components/bookmark-container/bookmark-container';
+import { PartnerCard } from '@/domains/partner/components/partner-card/partner-card';
 import {
   type DisplayablePartnerPost,
   hasPartnerCardFields,
 } from '@/domains/partner/model/partner-search';
 import { usePostBookmark } from '@/domains/posts/features/post-bookmark/use-post-bookmark';
 import { PROFILE_QUERY_OPTIONS } from '@/domains/profile/api/query';
-import { AsyncBoundary, Card, EmptyState } from '@/shared/components/ui';
+import { AsyncBoundary, EmptyState } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 import { useInfiniteScroll } from '@/shared/hooks/use-infinite-scroll';
 
@@ -27,23 +27,19 @@ const SavedPartnerItem = ({ partner }: SavedPartnerItemProps) => {
   });
 
   return (
-    <BookmarkContainer
+    <PartnerCard
+      href={ROUTES.POST.DETAIL(partner.postId)}
+      isRecruiting={partner.recruitmentStatus === 'RECRUITING'}
+      country={partner.country.name}
+      title={partner.title}
+      description={partner.content}
+      startDate={partner.startDate}
+      endDate={partner.endDate}
+      imageUrl={partner.thumbnailImageUrl}
       isBookmarked={bookmark.isBookmarked}
       isBookmarkPending={bookmark.isPending}
-      variant="card"
       onBookmarkClick={bookmark.toggleBookmark}
-    >
-      <Card
-        href={ROUTES.POST.DETAIL(partner.postId)}
-        title={partner.title}
-        content={partner.content}
-        postStatus={partner.recruitmentStatus}
-        tagValue={partner.country.name}
-        startDate={partner.startDate}
-        endDate={partner.endDate}
-        image={partner.thumbnailImageUrl}
-      />
-    </BookmarkContainer>
+    />
   );
 };
 
