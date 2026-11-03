@@ -23,7 +23,7 @@ export default function CourseBrowseLayout({
   return (
     <CourseBrowseProvider>
       {children}
-      <div className="pointer-events-none fixed bottom-23 left-1/2 z-40 flex w-full max-w-107.5 -translate-x-1/2 justify-end px-4">
+      <div className="pointer-events-none fixed bottom-18.5 left-1/2 z-40 flex w-full max-w-107.5 -translate-x-1/2 justify-end px-4">
         <IconButton
           variant="primary"
           icon={<PlusIcon />}
