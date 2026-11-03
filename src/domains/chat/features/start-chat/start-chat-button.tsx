@@ -57,9 +57,10 @@ export const StartChatButton = ({
 
   return (
     <IconButton
-      className="pointer-events-auto"
+      className="text-body-sb-14 pointer-events-auto px-4 py-[13.5px]"
       disabled={createChatRoomMutation.isPending}
       icon={<ChatIcon />}
+      iconClassName="size-5"
       variant="primary"
       onClick={handleChatClick}
     >
