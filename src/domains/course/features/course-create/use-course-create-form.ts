@@ -49,7 +49,11 @@ const isItineraryComplete = (
   return (
     durationDays !== null &&
     days.length === durationDays &&
-    days.every((day) => day.images.length >= COURSE_CREATE_MIN_DAY_IMAGE_COUNT)
+    days.every(
+      (day) =>
+        day.places.length > 0 &&
+        day.images.length >= COURSE_CREATE_MIN_DAY_IMAGE_COUNT,
+    )
   );
 };
 
