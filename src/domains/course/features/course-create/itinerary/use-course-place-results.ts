@@ -1,11 +1,19 @@
 'use client';
 
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 
 import { PLACE_QUERY_OPTIONS } from '@/domains/course/api/query';
-import type { BookmarkedPlace, Place } from '@/domains/course/api/type';
+import type { Place } from '@/domains/course/api/type';
+import { useCurrentLocation } from '@/domains/course/hook/use-current-location';
 import type { CourseMapCenter } from '@/domains/course/model/course-map';
+import {
+  convertBookmarkedPlaceToPlace,
+  type CourseMapCategory,
+  getApiPlaceCategory,
+  getNearbyPlaceParams,
+  mergeCoursePlaces,
+} from '@/domains/course/model/course-place';
 import { useDebouncedValue } from '@/shared/hooks/use-debounced-value';
 
 import { COURSE_CREATE_SEARCH_DEBOUNCE_MS } from '../constants';
@@ -14,7 +22,7 @@ import type {
   CourseCreateDayFormState,
 } from '../model';
 
-type PlaceCategory = NonNullable<Place['category']>;
+type PlaceResultMode = 'nearby' | 'search' | 'bookmark';
 
 const BOOKMARK_PAGE_SIZE = 20;
 
@@ -56,24 +64,13 @@ const getSearchCenter = (
   return { lat: fallbackPlace.latitude, lng: fallbackPlace.longitude };
 };
 
-const getUniquePlaces = <T extends Place | BookmarkedPlace>(places: T[]) => {
-  const seenPlaceIds = new Set<string>();
-
-  return places.filter(({ placeId }) => {
-    if (seenPlaceIds.has(placeId)) {
-      return false;
-    }
-
-    seenPlaceIds.add(placeId);
-    return true;
-  });
-};
-
 interface UseCoursePlaceResultsParams {
   cities: CourseCreateCityOption[];
   fallbackPlaces: CourseCreateDayFormState['places'];
   keyword: string;
-  category?: PlaceCategory;
+  category?: CourseMapCategory;
+  nearbyCenter: CourseMapCenter | null;
+  isBookmarkMode: boolean;
   isSheetOpen: boolean;
 }
 
@@ -82,6 +79,8 @@ export const useCoursePlaceResults = ({
   fallbackPlaces,
   keyword,
   category,
+  nearbyCenter,
+  isBookmarkMode,
   isSheetOpen,
 }: UseCoursePlaceResultsParams) => {
   const trimmedKeyword = keyword.trim();
@@ -90,68 +89,108 @@ export const useCoursePlaceResults = ({
     COURSE_CREATE_SEARCH_DEBOUNCE_MS,
   );
   const isKeywordSynced = debouncedKeyword === trimmedKeyword;
-  const isSearchMode = trimmedKeyword.length > 0 || category !== undefined;
-  const isSearchReady = trimmedKeyword.length > 0 && isKeywordSynced;
-  const searchCenter = useMemo(
+  const mode: PlaceResultMode = isBookmarkMode
+    ? 'bookmark'
+    : trimmedKeyword.length > 0
+      ? 'search'
+      : 'nearby';
+  const isSearchMode = mode === 'search';
+  const isSearchReady = isSearchMode && isKeywordSynced;
+  const courseCenter = useMemo(
     () => getSearchCenter(cities, fallbackPlaces),
     [cities, fallbackPlaces],
+  );
+  const {
+    currentLocation,
+    status: currentLocationStatus,
+    refetchCurrentLocation,
+  } = useCurrentLocation({ requestOnMount: courseCenter === null });
+  const searchCenter = courseCenter ?? currentLocation;
+  const nearbyParams = useMemo(
+    () => getNearbyPlaceParams(nearbyCenter ?? searchCenter, category),
+    [category, nearbyCenter, searchCenter],
   );
   const searchParams = useMemo(
     () => ({
       query: debouncedKeyword,
-      ...(category ? { category } : {}),
+      category: getApiPlaceCategory(category),
       ...(searchCenter ? { lat: searchCenter.lat, lng: searchCenter.lng } : {}),
     }),
     [category, debouncedKeyword, searchCenter],
   );
+  const nearbyQuery = useQuery({
+    ...PLACE_QUERY_OPTIONS.NEARBY(nearbyParams),
+    enabled: isSheetOpen && mode === 'nearby' && nearbyParams !== null,
+  });
   const searchQuery = useInfiniteQuery({
     ...PLACE_QUERY_OPTIONS.SEARCH(searchParams),
-    enabled: isSheetOpen && isSearchMode && isSearchReady,
+    enabled: isSheetOpen && isSearchReady,
   });
   const bookmarkQuery = useInfiniteQuery({
     ...PLACE_QUERY_OPTIONS.BOOKMARKS({ size: BOOKMARK_PAGE_SIZE }),
-    enabled: isSheetOpen && !isSearchMode,
+    enabled: isSheetOpen && mode === 'bookmark',
   });
   const { fetchNextPage: fetchNextSearchPage, refetch: refetchSearch } =
     searchQuery;
   const { fetchNextPage: fetchNextBookmarkPage, refetch: refetchBookmarks } =
     bookmarkQuery;
-  const places = useMemo<(Place | BookmarkedPlace)[]>(() => {
+  const places = useMemo<Place[]>(() => {
+    if (mode === 'nearby') {
+      return mergeCoursePlaces(nearbyQuery.data ?? []);
+    }
+
     if (isSearchMode) {
       if (!isSearchReady) {
         return [];
       }
 
-      return getUniquePlaces(
+      return mergeCoursePlaces(
         searchQuery.data?.pages.flatMap((page) => page.places) ?? [],
       );
     }
 
-    return getUniquePlaces(
-      bookmarkQuery.data?.pages.flatMap((page) => page.places) ?? [],
+    return mergeCoursePlaces(
+      bookmarkQuery.data?.pages.flatMap((page) =>
+        page.places.map(convertBookmarkedPlaceToPlace),
+      ) ?? [],
     );
   }, [
     bookmarkQuery.data?.pages,
     isSearchMode,
     isSearchReady,
+    mode,
+    nearbyQuery.data,
     searchQuery.data?.pages,
   ]);
-  const hasNextPage = isSearchMode
-    ? searchQuery.hasNextPage
-    : bookmarkQuery.hasNextPage;
-  const isFetchingNextPage = isSearchMode
-    ? searchQuery.isFetchingNextPage
-    : bookmarkQuery.isFetchingNextPage;
-  const isFetchNextPageError = isSearchMode
-    ? searchQuery.isFetchNextPageError
-    : bookmarkQuery.isFetchNextPageError;
-  const isLoading = isSearchMode
-    ? trimmedKeyword.length > 0 && (!isKeywordSynced || searchQuery.isPending)
-    : bookmarkQuery.isPending;
-  const isError = isSearchMode
-    ? isSearchReady && searchQuery.isLoadingError
-    : bookmarkQuery.isLoadingError;
+  const paginatedQuery =
+    mode === 'bookmark' ? bookmarkQuery : isSearchReady ? searchQuery : null;
+  const hasNextPage = Boolean(paginatedQuery?.hasNextPage);
+  const isFetchingNextPage = Boolean(paginatedQuery?.isFetchingNextPage);
+  const isFetchNextPageError = Boolean(paginatedQuery?.isFetchNextPageError);
+  const activeQuery = {
+    nearby: nearbyQuery,
+    search: searchQuery,
+    bookmark: bookmarkQuery,
+  }[mode];
+  const isWaitingForKeyword = isSearchMode && !isKeywordSynced;
+  const isNearbyCenterMissing = mode === 'nearby' && nearbyParams === null;
+  const isLoading = isNearbyCenterMissing
+    ? currentLocationStatus === 'loading'
+    : isWaitingForKeyword || activeQuery.isPending;
+  const isError = isNearbyCenterMissing
+    ? currentLocationStatus === 'error'
+    : !isWaitingForKeyword && activeQuery.isLoadingError;
+  const { refetch: refetchNearby } = nearbyQuery;
   const retry = useCallback(() => {
+    if (mode === 'nearby') {
+      if (nearbyParams === null) {
+        void refetchCurrentLocation();
+      } else {
+        void refetchNearby();
+      }
+      return;
+    }
+
     if (isSearchMode) {
       if (isSearchReady) {
         void refetchSearch();
@@ -160,9 +199,18 @@ export const useCoursePlaceResults = ({
     }
 
     void refetchBookmarks();
-  }, [isSearchMode, isSearchReady, refetchBookmarks, refetchSearch]);
+  }, [
+    isSearchMode,
+    isSearchReady,
+    mode,
+    nearbyParams,
+    refetchBookmarks,
+    refetchCurrentLocation,
+    refetchNearby,
+    refetchSearch,
+  ]);
   const loadMore = useCallback(() => {
-    if (!hasNextPage || isFetchingNextPage) {
+    if (!isSheetOpen || !hasNextPage || isFetchingNextPage) {
       return;
     }
 
@@ -178,18 +226,18 @@ export const useCoursePlaceResults = ({
     hasNextPage,
     isFetchingNextPage,
     isSearchMode,
+    isSheetOpen,
   ]);
 
   return {
     places,
     searchCenter,
-    isSearchMode,
-    isAwaitingKeyword: isSearchMode && trimmedKeyword.length === 0,
+    mode,
     isLoading,
     isError,
     isFetchingNextPage,
     isFetchNextPageError,
-    hasNextPage: Boolean(hasNextPage),
+    hasNextPage,
     retry,
     loadMore,
   };
