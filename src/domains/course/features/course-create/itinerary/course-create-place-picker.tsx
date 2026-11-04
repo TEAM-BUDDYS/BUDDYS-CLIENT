@@ -354,7 +354,7 @@ export const CourseCreatePlacePicker = ({
             ref={resultScrollRef}
             className="min-h-0 flex-1 scrollbar-none overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:hidden"
           >
-            {hasVisiblePlaces ? (
+            {hasVisiblePlaces && (
               <CourseCreatePlaceResultList
                 places={visiblePlaces}
                 selectedPlaceIds={selectedPlaceIds}
@@ -366,7 +366,8 @@ export const CourseCreatePlacePicker = ({
                 onPlaceFocus={handlePlaceFocus}
                 onSelect={handlePlaceFocusAndSelect}
               />
-            ) : placeResults.isLoading ? null : placeResults.isError ? (
+            )}
+            {!placeResults.isLoading && placeResults.isError && (
               <div className="flex flex-col items-center py-16">
                 <p className="text-body-r-14 text-center text-gray-500">
                   장소를 불러오지 못했어요.
@@ -379,11 +380,14 @@ export const CourseCreatePlacePicker = ({
                   다시 시도
                 </button>
               </div>
-            ) : (
-              <p className="text-body-r-14 py-16 text-center text-gray-500">
-                {resultMessages.emptyMessage}
-              </p>
             )}
+            {!hasVisiblePlaces &&
+              !placeResults.isLoading &&
+              !placeResults.isError && (
+                <p className="text-body-r-14 py-16 text-center text-gray-500">
+                  {resultMessages.emptyMessage}
+                </p>
+              )}
           </div>
 
           {(draftPlaces.length > 0 || selectedPlaces.length > 0) && (
