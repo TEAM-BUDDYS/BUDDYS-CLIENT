@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactNode, Ref } from 'react';
+import type { CSSProperties, ReactNode, Ref } from 'react';
 import { Drawer } from 'vaul';
 
 import { cn } from '@/lib/cn';
@@ -20,6 +20,7 @@ interface BottomSheetProps {
   modal?: boolean;
   repositionInputs?: boolean;
   snapPoints?: (number | string)[];
+  style?: CSSProperties;
   onClose: () => void;
   onSnapPointChange?: (snapPoint: number | string | null) => void;
 }
@@ -37,6 +38,7 @@ export const BottomSheet = ({
   modal = true,
   repositionInputs = true,
   snapPoints,
+  style,
   onClose,
   onSnapPointChange,
 }: BottomSheetProps) => {
@@ -66,6 +68,7 @@ export const BottomSheet = ({
           aria-describedby={undefined}
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledBy}
+          style={style}
           className={cn(
             'fixed right-0 bottom-0 left-0 z-50 mx-auto max-h-[calc(100dvh-24px)] w-full max-w-[430px] overflow-hidden rounded-t-[28px] bg-white shadow-[0_4px_2px_0_rgba(0,0,0,0.25)]',
             className,
