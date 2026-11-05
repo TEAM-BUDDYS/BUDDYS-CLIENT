@@ -1,11 +1,7 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { getGooglePlaceDetails } from '@/domains/course/api/google-place';
 import type { Place } from '@/domains/course/api/type';
-import {
-  getNearbyCourseItems,
-  type NearbyCourseItem,
-} from '@/domains/course/model/course-place';
 import {
   convertGooglePlaceToPlace,
   type GoogleMapPoi,
@@ -22,6 +18,13 @@ export const useCoursePlaceSelection = ({
 }: UseCoursePlaceSelectionParams) => {
   const [selectedPlace, setSelectedPlace] = useState<Place>();
   const selectionRequestIdRef = useRef(0);
+
+  useEffect(
+    () => () => {
+      selectionRequestIdRef.current += 1;
+    },
+    [],
+  );
 
   const clearSelectedPlace = useCallback(() => {
     selectionRequestIdRef.current += 1;
@@ -61,7 +64,16 @@ export const useCoursePlaceSelection = ({
     async (poi: GoogleMapPoi) => {
       const requestId = selectionRequestIdRef.current + 1;
       selectionRequestIdRef.current = requestId;
-      const googlePlace = await getGooglePlaceDetails(poi.placeId);
+      let googlePlace;
+
+      try {
+        googlePlace = await getGooglePlaceDetails(poi.placeId);
+      } catch (error) {
+        if (selectionRequestIdRef.current !== requestId) return undefined;
+
+        throw error;
+      }
+
       const knownBookmarkedPlace = bookmarkedPlaces.find(
         (place) => place.placeId === poi.placeId,
       );
@@ -101,14 +113,8 @@ export const useCoursePlaceSelection = ({
     return { ...selectedPlace, bookmarked: true };
   }, [bookmarkedPlaces, selectedPlace]);
 
-  const nearbyItems = useMemo<NearbyCourseItem[]>(
-    () => getNearbyCourseItems(nearbyPlaces, resolvedSelectedPlace),
-    [nearbyPlaces, resolvedSelectedPlace],
-  );
-
   return {
     clearSelectedPlace,
-    nearbyItems,
     selectedPlace: resolvedSelectedPlace,
     selectedPlaceId: resolvedSelectedPlace?.placeId,
     selectGooglePlace,

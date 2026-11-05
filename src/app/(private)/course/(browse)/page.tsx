@@ -10,15 +10,16 @@ import { MapFloatingControls } from '@/domains/course/components/map-floating-co
 import { useCourseBrowse } from '@/domains/course/features/course-browse/course-browse-provider';
 import { useBookmarkedPlaceMarkers } from '@/domains/course/features/course-browse/use-bookmarked-place-markers';
 import { useBookmarkedPlaces } from '@/domains/course/features/course-browse/use-bookmarked-places';
-import { useCoursePlaceSelection } from '@/domains/course/features/course-browse/use-course-place-selection';
 import { useNearbyPlaces } from '@/domains/course/features/course-browse/use-nearby-places';
 import { usePlaceBookmark } from '@/domains/course/features/course-browse/use-place-bookmark';
+import { useCoursePlaceSelection } from '@/domains/course/hook/use-course-place-selection';
 import type {
   CourseMapBounds,
   CourseMapCenter,
 } from '@/domains/course/model/course-map';
 import {
   type CourseMapCategory,
+  getNearbyCourseItems,
   mergeCoursePlaces,
 } from '@/domains/course/model/course-place';
 import type { GoogleMapPoi } from '@/domains/course/model/google-place';
@@ -91,7 +92,6 @@ export default function CoursePage() {
   const bookmarkedMarkers = useBookmarkedPlaceMarkers({ bounds: mapBounds });
   const {
     clearSelectedPlace,
-    nearbyItems,
     selectedPlace,
     selectedPlaceId,
     selectGooglePlace,
@@ -102,6 +102,10 @@ export default function CoursePage() {
     nearbyPlaces,
     bookmarkedPlaces: bookmarkedMarkers.places,
   });
+  const nearbyItems = useMemo(
+    () => getNearbyCourseItems(nearbyPlaces, selectedPlace),
+    [nearbyPlaces, selectedPlace],
+  );
   const { pendingPlaceIds: pendingBookmarkPlaceIds, updateBookmark } =
     usePlaceBookmark({
       onBookmarkChange: updateSelectedPlaceBookmark,
