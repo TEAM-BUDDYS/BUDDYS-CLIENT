@@ -62,7 +62,7 @@ export const CourseCreateCityStep = ({
         />
 
         {isResultOpen && (
-          <OptionList id={CITY_RESULT_LIST_ID}>
+          <OptionList id={CITY_RESULT_LIST_ID} className="shadow-none">
             {citySearch.cities.map((city) => (
               <OptionItem
                 key={city.id}
