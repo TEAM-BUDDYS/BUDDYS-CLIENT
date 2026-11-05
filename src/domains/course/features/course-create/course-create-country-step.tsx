@@ -72,7 +72,11 @@ export const CourseCreateCountryStep = ({
         />
 
         {isResultOpen && (
-          <OptionList id={COUNTRY_RESULT_LIST_ID} onScroll={handleResultScroll}>
+          <OptionList
+            id={COUNTRY_RESULT_LIST_ID}
+            className="shadow-none"
+            onScroll={handleResultScroll}
+          >
             {countrySearch.countries.map((country) => (
               <OptionItem
                 key={country.id}

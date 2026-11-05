@@ -40,6 +40,7 @@ export const TextField = ({
   'aria-invalid': ariaInvalid,
   ...inputProps
 }: TextFieldProps) => {
+  const { maxLength, value } = inputProps;
   const generatedId = useId();
   const inputId = id ?? generatedId;
   const messageId = message ? `${inputId}-message` : undefined;
@@ -47,8 +48,13 @@ export const TextField = ({
     suffix || status === 'default' ? null : STATUS_ICONS[status];
   const hasClearButton =
     status === 'default' && Boolean(onClear) && !disabled && !suffix;
+  const hasTrailingContent = Boolean(StatusIcon || hasClearButton || suffix);
+  const showCount =
+    typeof maxLength === 'number' && value != null && !hasTrailingContent;
+  const countId = showCount ? `${inputId}-count` : undefined;
   const describedBy =
-    [ariaDescribedBy, messageId].filter(Boolean).join(' ') || undefined;
+    [ariaDescribedBy, messageId, countId].filter(Boolean).join(' ') ||
+    undefined;
 
   return (
     <div className="flex w-full flex-col gap-2">
@@ -80,7 +86,8 @@ export const TextField = ({
             status === 'default' &&
               !disabled &&
               'not-placeholder-shown:not-focus-visible:border-gray-200',
-            (StatusIcon || hasClearButton || suffix) && 'pr-12',
+            hasTrailingContent && 'pr-12',
+            showCount && 'pr-16',
             status === 'error' &&
               'border-error-50 focus-visible:border-error-50 focus-visible:ring-error-50',
             status === 'success' &&
@@ -119,6 +126,15 @@ export const TextField = ({
           <div className="absolute top-1/2 right-4 -translate-y-1/2">
             {suffix}
           </div>
+        )}
+
+        {showCount && (
+          <span
+            className="text-caption-r-12 pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 whitespace-nowrap text-gray-500"
+            id={countId}
+          >
+            {Math.min(String(value).length, maxLength)}/{maxLength}
+          </span>
         )}
       </div>
 
