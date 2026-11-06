@@ -161,6 +161,7 @@ export const convertChatRoomDetailResponse = (
   response: GetChatRoomResponse,
 ): ChatRoomDetail => {
   const canSendMessage = response.data?.canSendMessage;
+  const canRecordCourse = response.data?.canRecordCourse;
   const createdAt = response.data?.createdAt;
   const participantNickname = response.data?.participant?.nickname;
   const participantUserId = response.data?.participant?.userId;
@@ -174,6 +175,7 @@ export const convertChatRoomDetailResponse = (
     typeof participantNickname !== 'string' ||
     participantNickname.length === 0 ||
     typeof canSendMessage !== 'boolean' ||
+    typeof canRecordCourse !== 'boolean' ||
     typeof hasBlocked !== 'boolean' ||
     typeof hasReported !== 'boolean'
   ) {
@@ -183,6 +185,7 @@ export const convertChatRoomDetailResponse = (
   }
 
   return {
+    canRecordCourse,
     canSendMessage,
     createdAt,
     participantNickname,

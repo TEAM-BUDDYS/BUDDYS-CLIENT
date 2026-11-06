@@ -719,8 +719,8 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * 타 유저가 작성한 코스 목록 조회
-     * @description 특정 사용자가 작성한 코스 목록을 조회합니다.
+     * 타 유저 코스 목록 조회
+     * @description 특정 사용자가 작성하거나 동행으로 태그된 코스 목록을 최신순으로 조회합니다.
      */
     get: operations['getUserCourses'];
     put?: never;
@@ -824,8 +824,8 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * 내가 작성한 코스 목록 조회
-     * @description 로그인한 사용자가 작성한 코스 목록을 조회합니다.
+     * 내 코스 목록 조회
+     * @description 로그인한 사용자가 작성하거나 동행으로 태그된 코스 목록을 최신순으로 조회합니다.
      */
     get: operations['getMyCourses'];
     put?: never;
@@ -1290,7 +1290,7 @@ export interface paths {
     };
     /**
      * 채팅방 상세 조회
-     * @description 채팅방 ID로 채팅방 기본 정보와 상대방 정보를 조회합니다. 내가 상대방을 차단했거나 신고한 경우 canSendMessage가 false로 응답되며, hasBlocked와 hasReported로 그 이유를 구분할 수 있습니다. 상대방이 나를 차단했거나 신고한 경우에는 영향을 받지 않습니다.
+     * @description 채팅방 ID로 채팅방 기본 정보와 상대방 정보를 조회합니다. 내가 상대방을 차단했거나 신고한 경우 canSendMessage가 false로 응답되며, hasBlocked와 hasReported로 그 이유를 구분할 수 있습니다. 상대방이 나를 차단했거나 신고한 경우에는 영향을 받지 않습니다. 양측이 주고받은 메시지가 20개 이상이면 canRecordCourse가 true로 응답됩니다.
      */
     get: operations['getChatRoom'];
     put?: never;
@@ -1413,14 +1413,14 @@ export interface components {
        */
       bio: string | null;
       /**
-       * @description 프로필 이미지 URL. 최대 512자. 이미지 업로드 API(imageDomain=PROFILE)로 발급받은 URL 또는 현재 설정된 값만 허용합니다. null이면 기존 프로필 이미지를 삭제합니다.
+       * @description 프로필 이미지 URL. 최대 2048자. 이미지 업로드 API(imageDomain=PROFILE)로 발급받은 URL 또는 현재 설정된 값만 허용합니다. null이면 기존 프로필 이미지를 삭제합니다.
        * @example https://example.com/profile.png
        */
       profileImageUrl: string | null;
       /**
        * @description 드래그앤드롭으로 정렬한 전체 선택 태그 ID 목록입니다.
        *     카테고리와 무관하게 상위 3개가 대표 태그로 노출됩니다.
-       *     서버에서 활동 1~3개, 관심사 1~3개, 여행 스타일 1~5개인지 검증합니다.
+       *     서버에서 활동 1~3개, 관심사 1~2개, 여행 스타일 1~2개인지 검증합니다.
        * @example [
        *       27,
        *       1,
@@ -1428,7 +1428,7 @@ export interface components {
        *       3,
        *       18,
        *       30,
-       *       34
+       *       2
        *     ]
        */
       orderedTagIds: number[];
@@ -1600,6 +1600,14 @@ export interface components {
        *     ]
        */
       tagIds: number[];
+      /**
+       * @description 함께한 유저 ID 목록 (최대 11명). 미전달(null) 시 기존 동행을 유지하고, 전달 시 이 목록으로 전체 교체합니다. 빈 배열이면 동행을 모두 삭제합니다. 탈퇴한 유저는 기존 동행인 경우에만 유지할 수 있습니다.
+       * @example [
+       *       12,
+       *       30
+       *     ]
+       */
+      companionUserIds?: number[] | null;
       /** @description 일자별 코스 목록 (최대 30일). 기존 일자/장소/사진/항공편 정보를 모두 대체합니다. */
       days: components['schemas']['CourseDayRequest'][];
     };
@@ -1741,7 +1749,7 @@ export interface components {
        */
       endDate: string;
       /**
-       * @description 게시글 제목
+       * @description 게시글 제목. 최대 40자
        * @example 주말에 파리 근교 함께 가실 분!
        */
       title: string;
@@ -2121,6 +2129,11 @@ export interface components {
        * @example false
        */
       hasReported?: boolean;
+      /**
+       * @description 코스 기록 가능 여부. 채팅방에서 양측이 주고받은 메시지가 20개 이상이면 true입니다.
+       * @example false
+       */
+      canRecordCourse?: boolean;
     };
     ReportChatPartnerRequest: {
       /**
@@ -2191,7 +2204,7 @@ export interface components {
        */
       activityTagIds: number[];
       /**
-       * @description 관심사 태그 ID 목록. 1~3개
+       * @description 관심사 태그 ID 목록. 1~2개
        * @example [
        *       13,
        *       26
@@ -2199,7 +2212,7 @@ export interface components {
        */
       interestTagIds: number[];
       /**
-       * @description 여행 스타일 태그 ID 목록. 1~5개
+       * @description 여행 스타일 태그 ID 목록. 1~2개
        * @example [
        *       27,
        *       30
@@ -2229,7 +2242,7 @@ export interface components {
        */
       bio?: string | null;
       /**
-       * @description 프로필 이미지 URL. 이미지 업로드 API(imageDomain=PROFILE)로 발급받은 URL 또는 현재 설정된 값만 허용합니다.
+       * @description 프로필 이미지 URL. 최대 2048자. 이미지 업로드 API(imageDomain=PROFILE)로 발급받은 URL 또는 현재 설정된 값만 허용합니다.
        * @example https://example.com/profile.png
        */
       profileImageUrl?: string | null;
@@ -2300,7 +2313,7 @@ export interface components {
        */
       endDate?: string;
       /**
-       * @description 전달하면 제목을 수정하고, 미전달 시 기존 값을 유지합니다. null 불가, 최대 120자
+       * @description 전달하면 제목을 수정하고, 미전달 시 기존 값을 유지합니다. null 불가, 최대 40자
        * @example 주말에 파리 근교 함께 가실 분!
        */
       title?: string;
@@ -8431,7 +8444,7 @@ export interface operations {
     };
     requestBody?: never;
     responses: {
-      /** @description 타 유저가 작성한 코스 목록 조회 성공 */
+      /** @description 타 유저 코스 목록 조회 성공 */
       200: {
         headers: {
           [name: string]: unknown;
@@ -8932,7 +8945,7 @@ export interface operations {
     };
     requestBody?: never;
     responses: {
-      /** @description 내가 작성한 코스 목록 조회 성공 */
+      /** @description 내 코스 목록 조회 성공 */
       200: {
         headers: {
           [name: string]: unknown;

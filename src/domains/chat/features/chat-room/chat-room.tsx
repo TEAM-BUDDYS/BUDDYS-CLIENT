@@ -220,10 +220,10 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
           isFetchPreviousMessagesError={isFetchNextPageError}
           onLoadPreviousMessages={fetchNextPage}
         />
-        {!isInputDisabled && (
+        {!isInputDisabled && chatRoomData.canRecordCourse && (
           <div className="mx-4 mb-4">
             <Button onClick={handleCourseCreateClick}>
-              코스 기록 바로가기
+              함께 코스 기록하기
             </Button>
           </div>
         )}
