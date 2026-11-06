@@ -1,11 +1,18 @@
-import { Skeleton } from '@/shared/components/ui';
+import { cn } from '@/lib/cn';
 
-export const CourseSaveCardSkeleton = () => {
+import { Skeleton } from './skeleton';
+
+interface HorizontalCardSkeletonProps {
+  className?: string;
+}
+
+export const HorizontalCardSkeleton = ({
+  className,
+}: HorizontalCardSkeletonProps) => {
   return (
-    <article
-      role="status"
-      aria-label="장소 정보를 불러오는 중"
-      className="flex w-full items-center gap-4"
+    <div
+      aria-hidden
+      className={cn('flex w-full items-center gap-4', className)}
     >
       <Skeleton className="size-25 shrink-0 rounded-xl" />
 
@@ -20,6 +27,6 @@ export const CourseSaveCardSkeleton = () => {
 
         <Skeleton className="size-6 shrink-0 rounded-sm" />
       </div>
-    </article>
+    </div>
   );
 };

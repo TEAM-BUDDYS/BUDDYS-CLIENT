@@ -6,16 +6,45 @@ import { COURSE_QUERY_OPTIONS } from '@/domains/course/api/course';
 import type { GetCoursesParams } from '@/domains/course/api/type';
 import { CourseListCard } from '@/domains/home/components/course-list-card/course-list-card';
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
+import {
+  SectionHeaderSkeleton,
+  SkeletonList,
+} from '@/domains/home/components/skeleton';
 import { useCountryCourseBookmark } from '@/domains/home/hooks/use-country-course-bookmark';
 import {
   type DisplayableCountryCourse,
   toDisplayableCountryCourses,
 } from '@/domains/home/model/country-course';
 import { PROFILE_QUERY_OPTIONS } from '@/domains/profile/api/query';
-import { AsyncBoundary, EmptyState } from '@/shared/components/ui';
+import {
+  AsyncBoundary,
+  EmptyState,
+  HorizontalCardSkeleton,
+} from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
 const EXCHANGE_COUNTRY_COURSE_SIZE = 3;
+
+const ExchangeCountryCourseListSkeleton = () => {
+  return (
+    <SkeletonList
+      count={EXCHANGE_COUNTRY_COURSE_SIZE}
+      label="파견국가 코스를 불러오는 중"
+      className="flex flex-col gap-5"
+    >
+      <HorizontalCardSkeleton />
+    </SkeletonList>
+  );
+};
+
+const ExchangeCountryCourseSectionSkeleton = () => {
+  return (
+    <div className="flex flex-col gap-5">
+      <SectionHeaderSkeleton />
+      <ExchangeCountryCourseListSkeleton />
+    </div>
+  );
+};
 
 interface ExchangeCountryCourseItemProps {
   course: DisplayableCountryCourse;
@@ -86,7 +115,10 @@ const ExchangeCountryCourseContent = () => {
         title={`${exchangeCountry.name}의 코스를 둘러보세요`}
         moreHref={ROUTES.COURSE.SUGGEST_EXPLORE}
       />
-      <AsyncBoundary className="py-8">
+      <AsyncBoundary
+        className="py-8"
+        loadingFallback={<ExchangeCountryCourseListSkeleton />}
+      >
         <ExchangeCountryCourseList countryId={exchangeCountry.id} />
       </AsyncBoundary>
     </section>
@@ -95,7 +127,10 @@ const ExchangeCountryCourseContent = () => {
 
 export const ExchangeCountryCourseSection = () => {
   return (
-    <AsyncBoundary className="py-8">
+    <AsyncBoundary
+      className="py-8"
+      loadingFallback={<ExchangeCountryCourseSectionSkeleton />}
+    >
       <ExchangeCountryCourseContent />
     </AsyncBoundary>
   );

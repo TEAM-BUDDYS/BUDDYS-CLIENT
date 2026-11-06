@@ -5,12 +5,40 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { COURSE_QUERY_OPTIONS } from '@/domains/course/api/course';
 import { CourseTileCard } from '@/domains/home/components/course-tile-card/course-tile-card';
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
+import {
+  CourseTileCardSkeleton,
+  SectionHeaderSkeleton,
+  SkeletonList,
+} from '@/domains/home/components/skeleton';
 import { toDisplayableCountryCourses } from '@/domains/home/model/country-course';
 import { PROFILE_QUERY_OPTIONS } from '@/domains/profile/api/query';
 import { AsyncBoundary, EmptyState } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
 const INTEREST_COUNTRY_COURSE_SIZE = 4;
+
+const InterestCountryCourseListSkeleton = () => {
+  return (
+    <div className="-mx-4 overflow-hidden px-4">
+      <SkeletonList
+        count={INTEREST_COUNTRY_COURSE_SIZE}
+        label="관심국가 코스를 불러오는 중"
+        className="flex gap-5"
+      >
+        <CourseTileCardSkeleton className="shrink-0" />
+      </SkeletonList>
+    </div>
+  );
+};
+
+const InterestCountryCourseSectionSkeleton = () => {
+  return (
+    <div className="flex flex-col gap-5">
+      <SectionHeaderSkeleton />
+      <InterestCountryCourseListSkeleton />
+    </div>
+  );
+};
 
 const InterestCountryCourseList = ({ countryId }: { countryId: number }) => {
   const { data } = useSuspenseQuery(
@@ -69,7 +97,10 @@ const InterestCountryCourseContent = () => {
         title={`${interestCountry.name}의 코스를 둘러보세요`}
         moreHref={ROUTES.COURSE.CUSTOMIZED_EXPLORE}
       />
-      <AsyncBoundary className="py-8">
+      <AsyncBoundary
+        className="py-8"
+        loadingFallback={<InterestCountryCourseListSkeleton />}
+      >
         <InterestCountryCourseList countryId={interestCountry.id} />
       </AsyncBoundary>
     </section>
@@ -78,7 +109,10 @@ const InterestCountryCourseContent = () => {
 
 export const InterestCountryCourseSection = () => {
   return (
-    <AsyncBoundary className="py-8">
+    <AsyncBoundary
+      className="py-8"
+      loadingFallback={<InterestCountryCourseSectionSkeleton />}
+    >
       <InterestCountryCourseContent />
     </AsyncBoundary>
   );

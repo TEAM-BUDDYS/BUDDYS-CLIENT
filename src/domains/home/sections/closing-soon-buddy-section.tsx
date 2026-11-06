@@ -13,8 +13,8 @@ import { POST_QUERY_OPTIONS } from '@/domains/posts/api/query';
 import { usePostBookmark } from '@/domains/posts/features/post-bookmark/use-post-bookmark';
 import {
   AsyncBoundary,
-  CardListSkeleton,
   EmptyState,
+  HorizontalCardSkeleton,
 } from '@/shared/components/ui';
 
 const CLOSING_SOON_SKELETON_COUNT = 4;
@@ -26,7 +26,7 @@ const ClosingSoonPostListSkeleton = () => {
       label="마감임박 게시물을 불러오는 중"
       className="flex flex-col gap-5"
     >
-      <CardListSkeleton />
+      <HorizontalCardSkeleton />
     </SkeletonList>
   );
 };
