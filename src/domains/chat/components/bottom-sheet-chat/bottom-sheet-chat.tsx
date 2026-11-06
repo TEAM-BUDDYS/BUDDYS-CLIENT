@@ -129,7 +129,7 @@ export const BottomSheetChat = ({
   return (
     <>
       <BottomSheet open={open} onClose={handleClose} ariaLabel="채팅방 옵션">
-        <div className="mx-4 mb-8.5 flex flex-col gap-4">
+        <div className="mx-4 mb-6 flex flex-col gap-4">
           <div className="overflow-hidden rounded-xl [&>button]:rounded-none">
             {menuItems.map(({ label, icon, onClick }) => (
               <Button
