@@ -5,9 +5,27 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { HOME_QUERY_OPTIONS } from '@/domains/home/api/query';
 import { MagazineCard } from '@/domains/home/components/magazine-card/magazine-card';
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
+import {
+  ImageCardSkeleton,
+  SkeletonList,
+} from '@/domains/home/components/skeleton';
 import { useCurrentMonth } from '@/domains/home/hooks/use-current-month';
 import { AsyncBoundary, EmptyState } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
+
+const BUDDYS_MAGAZINE_SIZE = 2;
+
+const BuddysMagazineListSkeleton = () => {
+  return (
+    <SkeletonList
+      count={BUDDYS_MAGAZINE_SIZE}
+      label="버디즈 매거진을 불러오는 중"
+      className="flex flex-col gap-5"
+    >
+      <ImageCardSkeleton />
+    </SkeletonList>
+  );
+};
 
 const BuddysMagazineList = () => {
   const { data: response } = useSuspenseQuery(
@@ -15,7 +33,7 @@ const BuddysMagazineList = () => {
       category: 'SUPPORT',
       sort: 'LATEST',
       page: 0,
-      size: 2,
+      size: BUDDYS_MAGAZINE_SIZE,
     }),
   );
 
@@ -58,7 +76,7 @@ export const BuddysMagazineSection = () => {
         moreHref={ROUTES.MAGAZINE}
       />
 
-      <AsyncBoundary>
+      <AsyncBoundary loadingFallback={<BuddysMagazineListSkeleton />}>
         <BuddysMagazineList />
       </AsyncBoundary>
     </section>
