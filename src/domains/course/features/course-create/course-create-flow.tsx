@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { useAuthSession } from '@/domains/auth/features/auth-session/auth-session-provider';
 import { cn } from '@/lib/cn';
 import { USER_QUERY_OPTIONS } from '@/shared/api';
 import { Header } from '@/shared/components/layout';
@@ -41,6 +42,7 @@ export const CourseCreateFlow = ({
   companionUserId,
 }: CourseCreateFlowProps) => {
   const router = useRouter();
+  const { userId } = useAuthSession();
   const [currentScreen, setCurrentScreen] =
     useState<CourseCreateScreen>('country');
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
@@ -65,7 +67,7 @@ export const CourseCreateFlow = ({
       : undefined;
   const courseCreateForm = useCourseCreateForm(initialCourse, initialCompanion);
   const { clearSubmitError, isSubmitting, submitCourse, submitErrorMessage } =
-    useCourseSubmit({ courseId: initialCourse?.courseId });
+    useCourseSubmit(initialCourse);
   const isEditMode = initialCourse !== undefined;
 
   if (flightDayNumber !== null) {
@@ -83,9 +85,7 @@ export const CourseCreateFlow = ({
   const currentProgressStep =
     COURSE_CREATE_PROGRESS_STEP_BY_SCREEN[currentScreen];
   const canGoNext = courseCreateForm.canGoNext(currentScreen);
-  const isSubmitScreen = isEditMode
-    ? currentScreen === 'itinerary'
-    : currentScreen === 'companion';
+  const isSubmitScreen = currentScreen === 'companion';
   const isQuestionScreen =
     currentScreen !== 'detail' && currentScreen !== 'itinerary';
 
@@ -163,7 +163,7 @@ export const CourseCreateFlow = ({
       return;
     }
 
-    if (currentScreen === 'itinerary' && !isEditMode) {
+    if (currentScreen === 'itinerary') {
       setCurrentScreen('companion');
     }
   };
@@ -194,11 +194,7 @@ export const CourseCreateFlow = ({
         <div className="px-4">
           <ProgressBar
             currentStep={currentProgressStep}
-            totalStep={
-              isEditMode
-                ? COURSE_CREATE_PROGRESS_STEP_BY_SCREEN.itinerary
-                : COURSE_CREATE_TOTAL_STEP
-            }
+            totalStep={COURSE_CREATE_TOTAL_STEP}
           />
         </div>
       </div>
@@ -221,7 +217,11 @@ export const CourseCreateFlow = ({
         >
           {isQuestionScreen && (
             <CourseCreateQuestionHeader
-              title={COURSE_CREATE_QUESTION_CONTENT[currentScreen].title}
+              title={
+                isEditMode && currentScreen === 'companion'
+                  ? '코스를 함께한 동행을 수정해보세요'
+                  : COURSE_CREATE_QUESTION_CONTENT[currentScreen].title
+              }
               description={
                 COURSE_CREATE_QUESTION_CONTENT[currentScreen].description
               }
@@ -293,6 +293,7 @@ export const CourseCreateFlow = ({
 
           {currentScreen === 'companion' && (
             <CourseCreateCompanionStep
+              excludedUserId={isEditMode ? userId : null}
               isSubmitting={isSubmitting}
               selectedCompanions={courseCreateForm.selectedCompanions}
               onCompanionSelect={courseCreateForm.handleCompanionSelect}

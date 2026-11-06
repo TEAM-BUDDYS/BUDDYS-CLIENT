@@ -16,11 +16,7 @@ import {
   convertCourseCreateValueToRequest,
   convertCourseUpdateValueToRequest,
 } from './course-create-payload';
-import type { CourseCreateValue } from './model';
-
-interface UseCourseSubmitParams {
-  courseId?: number;
-}
+import type { CourseCreateInitialValue, CourseCreateValue } from './model';
 
 const getCourseSubmitErrorMessage = (error: unknown, isEditMode: boolean) => {
   const defaultMessage = `코스를 ${isEditMode ? '수정' : '등록'}하지 못했습니다.`;
@@ -40,13 +36,23 @@ const getCourseSubmitErrorMessage = (error: unknown, isEditMode: boolean) => {
 
     const response = error.data as CourseErrorResponse | undefined;
 
+    if (isEditMode && response?.code === 'COURSE-E003') {
+      return '탈퇴했거나 존재하지 않는 사용자는 동행으로 추가할 수 없어요.';
+    }
+
+    if (isEditMode && response?.code === 'COURSE-E008') {
+      return '코스 작성자는 동행으로 추가할 수 없어요.';
+    }
+
     return response?.message || defaultMessage;
   }
 
   return error instanceof Error ? error.message : defaultMessage;
 };
 
-export const useCourseSubmit = ({ courseId }: UseCourseSubmitParams = {}) => {
+export const useCourseSubmit = (
+  initialCourse?: Pick<CourseCreateInitialValue, 'courseId' | 'companions'>,
+) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { showToast } = useToast();
@@ -57,7 +63,6 @@ export const useCourseSubmit = ({ courseId }: UseCourseSubmitParams = {}) => {
   const [submitErrorMessage, setSubmitErrorMessage] = useState<string | null>(
     null,
   );
-  const isEditMode = courseId !== undefined;
 
   const clearSubmitError = () => {
     setSubmitErrorMessage(null);
@@ -106,8 +111,13 @@ export const useCourseSubmit = ({ courseId }: UseCourseSubmitParams = {}) => {
     try {
       const dayImageUrls = await uploadDayImages(value);
 
-      if (isEditMode) {
-        const payload = convertCourseUpdateValueToRequest(value, dayImageUrls);
+      if (initialCourse) {
+        const { courseId, companions } = initialCourse;
+        const payload = convertCourseUpdateValueToRequest(
+          value,
+          dayImageUrls,
+          companions,
+        );
         const updatedCourseId = await updateCourseMutation.mutateAsync({
           courseId,
           body: payload,
@@ -119,6 +129,21 @@ export const useCourseSubmit = ({ courseId }: UseCourseSubmitParams = {}) => {
         void queryClient.invalidateQueries({
           queryKey: COURSE_QUERY_KEY.BOOKMARKS_ALL(),
           refetchType: 'none',
+        });
+        void queryClient.invalidateQueries({
+          queryKey: USER_QUERY_KEY.ME_COURSES_ALL(),
+          refetchType: 'none',
+        });
+        const affectedUserIds = new Set([
+          ...companions.map(({ userId }) => userId),
+          ...(payload.companionUserIds ?? []),
+        ]);
+
+        affectedUserIds.forEach((userId) => {
+          void queryClient.invalidateQueries({
+            queryKey: USER_QUERY_KEY.COURSES_ALL(userId),
+            refetchType: 'none',
+          });
         });
         showToast('코스가 수정되었어요', {
           bottomOffsetClassName: 'bottom-26.5',
@@ -146,7 +171,9 @@ export const useCourseSubmit = ({ courseId }: UseCourseSubmitParams = {}) => {
       ]);
       router.replace(ROUTES.COURSE.DETAIL(createdCourseId));
     } catch (error) {
-      setSubmitErrorMessage(getCourseSubmitErrorMessage(error, isEditMode));
+      setSubmitErrorMessage(
+        getCourseSubmitErrorMessage(error, Boolean(initialCourse)),
+      );
       setIsSubmitting(false);
     }
   };

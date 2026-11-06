@@ -4,7 +4,11 @@ import type {
 } from '@/domains/course/api/type';
 import { formatDateToIsoDate } from '@/shared/utils/format-date-range';
 
-import type { CourseCreateDayFormState, CourseCreateValue } from './model';
+import type {
+  CourseCreateCompanion,
+  CourseCreateDayFormState,
+  CourseCreateValue,
+} from './model';
 
 const convertCoursePlace = (
   place: CourseCreateDayFormState['places'][number],
@@ -110,6 +114,7 @@ export const convertCourseCreateValueToRequest = (
 export const convertCourseUpdateValueToRequest = (
   value: CourseCreateValue,
   dayImageUrls: string[][],
+  initialCompanions: CourseCreateCompanion[],
 ): UpdateCourseRequest => {
   if (dayImageUrls.length !== value.days.length) {
     throw new Error('코스 이미지 업로드 결과가 올바르지 않습니다.');
@@ -121,6 +126,12 @@ export const convertCourseUpdateValueToRequest = (
     ...value.detail.interestTagIds,
     ...value.detail.travelStyleTagIds,
   ];
+  const initialCompanionIds = new Set(
+    initialCompanions.map(({ userId }) => userId),
+  );
+  const hasCompanionChanges =
+    value.companionUserIds.length !== initialCompanionIds.size ||
+    value.companionUserIds.some((userId) => !initialCompanionIds.has(userId));
 
   return {
     countryIds: value.countries.map(({ id }) => id),
@@ -134,6 +145,9 @@ export const convertCourseUpdateValueToRequest = (
       ? formatDateToIsoDate(value.dateRange.endDate)
       : null,
     tagIds,
+    ...(hasCompanionChanges
+      ? { companionUserIds: value.companionUserIds }
+      : {}),
     days: value.days.map((day, index) =>
       convertCourseDay(day, dayImageUrls[index] ?? []),
     ),
