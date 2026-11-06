@@ -1,13 +1,11 @@
 import { cn } from '@/lib/cn';
 import { Skeleton } from '@/shared/components/ui/skeleton/skeleton';
 
-interface MagazineCardSkeletonProps {
+interface ImageCardSkeletonProps {
   className?: string;
 }
 
-export const MagazineCardSkeleton = ({
-  className,
-}: MagazineCardSkeletonProps) => {
+export const ImageCardSkeleton = ({ className }: ImageCardSkeletonProps) => {
   return (
     <div
       aria-hidden

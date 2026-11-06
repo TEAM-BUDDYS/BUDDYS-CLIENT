@@ -2,6 +2,10 @@
 
 import { useSuspenseQuery } from '@tanstack/react-query';
 
+import {
+  ImageCardSkeleton,
+  SkeletonList,
+} from '@/domains/home/components/skeleton';
 import { RECOMMENDATION_QUERY_OPTIONS } from '@/shared/api';
 import { AsyncBoundary, EmptyState } from '@/shared/components/ui';
 
@@ -11,6 +15,14 @@ import {
 } from '../components/carousel/carousel';
 
 const TODAY_BUDDY_SIZE = 3;
+
+const TodayBuddyPostListSkeleton = () => {
+  return (
+    <SkeletonList count={1} label="오늘의 추천 동행을 불러오는 중">
+      <ImageCardSkeleton />
+    </SkeletonList>
+  );
+};
 
 const TodayBuddyPostList = () => {
   const { data } = useSuspenseQuery(
@@ -39,7 +51,10 @@ const TodayBuddyPostList = () => {
 export const TodayBuddySection = () => {
   return (
     <section className="pt-3" aria-label="오늘의 추천 동행">
-      <AsyncBoundary className="py-8">
+      <AsyncBoundary
+        className="py-8"
+        loadingFallback={<TodayBuddyPostListSkeleton />}
+      >
         <TodayBuddyPostList />
       </AsyncBoundary>
     </section>
