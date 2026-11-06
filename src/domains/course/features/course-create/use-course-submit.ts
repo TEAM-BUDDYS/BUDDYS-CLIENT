@@ -51,6 +51,7 @@ const getCourseSubmitErrorMessage = (error: unknown, isEditMode: boolean) => {
 };
 
 export const useCourseSubmit = (
+  currentUserId: number | null,
   initialCourse?: Pick<CourseCreateInitialValue, 'courseId' | 'companions'>,
 ) => {
   const router = useRouter();
@@ -138,6 +139,9 @@ export const useCourseSubmit = (
           ...companions.map(({ userId }) => userId),
           ...(payload.companionUserIds ?? []),
         ]);
+        if (currentUserId !== null) {
+          affectedUserIds.add(currentUserId);
+        }
 
         affectedUserIds.forEach((userId) => {
           void queryClient.invalidateQueries({

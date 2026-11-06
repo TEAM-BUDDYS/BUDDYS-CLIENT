@@ -67,7 +67,7 @@ export const CourseCreateFlow = ({
       : undefined;
   const courseCreateForm = useCourseCreateForm(initialCourse, initialCompanion);
   const { clearSubmitError, isSubmitting, submitCourse, submitErrorMessage } =
-    useCourseSubmit(initialCourse);
+    useCourseSubmit(userId, initialCourse);
   const isEditMode = initialCourse !== undefined;
 
   if (flightDayNumber !== null) {
