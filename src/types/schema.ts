@@ -719,8 +719,8 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * 타 유저가 작성한 코스 목록 조회
-     * @description 특정 사용자가 작성한 코스 목록을 조회합니다.
+     * 타 유저 코스 목록 조회
+     * @description 특정 사용자가 작성하거나 동행으로 태그된 코스 목록을 최신순으로 조회합니다.
      */
     get: operations['getUserCourses'];
     put?: never;
@@ -824,8 +824,8 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * 내가 작성한 코스 목록 조회
-     * @description 로그인한 사용자가 작성한 코스 목록을 조회합니다.
+     * 내 코스 목록 조회
+     * @description 로그인한 사용자가 작성하거나 동행으로 태그된 코스 목록을 최신순으로 조회합니다.
      */
     get: operations['getMyCourses'];
     put?: never;
@@ -1600,6 +1600,14 @@ export interface components {
        *     ]
        */
       tagIds: number[];
+      /**
+       * @description 함께한 유저 ID 목록 (최대 11명). 미전달(null) 시 기존 동행을 유지하고, 전달 시 이 목록으로 전체 교체합니다. 빈 배열이면 동행을 모두 삭제합니다. 탈퇴한 유저는 기존 동행인 경우에만 유지할 수 있습니다.
+       * @example [
+       *       12,
+       *       30
+       *     ]
+       */
+      companionUserIds?: number[] | null;
       /** @description 일자별 코스 목록 (최대 30일). 기존 일자/장소/사진/항공편 정보를 모두 대체합니다. */
       days: components['schemas']['CourseDayRequest'][];
     };
@@ -8431,7 +8439,7 @@ export interface operations {
     };
     requestBody?: never;
     responses: {
-      /** @description 타 유저가 작성한 코스 목록 조회 성공 */
+      /** @description 타 유저 코스 목록 조회 성공 */
       200: {
         headers: {
           [name: string]: unknown;
@@ -8932,7 +8940,7 @@ export interface operations {
     };
     requestBody?: never;
     responses: {
-      /** @description 내가 작성한 코스 목록 조회 성공 */
+      /** @description 내 코스 목록 조회 성공 */
       200: {
         headers: {
           [name: string]: unknown;
