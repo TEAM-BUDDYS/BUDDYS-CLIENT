@@ -78,6 +78,7 @@ export const convertCourseDetailToInitialValue = (
 
   return {
     courseId: course.courseId,
+    companions: course.companions,
     countries: course.countries.map(({ countryId, name }) => ({
       id: countryId,
       name,

@@ -94,7 +94,10 @@ export const useCourseCreateForm = (
   );
   const [selectedCompanions, setSelectedCompanions] = useState<
     CourseCreateCompanion[]
-  >(() => (initialCompanion ? [initialCompanion] : []));
+  >(
+    () =>
+      initialValue?.companions ?? (initialCompanion ? [initialCompanion] : []),
+  );
   const [hasInitializedCompanion, setHasInitializedCompanion] = useState(
     initialCompanion !== undefined,
   );

@@ -10,11 +10,14 @@ import { COURSE_CREATE_SEARCH_DEBOUNCE_MS } from '../constants';
 
 const COURSE_COMPANION_SEARCH_PAGE_SIZE = 20;
 
-const getUniqueCompanions = (companions: CourseCompanion[]) => {
+const getSelectableCompanions = (
+  companions: CourseCompanion[],
+  excludedUserId: number | null,
+) => {
   const companionIds = new Set<number>();
 
   return companions.filter(({ userId }) => {
-    if (companionIds.has(userId)) {
+    if (userId === excludedUserId || companionIds.has(userId)) {
       return false;
     }
 
@@ -25,10 +28,12 @@ const getUniqueCompanions = (companions: CourseCompanion[]) => {
 
 interface UseCourseCompanionSearchParams {
   keyword: string;
+  excludedUserId: number | null;
 }
 
 export const useCourseCompanionSearch = ({
   keyword,
+  excludedUserId,
 }: UseCourseCompanionSearchParams) => {
   const normalizedKeyword = keyword.trim();
   const debouncedKeyword = useDebouncedValue(
@@ -47,8 +52,9 @@ export const useCourseCompanionSearch = ({
   });
 
   const companions = canSearch
-    ? getUniqueCompanions(
+    ? getSelectableCompanions(
         companionSearchQuery.data?.pages.flatMap((page) => page.users) ?? [],
+        excludedUserId,
       )
     : [];
 
