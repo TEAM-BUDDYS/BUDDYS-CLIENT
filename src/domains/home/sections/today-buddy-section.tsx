@@ -18,12 +18,8 @@ const TODAY_BUDDY_SIZE = 3;
 
 const TodayBuddyPostListSkeleton = () => {
   return (
-    <SkeletonList
-      count={1}
-      label="오늘의 추천 동행을 불러오는 중"
-      className="flex justify-center"
-    >
-      <ImageCardSkeleton className="w-81.75" />
+    <SkeletonList count={1} label="오늘의 추천 동행을 불러오는 중">
+      <ImageCardSkeleton />
     </SkeletonList>
   );
 };
