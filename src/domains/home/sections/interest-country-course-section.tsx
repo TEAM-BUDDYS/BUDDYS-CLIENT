@@ -3,7 +3,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 import { COURSE_QUERY_OPTIONS } from '@/domains/course/api/course';
-import { CourseTileCard } from '@/domains/home/components/course-tile-card';
+import { CourseTileCard } from '@/domains/home/components/course-tile-card/course-tile-card';
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
 import { toDisplayableCountryCourses } from '@/domains/home/model/country-course';
 import { PROFILE_QUERY_OPTIONS } from '@/domains/profile/api/query';

@@ -3,7 +3,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 import { HOME_QUERY_OPTIONS } from '@/domains/home/api/query';
-import { MagazineCard } from '@/domains/home/components/magazine-card';
+import { MagazineCard } from '@/domains/home/components/magazine-card/magazine-card';
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
 import { useCurrentMonth } from '@/domains/home/hooks/use-current-month';
 import { AsyncBoundary, EmptyState } from '@/shared/components/ui';

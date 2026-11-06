@@ -1,2 +1,2 @@
-export { CourseTileCard } from './course-tile-card';
 export { CourseTileCardSkeleton } from './course-tile-card-skeleton';
+export { ImageCardSkeleton } from './image-card-skeleton';
