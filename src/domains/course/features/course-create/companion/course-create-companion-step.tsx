@@ -23,6 +23,7 @@ const COURSE_INVITE_URL = 'https://buddys.co.kr';
 const COURSE_CREATE_TOAST_BOTTOM_OFFSET_CLASS_NAME = 'bottom-26.5';
 
 interface CourseCreateCompanionStepProps {
+  excludedUserId: number | null;
   isSubmitting: boolean;
   selectedCompanions: CourseCreateCompanion[];
   onCompanionSelect: (companion: CourseCreateCompanion) => void;
@@ -30,6 +31,7 @@ interface CourseCreateCompanionStepProps {
 }
 
 export const CourseCreateCompanionStep = ({
+  excludedUserId,
   isSubmitting,
   selectedCompanions,
   onCompanionSelect,
@@ -38,7 +40,7 @@ export const CourseCreateCompanionStep = ({
   const { showToast } = useToast();
   const { shareContent } = useContentShare();
   const [keyword, setKeyword] = useState('');
-  const companionSearch = useCourseCompanionSearch({ keyword });
+  const companionSearch = useCourseCompanionSearch({ keyword, excludedUserId });
   const isResultOpen = companionSearch.hasKeyword;
 
   const handleCompanionSelect = (companion: CourseCreateCompanion) => {

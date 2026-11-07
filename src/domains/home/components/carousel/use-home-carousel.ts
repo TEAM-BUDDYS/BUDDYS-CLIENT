@@ -22,6 +22,7 @@ export const useHomeCarousel = (itemCount: number) => {
   return useCarouselIndex(
     {
       align: 'center',
+      containScroll: false,
       loop: canLoop,
     },
     autoplayPlugins,

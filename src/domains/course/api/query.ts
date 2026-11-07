@@ -59,10 +59,12 @@ const updatePlaceBookmark = async ({
 
 const getNearbyPlaces = async (
   params: GetNearbyPlacesParams,
+  signal?: AbortSignal,
 ): Promise<Place[]> => {
   const response = await apiClient
     .get(END_POINT.PLACE.NEARBY, {
       searchParams: createSearchParams(params),
+      signal,
     })
     .json<GetNearbyPlacesResponse>();
 
@@ -255,12 +257,12 @@ export const PLACE_QUERY_OPTIONS = {
   NEARBY: (params: GetNearbyPlacesParams | null) =>
     queryOptions({
       queryKey: PLACE_QUERY_KEY.NEARBY(params),
-      queryFn: () => {
+      queryFn: ({ signal }) => {
         if (!params) {
           throw new Error('근처 장소 조회 좌표가 필요합니다.');
         }
 
-        return getNearbyPlaces(params);
+        return getNearbyPlaces(params, signal);
       },
       enabled: params !== null,
     }),

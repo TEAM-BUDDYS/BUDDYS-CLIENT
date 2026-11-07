@@ -44,6 +44,7 @@ export { ProgressBar } from './progress-bar/progress-bar';
 export { SearchOptionField } from './search-option-field/search-option-field';
 export { Searchbar, type SearchbarSize } from './searchbar/searchbar';
 export { SearchbarWithDropdown } from './searchbar/searchbar-with-dropdown';
+export { HorizontalCardSkeleton } from './skeleton/horizontal-card-skeleton';
 export { Skeleton } from './skeleton/skeleton';
 export { Tab } from './tab/tab';
 export { TextArea, type TextAreaStatus } from './text-area/text-area';

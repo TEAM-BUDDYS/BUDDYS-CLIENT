@@ -11,7 +11,7 @@ export const useCarouselIndex = (
   plugins?: CarouselIndexPlugins,
 ) => {
   const [emblaRef, emblaApi] = useEmblaCarousel(options, plugins);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(options?.startIndex ?? 0);
 
   const handleSelect = useCallback(() => {
     if (!emblaApi) {

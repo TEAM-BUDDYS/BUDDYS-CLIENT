@@ -1,11 +1,11 @@
 'use client';
 
-import { useId, useState } from 'react';
+import { useId } from 'react';
 
 import type { BookmarkedPlace, Place } from '@/domains/course/api/type';
+import { CoursePlaceImage } from '@/domains/course/components/course-place-image/course-place-image';
 import { cn } from '@/lib/cn';
-import { getApiResourceUrl } from '@/shared/api';
-import { ChipButton, CommonImage } from '@/shared/components/ui';
+import { ChipButton } from '@/shared/components/ui';
 
 interface CourseSelectCardProps {
   place: Place | BookmarkedPlace;
@@ -22,10 +22,7 @@ export const CourseSelectCard = ({
 }: CourseSelectCardProps) => {
   const headingId = useId();
   const focusActionId = `${headingId}-focus-action`;
-  const [failedPhotoUrl, setFailedPhotoUrl] = useState<string>();
   const { placeId, name, address, photoUrl } = place;
-  const imageUrl = photoUrl ? getApiResourceUrl(photoUrl) : null;
-  const hasImageError = failedPhotoUrl === imageUrl;
   const displayName = name ?? '이름 없는 장소';
   const location =
     'country' in place
@@ -46,20 +43,7 @@ export const CourseSelectCard = ({
           </span>
         </button>
 
-        {imageUrl && !hasImageError ? (
-          <CommonImage
-            unoptimized
-            src={imageUrl}
-            alt=""
-            width={100}
-            height={100}
-            radius="rounded-xl"
-            className="size-25 shrink-0"
-            onError={() => setFailedPhotoUrl(imageUrl)}
-          />
-        ) : (
-          <div aria-hidden className="size-25 shrink-0 rounded-xl bg-gray-50" />
-        )}
+        <CoursePlaceImage photoUrl={photoUrl} />
 
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <h3 id={headingId} className="text-body-sb-16 truncate text-gray-800">

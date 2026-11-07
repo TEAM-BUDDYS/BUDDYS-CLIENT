@@ -37,7 +37,6 @@ export const EmailInputStep = ({
       label="학교 이메일"
       message={message}
       placeholder="예) example@university.edu"
-      required
       status={status}
       type="email"
       value={email}

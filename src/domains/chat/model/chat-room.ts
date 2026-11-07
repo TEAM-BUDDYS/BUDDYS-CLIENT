@@ -1,6 +1,7 @@
 import { ChatRoomParticipant } from './chat-list';
 
 export interface ChatRoomDetail {
+  canRecordCourse: boolean;
   canSendMessage: boolean;
   hasBlocked: boolean;
   hasReported: boolean;

@@ -3,6 +3,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 
 import { SectionHeader } from '@/domains/home/components/section-header/section-header';
+import { SkeletonList } from '@/domains/home/components/skeleton';
 import { TodayCard } from '@/domains/home/components/today-card/today-card';
 import {
   type DisplayableClosingSoonPost,
@@ -10,7 +11,25 @@ import {
 } from '@/domains/home/model/closing-soon';
 import { POST_QUERY_OPTIONS } from '@/domains/posts/api/query';
 import { usePostBookmark } from '@/domains/posts/features/post-bookmark/use-post-bookmark';
-import { AsyncBoundary, EmptyState } from '@/shared/components/ui';
+import {
+  AsyncBoundary,
+  EmptyState,
+  HorizontalCardSkeleton,
+} from '@/shared/components/ui';
+
+const CLOSING_SOON_SKELETON_COUNT = 4;
+
+const ClosingSoonPostListSkeleton = () => {
+  return (
+    <SkeletonList
+      count={CLOSING_SOON_SKELETON_COUNT}
+      label="마감임박 게시물을 불러오는 중"
+      className="flex flex-col gap-5"
+    >
+      <HorizontalCardSkeleton />
+    </SkeletonList>
+  );
+};
 
 interface ClosingSoonPostItemProps {
   post: DisplayableClosingSoonPost;
@@ -63,7 +82,10 @@ export const ClosingSoonBuddySection = () => {
         title="곧 마감임박!"
         description="오늘 바로 동행할 버디를 찾아보세요"
       />
-      <AsyncBoundary className="py-8">
+      <AsyncBoundary
+        className="py-8"
+        loadingFallback={<ClosingSoonPostListSkeleton />}
+      >
         <ClosingSoonPostList />
       </AsyncBoundary>
     </section>

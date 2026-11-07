@@ -41,6 +41,7 @@ export { MoreIcon } from './more-icon';
 export { MyIcon } from './my-icon';
 export { NoticeIcon } from './notice-icon';
 export { PenIcon } from './pen-icon';
+export { PhotoAlbumIcon } from './photo-album-icon';
 export { PlusIcon } from './plus-icon';
 export { ProfileBadgeIcon } from './profile-badge-icon';
 export { ProfileIcon } from './profile-icon';

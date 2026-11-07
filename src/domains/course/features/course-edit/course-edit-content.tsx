@@ -1,6 +1,6 @@
 'use client';
 
-import { useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQueries } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { COURSE_QUERY_OPTIONS } from '@/domains/course/api/course';
@@ -8,6 +8,7 @@ import type { CourseDetail } from '@/domains/course/api/type';
 import { CourseCreateFlow } from '@/domains/course/features/course-create/course-create-flow';
 import { CourseNotFoundView } from '@/domains/course/features/course-detail/course-not-found-view';
 import { TAG_QUERY_OPTIONS } from '@/shared/api';
+import { AsyncLoadingState } from '@/shared/components/ui';
 
 import { convertCourseDetailToInitialValue } from './course-edit-initial-value';
 
@@ -40,11 +41,30 @@ const CourseEditFormContent = ({ course }: CourseEditFormContentProps) => {
 };
 
 export const CourseEditContent = ({ courseId }: CourseEditContentProps) => {
-  const { data: course } = useSuspenseQuery(
-    COURSE_QUERY_OPTIONS.DETAIL(courseId),
-  );
+  const [hasLoadedCourse, setHasLoadedCourse] = useState(false);
+  const {
+    data: course,
+    error,
+    isFetchedAfterMount,
+    isFetching,
+  } = useQuery({
+    ...COURSE_QUERY_OPTIONS.DETAIL(courseId),
+    refetchOnMount: hasLoadedCourse ? true : 'always',
+  });
 
-  if (!course.isMine) {
+  if (!hasLoadedCourse) {
+    if (!isFetchedAfterMount || isFetching) {
+      return <AsyncLoadingState title="코스를 불러오고 있어요" />;
+    }
+
+    if (error) {
+      throw error;
+    }
+
+    setHasLoadedCourse(true);
+  }
+
+  if (!course?.isMine) {
     return <CourseNotFoundView />;
   }
 

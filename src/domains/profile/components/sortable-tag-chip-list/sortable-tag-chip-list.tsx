@@ -57,7 +57,11 @@ const SortableTagChip = ({ tag }: SortableTagChipProps) => {
       {...attributes}
       {...listeners}
     >
-      <Chip variant="lineMedium" active className="cursor-pointer gap-1">
+      <Chip
+        variant="lineMedium"
+        active
+        className="cursor-pointer gap-1 pr-3.5 pl-2.5"
+      >
         <HandleIcon className="size-3.5" />
         {tag.name}
       </Chip>

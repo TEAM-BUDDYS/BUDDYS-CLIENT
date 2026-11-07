@@ -1,13 +1,12 @@
 import type { Ref } from 'react';
 
 import type { Place } from '@/domains/course/api/type';
-import { CourseSaveCardSkeleton } from '@/domains/course/components/course-save-card/course-save-card-skeleton';
 import {
   CourseTab,
   type CourseTabValue,
 } from '@/domains/course/components/course-tab/course-tab';
 import type { NearbyCourseItem } from '@/domains/course/model/course-place';
-import { BottomSheet } from '@/shared/components/ui';
+import { BottomSheet, HorizontalCardSkeleton } from '@/shared/components/ui';
 
 import { BookmarkedPlaceContent } from './bookmarked-place-content';
 import { NearbyCourseContent } from './nearby-course-content';
@@ -134,10 +133,17 @@ export const CourseBottomSheet = ({
           </div>
         ) : null}
 
-        <div className="min-h-0 flex-1 scrollbar-none overflow-x-hidden overflow-y-auto overscroll-contain pb-100 [&::-webkit-scrollbar]:hidden">
+        <div
+          key={tab}
+          className="min-h-0 flex-1 scrollbar-none overflow-x-hidden overflow-y-auto overscroll-contain pb-100 [&::-webkit-scrollbar]:hidden"
+        >
           {isPlaceSelectionLoading ? (
-            <div className="border-b border-gray-50 pb-6">
-              <CourseSaveCardSkeleton />
+            <div
+              role="status"
+              aria-label="장소 정보를 불러오는 중"
+              className="border-b border-gray-50 pb-6"
+            >
+              <HorizontalCardSkeleton />
             </div>
           ) : isBookmarkMode ? (
             <BookmarkedPlaceContent

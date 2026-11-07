@@ -90,6 +90,7 @@ export interface CourseCreateValue extends CourseCreateBasicInfoValue {
 export interface CourseCreateInitialValue extends CourseCreateBasicInfoValue {
   courseId: number;
   days: CourseCreateDayFormState[];
+  companions: CourseCreateCompanion[];
 }
 
 export type CourseCreateCompanion = CourseCompanion;
