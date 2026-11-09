@@ -23,13 +23,13 @@ import {
 } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
-const EXCHANGE_COUNTRY_COURSE_SIZE = 3;
+const SECOND_COUNTRY_COURSE_SIZE = 3;
 
-const ExchangeCountryCourseListSkeleton = () => {
+const SecondCountryCourseListSkeleton = () => {
   return (
     <SkeletonList
-      count={EXCHANGE_COUNTRY_COURSE_SIZE}
-      label="파견국가 코스를 불러오는 중"
+      count={SECOND_COUNTRY_COURSE_SIZE}
+      label="코스를 불러오는 중"
       className="flex flex-col gap-5"
     >
       <HorizontalCardSkeleton />
@@ -37,24 +37,24 @@ const ExchangeCountryCourseListSkeleton = () => {
   );
 };
 
-const ExchangeCountryCourseSectionSkeleton = () => {
+const SecondCountryCourseSectionSkeleton = () => {
   return (
     <div className="flex flex-col gap-5">
       <SectionHeaderSkeleton />
-      <ExchangeCountryCourseListSkeleton />
+      <SecondCountryCourseListSkeleton />
     </div>
   );
 };
 
-interface ExchangeCountryCourseItemProps {
+interface SecondCountryCourseItemProps {
   course: DisplayableCountryCourse;
   params: GetCoursesParams;
 }
 
-const ExchangeCountryCourseItem = ({
+const SecondCountryCourseItem = ({
   course,
   params,
-}: ExchangeCountryCourseItemProps) => {
+}: SecondCountryCourseItemProps) => {
   const { toggleBookmark } = useCountryCourseBookmark({
     params,
     courseId: course.courseId,
@@ -73,8 +73,8 @@ const ExchangeCountryCourseItem = ({
   );
 };
 
-const ExchangeCountryCourseList = ({ countryId }: { countryId: number }) => {
-  const params = { countryId, size: EXCHANGE_COUNTRY_COURSE_SIZE };
+const SecondCountryCourseList = ({ countryId }: { countryId: number }) => {
+  const params = { countryId, size: SECOND_COUNTRY_COURSE_SIZE };
   const { data } = useSuspenseQuery(COURSE_QUERY_OPTIONS.LIST(params));
 
   const courses = toDisplayableCountryCourses(data.content);
@@ -93,45 +93,45 @@ const ExchangeCountryCourseList = ({ countryId }: { countryId: number }) => {
     <ul className="flex flex-col gap-5">
       {courses.map((course) => (
         <li key={course.courseId}>
-          <ExchangeCountryCourseItem course={course} params={params} />
+          <SecondCountryCourseItem course={course} params={params} />
         </li>
       ))}
     </ul>
   );
 };
 
-const ExchangeCountryCourseContent = () => {
+const SecondCountryCourseContent = () => {
   const {
-    data: { exchangeCountry },
+    data: { secondSectionCountry },
   } = useSuspenseQuery(PROFILE_QUERY_OPTIONS.ME_COUNTRIES());
 
-  if (!exchangeCountry) {
+  if (!secondSectionCountry) {
     return null;
   }
 
   return (
     <section className="flex flex-col gap-5">
       <SectionHeader
-        title={`${exchangeCountry.name}의 코스를 둘러보세요`}
+        title={`${secondSectionCountry.name}의 코스를 둘러보세요`}
         moreHref={ROUTES.COURSE.SUGGEST_EXPLORE}
       />
       <AsyncBoundary
         className="py-8"
-        loadingFallback={<ExchangeCountryCourseListSkeleton />}
+        loadingFallback={<SecondCountryCourseListSkeleton />}
       >
-        <ExchangeCountryCourseList countryId={exchangeCountry.id} />
+        <SecondCountryCourseList countryId={secondSectionCountry.id} />
       </AsyncBoundary>
     </section>
   );
 };
 
-export const ExchangeCountryCourseSection = () => {
+export const SecondCountryCourseSection = () => {
   return (
     <AsyncBoundary
       className="py-8"
-      loadingFallback={<ExchangeCountryCourseSectionSkeleton />}
+      loadingFallback={<SecondCountryCourseSectionSkeleton />}
     >
-      <ExchangeCountryCourseContent />
+      <SecondCountryCourseContent />
     </AsyncBoundary>
   );
 };
