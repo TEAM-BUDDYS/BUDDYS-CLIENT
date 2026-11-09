@@ -12,9 +12,20 @@ export interface MyCountry {
   code: string;
 }
 
+export type SecondSectionCountryReason =
+  | 'EXCHANGE'
+  | 'MOST_COURSES'
+  | (string & {});
+
+export interface SecondSectionCountry extends Omit<MyCountry, 'englishName'> {
+  englishName: string | null;
+  reason: SecondSectionCountryReason;
+}
+
 export interface MyCountries {
   interestCountry: MyCountry | null;
   exchangeCountry: MyCountry | null;
+  secondSectionCountry: SecondSectionCountry | null;
 }
 
 export type UpdateMyProfileRequest =
