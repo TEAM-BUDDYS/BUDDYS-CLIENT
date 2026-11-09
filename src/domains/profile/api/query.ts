@@ -152,9 +152,13 @@ const isSecondSectionCountry = (
     return false;
   }
 
-  const { reason } = value as Partial<SecondSectionCountry>;
+  const { code, englishName, reason } = value as Partial<SecondSectionCountry>;
 
-  return typeof reason === 'string';
+  return (
+    typeof code === 'string' &&
+    (typeof englishName === 'string' || englishName === null) &&
+    typeof reason === 'string'
+  );
 };
 
 const toSecondSectionCountry = (value: unknown) =>
