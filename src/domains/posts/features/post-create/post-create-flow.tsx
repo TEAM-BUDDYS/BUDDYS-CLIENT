@@ -53,7 +53,10 @@ export const PostCreateFlow = ({ initialPost }: PostCreateFlowProps) => {
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const postCreateForm = usePostCreateForm(initialPost);
   const { clearSubmitError, isSubmitting, submitErrorMessage, submitPost } =
-    usePostSubmit({ postId: initialPost?.postId });
+    usePostSubmit({
+      postId: initialPost?.postId,
+      initialTitle: initialPost?.title,
+    });
   const citySearch = useCitySearch({
     countryId: postCreateForm.selectedCountry?.id,
     keyword: postCreateForm.city,

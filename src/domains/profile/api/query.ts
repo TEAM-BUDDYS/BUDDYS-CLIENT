@@ -35,6 +35,7 @@ import type {
   GetUserPostsResponse,
   MyCountries,
   MyCountry,
+  SecondSectionCountry,
   UpdateMyProfileRequest,
   UpdateMyProfileResponse,
 } from './type';
@@ -144,6 +145,25 @@ const isMyCountry = (value: unknown): value is MyCountry => {
 
 const toMyCountry = (value: unknown) => (isMyCountry(value) ? value : null);
 
+const isSecondSectionCountry = (
+  value: unknown,
+): value is SecondSectionCountry => {
+  if (!isMyCountry(value)) {
+    return false;
+  }
+
+  const { code, englishName, reason } = value as Partial<SecondSectionCountry>;
+
+  return (
+    typeof code === 'string' &&
+    (typeof englishName === 'string' || englishName === null) &&
+    typeof reason === 'string'
+  );
+};
+
+const toSecondSectionCountry = (value: unknown) =>
+  isSecondSectionCountry(value) ? value : null;
+
 const getMyCountries = async (): Promise<MyCountries> => {
   const response = await apiClient
     .get(END_POINT.USER.ME_COUNTRIES)
@@ -157,13 +177,13 @@ const getMyCountries = async (): Promise<MyCountries> => {
     throw new Error(response.message || '내 국가 정보를 불러오지 못했습니다.');
   }
 
-  const { interestCountry, exchangeCountry } = response.data as Partial<
-    Record<keyof MyCountries, unknown>
-  >;
+  const { interestCountry, exchangeCountry, secondSectionCountry } =
+    response.data as Partial<Record<keyof MyCountries, unknown>>;
 
   return {
     interestCountry: toMyCountry(interestCountry),
     exchangeCountry: toMyCountry(exchangeCountry),
+    secondSectionCountry: toSecondSectionCountry(secondSectionCountry),
   };
 };
 
