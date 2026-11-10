@@ -12,6 +12,7 @@ import { useImageUpload, validateImageFile } from '@/shared/api/image';
 import { useToast } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
+import { COURSE_CREATE_MAX_TITLE_LENGTH } from './constants';
 import {
   convertCourseCreateValueToRequest,
   convertCourseUpdateValueToRequest,
@@ -52,7 +53,10 @@ const getCourseSubmitErrorMessage = (error: unknown, isEditMode: boolean) => {
 
 export const useCourseSubmit = (
   currentUserId: number | null,
-  initialCourse?: Pick<CourseCreateInitialValue, 'courseId' | 'companions'>,
+  initialCourse?: Pick<
+    CourseCreateInitialValue,
+    'courseId' | 'companions' | 'detail'
+  >,
 ) => {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -106,6 +110,17 @@ export const useCourseSubmit = (
   };
 
   const submitCourse = async (value: CourseCreateValue) => {
+    const title = value.detail.title.trim();
+    if (
+      title.length > COURSE_CREATE_MAX_TITLE_LENGTH &&
+      title !== initialCourse?.detail.title.trim()
+    ) {
+      setSubmitErrorMessage(
+        `제목은 ${COURSE_CREATE_MAX_TITLE_LENGTH}자 이하로 입력해 주세요.`,
+      );
+      return;
+    }
+
     setIsSubmitting(true);
     clearSubmitError();
 
