@@ -19,10 +19,12 @@ import { useImageUpload, validateImageFile } from '@/shared/api/image';
 import { useToast } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config';
 
+import { MAX_POST_TITLE_LENGTH } from './constants';
 import type { PostCreateImage } from './model';
 
 interface UsePostSubmitParams {
   postId?: number;
+  initialTitle?: string;
 }
 
 const getPostSubmitErrorMessage = (error: unknown, isEditMode: boolean) => {
@@ -49,7 +51,10 @@ const getPostSubmitErrorMessage = (error: unknown, isEditMode: boolean) => {
   return error instanceof Error ? error.message : defaultMessage;
 };
 
-export const usePostSubmit = ({ postId }: UsePostSubmitParams) => {
+export const usePostSubmit = ({
+  postId,
+  initialTitle,
+}: UsePostSubmitParams) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { showToast } = useToast();
@@ -61,6 +66,7 @@ export const usePostSubmit = ({ postId }: UsePostSubmitParams) => {
     null,
   );
   const isEditMode = postId !== undefined;
+  const [originalTitle] = useState(() => initialTitle?.trim());
 
   const clearSubmitError = () => {
     setSubmitErrorMessage(null);
@@ -70,6 +76,14 @@ export const usePostSubmit = ({ postId }: UsePostSubmitParams) => {
     payload: CreatePostRequest,
     images: PostCreateImage[],
   ) => {
+    const shouldSendTitle = !isEditMode || payload.title !== originalTitle;
+    if (shouldSendTitle && payload.title.length > MAX_POST_TITLE_LENGTH) {
+      setSubmitErrorMessage(
+        `제목은 ${MAX_POST_TITLE_LENGTH}자 이하로 입력해 주세요.`,
+      );
+      return;
+    }
+
     setIsSubmitting(true);
     clearSubmitError();
 
@@ -101,9 +115,14 @@ export const usePostSubmit = ({ postId }: UsePostSubmitParams) => {
       const imageUrls = [...existingImageUrls, ...uploadedImageUrls];
 
       if (isEditMode) {
+        const { title, ...details } = payload;
         const updatedPostId = await updatePostMutation.mutateAsync({
           postId,
-          body: { ...payload, imageUrls },
+          body: {
+            ...details,
+            ...(shouldSendTitle ? { title } : {}),
+            imageUrls,
+          },
         });
 
         await queryClient.invalidateQueries({

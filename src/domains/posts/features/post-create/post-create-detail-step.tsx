@@ -7,14 +7,13 @@ import {
   AGE_CONDITION_OPTIONS,
   COMPANION_TYPE_OPTIONS,
   GENDER_OPTIONS,
+  MAX_POST_CONTENT_LENGTH,
+  MAX_POST_TITLE_LENGTH,
   RECRUITMENT_COUNT_OPTIONS,
 } from './constants';
 import type { PostCreateDetailFormState, PostCreateImage } from './model';
 import { PostCreateImageField } from './post-create-image-field';
 import { PostCreatePreferenceTagFields } from './post-create-preference-tag-fields';
-
-const MAX_POST_CONTENT_LENGTH = 120;
-const MAX_POST_TITLE_LENGTH = 14;
 
 interface PostCreateDetailStepProps {
   value: PostCreateDetailFormState;
