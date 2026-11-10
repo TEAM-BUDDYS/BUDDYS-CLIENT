@@ -19,6 +19,8 @@ import type {
 
 export const TOTAL_STEP = 4 satisfies PostCreateStep;
 export const MAX_IMAGE_COUNT = 10;
+export const MAX_POST_TITLE_LENGTH = 40;
+export const MAX_POST_CONTENT_LENGTH = 120;
 export const POST_CREATE_SEARCH_DEBOUNCE_MS = 300;
 
 export const STEP_CONTENTS = {

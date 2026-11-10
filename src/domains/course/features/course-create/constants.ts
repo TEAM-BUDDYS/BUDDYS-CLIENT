@@ -2,7 +2,7 @@ import type { CourseCreateScreen } from './model';
 
 export const COURSE_CREATE_TOTAL_STEP = 5;
 export const COURSE_CREATE_SEARCH_DEBOUNCE_MS = 300;
-export const COURSE_CREATE_MAX_TITLE_LENGTH = 14;
+export const COURSE_CREATE_MAX_TITLE_LENGTH = 40;
 export const COURSE_CREATE_MAX_CONTENT_LENGTH = 120;
 export const COURSE_CREATE_PAST_YEAR_COUNT = 5;
 export const COURSE_CREATE_MAX_DATE_RANGE_DAYS = 30;
