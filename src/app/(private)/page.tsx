@@ -3,8 +3,8 @@ import { WriteFloatingButton } from '@/domains/home/components/write-floating-bu
 import { PwaInstallPromptClient } from '@/domains/home/features/pwa/pwa-install-prompt-client';
 import { BuddysMagazineSection } from '@/domains/home/sections/buddys-magazine-section';
 import { ClosingSoonBuddySection } from '@/domains/home/sections/closing-soon-buddy-section';
-import { ExchangeCountryCourseSection } from '@/domains/home/sections/exchange-country-course-section';
 import { InterestCountryCourseSection } from '@/domains/home/sections/interest-country-course-section';
+import { SecondCountryCourseSection } from '@/domains/home/sections/second-country-course-section';
 import { TodayBuddySection } from '@/domains/home/sections/today-buddy-section';
 import { BuddysLogoIcon } from '@/shared/components/icons';
 import {
@@ -40,7 +40,7 @@ export default function Home() {
           <ClosingSoonBuddySection />
           <BuddysMagazineSection />
           <InterestCountryCourseSection />
-          <ExchangeCountryCourseSection />
+          <SecondCountryCourseSection />
         </div>
       </main>
       <WriteFloatingButton />
