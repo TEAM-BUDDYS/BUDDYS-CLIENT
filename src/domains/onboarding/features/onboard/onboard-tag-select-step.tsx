@@ -4,13 +4,13 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 
 import { TAG_QUERY_OPTIONS, type TagType } from '@/shared/api';
 import { ChipGroup, useToast } from '@/shared/components/ui';
+import { PROFILE_TAG_SELECTION_LIMITS } from '@/shared/constants/profile';
 
 interface OnboardTagSelectStepProps {
   title: string;
   description: string;
   tagType: TagType;
   selectedTagIds: number[];
-  maxSelectionCount: number;
   onChange: (tagIds: number[]) => void;
 }
 
@@ -19,11 +19,12 @@ export const OnboardTagSelectStep = ({
   description,
   tagType,
   selectedTagIds,
-  maxSelectionCount,
   onChange,
 }: OnboardTagSelectStepProps) => {
   const { data: tags } = useSuspenseQuery(TAG_QUERY_OPTIONS.LIST(tagType));
   const { showToast } = useToast();
+  const { minSelectionCount, maxSelectionCount } =
+    PROFILE_TAG_SELECTION_LIMITS[tagType];
 
   const handleSelectionLimitReached = () => {
     showToast(`최대 ${maxSelectionCount}개까지 선택할 수 있어요.`, {
@@ -41,8 +42,8 @@ export const OnboardTagSelectStep = ({
 
       <div className="flex flex-col gap-5">
         <p className="text-body-r-14 text-gray-500">
-          1~{maxSelectionCount}개 선택 ({selectedTagIds.length}/
-          {maxSelectionCount})
+          {minSelectionCount}~{maxSelectionCount}개 선택 (
+          {selectedTagIds.length}/{maxSelectionCount})
         </p>
 
         <ChipGroup

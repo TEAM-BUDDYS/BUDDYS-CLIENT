@@ -295,7 +295,6 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
             description="원하는 동행 유형을 추천해드릴게요"
             tagType="ACTIVITY"
             selectedTagIds={onboardForm.activityTagIds}
-            maxSelectionCount={3}
             onChange={onboardForm.handleActivityTagIdsChange}
           />
         )}
@@ -306,7 +305,6 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
             description="취향이 비슷한 사람을 연결해드릴게요"
             tagType="INTEREST"
             selectedTagIds={onboardForm.interestTagIds}
-            maxSelectionCount={3}
             onChange={onboardForm.handleInterestTagIdsChange}
           />
         )}
@@ -317,7 +315,6 @@ export const OnboardFlow = ({ onCompleted, onStart }: OnboardFlowProps) => {
             description="함께할 사람의 성향을 맞춰볼게요 "
             tagType="TRAVEL_STYLE"
             selectedTagIds={onboardForm.companionTagIds}
-            maxSelectionCount={5}
             onChange={onboardForm.handleCompanionTagIdsChange}
           />
         )}
