@@ -8,3 +8,9 @@ export const GENDER_OPTIONS = [
 export const NICKNAME_MAX_LENGTH = 14;
 
 export const PROFILE_BIO_MAX_LENGTH = 69;
+
+export const PROFILE_TAG_SELECTION_LIMITS = {
+  ACTIVITY: { minSelectionCount: 1, maxSelectionCount: 3 },
+  INTEREST: { minSelectionCount: 1, maxSelectionCount: 2 },
+  TRAVEL_STYLE: { minSelectionCount: 1, maxSelectionCount: 2 },
+} as const;
