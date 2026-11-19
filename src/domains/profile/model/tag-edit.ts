@@ -1,4 +1,5 @@
 import type { TagType } from '@/shared/api';
+import { PROFILE_TAG_SELECTION_LIMITS } from '@/shared/constants/profile';
 import type { Tag } from '@/types/tag';
 
 export interface TagEditGroup {
@@ -16,20 +17,17 @@ export const TAG_EDIT_GROUPS: TagEditGroup[] = [
   {
     tagType: 'ACTIVITY',
     title: '동행 유형',
-    minSelectionCount: 1,
-    maxSelectionCount: 3,
+    ...PROFILE_TAG_SELECTION_LIMITS.ACTIVITY,
   },
   {
     tagType: 'INTEREST',
     title: '관심사',
-    minSelectionCount: 1,
-    maxSelectionCount: 3,
+    ...PROFILE_TAG_SELECTION_LIMITS.INTEREST,
   },
   {
     tagType: 'TRAVEL_STYLE',
     title: '동행 스타일',
-    minSelectionCount: 1,
-    maxSelectionCount: 5,
+    ...PROFILE_TAG_SELECTION_LIMITS.TRAVEL_STYLE,
   },
 ];
 
