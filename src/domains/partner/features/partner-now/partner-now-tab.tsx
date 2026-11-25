@@ -155,7 +155,7 @@ export const PartnerNowTab = ({
 
   return (
     <>
-      <section className="flex flex-col">
+      <section className="flex flex-col pb-33">
         <div
           className={cn(
             '-mx-4 h-[122px]',
