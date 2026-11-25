@@ -94,6 +94,7 @@ export const CourseCreateFlow = ({
       return;
     }
 
+    courseCreateForm.cancelPendingImagePreviews();
     clearSubmitError();
 
     if (currentScreen === 'country') {
@@ -281,6 +282,7 @@ export const CourseCreateFlow = ({
                 ({ places }) => places,
               )}
               isDisabled={isSubmitting}
+              isProcessingImages={courseCreateForm.isProcessingImages}
               onDayPlacesChange={courseCreateForm.setDayPlaces}
               onDayPlaceRemove={courseCreateForm.removeDayPlace}
               onDayImagesAdd={courseCreateForm.addDayImages}
@@ -310,7 +312,7 @@ export const CourseCreateFlow = ({
           </p>
         )}
         <Button
-          aria-busy={isSubmitting}
+          aria-busy={isSubmitting || courseCreateForm.isProcessingImages}
           disabled={!canGoNext || isSubmitting}
           onClick={handleNextClick}
         >
