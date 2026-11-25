@@ -21,6 +21,7 @@ interface CourseCreateItineraryStepProps {
   days: CourseCreateDayFormState[];
   initialPlaces?: CourseCreateDayFormState['places'];
   isDisabled?: boolean;
+  isProcessingImages: boolean;
   onDayPlacesChange: (
     dayNumber: number,
     places: CourseCreateDayFormState['places'],
@@ -42,6 +43,7 @@ export const CourseCreateItineraryStep = ({
   days,
   initialPlaces = [],
   isDisabled = false,
+  isProcessingImages,
   onDayPlacesChange,
   onDayPlaceRemove,
   onDayImagesAdd,
@@ -109,11 +111,17 @@ export const CourseCreateItineraryStep = ({
         </div>
 
         <div>
+          {isProcessingImages && (
+            <p className="text-caption-r-12 mb-4 text-gray-500" role="status">
+              사진 미리보기를 준비하고 있어요.
+            </p>
+          )}
           {days.map((day, index) => (
             <CourseCreateDaySection
               key={day.dayNumber}
               day={day}
               isDisabled={isDisabled}
+              isProcessingImages={isProcessingImages}
               isFirst={index === 0}
               isLast={index === days.length - 1}
               onPlaceAdd={setPlacePickerDayNumber}

@@ -16,6 +16,7 @@ import type { CourseCreateDayFormState } from '../model';
 interface CourseCreateDayImageFieldProps {
   dayNumber: CourseCreateDayFormState['dayNumber'];
   images: CourseCreateDayFormState['images'];
+  isProcessingImages: boolean;
   onImagesAdd: (
     dayNumber: CourseCreateDayFormState['dayNumber'],
     files: File[],
@@ -29,6 +30,7 @@ interface CourseCreateDayImageFieldProps {
 export const CourseCreateDayImageField = ({
   dayNumber,
   images,
+  isProcessingImages,
   onImagesAdd,
   onImageRemove,
 }: CourseCreateDayImageFieldProps) => {
@@ -66,7 +68,10 @@ export const CourseCreateDayImageField = ({
   };
 
   return (
-    <section className="flex min-w-0 flex-col gap-3">
+    <section
+      aria-busy={isProcessingImages}
+      className="flex min-w-0 flex-col gap-3"
+    >
       <div className="flex items-center gap-2">
         <FormLabel as="p" required className="text-body-sb-14">
           사진
@@ -81,7 +86,10 @@ export const CourseCreateDayImageField = ({
           multiple
           accept="image/jpeg,image/png,image/webp"
           className="shrink-0"
-          disabled={images.length >= COURSE_CREATE_MAX_DAY_IMAGE_COUNT}
+          disabled={
+            isProcessingImages ||
+            images.length >= COURSE_CREATE_MAX_DAY_IMAGE_COUNT
+          }
           label={`Day ${dayNumber} 사진 추가`}
           onChange={handleImageInputChange}
         />

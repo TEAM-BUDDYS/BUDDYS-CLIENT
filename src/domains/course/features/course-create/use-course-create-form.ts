@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import type { Country } from '@/shared/api';
-import type { DateRangeTypes } from '@/shared/components/ui';
+import { type DateRangeTypes, useToast } from '@/shared/components/ui';
 import { getDateRangeDayCount } from '@/shared/components/ui/date-range-picker/date-utils';
 import { formatDateToIsoDate } from '@/shared/utils/format-date-range';
 
@@ -13,6 +13,7 @@ import {
   COURSE_CREATE_MAX_FLIGHT_COUNT,
   COURSE_CREATE_MIN_DAY_IMAGE_COUNT,
 } from './constants';
+import { createCourseImagePreview } from './itinerary/create-course-image-preview';
 import type {
   CourseCreateBasicInfoValue,
   CourseCreateCityOption,
@@ -92,6 +93,9 @@ export const useCourseCreateForm = (
   const [days, setDays] = useState<CourseCreateDayFormState[]>(
     initialValue?.days ?? [],
   );
+  const [isProcessingImages, setIsProcessingImages] = useState(false);
+  const imageProcessingRef = useRef<AbortController | null>(null);
+  const { showToast } = useToast();
   const [selectedCompanions, setSelectedCompanions] = useState<
     CourseCreateCompanion[]
   >(
@@ -113,12 +117,16 @@ export const useCourseCreateForm = (
     const previewUrls = previewUrlsRef.current;
 
     return () => {
+      imageProcessingRef.current?.abort();
       previewUrls.forEach((previewUrl) => URL.revokeObjectURL(previewUrl));
       previewUrls.clear();
     };
   }, []);
 
-  // 비동기 조회가 끝났을 때 한 번만 반영하고, 이후 사용자의 삭제를 유지합니다.
+  const cancelPendingImagePreviews = () => {
+    imageProcessingRef.current?.abort();
+  };
+
   if (initialCompanion && !hasInitializedCompanion) {
     setHasInitializedCompanion(true);
     setSelectedCompanions((companions) =>
@@ -242,7 +250,11 @@ export const useCourseCreateForm = (
     );
   };
 
-  const addDayImages = (dayNumber: number, files: File[]) => {
+  const addDayImages = async (dayNumber: number, files: File[]) => {
+    if (imageProcessingRef.current) {
+      return;
+    }
+
     const currentDay = days.find((day) => day.dayNumber === dayNumber);
 
     if (!currentDay) {
@@ -253,27 +265,56 @@ export const useCourseCreateForm = (
       0,
       COURSE_CREATE_MAX_DAY_IMAGE_COUNT - currentDay.images.length,
     );
-    const nextImages = files.slice(0, remainingImageCount).map((file) => ({
-      type: 'new' as const,
-      file,
-      previewUrl: URL.createObjectURL(file),
-    }));
+    const selectedFiles = files.slice(0, remainingImageCount);
 
-    if (nextImages.length === 0) {
+    if (selectedFiles.length === 0) {
       return;
     }
 
-    nextImages.forEach(({ previewUrl }) => {
-      previewUrlsRef.current.add(previewUrl);
-    });
+    const controller = new AbortController();
+    imageProcessingRef.current = controller;
+    setIsProcessingImages(true);
 
-    setDays((prevDays) =>
-      prevDays.map((day) =>
-        day.dayNumber === dayNumber
-          ? { ...day, images: [...day.images, ...nextImages] }
-          : day,
-      ),
-    );
+    try {
+      for (const file of selectedFiles) {
+        try {
+          const previewUrl = await createCourseImagePreview(
+            file,
+            controller.signal,
+          );
+          if (controller.signal.aborted) {
+            URL.revokeObjectURL(previewUrl);
+            break;
+          }
+
+          previewUrlsRef.current.add(previewUrl);
+          setDays((prevDays) =>
+            prevDays.map((day) =>
+              day.dayNumber === dayNumber
+                ? {
+                    ...day,
+                    images: [...day.images, { type: 'new', file, previewUrl }],
+                  }
+                : day,
+            ),
+          );
+        } catch {
+          if (controller.signal.aborted) {
+            break;
+          }
+
+          showToast(
+            `‘${file.name}’ 사진을 추가하지 못했어요. 다시 선택해 주세요.`,
+            {
+              variant: 'gray',
+            },
+          );
+        }
+      }
+    } finally {
+      imageProcessingRef.current = null;
+      setIsProcessingImages(false);
+    }
   };
 
   const removeDayImage = (dayNumber: number, previewUrl: string) => {
@@ -367,6 +408,10 @@ export const useCourseCreateForm = (
   };
 
   const canGoNext = (screen: CourseCreateScreen) => {
+    if (isProcessingImages) {
+      return false;
+    }
+
     if (screen === 'country') {
       return selectedCountries.length > 0;
     }
@@ -428,6 +473,7 @@ export const useCourseCreateForm = (
     const basicInfoValue = getBasicInfoValue();
 
     if (
+      imageProcessingRef.current ||
       !basicInfoValue ||
       !isItineraryComplete(days, basicInfoValue.durationDays)
     ) {
@@ -449,6 +495,8 @@ export const useCourseCreateForm = (
     detail,
     days,
     selectedCompanions,
+    isProcessingImages,
+    cancelPendingImagePreviews,
     handleCountrySelect,
     handleCountryRemove,
     handleCitySelect,

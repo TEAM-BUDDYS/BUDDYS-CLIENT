@@ -14,6 +14,7 @@ import { CourseCreateMemoCostSheet } from './course-create-memo-cost-sheet';
 interface CourseCreateDaySectionProps {
   day: CourseCreateDayFormState;
   isDisabled?: boolean;
+  isProcessingImages: boolean;
   isFirst: boolean;
   isLast: boolean;
   onPlaceAdd: (dayNumber: number) => void;
@@ -29,6 +30,7 @@ interface CourseCreateDaySectionProps {
 export const CourseCreateDaySection = ({
   day,
   isDisabled = false,
+  isProcessingImages,
   isFirst,
   isLast,
   onPlaceAdd,
@@ -78,6 +80,7 @@ export const CourseCreateDaySection = ({
       <CourseCreateDayImageField
         dayNumber={day.dayNumber}
         images={day.images}
+        isProcessingImages={isProcessingImages}
         onImagesAdd={onImagesAdd}
         onImageRemove={onImageRemove}
       />
