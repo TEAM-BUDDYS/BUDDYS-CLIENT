@@ -9,9 +9,11 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAuthSession } from '@/domains/auth/features/auth-session/auth-session-provider';
+import { cn } from '@/lib/cn';
 import { Header } from '@/shared/components/layout';
 import { BottomActionBar, Button } from '@/shared/components/ui';
 import { ROUTES } from '@/shared/config/routes';
+import { useVirtualKeyboard } from '@/shared/hooks/use-virtual-keyboard';
 
 import { CHAT_QUERY_OPTIONS } from '../../api/query';
 import {
@@ -22,6 +24,7 @@ import { useChatRoomStomp } from '../../hooks/use-chat-room-stomp';
 import { ChatMessageData } from '../../model/chat-room';
 import { ChatRoomMenu } from '../chat-room-menu/chat-room-menu';
 import { ChatMessageList } from './chat-message-list';
+import { useChatRoomViewport } from './use-chat-room-viewport';
 
 const CHAT_MESSAGE_PAGE_SIZE = 10;
 
@@ -32,6 +35,8 @@ interface ChatRoomProps {
 export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
   const router = useRouter();
   const { userId: currentUserId } = useAuthSession();
+  const viewportStyle = useChatRoomViewport();
+  const isKeyboardOpen = useVirtualKeyboard();
   const [message, setMessage] = useState('');
   const [realtimeMessages, setRealtimeMessages] = useState<ChatMessageData[]>(
     [],
@@ -198,8 +203,12 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
   }
 
   return (
-    <div className="fixed inset-0 mx-auto flex w-full max-w-[430px] min-w-[375px] flex-col">
+    <div
+      className="fixed inset-x-0 top-0 mx-auto flex h-dvh w-full max-w-[430px] min-w-[375px] flex-col overflow-hidden overscroll-none bg-white"
+      style={viewportStyle}
+    >
       <Header
+        className={cn('shrink-0', isKeyboardOpen && 'hidden')}
         content={chatRoomData.participantNickname}
         hasBackButton
         contentAlign="center"
@@ -211,7 +220,7 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
           />
         }
       />
-      <main className="flex min-h-0 flex-1 flex-col">
+      <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <ChatMessageList
           createdAt={chatRoomData.createdAt}
           messages={messages}
@@ -221,7 +230,7 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
           onLoadPreviousMessages={fetchNextPage}
         />
         {!isInputDisabled && chatRoomData.canRecordCourse && (
-          <div className="mx-4 mb-4">
+          <div className="mx-4 mb-4 shrink-0">
             <Button onClick={handleCourseCreateClick}>
               함께 코스 기록하기
             </Button>
@@ -229,7 +238,10 @@ export const ChatRoom = ({ chatRoomId }: ChatRoomProps) => {
         )}
 
         <BottomActionBar
-          className="border-t border-t-gray-100"
+          className={cn(
+            'shrink-0 border-t border-t-gray-100',
+            isKeyboardOpen && 'h-18',
+          )}
           value={message}
           inputProps={{ disabled: isInputDisabled }}
           submitDisabled={isInputDisabled}
