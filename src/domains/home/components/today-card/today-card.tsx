@@ -32,7 +32,7 @@ export const TodayCard = ({
   } = post;
 
   return (
-    <article className="flex h-[100px] w-full items-center gap-8">
+    <article className="flex h-25 w-full items-center gap-8">
       <Link
         href={`/posts/${postId}`}
         className="flex h-full min-w-0 flex-1 gap-4"
@@ -49,19 +49,18 @@ export const TodayCard = ({
 
         <div className="flex min-w-0 flex-1 flex-col justify-between">
           <Tag value={country.name} />
-
-          <div className="flex flex-col gap-1">
+          <div className="text-body-sb-15 flex h-[2lh] flex-col gap-1 overflow-hidden">
             <h3
               className={cn(
-                'text-body-sb-15 text-gray-800',
+                'text-body-sb-15 shrink-0 text-gray-800',
                 thumbnailImageUrl ? 'line-clamp-2' : 'truncate',
               )}
             >
               {title}
             </h3>
 
-            {!thumbnailImageUrl && (
-              <p className="text-caption-m-12 truncate text-gray-500">
+            {content && (
+              <p className="text-caption-m-12 shrink-0 truncate text-gray-500">
                 {content}
               </p>
             )}
