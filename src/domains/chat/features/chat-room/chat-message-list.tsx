@@ -68,6 +68,32 @@ export const ChatMessageList = ({
     bottomRef.current?.scrollIntoView();
   }, [latestMessageId]);
 
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+
+    if (!container) {
+      return;
+    }
+
+    let previousHeight = container.clientHeight;
+    const observer = new ResizeObserver(() => {
+      const height = container.clientHeight;
+      const wasViewingLatestMessage =
+        container.scrollHeight - previousHeight - container.scrollTop <=
+        (bottomRef.current?.offsetHeight ?? 0) + 1;
+
+      if (height < previousHeight && wasViewingLatestMessage) {
+        container.scrollTop = container.scrollHeight;
+      }
+
+      previousHeight = height;
+    });
+
+    observer.observe(container);
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div
       ref={scrollContainerRef}
