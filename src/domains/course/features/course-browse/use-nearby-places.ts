@@ -1,5 +1,9 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { useCallback, useMemo } from 'react';
+import {
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import { PLACE_QUERY_OPTIONS } from '@/domains/course/api/query';
 import type { Place } from '@/domains/course/api/type';
@@ -9,12 +13,14 @@ import {
   getApiPlaceCategory,
   getNearbyPlaceParams,
 } from '@/domains/course/model/course-place';
+import { PLACE_QUERY_KEY } from '@/shared/api';
 import { useDebouncedValue } from '@/shared/hooks/use-debounced-value';
 
 const EMPTY_PLACES: Place[] = [];
 const SEARCH_DEBOUNCE_MS = 300;
 
 interface UseNearbyPlacesParams {
+  enabled: boolean;
   currentLocation: CourseMapCenter | null;
   nearbyCenter?: CourseMapCenter | null;
   searchKeyword: string;
@@ -22,11 +28,13 @@ interface UseNearbyPlacesParams {
 }
 
 export const useNearbyPlaces = ({
+  enabled,
   currentLocation,
   nearbyCenter = currentLocation,
   searchKeyword,
   selectedCategory,
 }: UseNearbyPlacesParams) => {
+  const queryClient = useQueryClient();
   const nearbyParams = useMemo(
     () => getNearbyPlaceParams(nearbyCenter, selectedCategory),
     [nearbyCenter, selectedCategory],
@@ -50,12 +58,20 @@ export const useNearbyPlaces = ({
   );
   const nearbyQuery = useQuery({
     ...PLACE_QUERY_OPTIONS.NEARBY(nearbyParams),
-    enabled: !isSearchMode && nearbyParams !== null,
+    enabled: enabled && !isSearchMode && nearbyParams !== null,
   });
   const searchQuery = useInfiniteQuery({
     ...PLACE_QUERY_OPTIONS.SEARCH(searchParams),
-    enabled: isSearchReady,
+    enabled: enabled && isSearchReady,
   });
+  useEffect(() => {
+    if (enabled) return;
+
+    void queryClient.cancelQueries({
+      queryKey: PLACE_QUERY_KEY.NEARBY(nearbyParams),
+      exact: true,
+    });
+  }, [enabled, nearbyParams, queryClient]);
   const { fetchNextPage, hasNextPage, isFetchingNextPage } = searchQuery;
   const places = useMemo(() => {
     if (!isSearchMode) return nearbyQuery.data ?? EMPTY_PLACES;
@@ -70,10 +86,17 @@ export const useNearbyPlaces = ({
     );
   }, [isSearchMode, isSearchReady, nearbyQuery.data, searchQuery.data?.pages]);
   const loadMore = useCallback(() => {
-    if (!hasNextPage || isFetchingNextPage) return;
+    if (!enabled || !isSearchReady || !hasNextPage || isFetchingNextPage) {
+      return;
+    }
 
     void fetchNextPage();
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+  }, [enabled, fetchNextPage, hasNextPage, isFetchingNextPage, isSearchReady]);
+  const refetch = () => {
+    if (!enabled) return;
+
+    return isSearchMode ? searchQuery.refetch() : nearbyQuery.refetch();
+  };
 
   return {
     places,
@@ -88,6 +111,6 @@ export const useNearbyPlaces = ({
       : nearbyQuery.isLoading,
     isSearchMode,
     loadMore,
-    refetch: isSearchMode ? searchQuery.refetch : nearbyQuery.refetch,
+    refetch,
   };
 };
