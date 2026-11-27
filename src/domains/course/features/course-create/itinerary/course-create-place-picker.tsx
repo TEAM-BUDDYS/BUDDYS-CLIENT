@@ -1,12 +1,11 @@
 'use client';
 
 import type { ComponentType, KeyboardEvent, SVGProps } from 'react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import type { Place } from '@/domains/course/api/type';
 import { CourseMap } from '@/domains/course/components/course-map/course-map';
 import { useCoursePlaceSelection } from '@/domains/course/hook/use-course-place-selection';
-import type { CourseMapCenter } from '@/domains/course/model/course-map';
 import {
   type CourseMapCategory,
   mergeCoursePlaces,
@@ -53,9 +52,9 @@ const PLACE_CATEGORIES: {
 const RESULT_SHEET_OVERLAY_RATIO = 0.57;
 
 const PLACE_RESULT_MESSAGES = {
-  nearby: {
-    label: '주변 장소',
-    emptyMessage: '주변 장소가 없어요.',
+  idle: {
+    label: '장소 선택',
+    emptyMessage: '장소를 검색하거나 지도에서 선택해 주세요.',
   },
   search: {
     label: '장소 검색 결과',
@@ -92,10 +91,6 @@ export const CourseCreatePlacePicker = ({
   const [pinnedPlace, setPinnedPlace] = useState<Place>();
   const [cameraRequestId, setCameraRequestId] = useState(0);
   const [isBookmarkMode, setIsBookmarkMode] = useState(false);
-  const [nearbyCenter, setNearbyCenter] = useState<CourseMapCenter | null>(
-    null,
-  );
-  const mapCenterRef = useRef<CourseMapCenter | null>(null);
   const resultScrollRef = useRef<HTMLDivElement>(null);
   const [isResultSheetOpen, setIsResultSheetOpen] = useState(true);
   const isResultSheetVisible = isResultSheetOpen && !isVirtualKeyboardOpen;
@@ -105,7 +100,6 @@ export const CourseCreatePlacePicker = ({
     fallbackPlaces,
     keyword,
     category,
-    nearbyCenter,
     isBookmarkMode,
     isSheetOpen: isResultSheetOpen,
   });
@@ -138,10 +132,6 @@ export const CourseCreatePlacePicker = ({
   };
 
   const handleKeywordChange = (value: string) => {
-    if (value.trim().length === 0) {
-      setNearbyCenter(mapCenterRef.current ?? placeResults.searchCenter);
-    }
-
     setKeyword(value);
     setIsBookmarkMode(false);
     clearPlacePreview();
@@ -155,15 +145,10 @@ export const CourseCreatePlacePicker = ({
     event.currentTarget.blur();
   };
 
-  const handleMapCenterChange = useCallback((center: CourseMapCenter) => {
-    mapCenterRef.current = center;
-  }, []);
-
   const handleCategoryChange = (nextCategory: CourseMapCategory) => {
     setCategory((currentCategory) =>
       currentCategory === nextCategory ? undefined : nextCategory,
     );
-    setNearbyCenter(mapCenterRef.current ?? placeResults.searchCenter);
     setIsBookmarkMode(false);
     clearPlacePreview();
     setIsResultSheetOpen(true);
@@ -173,7 +158,6 @@ export const CourseCreatePlacePicker = ({
     setIsBookmarkMode(!isBookmarkMode || !isResultSheetOpen);
     setKeyword('');
     setCategory(undefined);
-    setNearbyCenter(mapCenterRef.current ?? placeResults.searchCenter);
     clearPlacePreview();
     setIsResultSheetOpen(true);
   };
@@ -271,7 +255,6 @@ export const CourseCreatePlacePicker = ({
         cameraRequestId={cameraRequestId}
         selectedPlace={focusedPlace}
         places={visiblePlaces}
-        onCenterChange={handleMapCenterChange}
         onPlaceSelect={handleMapPlaceSelect}
         onPoiSelect={(poi) => void handlePoiSelect(poi)}
       />
