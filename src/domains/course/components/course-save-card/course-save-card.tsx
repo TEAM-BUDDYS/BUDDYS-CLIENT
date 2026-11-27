@@ -1,7 +1,6 @@
 'use client';
 
 import type { Place } from '@/domains/course/api/type';
-import { CoursePlaceImage } from '@/domains/course/components/course-place-image/course-place-image';
 import { BookmarkButton } from '@/shared/components/ui';
 
 interface CourseSaveCardProps {
@@ -19,7 +18,7 @@ export const CourseSaveCard = ({
   onPlaceSelect,
   onBookmarkChange,
 }: CourseSaveCardProps) => {
-  const { placeId, name, address, bookmarked, photoUrl } = place;
+  const { placeId, name, address, bookmarked } = place;
   const displayName = name ?? '이름 없는 장소';
 
   const handleBookmarkClick = () => {
@@ -31,11 +30,9 @@ export const CourseSaveCard = ({
       <button
         type="button"
         aria-label={`${displayName} 지도에서 보기`}
-        className="focus-visible:outline-mint-300 flex w-full items-center gap-4 rounded-xl pr-14 text-left focus-visible:outline-2 focus-visible:outline-offset-2"
+        className="focus-visible:outline-mint-300 flex w-full items-center rounded-xl pr-14 text-left focus-visible:outline-2 focus-visible:outline-offset-2"
         onClick={() => onPlaceSelect(place)}
       >
-        <CoursePlaceImage photoUrl={photoUrl} />
-
         <span className="flex min-w-0 flex-1 flex-col gap-2">
           <span className="text-body-sb-16 truncate text-gray-800">
             {displayName}
