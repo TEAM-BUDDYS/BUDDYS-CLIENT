@@ -3,7 +3,6 @@
 import { useId } from 'react';
 
 import type { BookmarkedPlace, Place } from '@/domains/course/api/type';
-import { CoursePlaceImage } from '@/domains/course/components/course-place-image/course-place-image';
 import { cn } from '@/lib/cn';
 import { ChipButton } from '@/shared/components/ui';
 
@@ -22,7 +21,7 @@ export const CourseSelectCard = ({
 }: CourseSelectCardProps) => {
   const headingId = useId();
   const focusActionId = `${headingId}-focus-action`;
-  const { placeId, name, address, photoUrl } = place;
+  const { placeId, name, address } = place;
   const displayName = name ?? '이름 없는 장소';
   const location =
     'country' in place
@@ -31,7 +30,7 @@ export const CourseSelectCard = ({
 
   return (
     <article className="flex w-full items-center gap-4">
-      <div className="relative flex min-w-0 flex-1 items-center gap-4">
+      <div className="relative min-w-0 flex-1">
         <button
           aria-labelledby={`${headingId} ${focusActionId}`}
           className="focus-visible:outline-mint-300 absolute inset-0 z-10 rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid"
@@ -43,9 +42,7 @@ export const CourseSelectCard = ({
           </span>
         </button>
 
-        <CoursePlaceImage photoUrl={photoUrl} />
-
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <div className="flex flex-col gap-1">
           <h3 id={headingId} className="text-body-sb-16 truncate text-gray-800">
             {displayName}
           </h3>

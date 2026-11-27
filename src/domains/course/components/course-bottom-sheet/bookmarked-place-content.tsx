@@ -73,7 +73,7 @@ export const BookmarkedPlaceContent = ({
 
   return (
     <>
-      <ul className="flex flex-col gap-6 divide-y-1 divide-gray-50">
+      <ul className="flex flex-col gap-6 divide-y divide-gray-50 border-t border-gray-50 pt-6">
         {items.map(({ place, description }) => (
           <li key={place.placeId} className="pb-6">
             <CourseSaveCard

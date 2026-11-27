@@ -56,7 +56,7 @@ export const CourseBrowseProvider = ({
   const [bottomSheetPosition, setBottomSheetPosition] =
     useState<CourseBottomSheetPosition>('default');
   const [bottomSheetTab, setBottomSheetTab] =
-    useState<CourseTabValue>('nearby');
+    useState<CourseTabValue>('recommend');
   const [isBookmarkMode, setIsBookmarkMode] = useState(false);
   const [isCurrentLocationVisible, setIsCurrentLocationVisible] =
     useState(false);

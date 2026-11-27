@@ -84,6 +84,7 @@ export default function CoursePage() {
     places: nearbyPlaces,
     refetch: refetchNearbyPlaces,
   } = useNearbyPlaces({
+    enabled: bottomSheetTab === 'nearby' && !isBookmarkMode,
     currentLocation,
     searchKeyword,
     selectedCategory,

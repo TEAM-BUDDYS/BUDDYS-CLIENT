@@ -1,8 +1,8 @@
 import { cn } from '@/lib/cn';
 
 const COURSE_TAB_ITEMS = [
-  { label: '근처 장소', value: 'nearby' },
   { label: '맞춤 탐색', value: 'recommend' },
+  { label: '근처 장소', value: 'nearby' },
 ] as const;
 
 export type CourseTabValue = (typeof COURSE_TAB_ITEMS)[number]['value'];
